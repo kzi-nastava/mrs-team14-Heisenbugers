@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <!-- centered title (как в figma) -->
+    <!-- centered title -->
     <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
       <h1 class="text-[35px] font-normal">Registration</h1>
     </div>
@@ -23,59 +23,147 @@
         <div class="grid grid-cols-2 gap-[18px]">
           <div>
             <label class="block text-[12px] text-neutral-300 mb-[10px]">First name</label>
-            <input class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                         focus:outline-none focus:ring-4 focus:ring-lime-200"
-                   type="text" formControlName="firstName" />
+            <input
+              type="text"
+              formControlName="firstName"
+              class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+              [class.border-neutral-200]="!isInvalid('firstName')"
+              [class.focus:ring-lime-200]="!isInvalid('firstName')"
+              [class.border-red-400]="isInvalid('firstName')"
+              [class.focus:ring-red-200]="isInvalid('firstName')"
+            />
             <p *ngIf="f.firstName.touched && f.firstName.invalid" class="mt-1 text-xs text-red-500">Required</p>
           </div>
           <div>
             <label class="block text-[12px] text-neutral-300 mb-[10px]">Last name</label>
-            <input class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                         focus:outline-none focus:ring-4 focus:ring-lime-200"
-                   type="text" formControlName="lastName" />
+            <input
+              type="text"
+              formControlName="lastName"
+              class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
+         focus:outline-none focus:ring-4 focus:ring-lime-200"
+              [class.border-neutral-200]="!isInvalid('lastName')"
+              [class.focus:ring-lime-200]="!isInvalid('lastName')"
+              [class.border-red-400]="isInvalid('lastName')"
+              [class.focus:ring-red-200]="isInvalid('lastName')"
+            />
             <p *ngIf="f.lastName.touched && f.lastName.invalid" class="mt-1 text-xs text-red-500">Required</p>
           </div>
         </div>
 
         <div>
           <label class="block text-[12px] text-neutral-300 mb-[10px]">Email Address</label>
-          <input class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                       focus:outline-none focus:ring-4 focus:ring-lime-200"
-                 type="email" formControlName="email" />
+          <input
+            type="email"
+            formControlName="email"
+            class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
+         focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!isInvalid('email')"
+            [class.focus:ring-lime-200]="!isInvalid('email')"
+            [class.border-red-400]="isInvalid('email')"
+            [class.focus:ring-red-200]="isInvalid('email')"
+          />
           <p *ngIf="f.email.touched && f.email.hasError('required')" class="mt-1 text-xs text-red-500">Required</p>
           <p *ngIf="f.email.touched && f.email.hasError('email')" class="mt-1 text-xs text-red-500">Invalid email</p>
         </div>
 
         <div>
           <label class="block text-[12px] text-neutral-300 mb-[10px]">Phone</label>
-          <input class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                       focus:outline-none focus:ring-4 focus:ring-lime-200"
-                 type="text" formControlName="phone" />
-          <p *ngIf="f.phone.touched && f.phone.invalid" class="mt-1 text-xs text-red-500">Required</p>
+          <input
+            type="text"
+            formControlName="phone"
+            class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
+         focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!isInvalid('phone')"
+            [class.focus:ring-lime-200]="!isInvalid('phone')"
+            [class.border-red-400]="isInvalid('phone')"
+            [class.focus:ring-red-200]="isInvalid('phone')"
+          />
+          <p *ngIf="f.phone.touched && f.phone.hasError('required')" class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+          <p *ngIf="f.phone.touched && f.phone.hasError('pattern')" class="mt-1 text-xs text-red-500">
+            Invalid phone format
+          </p>
         </div>
 
         <div>
           <label class="block text-[12px] text-neutral-300 mb-[10px]">Address</label>
-          <input class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                       focus:outline-none focus:ring-4 focus:ring-lime-200"
-                 type="text" formControlName="address" />
+          <input
+            type="text"
+            formControlName="address"
+            class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
+         focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!isInvalid('address')"
+            [class.focus:ring-lime-200]="!isInvalid('address')"
+            [class.border-red-400]="isInvalid('address')"
+            [class.focus:ring-red-200]="isInvalid('address')"
+          />
           <p *ngIf="f.address.touched && f.address.invalid" class="mt-1 text-xs text-red-500">Required</p>
         </div>
 
         <div>
           <label class="block text-[12px] text-neutral-300 mb-[10px]">Password</label>
-          <input class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                       focus:outline-none focus:ring-4 focus:ring-lime-200"
-                 type="password" formControlName="password" />
+          <div class="relative">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
+           focus:outline-none focus:ring-4 focus:ring-lime-200"
+              [class.border-neutral-200]="!(isInvalid('password') || mismatchActive)"
+              [class.focus:ring-lime-200]="!(isInvalid('password') || mismatchActive)"
+              [class.border-red-400]="isInvalid('password') || mismatchActive"
+              [class.focus:ring-red-200]="isInvalid('password') || mismatchActive"
+            />
+
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-black"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            >
+              <img
+                [src]="showPassword ? 'assets/icons/eye.svg' : 'assets/icons/eye-off.svg'"
+                alt=""
+                class="h-5 w-5"
+              />
+            </button>
+          </div>
+
           <p *ngIf="f.password.touched && f.password.hasError('required')" class="mt-1 text-xs text-red-500">Required</p>
           <p *ngIf="f.password.touched && f.password.hasError('minlength')" class="mt-1 text-xs text-red-500">Min 6 chars</p>
+          <p *ngIf="passwordMismatch" class="mt-1 text-xs text-red-500">
+            Passwords do not match
+          </p>
         </div>
 
         <div>
           <label class="block text-[12px] text-neutral-300 mb-[10px]">Confirm password</label>
-          <input class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                       focus:outline-none focus:ring-4 focus:ring-lime-200"
-                 type="password" formControlName="confirmPassword" />
+          <div class="relative">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              class="w-full h-[38px] rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
+           focus:outline-none focus:ring-4 focus:ring-lime-200"
+              [class.border-neutral-200]="!(isInvalid('confirmPassword') || mismatchActive)"
+              [class.focus:ring-lime-200]="!(isInvalid('confirmPassword') || mismatchActive)"
+              [class.border-red-400]="isInvalid('confirmPassword') || mismatchActive"
+              [class.focus:ring-red-200]="isInvalid('confirmPassword') || mismatchActive"
+            />
+
+            <button
+              type="button"
+              (click)="toggleConfirmPassword()"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-black"
+              [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
+            >
+              <img
+                [src]="showConfirmPassword ? 'assets/icons/eye.svg' : 'assets/icons/eye-off.svg'"
+                alt=""
+                class="h-5 w-5"
+              />
+            </button>
+          </div>
+
           <p *ngIf="f.confirmPassword.touched && f.confirmPassword.hasError('required')" class="mt-1 text-xs text-red-500">Required</p>
           <p *ngIf="passwordMismatch" class="mt-1 text-xs text-red-500">Passwords do not match</p>
         </div>
