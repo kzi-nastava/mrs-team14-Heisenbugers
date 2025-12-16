@@ -1,0 +1,114 @@
+<div class="min-h-screen bg-white">
+
+  <header class="relative h-[85px] w-full bg-black text-white">
+    <div class="h-full flex items-center px-[70px]">
+      <div class="relative w-[75px] h-[49px]">
+        <img src="assets/icons/logo.svg" alt="logo" class="h-12 w-auto" />
+      </div>
+    </div>
+  </header>
+
+  <!-- content: left panel + right map -->
+  <div class="grid grid-cols-1 lg:grid-cols-[520px_1fr] min-h-[calc(100vh-85px)]">
+    <!-- LEFT PANEL -->
+    <section class="bg-white px-[70px] py-[55px]  border-r border-neutral-200">
+      <h1 class="text-[42px] font-extrabold text-black text-center mb-[35px]">Login</h1>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-[22px] mt-[120px]">
+        <div>
+          <label class="block text-[12px] text-neutral-300 mb-[6px]">Email Address</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="w-full h-[40px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
+                   focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!isInvalid('email')"
+            [class.focus:ring-lime-200]="!isInvalid('email')"
+            [class.border-red-400]="isInvalid('email')"
+            [class.focus:ring-red-200]="isInvalid('email')"
+          />
+          <p *ngIf="f.email.touched && f.email.hasError('required')" class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+          <p *ngIf="f.email.touched && f.email.hasError('email')" class="mt-1 text-xs text-red-500">
+            Invalid email
+          </p>
+        </div>
+
+        <div>
+          <label class="block text-[12px] text-neutral-300 mb-[6px]">Password</label>
+
+          <div class="relative">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              class="w-full h-[40px] rounded-[10px] border border-neutral-200 bg-white px-4 pr-14 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              [class.border-neutral-200]="!isInvalid('password')"
+              [class.focus:ring-lime-200]="!isInvalid('password')"
+              [class.border-red-400]="isInvalid('password')"
+              [class.focus:ring-red-200]="isInvalid('password')"
+            />
+
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-black"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            >
+              <img
+                [src]="showPassword ? 'assets/icons/eye-off.svg' : 'assets/icons/eye.svg'"
+                alt=""
+                class="h-5 w-5"
+              />
+            </button>
+          </div>
+
+          <p *ngIf="isInvalid('password') && f.password.hasError('required')" class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+          <p *ngIf="isInvalid('password') && f.password.hasError('minlength')" class="mt-1 text-xs text-red-500">
+            Min 6 chars
+          </p>
+        </div>
+
+
+        <a
+          routerLink="/auth/forgot-password"
+          class="block -mt-[18px] text-[12px] text-neutral-300 hover:underline"
+        >
+          Forgot password?
+        </a>
+
+        <button
+          type="submit"
+          class="mx-auto block h-[42px] w-[190px] rounded-[10px] bg-lime-300 text-black font-semibold shadow
+                 hover:bg-lime-200 active:scale-[0.99]"
+        >
+          Login
+        </button>
+
+        <p class="text-[10px] text-neutral-300 text-center leading-snug -mt-2">
+          By clicking the Sign Up button, you accept the<br />
+          <a class="underline" href="#" (click)="$event.preventDefault()">terms</a>
+          of the
+          <a class="underline" href="#" (click)="$event.preventDefault()">Privacy Policy</a>.
+        </p>
+
+        <p class="text-[12px] text-neutral-700 text-center">
+          First time here?
+          <a routerLink="/auth/register" class="font-semibold text-black">Sign in</a>
+        </p>
+      </form>
+    </section>
+
+    <!-- RIGHT: MAP IMAGE -->
+    <section class="relative">
+      <img
+        src="assets/images/map-placeholder.png"
+        alt="map"
+        class="absolute inset-0 h-full w-full object-cover"
+      />
+    </section>
+  </div>
+</div>
