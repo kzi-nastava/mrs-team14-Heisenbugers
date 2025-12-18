@@ -1,0 +1,81 @@
+<header class="relative h-21.25 w-full bg-black text-white">
+  <div class="h-full flex items-center px-17.5">
+    <div class="relative w-18.75 h-12.25">
+      <img src="icons/logo.svg" alt="logo" class="h-12 w-auto" />
+    </div>
+  </div>
+</header>
+
+<div class="flex flex-row justify-between m-7">
+  <label class="text-xl">
+    Manage Account
+  </label>
+  <label class="text-base mt-1">
+    Hi, John Doe | <a class="text-lime-500" routerLink="/auth/login">Sign out</a>
+  </label>
+</div>
+
+<div class="py-5 px-7 flex flex-row gap-50">
+  <div class="flex ml-7 flex-col items-start">
+    <div
+      class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden mb-2"
+    >
+        <ng-icon name="bootstrapPersonCircle" size="60" color="#fafcfa"></ng-icon>
+    </div>
+
+    <p class="font-medium">
+      John Doe
+    </p>
+    <p class="text-sm text-gray-600">
+      johndoe&#64;gmail.com
+    </p>
+    <button class="mt-10 cursor-pointer" (click)="setProfileTab('Personal Information')" [class]="{'text-lime-500': selectedTab === 'Personal Information', 'text-gray-700': selectedTab !== 'Personal Information'}">
+      Personal Information
+    </button>
+    <button class="mt-1 cursor-pointer" (click)="setProfileTab('Manage Password')" [class]="{'text-lime-500': selectedTab === 'Manage Password', 'text-gray-700': selectedTab !== 'Manage Password'}">
+      Manage Password
+    </button>
+    <button class="mt-1 cursor-pointer" (click)="setProfileTab('Driver Information')" [class]="{'text-lime-500': selectedTab === 'Driver Information', 'text-gray-700': selectedTab !== 'Driver Information'}">
+      Driver Information
+    </button>
+    <button class="mt-1 cursor-pointer" (click)="setProfileTab('Vehicle Information')" [class]="{'text-lime-500': selectedTab === 'Vehicle Information', 'text-gray-700': selectedTab !== 'Vehicle Information'}">
+      Vehicle Information
+    </button>
+  </div>
+
+  <div class="mt-6">
+    <div class="flex flex-row justify-between">
+      <h2 class="text-3xl font-bold">
+        {{selectedTab}}
+      </h2>
+      <div class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50">
+        <ng-icon name="bootstrapPencilFill" size="20" color="#a1bf3f"></ng-icon>
+        <p class="text-base">Edit Profile</p>
+      </div>
+    </div>
+    <div class="flex flex-row gap-15">
+      <app-profile-card
+        title="Name"
+        value="John Doe"
+        iconName="bootstrapPersonFill"
+      ></app-profile-card>
+      <app-profile-card
+        title="Email"
+        value="johndoe&#64;gmail.com"
+        iconName="bootstrapEnvelopeFill"
+      ></app-profile-card>
+    </div>
+    <div class="flex flex-row gap-15">
+      <app-profile-card
+        title="Address"
+        value="Bulevar Jovana Ducica 35, Novi Sad"
+        iconName="bootstrapPinMapFill"
+      ></app-profile-card>
+      <app-profile-card
+        title="Phone number"
+        value="+381645712833"
+        iconName="bootstrapTelephoneFill"
+      ></app-profile-card>
+    </div>
+  </div>
+</div>
