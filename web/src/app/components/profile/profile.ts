@@ -19,7 +19,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
   viewProviders: [provideIcons({ bootstrapPersonCircle,bootstrapPencilFill, bootstrapClockFill })]
 })
 export class ProfileComponent {
-  public selectedTab: string = 'Personal Information';
+  selectedTab: string = 'Personal Information';
+  isEditing = false;
+
+  imagePreview: string | null = null;
 
   showPassword = false;
   showConfirmPassword = false;
@@ -42,5 +45,19 @@ export class ProfileComponent {
 
   setProfileTab(tab: string) {
     this.selectedTab = tab;
+  }
+
+  setIsEditing(value: boolean) {
+    this.isEditing = value;
+  }
+
+  onPickImage(ev: Event) {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => (this.imagePreview = String(reader.result));
+    reader.readAsDataURL(file);
   }
 }
