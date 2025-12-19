@@ -50,18 +50,20 @@
 
     <!-- Ride list -->
     @for (r of rides; track r) {
-    <div class="mb-3 border rounded-xl border-gray-200">
-      <button
-        class="w-full text-left px-4 py-3 text-sm flex justify-between items-center hover:shadow-md hover:border-gray-400 hover:bg-gray-50"
-      >
+    <div
+      [class.border-2]="r.wasPanic"
+      [class.border-red-500]="r.wasPanic"
+      class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
+    >
+      <button class="w-full text-left px-4 py-3 text-sm flex justify-between items-center">
         <span class="flex items-center">
-          <span class="mr-4">{{ r.beginSpot }}</span>
+          <span class="mr-4">{{ r.startLocation }}</span>
           <span class="mr-4 flex items-center">
             <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
-            {{ r.beginTime | date : 'HH:mm' }}
+            {{ r.startTime | date : 'HH:mm' }}
           </span>
           <ng-icon class="mr-4" name="bootstrapArrowRight"></ng-icon>
-          <span class="mr-4">{{ r.endSpot }}</span>
+          <span class="mr-4">{{ r.finishLocation }}</span>
           <span class="mr-4 flex items-center">
             <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
             {{ r.endTime | date : 'HH:mm' }}

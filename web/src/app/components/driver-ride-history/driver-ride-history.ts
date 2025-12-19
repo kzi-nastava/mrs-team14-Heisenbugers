@@ -8,21 +8,10 @@ import {
     bootstrapClock,
     bootstrapCash }
     from '@ng-icons/bootstrap-icons';
+import { RideInfo } from './driver-info.model';
 
-interface Ride {
-    beginSpot: string;
-    endSpot: string;
-    beginTime: Date;
-    endTime: Date;
-    price: number;
-    panic: boolean;
-    notes: string;
-}
 
-interface Passenger {
-    firstName: string;
-    lastName: string;
-}
+
 
 @Component({
 standalone: true,
@@ -40,15 +29,46 @@ standalone: true,
 export class RideHistoryComponent {
   sort: 'date' | 'price' | 'route' = 'date';
 
-  rides: Ride[] = Array.from({ length: 5 }).map(() => ({
-    beginSpot: 'ул.Атамана Головатого 2а',
-    endSpot: 'ул.Красная 113',
-    beginTime: new Date('2025-12-19T08:12:00'),
+  rides: RideInfo[] = [
+  ...Array.from({ length: 4 }).map(() => ({
+    driverName: 'Vozac Vozacovic',
+    startLocation: 'ул.Атамана Головатого 2а',
+    finishLocation: 'ул.Красная 113',
+    startTime: new Date('2025-12-19T08:12:00'),
     endTime: new Date('2025-12-19T10:12:00'),
     price: 350,
-    panic: false,
-    notes: "Neki podaci jos"
-  }));
+    rating: 3.5,
+    maxRating: 5,
+    cancelled: false,
+    passengers: [
+      {firstName: 'Alice', lastName: 'Alisic'},
+      {firstName: 'Bob', lastName: 'Bobic'},
+      {firstName: 'Carl', lastName: 'Carlic'},
+      {firstName: 'Denise', lastName: 'Denisic'}
+    ],
+    trafficViolations: [{type: 'Red light'}],
+    wasPanic: false
+  })),
+  {
+    driverName: 'Vozac Vozacovic',
+    startLocation: 'ул.Атамана Головатого 2а',
+    finishLocation: 'ул.Красная 113',
+    startTime: new Date('2025-12-19T08:12:00'),
+    endTime: new Date('2025-12-19T10:12:00'),
+    price: 350,
+    rating: 3.5,
+    maxRating: 5,
+    cancelled: false,
+    passengers: [
+      {firstName: 'Alice', lastName: 'Alisic'},
+      {firstName: 'Bob', lastName: 'Bobic'},
+      {firstName: 'Carl', lastName: 'Carlic'},
+      {firstName: 'Denise', lastName: 'Denisic'}
+    ],
+    trafficViolations: [{type: 'Red light'}],
+    wasPanic: true
+  }
+];
 
   setSort(type: 'date' | 'price' | 'route') {
     this.sort = type;

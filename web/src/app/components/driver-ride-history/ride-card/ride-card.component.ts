@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { DriverInfo, Passenger } from '../driver-info.model';
+import { RideInfo, Passenger } from '../driver-info.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle } from '@ng-icons/bootstrap-icons';
 
@@ -13,7 +13,7 @@ import { bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCir
   viewProviders: [provideIcons({bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle})]
 })
 export class RideCardComponent {
-  @Input() ride: DriverInfo = {
+  @Input() ride: RideInfo = {
     driverName: 'Vozac Vozacovic',
     startLocation: 'ул.Атамана Головатого 2а',
     finishLocation: 'ул.Красная 113',

@@ -8,7 +8,7 @@ export interface TrafficViolation {
   description?: string;
 }
 
-export interface DriverInfo {
+export interface RideInfo {
   driverName: string;
   startLocation: string;
   finishLocation: string;
