@@ -1,3 +1,11 @@
+<header class="relative h-21.25 w-full bg-black text-white">
+  <div class="h-full flex items-center px-17.5">
+    <div class="relative w-18.75 h-12.25">
+      <img src="icons/logo.svg" alt="logo" class="h-12 w-auto" />
+    </div>
+  </div>
+</header>
+
 <div class="flex h-screen font-sans">
   <!-- Sidebar -->
   <aside class="w-[260px] border-r border-gray-300 p-6">
@@ -7,7 +15,7 @@
   </aside>
 
   <!-- Content -->
-  <main class="flex-1 p-8">
+  <main class="flex-1 p-8 justify-center w-full">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-xl font-semibold">Ride History</h2>
       <span class="text-lg cursor-pointer">⇅</span>
@@ -16,7 +24,7 @@
     <!-- Filters -->
     <div class="flex gap-2 mb-6">
       <button
-        class="px-4 py-1 rounded-full border text-sm"
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
         [ngClass]="sort === 'date' ? 'border-black' : 'border-gray-400'"
         (click)="setSort('date')"
       >
@@ -24,7 +32,7 @@
       </button>
 
       <button
-        class="px-4 py-1 rounded-full border text-sm"
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
         [ngClass]="sort === 'price' ? 'border-black' : 'border-gray-400'"
         (click)="setSort('price')"
       >
@@ -32,7 +40,7 @@
       </button>
 
       <button
-        class="px-4 py-1 rounded-full border text-sm"
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
         [ngClass]="sort === 'route' ? 'border-black' : 'border-gray-400'"
         (click)="setSort('route')"
       >
@@ -41,8 +49,12 @@
     </div>
 
     <!-- Ride list -->
-    <div *ngFor="let r of rides" class="mb-3 rounded-xl border border-gray-200 px-4 py-3 text-sm">
+    @for (r of rides; track r) {
+    <div
+      class="mb-3 rounded-xl border border-gray-200 px-4 py-3 text-sm transition cursor-pointer hover:shadow-md hover:border-gray-400 hover:bg-gray-50"
+    >
       {{ r.route }} - {{ r.time }} - {{ r.price }} RSD
     </div>
+    }
   </main>
 </div>
