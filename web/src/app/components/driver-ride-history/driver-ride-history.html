@@ -55,7 +55,10 @@
       [class.border-red-500]="r.wasPanic"
       class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
     >
-      <button class="w-full text-left px-4 py-3 text-sm flex justify-between items-center">
+      <button
+        class="w-full text-left px-4 py-3 text-sm flex justify-between items-center"
+        (click)="goToRide()"
+      >
         <span class="flex items-center">
           <span class="mr-4">{{ r.startLocation }}</span>
           <span class="mr-4 flex items-center">

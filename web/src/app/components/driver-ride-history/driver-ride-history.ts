@@ -73,4 +73,8 @@ export class RideHistoryComponent {
   setSort(type: 'date' | 'price' | 'route') {
     this.sort = type;
   }
+
+  goToRide(){
+    window.location.href += '/ride'
+  }
 }
