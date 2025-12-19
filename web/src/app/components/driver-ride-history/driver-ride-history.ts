@@ -1,14 +1,28 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { bootstrapCaretDownFill, bootstrapCaretUpFill } from '@ng-icons/bootstrap-icons';
+import {
+    bootstrapCaretDownFill,
+    bootstrapCaretUpFill,
+    bootstrapArrowRight,
+    bootstrapClock,
+    bootstrapCash }
+    from '@ng-icons/bootstrap-icons';
 
 interface Ride {
-    route: string;
-    time: string;
+    beginSpot: string;
+    endSpot: string;
+    beginTime: Date;
+    endTime: Date;
     price: number;
-    details: string;
+    panic: boolean;
+    notes: string;
     open?: boolean;
+}
+
+interface Passenger {
+    firstName: string;
+    lastName: string;
 }
 
 @Component({
@@ -17,16 +31,24 @@ standalone: true,
   selector: 'app-ride-history',
   templateUrl: './driver-ride-history.html',
   styleUrls: ['./driver-ride-history.css'],
-  viewProviders: [provideIcons({ bootstrapCaretDownFill, bootstrapCaretUpFill })]
+  viewProviders: [provideIcons({ bootstrapCaretDownFill,
+    bootstrapCaretUpFill,
+    bootstrapArrowRight,
+    bootstrapClock,
+    bootstrapCash
+    })]
 })
 export class RideHistoryComponent {
   sort: 'date' | 'price' | 'route' = 'date';
 
   rides: Ride[] = Array.from({ length: 5 }).map(() => ({
-    route: 'ул.Атамана Головатого 2а → ул.Красная 113',
-    time: '08:12-10:12',
+    beginSpot: 'ул.Атамана Головатого 2а',
+    endSpot: 'ул.Красная 113',
+    beginTime: new Date('2025-12-19T08:12:00'),
+    endTime: new Date('2025-12-19T10:12:00'),
     price: 350,
-    details: "Neki podaci jos"
+    panic: false,
+    notes: "Neki podaci jos"
   }));
 
   setSort(type: 'date' | 'price' | 'route') {
