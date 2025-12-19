@@ -6,7 +6,8 @@ import {
     bootstrapCaretUpFill,
     bootstrapArrowRight,
     bootstrapClock,
-    bootstrapCash }
+    bootstrapCash,
+    bootstrapExclamationCircleFill }
     from '@ng-icons/bootstrap-icons';
 import { RideInfo } from './driver-info.model';
 
@@ -23,7 +24,8 @@ standalone: true,
     bootstrapCaretUpFill,
     bootstrapArrowRight,
     bootstrapClock,
-    bootstrapCash
+    bootstrapCash,
+    bootstrapExclamationCircleFill
     })]
 })
 export class RideHistoryComponent {

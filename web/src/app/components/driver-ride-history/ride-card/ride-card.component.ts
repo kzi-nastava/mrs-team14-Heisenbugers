@@ -30,7 +30,7 @@ export class RideCardComponent {
       {firstName: 'Denise', lastName: 'Denisic'}
     ],
     trafficViolations: [{type: 'Red light'}],
-    wasPanic: false
+    wasPanic: true
   };
   
 

@@ -56,7 +56,7 @@
       class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
     >
       <button
-        class="w-full text-left px-4 py-3 text-sm flex justify-between items-center"
+        class="w-full text-left px-4 py-3 text-sm flex justify-between items-center cursor-pointer"
         (click)="goToRide()"
       >
         <span class="flex items-center">
@@ -76,6 +76,9 @@
             <span>{{ r.price | number : '1.2-2' }} RSD</span>
           </span>
         </span>
+        @if(r.wasPanic){
+        <ng-icon name="bootstrapExclamationCircleFill" color="red" size="24"></ng-icon>
+        }
       </button>
     </div>
     }
