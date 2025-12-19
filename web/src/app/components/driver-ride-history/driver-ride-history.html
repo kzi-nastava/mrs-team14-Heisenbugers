@@ -50,11 +50,9 @@
 
     <!-- Ride list -->
     @for (r of rides; track r) {
-    <div class="mb-3 border rounded-xl border-gray-200 overflow-hidden">
+    <div class="mb-3 border rounded-xl border-gray-200">
       <button
-        (click)="r.open = !r.open"
         class="w-full text-left px-4 py-3 text-sm flex justify-between items-center hover:shadow-md hover:border-gray-400 hover:bg-gray-50"
-        onclick="this.nextElementSibling.classList.toggle('hidden')"
       >
         <span class="flex items-center">
           <span class="mr-4">{{ r.beginSpot }}</span>
@@ -73,12 +71,7 @@
             <span>{{ r.price | number : '1.2-2' }} RSD</span>
           </span>
         </span>
-        <ng-icon [name]="r.open ? 'bootstrapCaretUpFill' : 'bootstrapCaretDownFill'"></ng-icon>
-        <!-- toggle arrow -->
       </button>
-      <div class="px-4 py-3 text-sm border-t border-gray-200 hidden">
-        <p>Additional details: {{ r.notes }}</p>
-      </div>
     </div>
     }
   </main>

@@ -17,7 +17,6 @@ interface Ride {
     price: number;
     panic: boolean;
     notes: string;
-    open?: boolean;
 }
 
 interface Passenger {
