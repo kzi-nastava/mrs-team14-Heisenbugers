@@ -1,20 +1,4 @@
 <div class="min-h-screen bg-white">
-  <header class="relative h-21.25 w-full bg-black text-white">
-    <!-- left content -->
-    <div class="h-full flex items-center px-17.5">
-      <!-- logo from figma -->
-      <div class="relative w-18.75 h-12.25">
-        <!-- left big svg -->
-        <img src="icons/logo.svg" alt="logo" class="h-12 w-auto" />
-      </div>
-    </div>
-
-    <!-- centered title -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <h1 class="text-[35px] font-normal">Registration</h1>
-    </div>
-  </header>
-
   <main class="px-37.5 py-10.5">
     <div class="grid grid-cols-1 lg:grid-cols-[460px_1fr] gap-22.5 items-start">
       <!-- LEFT: FORM -->
@@ -33,26 +17,23 @@
               [class.focus:ring-red-200]="isInvalid('firstName')"
             />
             @if (f.firstName.touched && f.firstName.invalid) {
-              <p  class="mt-1 text-xs text-red-500">Required</p>
+            <p class="mt-1 text-xs text-red-500">Required</p>
             }
-
           </div>
           <div>
             <label class="block text-[12px] text-neutral-300 mb-2.5">Last name</label>
             <input
               type="text"
               formControlName="lastName"
-              class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-         focus:outline-none focus:ring-4 focus:ring-lime-200"
+              class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
               [class.border-neutral-200]="!isInvalid('lastName')"
               [class.focus:ring-lime-200]="!isInvalid('lastName')"
               [class.border-red-400]="isInvalid('lastName')"
               [class.focus:ring-red-200]="isInvalid('lastName')"
             />
             @if (f.lastName.touched && f.lastName.invalid) {
-              <p class="mt-1 text-xs text-red-500">Required</p>
+            <p class="mt-1 text-xs text-red-500">Required</p>
             }
-
           </div>
         </div>
 
@@ -61,20 +42,17 @@
           <input
             type="email"
             formControlName="email"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-         focus:outline-none focus:ring-4 focus:ring-lime-200"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
             [class.border-neutral-200]="!isInvalid('email')"
             [class.focus:ring-lime-200]="!isInvalid('email')"
             [class.border-red-400]="isInvalid('email')"
             [class.focus:ring-red-200]="isInvalid('email')"
           />
           @if (f.email.touched && f.email.hasError('required')) {
-            <p class="mt-1 text-xs text-red-500">Required</p>
+          <p class="mt-1 text-xs text-red-500">Required</p>
+          } @if (f.email.touched && f.email.hasError('email')) {
+          <p class="mt-1 text-xs text-red-500">Invalid email</p>
           }
-          @if (f.email.touched && f.email.hasError('email')) {
-            <p class="mt-1 text-xs text-red-500">Invalid email</p>
-          }
-
         </div>
 
         <div>
@@ -82,25 +60,17 @@
           <input
             type="text"
             formControlName="phone"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-         focus:outline-none focus:ring-4 focus:ring-lime-200"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
             [class.border-neutral-200]="!isInvalid('phone')"
             [class.focus:ring-lime-200]="!isInvalid('phone')"
             [class.border-red-400]="isInvalid('phone')"
             [class.focus:ring-red-200]="isInvalid('phone')"
           />
           @if (f.phone.touched && f.phone.hasError('required')) {
-            <p class="mt-1 text-xs text-red-500">
-              Required
-            </p>
+          <p class="mt-1 text-xs text-red-500">Required</p>
+          } @if (f.phone.touched && f.phone.hasError('pattern')) {
+          <p class="mt-1 text-xs text-red-500">Invalid phone format</p>
           }
-          @if (f.phone.touched && f.phone.hasError('pattern')) {
-            <p class="mt-1 text-xs text-red-500">
-              Invalid phone format
-            </p>
-          }
-
-
         </div>
 
         <div>
@@ -108,15 +78,14 @@
           <input
             type="text"
             formControlName="address"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-         focus:outline-none focus:ring-4 focus:ring-lime-200"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
             [class.border-neutral-200]="!isInvalid('address')"
             [class.focus:ring-lime-200]="!isInvalid('address')"
             [class.border-red-400]="isInvalid('address')"
             [class.focus:ring-red-200]="isInvalid('address')"
           />
           @if (f.address.touched && f.address.invalid) {
-            <p class="mt-1 text-xs text-red-500">Required</p>
+          <p class="mt-1 text-xs text-red-500">Required</p>
           }
         </div>
 
@@ -126,8 +95,7 @@
             <input
               [type]="showPassword ? 'text' : 'password'"
               formControlName="password"
-              class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
-           focus:outline-none focus:ring-4 focus:ring-lime-200"
+              class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
               [class.border-neutral-200]="!(isInvalid('password') || mismatchActive)"
               [class.focus:ring-lime-200]="!(isInvalid('password') || mismatchActive)"
               [class.border-red-400]="isInvalid('password') || mismatchActive"
@@ -137,27 +105,23 @@
             <button
               type="button"
               (click)="togglePassword()"
-              class="absolute right-3 top-3/4 -translate-y-3/4 cursor-pointer text-neutral-400 "
+              class="absolute right-3 top-3/4 -translate-y-3/4 cursor-pointer text-neutral-400"
               [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
             >
               @if (showPassword) {
-                <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
+              <ng-icon name="bootstrapEye" size="20"> </ng-icon>
               } @else {
-                <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
+              <ng-icon name="bootstrapEyeSlash" size="20"> </ng-icon>
               }
             </button>
           </div>
 
           @if (f.password.touched && f.password.hasError('required')) {
-            <p class="mt-1 text-xs text-red-500">Required</p>
-          }
-          @if (f.password.touched && f.password.hasError('minlength')) {
-            <p class="mt-1 text-xs text-red-500">Min 6 chars</p>
-          }
-          @if (passwordMismatch) {
-            <p class="mt-1 text-xs text-red-500">
-              Passwords do not match
-            </p>
+          <p class="mt-1 text-xs text-red-500">Required</p>
+          } @if (f.password.touched && f.password.hasError('minlength')) {
+          <p class="mt-1 text-xs text-red-500">Min 6 chars</p>
+          } @if (passwordMismatch) {
+          <p class="mt-1 text-xs text-red-500">Passwords do not match</p>
           }
         </div>
 
@@ -167,8 +131,7 @@
             <input
               [type]="showConfirmPassword ? 'text' : 'password'"
               formControlName="confirmPassword"
-              class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
-           focus:outline-none focus:ring-4 focus:ring-lime-200"
+              class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
               [class.border-neutral-200]="!(isInvalid('confirmPassword') || mismatchActive)"
               [class.focus:ring-lime-200]="!(isInvalid('confirmPassword') || mismatchActive)"
               [class.border-red-400]="isInvalid('confirmPassword') || mismatchActive"
@@ -178,28 +141,27 @@
             <button
               type="button"
               (click)="toggleConfirmPassword()"
-              class="absolute right-3 top-3/4 -translate-y-3/4 cursor-pointer text-neutral-400 "
+              class="absolute right-3 top-3/4 -translate-y-3/4 cursor-pointer text-neutral-400"
               [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
             >
               @if (showPassword) {
-                <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
+              <ng-icon name="bootstrapEye" size="20"> </ng-icon>
               } @else {
-                <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
+              <ng-icon name="bootstrapEyeSlash" size="20"> </ng-icon>
               }
             </button>
           </div>
           @if (f.confirmPassword.touched && f.confirmPassword.hasError('required')) {
-            <p class="mt-1 text-xs text-red-500">Required</p>
+          <p class="mt-1 text-xs text-red-500">Required</p>
+          } @if (passwordMismatch) {
+          <p class="mt-1 text-xs text-red-500">Passwords do not match</p>
           }
-          @if (passwordMismatch) {
-            <p class="mt-1 text-xs text-red-500">Passwords do not match</p>
-          }
-
         </div>
 
-        <button type="submit"
-                class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow
-                 hover:bg-lime-200 active:scale-[0.99] mt-[10px]">
+        <button
+          type="submit"
+          class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] mt-[10px]"
+        >
           Register
         </button>
 
@@ -216,21 +178,21 @@
         </p>
 
         @if (submitted) {
-          <div class="mt-3 rounded-md border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-700">
-            Activation email sent. Link is valid for 24h.
-          </div>
+        <div class="mt-3 rounded-md border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-700">
+          Activation email sent. Link is valid for 24h.
+        </div>
         }
-
       </form>
 
       <!-- RIGHT: IMAGE UPLOAD -->
       <div class="flex justify-center">
-        <label class="w-full max-w-180 aspect-4/3 rounded-[34px] bg-neutral-200
-                      flex items-center justify-center cursor-pointer relative overflow-hidden">
+        <label
+          class="w-full max-w-180 aspect-4/3 rounded-[34px] bg-neutral-200 flex items-center justify-center cursor-pointer relative overflow-hidden"
+        >
           <input type="file" accept="image/*" class="hidden" (change)="onPickImage($event)" />
 
           <div class="text-neutral-500">
-            <ng-icon name = "bootstrapCameraFill" size="120"></ng-icon>
+            <ng-icon name="bootstrapCameraFill" size="120"></ng-icon>
           </div>
           <div class="absolute bottom-4 text-xs text-neutral-500">
             Click to upload photo (optional)

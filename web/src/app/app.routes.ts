@@ -7,7 +7,9 @@ import { LoginComponent } from './components/auth/login/login';
 import { ProfileComponent } from './components/profile/profile';
 import { RideHistoryComponent } from './components/driver-ride-history/driver-ride-history';
 import { RideCardComponent } from './components/driver-ride-history/ride-card/ride-card.component';
+import { BaseLayoutComponent, HeaderlessLayoutComponent, LoggedLayoutComponent } from './layouters';
 
+/*
 export const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'auth/register', component: RegisterComponent },
@@ -15,4 +17,32 @@ export const routes: Routes = [
   { path: 'profile', component: ProfileComponent },
   { path: 'driver-ride-history', component: RideHistoryComponent },
   { path: 'driver-ride-history/ride', component: RideCardComponent }
+];
+*/
+
+export const routes: Routes = [
+  {
+    path: '',
+    component: BaseLayoutComponent, // Pages with header
+    children: [
+      { path: 'auth/register', component: RegisterComponent },
+      { path: 'auth/login', component: LoginComponent },
+    ]
+  },
+  {
+    path: '',
+    component: LoggedLayoutComponent,
+    children: [
+      { path: 'profile', component: ProfileComponent },
+      { path: 'driver-ride-history', component: RideHistoryComponent },
+      { path: 'driver-ride-history/ride', component: RideCardComponent }
+    ]
+  },
+  {
+    path: '',
+    component: HeaderlessLayoutComponent,
+    children: [
+      { path: 'home', component: HomeComponent },
+    ]
+  }
 ];

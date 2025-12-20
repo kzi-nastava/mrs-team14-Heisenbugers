@@ -1,17 +1,8 @@
 <div class="min-h-screen bg-white">
-
-  <header class="relative h-[85px] w-full bg-black text-white">
-    <div class="h-full flex items-center px-[70px]">
-      <div class="relative w-[75px] h-[49px]">
-        <img src="icons/logo.svg" alt="logo" class="h-12 w-auto" />
-      </div>
-    </div>
-  </header>
-
   <!-- content: left panel + right map -->
   <div class="grid grid-cols-1 lg:grid-cols-[520px_1fr] min-h-[calc(100vh-85px)]">
     <!-- LEFT PANEL -->
-    <section class="bg-white px-[70px] py-[55px]  border-r border-neutral-200">
+    <section class="bg-white px-[70px] py-[55px] border-r border-neutral-200">
       <h1 class="text-[42px] font-extrabold text-black text-center mb-[35px]">Login</h1>
 
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-[22px] mt-[120px]">
@@ -20,14 +11,16 @@
           <input
             type="email"
             formControlName="email"
-            class="w-full h-[40px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                   focus:outline-none focus:ring-4 focus:ring-lime-200"
+            class="w-full h-[40px] rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
             [class.border-neutral-200]="!isInvalid('email')"
             [class.focus:ring-lime-200]="!isInvalid('email')"
             [class.border-red-400]="isInvalid('email')"
             [class.focus:ring-red-200]="isInvalid('email')"
           />
-          <p *ngIf="f.email.touched && f.email.hasError('required')" class="mt-1 text-xs text-red-500">
+          <p
+            *ngIf="f.email.touched && f.email.hasError('required')"
+            class="mt-1 text-xs text-red-500"
+          >
             Required
           </p>
           <p *ngIf="f.email.touched && f.email.hasError('email')" class="mt-1 text-xs text-red-500">
@@ -42,8 +35,7 @@
             <input
               [type]="showPassword ? 'text' : 'password'"
               formControlName="password"
-              class="w-full h-[40px] rounded-[10px] border border-neutral-200 bg-white px-4 pr-14 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              class="w-full h-[40px] rounded-[10px] border border-neutral-200 bg-white px-4 pr-14 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
               [class.border-neutral-200]="!isInvalid('password')"
               [class.focus:ring-lime-200]="!isInvalid('password')"
               [class.border-red-400]="isInvalid('password')"
@@ -64,14 +56,19 @@
             </button>
           </div>
 
-          <p *ngIf="isInvalid('password') && f.password.hasError('required')" class="mt-1 text-xs text-red-500">
+          <p
+            *ngIf="isInvalid('password') && f.password.hasError('required')"
+            class="mt-1 text-xs text-red-500"
+          >
             Required
           </p>
-          <p *ngIf="isInvalid('password') && f.password.hasError('minlength')" class="mt-1 text-xs text-red-500">
+          <p
+            *ngIf="isInvalid('password') && f.password.hasError('minlength')"
+            class="mt-1 text-xs text-red-500"
+          >
             Min 6 chars
           </p>
         </div>
-
 
         <a
           routerLink="/auth/forgot-password"
@@ -82,8 +79,7 @@
 
         <button
           type="submit"
-          class="mx-auto block h-[42px] w-[190px] rounded-[10px] bg-lime-300 text-black font-semibold shadow
-                 hover:bg-lime-200 active:scale-[0.99]"
+          class="mx-auto block h-[42px] w-[190px] rounded-[10px] bg-lime-300 text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]"
         >
           Login
         </button>
