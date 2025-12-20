@@ -1,5 +1,6 @@
 import { Component,inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import {bootstrapEye,bootstrapEyeSlash,bootstrapCameraFill} from '@ng-icons/bootstrap-icons';
 import {
   AbstractControl,
   FormBuilder,
@@ -7,6 +8,7 @@ import {
   Validators,
 } from '@angular/forms';
 import {RouterLink} from '@angular/router';
+import {NgIcon, provideIcons} from '@ng-icons/core';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -22,9 +24,10 @@ const phonePattern = /^[0-9+\-\s()]{6,30}$/;
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, NgIcon],
   templateUrl: './register.html',
   styleUrl: './register.css',
+  viewProviders: [provideIcons({bootstrapEye,bootstrapEyeSlash,bootstrapCameraFill})]
 })
 
 
