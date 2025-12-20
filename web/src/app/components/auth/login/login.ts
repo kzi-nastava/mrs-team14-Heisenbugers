@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
 
-import { NgIf } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import {bootstrapCameraFill, bootstrapEye, bootstrapEyeSlash} from '@ng-icons/bootstrap-icons';
+import {NgIcon, provideIcons} from '@ng-icons/core';
 
 
 
@@ -10,9 +11,11 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, NgIcon],
   templateUrl: './login.html',
   styleUrl: './login.css',
+  viewProviders: [provideIcons({bootstrapEye,bootstrapEyeSlash})]
+
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);

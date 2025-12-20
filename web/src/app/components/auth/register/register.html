@@ -8,19 +8,21 @@
         <img src="icons/logo.svg" alt="logo" class="h-12 w-auto" />
       </div>
     </div>
-
-    <!-- centered title -->
-    <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <h1 class="text-[35px] font-normal">Registration</h1>
-    </div>
   </header>
 
+
+
   <main class="px-37.5 py-10.5">
+    <h1 class="text-[26px]  font-bold text-neutral-800 mb-6">
+      Registration
+    </h1>
     <div class="grid grid-cols-1 lg:grid-cols-[460px_1fr] gap-22.5 items-start">
       <!-- LEFT: FORM -->
+
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4.5">
         <!-- First/Last -->
         <div class="grid grid-cols-2 gap-4.5">
+
           <div>
             <label class="block text-[12px] text-neutral-300 mb-2.5">First name</label>
             <input
