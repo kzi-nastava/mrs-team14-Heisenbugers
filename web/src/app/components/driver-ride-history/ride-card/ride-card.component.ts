@@ -1,16 +1,18 @@
 import { Component, Input } from '@angular/core';
 
-import { RideInfo, Passenger } from '../driver-info.model';
+import { RideInfo } from '../driver-info.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle } from '@ng-icons/bootstrap-icons';
+import { bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle, bootstrapClock, bootstrapCash, bootstrapArrowRight, bootstrapArrowLeft } from '@ng-icons/bootstrap-icons';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 
 @Component({
   selector: 'app-driver-card',
   templateUrl: './ride-card.component.html',
   styleUrls: ['./ride-card.component.css'],
-  imports: [NgIcon],
-  viewProviders: [provideIcons({bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle})]
+  imports: [NgIcon, CommonModule],
+  viewProviders: [provideIcons({bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle, bootstrapClock, bootstrapCash, bootstrapArrowRight, bootstrapArrowLeft})]
 })
 export class RideCardComponent {
   @Input() ride: RideInfo = {
@@ -30,8 +32,12 @@ export class RideCardComponent {
       {firstName: 'Denise', lastName: 'Denisic'}
     ],
     trafficViolations: [{type: 'Red light'}],
-    wasPanic: true
+    wasPanic: false
   };
+
+  constructor(private router: Router) {
+    
+  }
   
 
   getFormattedTime(): string {
@@ -54,6 +60,10 @@ export class RideCardComponent {
 
   get stars(): number[]{
     return Array(this.ride.rating).fill(0);
+  }
+
+  goBack(){
+    this.router.navigate(['/driver-ride-history'])
   }
 
 }

@@ -10,6 +10,7 @@ import {
     bootstrapExclamationCircleFill }
     from '@ng-icons/bootstrap-icons';
 import { RideInfo } from './driver-info.model';
+import { Router } from '@angular/router';
 
 
 
@@ -72,11 +73,15 @@ export class RideHistoryComponent {
   }
 ];
 
+constructor(private router: Router) {
+  
+}
+
   setSort(type: 'date' | 'price' | 'route') {
     this.sort = type;
   }
 
   goToRide(){
-    window.location.href += '/ride'
+    this.router.navigate(['/driver-ride-history/ride'])
   }
 }
