@@ -1,8 +1,4 @@
-import {Component, inject, ChangeDetectorRef } from '@angular/core';
-import {RouterLink} from '@angular/router';
-import { NgIcon, provideIcons } from '@ng-icons/core';
-import { bootstrapPersonCircle, bootstrapPencilFill, bootstrapClockFill, bootstrapEye, bootstrapEyeSlash, bootstrapCameraFill, bootstrapCarFrontFill } from '@ng-icons/bootstrap-icons';
-import { ProfileCard} from './profile-card/profile-card';
+import {ChangeDetectorRef, Component, inject} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -10,41 +6,30 @@ import {
   ReactiveFormsModule,
   ValidationErrors,
   Validators
-} from '@angular/forms';
-import {ManagePassword} from './manage-password/manage-password';
+} from "@angular/forms";
+import {NgIcon} from "@ng-icons/core";
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-manage-password',
   imports: [
-    RouterLink,
-    NgIcon,
-    ProfileCard,
     FormsModule,
-    ReactiveFormsModule,
-    ManagePassword
+    NgIcon,
+    ReactiveFormsModule
   ],
-  templateUrl: './profile.html',
-  styleUrl: './profile.css',
-  viewProviders: [provideIcons({ bootstrapPersonCircle,bootstrapPencilFill, bootstrapClockFill, bootstrapEye, bootstrapEyeSlash, bootstrapCameraFill, bootstrapCarFrontFill })]
+  templateUrl: './manage-password.html',
+  styleUrl: './manage-password.css',
 })
-export class ProfileComponent {
+export class ManagePassword {
   private fb = inject(FormBuilder);
 
   submitAttempted = false;
   submitted = false;
 
   selectedTab: string = 'Personal Information';
-  isEditing = false;
-  isVehicleEditing = false;
-
-  imagePreview: string | null = null;
 
   showPassword = false;
   showConfirmPassword = false;
   showOldPassword = false;
-
-  petsAllowed = false;
-  babiesAllowed = true;
 
   passwordsMatch(group: AbstractControl): ValidationErrors | null {
     const p = group.get('password')?.value;
@@ -57,6 +42,7 @@ export class ProfileComponent {
     {
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', [Validators.required]],
+      oldPassword: ['', [Validators.required]],
     },
     { validators: this.passwordsMatch }
   );
@@ -103,31 +89,7 @@ export class ProfileComponent {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor() {
   }
 
-  setProfileTab(tab: string) {
-    this.selectedTab = tab;
-  }
-
-  setIsEditing(value: boolean) {
-    this.isEditing = value;
-  }
-
-  setIsEditingVehicle(value: boolean) {
-    this.isVehicleEditing = value;
-  }
-
-  onPickImage(ev: Event) {
-    const input = ev.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.imagePreview = reader.result as string;
-      this.cdr.markForCheck();
-    };
-    reader.readAsDataURL(file);
-  }
 }
