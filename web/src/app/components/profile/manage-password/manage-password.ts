@@ -25,8 +25,6 @@ export class ManagePassword {
   submitAttempted = false;
   submitted = false;
 
-  selectedTab: string = 'Personal Information';
-
   showPassword = false;
   showConfirmPassword = false;
   showOldPassword = false;

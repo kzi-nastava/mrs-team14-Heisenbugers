@@ -169,80 +169,10 @@
       </div>
     </div>
   } @else if (selectedTab == 'Personal Information' && isEditing) {
-    <div>
-      <h2 class="text-3xl font-bold">
-        Edit {{selectedTab}}
-      </h2>
-      <p class="mt-3 text-gray-600">
-        Update your personal information such as name, email, address, and phone number.
-      </p>
-      <div class="flex flex-row gap-6">
-        <div class="mt-6 grid grid-cols-2 gap-6">
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Name</label>
-            <input
-              type="text"
-              class="w-100 h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="John Doe"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Email</label>
-            <input
-              type="email"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="johndoe&#64;gmail.com"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Address</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="Bulevar Jovana Ducica 35, Novi Sad"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Phone number</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="+381645712833"
-            />
-          </div>
-        </div>
-        <div class="flex justify-center mt-11">
-          <label class="w-45 h-35 max-w-180 aspect-4/3 rounded-2xl bg-neutral-200
-                      flex items-center justify-center cursor-pointer relative overflow-hidden">
-            <input type="file" accept="image/*" class="hidden" (change)="onPickImage($event)" />
-
-            @if (imagePreview) {
-              <img
-                [src]="imagePreview"
-                alt="Profile preview"
-                class="absolute inset-0 w-full h-full object-fit" />
-            } @else {
-                <div class="flex flex-col items-center text-neutral-500">
-                  <ng-icon name="bootstrapCameraFill" size="75"></ng-icon>
-                  <div class="mt-2 text-xs">Change profile photo</div>
-                </div>
-            }
-          </label>
-        </div>
-      </div>
-      <div class="mt-10 flex gap-4">
-        <button (click)="setIsEditing(false)" class="h-10.5 w-32 cursor-pointer rounded-[10px] bg-gray-300 text-black font-semibold shadow
-                 hover:bg-gray-200 active:scale-[0.99]">
-          Cancel
-        </button>
-        <button class="h-10.5 w-32 rounded-[10px] bg-[#C5E55D] cursor-pointer text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]">
-            Save Changes
-        </button>
-      </div>
-    </div>
+    <app-edit-profile
+      [user]="user"
+      (closeEdit)="setIsEditing($event)">
+    ></app-edit-profile>
   } @else if (selectedTab == 'Vehicle Information' && isVehicleEditing) {
     <div>
       <h2 class="text-3xl font-bold">
