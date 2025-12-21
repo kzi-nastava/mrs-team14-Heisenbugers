@@ -174,88 +174,10 @@
       (closeEdit)="setIsEditing($event)">
     ></app-edit-profile>
   } @else if (selectedTab == 'Vehicle Information' && isVehicleEditing) {
-    <div>
-      <h2 class="text-3xl font-bold">
-        Edit {{selectedTab}}
-      </h2>
-      <p class="mt-3 text-gray-600">
-        Update your vehicle information such as model, type, plate number and seating capacity.
-      </p>
-      <div class="flex flex-row gap-6">
-        <div class="mt-6 grid grid-cols-2 gap-6">
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Model</label>
-            <input
-              type="text"
-              class="w-100 h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="Ford Fiesta"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Type</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="Standard"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Plate No.</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="NS-215-KL"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Seats</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="5"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Baby Allowed</label>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only peer" [(ngModel)]="babiesAllowed">
-
-              <div
-                class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
-              ></div>
-
-              <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
-              ></div>
-            </label>
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Pets Allowed</label>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only peer" [(ngModel)]="petsAllowed">
-
-              <div
-                class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
-              ></div>
-
-              <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
-              ></div>
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="mt-10 flex gap-4">
-        <button (click)="setIsEditingVehicle(false)" class="h-10.5 w-32 cursor-pointer rounded-[10px] bg-gray-300 text-black font-semibold shadow
-                 hover:bg-gray-200 active:scale-[0.99]">
-          Cancel
-        </button>
-        <button class="h-10.5 w-32 rounded-[10px] bg-[#C5E55D] cursor-pointer text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]">
-          Save Changes
-        </button>
-      </div>
-    </div>
+    <app-edit-vehicle
+      [vehicle]="vehicle"
+      (closeEdit)="setIsEditingVehicle($event)">
+    ></app-edit-vehicle>
   }
 
 </div>

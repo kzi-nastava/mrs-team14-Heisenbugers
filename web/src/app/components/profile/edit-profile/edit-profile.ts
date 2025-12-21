@@ -38,8 +38,6 @@ export class EditProfile {
   submitAttempted = false;
   submitted = false;
 
-  isEditing = false;
-
   imagePreview: string | null = null;
 
   form = this.fb.group(
@@ -79,10 +77,6 @@ export class EditProfile {
   }
 
   constructor(private cdr: ChangeDetectorRef) {
-  }
-
-  setIsEditing(value: boolean) {
-    this.isEditing = value;
   }
 
   onPickImage(ev: Event) {

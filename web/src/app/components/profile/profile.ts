@@ -1,4 +1,4 @@
-import {Component, inject, ChangeDetectorRef } from '@angular/core';
+import {Component} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { bootstrapPersonCircle, bootstrapPencilFill, bootstrapClockFill, bootstrapEye, bootstrapEyeSlash, bootstrapCameraFill, bootstrapCarFrontFill } from '@ng-icons/bootstrap-icons';
@@ -9,6 +9,7 @@ import {
 } from '@angular/forms';
 import {ManagePassword} from './manage-password/manage-password';
 import {EditProfile} from './edit-profile/edit-profile';
+import {EditVehicle} from './edit-vehicle/edit-vehicle';
 
 @Component({
   selector: 'app-profile',
@@ -19,7 +20,8 @@ import {EditProfile} from './edit-profile/edit-profile';
     FormsModule,
     ReactiveFormsModule,
     ManagePassword,
-    EditProfile
+    EditProfile,
+    EditVehicle
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
@@ -30,10 +32,6 @@ export class ProfileComponent {
   selectedTab: string = 'Personal Information';
   isEditing = false;
   isVehicleEditing = false;
-
-
-  petsAllowed = false;
-  babiesAllowed = true;
 
   setProfileTab(tab: string) {
     this.selectedTab = tab;
@@ -52,5 +50,14 @@ export class ProfileComponent {
     email: 'johndoe@gmail.com',
     address: 'Bulevar Jovana Ducica 35, Novi Sad',
     phoneNumber: '381645712833'
+  };
+
+  vehicle = {
+    model: 'Ford Fiesta',
+    type: 'Standard',
+    plateNumber: 'NS-215-KL',
+    seats: '5',
+    babiesAllowed: true,
+    petsAllowed: false
   };
 }

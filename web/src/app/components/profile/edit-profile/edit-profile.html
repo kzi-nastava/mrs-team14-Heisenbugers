@@ -17,7 +17,6 @@
           [class.focus:ring-lime-200]="!isInvalid('name')"
           [class.border-red-400]="isInvalid('name')"
           [class.focus:ring-red-200]="isInvalid('name')"
-          value="John Doe"
         />
         @if (f.name.touched && f.name.hasError('required')) {
           <p class="mt-1 text-xs text-red-500">Required</p>
@@ -34,7 +33,6 @@
           [class.focus:ring-lime-200]="!isInvalid('email')"
           [class.border-red-400]="isInvalid('email')"
           [class.focus:ring-red-200]="isInvalid('email')"
-          value="johndoe&#64;gmail.com"
         />
         @if (f.email.touched && f.email.hasError('required')) {
           <p class="mt-1 text-xs text-red-500">Required</p>
@@ -54,7 +52,6 @@
           [class.focus:ring-lime-200]="!isInvalid('address')"
           [class.border-red-400]="isInvalid('address')"
           [class.focus:ring-red-200]="isInvalid('address')"
-          value="Bulevar Jovana Ducica 35, Novi Sad"
         />
         @if (f.address.touched && f.address.hasError('required')) {
           <p class="mt-1 text-xs text-red-500">Required</p>
@@ -71,7 +68,6 @@
           [class.focus:ring-lime-200]="!isInvalid('phoneNumber')"
           [class.border-red-400]="isInvalid('phoneNumber')"
           [class.focus:ring-red-200]="isInvalid('phoneNumber')"
-          value="+381645712833"
         />
         @if (f.phoneNumber.touched && f.phoneNumber.hasError('required')) {
           <p class="mt-1 text-xs text-red-500">
