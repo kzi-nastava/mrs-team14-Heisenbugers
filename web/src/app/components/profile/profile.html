@@ -334,13 +334,17 @@
                       flex items-center justify-center cursor-pointer relative overflow-hidden">
             <input type="file" accept="image/*" class="hidden" (change)="onPickImage($event)" />
 
-            <div class="text-neutral-500">
-              <ng-icon name = "bootstrapCameraFill" size="75"></ng-icon>
-            </div>
-
-            <div class="absolute bottom-4 text-xs text-neutral-500">
-              Change profile photo
-            </div>
+            @if (imagePreview) {
+              <img
+                [src]="imagePreview"
+                alt="Profile preview"
+                class="absolute inset-0 w-full h-full object-fit" />
+            } @else {
+                <div class="flex flex-col items-center text-neutral-500">
+                  <ng-icon name="bootstrapCameraFill" size="75"></ng-icon>
+                  <div class="mt-2 text-xs">Change profile photo</div>
+                </div>
+            }
           </label>
         </div>
       </div>

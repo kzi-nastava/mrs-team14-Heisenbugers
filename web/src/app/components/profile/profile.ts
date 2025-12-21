@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, ChangeDetectorRef } from '@angular/core';
 import {RouterLink} from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { bootstrapPersonCircle, bootstrapPencilFill, bootstrapClockFill, bootstrapEye, bootstrapEyeSlash, bootstrapCameraFill, bootstrapCarFrontFill } from '@ng-icons/bootstrap-icons';
@@ -101,7 +101,7 @@ export class ProfileComponent {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
   }
 
   setProfileTab(tab: string) {
@@ -122,7 +122,10 @@ export class ProfileComponent {
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = () => (this.imagePreview = String(reader.result));
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+      this.cdr.markForCheck();
+    };
     reader.readAsDataURL(file);
   }
 }
