@@ -49,7 +49,8 @@ export class ProfileComponent {
     name: 'John Doe',
     email: 'johndoe@gmail.com',
     address: 'Bulevar Jovana Ducica 35, Novi Sad',
-    phoneNumber: '381645712833'
+    phoneNumber: '381645712833',
+    profilePicture: null
   };
 
   vehicle = {

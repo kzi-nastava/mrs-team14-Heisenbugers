@@ -20,7 +20,15 @@
     <div
       class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden mb-2"
     >
+      @if (this.user.profilePicture) {
+        <img
+          [src]="this.user.profilePicture"
+          alt="Profile Picture"
+          class="w-full h-full object-cover"
+        />
+      } @else {
         <ng-icon name="bootstrapPersonCircle" size="60" color="#fafcfa"></ng-icon>
+      }
     </div>
 
     <p class="font-medium">
@@ -70,24 +78,24 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Name"
-          value="John Doe"
+          value={{this.user.name}}
           iconName="bootstrapPersonFill"
         ></app-profile-card>
         <app-profile-card
           title="Email"
-          value="johndoe&#64;gmail.com"
+          value={{this.user.email}}
           iconName="bootstrapEnvelopeFill"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Address"
-          value="Bulevar Jovana Ducica 35, Novi Sad"
+          value={{this.user.address}}
           iconName="bootstrapPinMapFill"
         ></app-profile-card>
         <app-profile-card
           title="Phone number"
-          value="+381645712833"
+          value=+{{this.user.phoneNumber}}
           iconName="bootstrapTelephoneFill"
         ></app-profile-card>
       </div>
@@ -129,41 +137,36 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Model"
-          value="Ford Fiesta"
+          value={{this.vehicle.model}}
           iconName="bootstrapCarFrontFill"
         ></app-profile-card>
         <app-profile-card
           title="Type"
-          value="Standard"
-          iconName="custom"
+          value={{this.vehicle.type}}
           iconImage="icons/diamond.svg"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Plate No."
-          value="NS-215-KL"
-          iconName="custom"
+          value={{this.vehicle.plateNumber}}
           iconImage="icons/license-plate.svg"
         ></app-profile-card>
         <app-profile-card
           title="Seats"
-          value="5"
-          iconName="custom"
+          value={{this.vehicle.seats}}
           iconImage="icons/car-seat.svg"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Baby Allowed"
-          value="Yes"
-          iconName="custom"
+          [value]="this.vehicle.babiesAllowed ? 'Yes' : 'No'"
           iconImage="icons/baby.svg"
         ></app-profile-card>
         <app-profile-card
           title="Pets Allowed"
-          value="No"
-          iconName="custom"
+          [value]="this.vehicle.petsAllowed ? 'Yes' : 'No'"
           iconImage="icons/pets.svg"
         ></app-profile-card>
       </div>

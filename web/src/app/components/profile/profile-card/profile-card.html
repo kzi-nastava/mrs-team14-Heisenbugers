@@ -7,8 +7,9 @@
       {{ value }}
     </label>
   </div>
-  <ng-icon [name]="iconName" size="30" color="#C5E55D" class="mt-1 mr-1"></ng-icon>
-  @if (iconName == 'custom'){
+  @if (iconName) {
+    <ng-icon [name]="iconName" size="30" color="#C5E55D" class="mt-1 mr-1"></ng-icon>
+  } @else {
     <img [src]="iconImage" alt="icon" class="w-11 h-14.5 pb-5">
   }
 
