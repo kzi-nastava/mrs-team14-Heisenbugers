@@ -15,4 +15,5 @@ export class ProfileCard {
   @Input() title!: string;
   @Input() value!: string;
   @Input() iconName?: string;
+  @Input() iconImage?: string;
 }

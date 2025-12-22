@@ -1,7 +1,9 @@
 <div class="flex flex-row justify-between m-7">
-  <label class="text-xl"> Manage Account </label>
+  <label class="text-xl">
+    Manage Account
+  </label>
   <label class="text-base mt-1">
-    Hi, John Doe | <a class="text-lime-500" routerLink="/auth/login">Sign out</a>
+    Hi, John Doe | <a class="text-[#C5E55D]" routerLink="/auth/login">Sign out</a>
   </label>
 </div>
 
@@ -10,285 +12,428 @@
     <div
       class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden mb-2"
     >
-      <ng-icon name="bootstrapPersonCircle" size="60" color="#fafcfa"></ng-icon>
+        <ng-icon name="bootstrapPersonCircle" size="60" color="#fafcfa"></ng-icon>
     </div>
 
-    <p class="font-medium">John Doe</p>
-    <p class="text-sm text-gray-600">johndoe&#64;gmail.com</p>
-    <button
-      class="mt-10 cursor-pointer"
-      (click)="setProfileTab('Personal Information')"
-      [class]="{
-        'text-lime-500': selectedTab === 'Personal Information',
-        'text-gray-700': selectedTab !== 'Personal Information'
-      }"
-    >
-      Personal Information
-    </button>
-    <button
-      class="mt-1 cursor-pointer"
-      (click)="setProfileTab('Manage Password')"
-      [class]="{
-        'text-lime-500': selectedTab === 'Manage Password',
-        'text-gray-700': selectedTab !== 'Manage Password'
-      }"
-    >
-      Manage Password
-    </button>
-    <button
-      class="mt-1 cursor-pointer"
-      (click)="setProfileTab('Driver Information')"
-      [class]="{
-        'text-lime-500': selectedTab === 'Driver Information',
-        'text-gray-700': selectedTab !== 'Driver Information'
-      }"
-    >
-      Driver Information
-    </button>
-    <button
-      class="mt-1 cursor-pointer"
-      (click)="setProfileTab('Vehicle Information')"
-      [class]="{
-        'text-lime-500': selectedTab === 'Vehicle Information',
-        'text-gray-700': selectedTab !== 'Vehicle Information'
-      }"
-    >
-      Vehicle Information
-    </button>
+    <p class="font-medium">
+      John Doe
+    </p>
+    <p class="text-sm text-gray-600">
+      johndoe&#64;gmail.com
+    </p>
+    <div class="gap-1.5 flex flex-col">
+      <button class="mt-10 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100 " (click)="setProfileTab('Personal Information')" [class]="{'border-lime-300': selectedTab === 'Personal Information', 'border-gray-200': selectedTab !== 'Personal Information', 'bg-[#C5E55D]': selectedTab === 'Personal Information', 'text-gray-700': selectedTab !== 'Personal Information'}">
+        Personal Information
+      </button>
+      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Manage Password')" [class]="{'border-lime-300': selectedTab === 'Manage Password', 'border-gray-200': selectedTab !== 'Manage Password', 'text-gray-700': selectedTab !== 'Manage Password', 'bg-[#C5E55D]': selectedTab === 'Manage Password'}">
+        Manage Password
+      </button>
+      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Driver Information')" [class]="{'border-lime-300': selectedTab === 'Driver Information', 'border-gray-200': selectedTab !== 'Driver Information', 'text-gray-700': selectedTab !== 'Driver Information', 'bg-[#C5E55D]': selectedTab === 'Driver Information'}">
+        Driver Information
+      </button>
+      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Vehicle Information')" [class]="{'border-lime-300': selectedTab === 'Vehicle Information', 'border-gray-200': selectedTab !== 'Vehicle Information', 'text-gray-700': selectedTab !== 'Vehicle Information', 'bg-[#C5E55D]': selectedTab === 'Vehicle Information'}">
+        Vehicle Information
+      </button>
+      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Favorite Routes')" [class]="{'border-lime-300': selectedTab === 'Favorite Routes', 'border-gray-200': selectedTab !== 'Favorite Routes', 'text-gray-700': selectedTab !== 'Favorite Routes', 'bg-[#C5E55D]': selectedTab === 'Favorite Routes'}">
+        Favorite Routes
+      </button>
+      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Ride History')" [class]="{'border-lime-300': selectedTab === 'Ride History', 'border-gray-200': selectedTab !== 'Ride History', 'text-gray-700': selectedTab !== 'Ride History', 'bg-[#C5E55D]': selectedTab === 'Ride History'}">
+        Ride History
+      </button>
+    </div>
   </div>
 
   @if (selectedTab == 'Personal Information' && !isEditing) {
-  <div class="mt-6">
-    <div class="flex flex-row justify-between">
-      <div class="flex flex-col">
-        <h2 class="text-3xl font-bold">
-          {{ selectedTab }}
-        </h2>
-        <p class="mt-3 text-gray-600">
-          Manage your personal information such as name, email, address, and phone number.
-        </p>
+    <div class="mt-6">
+      <div class="flex flex-row justify-between">
+        <div class="flex flex-col">
+          <h2 class="text-3xl font-bold">
+            {{selectedTab}}
+          </h2>
+          <p class="mt-3 text-gray-600">
+            Manage your personal information such as name, email, address and phone number.
+          </p>
+        </div>
+        <div (click)="setIsEditing(true)" class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50 h-10">
+          <ng-icon name="bootstrapPencilFill" size="20" color="#a1bf3f"></ng-icon>
+          <p class="text-base">Edit Profile</p>
+        </div>
       </div>
-      <div
-        (click)="setIsEditing(true)"
-        class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50 h-10"
-      >
-        <ng-icon name="bootstrapPencilFill" size="20" color="#a1bf3f"></ng-icon>
-        <p class="text-base">Edit Profile</p>
+      <div class="flex flex-row gap-15">
+        <app-profile-card
+          title="Name"
+          value="John Doe"
+          iconName="bootstrapPersonFill"
+        ></app-profile-card>
+        <app-profile-card
+          title="Email"
+          value="johndoe&#64;gmail.com"
+          iconName="bootstrapEnvelopeFill"
+        ></app-profile-card>
+      </div>
+      <div class="flex flex-row gap-15">
+        <app-profile-card
+          title="Address"
+          value="Bulevar Jovana Ducica 35, Novi Sad"
+          iconName="bootstrapPinMapFill"
+        ></app-profile-card>
+        <app-profile-card
+          title="Phone number"
+          value="+381645712833"
+          iconName="bootstrapTelephoneFill"
+        ></app-profile-card>
       </div>
     </div>
-    <div class="flex flex-row gap-15">
-      <app-profile-card
-        title="Name"
-        value="John Doe"
-        iconName="bootstrapPersonFill"
-      ></app-profile-card>
-      <app-profile-card
-        title="Email"
-        value="johndoe&#64;gmail.com"
-        iconName="bootstrapEnvelopeFill"
-      ></app-profile-card>
-    </div>
-    <div class="flex flex-row gap-15">
-      <app-profile-card
-        title="Address"
-        value="Bulevar Jovana Ducica 35, Novi Sad"
-        iconName="bootstrapPinMapFill"
-      ></app-profile-card>
-      <app-profile-card
-        title="Phone number"
-        value="+381645712833"
-        iconName="bootstrapTelephoneFill"
-      ></app-profile-card>
-    </div>
-  </div>
   } @else if (selectedTab == 'Manage Password') {
-  <div class="mt-6">
-    <h2 class="text-3xl font-bold">
-      {{ selectedTab }}
-    </h2>
-    <p class="mt-3 text-gray-600">
-      To change your password, please enter your current password and the new password you would
-      like to set.
-    </p>
     <div class="mt-6">
-      <label class="block text-[12px] text-neutral-300 mb-2.5">Old password</label>
-      <div class="relative">
-        <input
-          [type]="showOldPassword ? 'text' : 'password'"
-          class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-        />
-
-        <button
-          type="button"
-          (click)="toggleOldPassword()"
-          class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-black"
-          [attr.aria-label]="showOldPassword ? 'Hide password' : 'Show password'"
-        >
-          <img
-            [src]="showOldPassword ? 'icons/eye.svg' : 'icons/eye-off.svg'"
-            alt=""
-            class="h-5 w-5"
-          />
-        </button>
-      </div>
-    </div>
-    <div class="mt-6">
-      <label class="block text-[12px] text-neutral-300 mb-2.5">Password</label>
-      <div class="relative">
-        <input
-          [type]="showPassword ? 'text' : 'password'"
-          class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-        />
-
-        <button
-          type="button"
-          (click)="togglePassword()"
-          class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-black"
-          [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
-        >
-          <img
-            [src]="showPassword ? 'icons/eye.svg' : 'icons/eye-off.svg'"
-            alt=""
-            class="h-5 w-5"
-          />
-        </button>
-      </div>
-    </div>
-    <div class="mt-6">
-      <label class="block text-[12px] text-neutral-300 mb-2.5">Confirm password</label>
-      <div class="relative">
-        <input
-          [type]="showConfirmPassword ? 'text' : 'password'"
-          class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-        />
-
-        <button
-          type="button"
-          (click)="toggleConfirmPassword()"
-          class="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-black"
-          [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
-        >
-          <img
-            [src]="showConfirmPassword ? 'icons/eye.svg' : 'icons/eye-off.svg'"
-            alt=""
-            class="h-5 w-5"
-          />
-        </button>
-      </div>
-    </div>
-    <button
-      class="mt-8 mx-auto block h-10.5 w-47.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]"
-    >
-      Confirm
-    </button>
-  </div>
-  } @else if (selectedTab == 'Driver Information') {
-  <div class="mt-6">
-    <h2 class="text-3xl font-bold">
-      {{ selectedTab }}
-    </h2>
-    <div class="flex flex-row gap-15">
-      <app-profile-card
-        title="Active In Last 24H"
-        value="6H 23M"
-        iconName="bootstrapClockFill"
-      ></app-profile-card>
-    </div>
-  </div>
-  } @else if (selectedTab == 'Vehicle Information') {
-  <div class="mt-6">
-    <div class="flex flex-row justify-between">
       <h2 class="text-3xl font-bold">
-        {{ selectedTab }}
+        {{selectedTab}}
       </h2>
-      <div
-        class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50"
-      >
-        <ng-icon name="bootstrapPencilFill" size="20" color="#a1bf3f"></ng-icon>
-        <p class="text-base">Edit Vehicle</p>
+      <p class="mt-3 text-gray-600">
+        To change your password, please enter your current password and the new password you would like to set.
+      </p>
+      <form [formGroup]="form" (ngSubmit)="submit()" class="w-full max-w-120 space-y-5">
+      <div class="mt-6">
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Old password</label>
+        <div class="relative">
+          <input
+            [type]="showOldPassword ? 'text' : 'password'"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
+           focus:outline-none focus:ring-4 focus:ring-lime-200"
+          />
+
+          <button
+            type="button"
+            (click)="toggleOldPassword()"
+            class="absolute right-3 top-3/4 -translate-y-3/4 text-neutral-400 hover:text-black cursor-pointer"
+            [attr.aria-label]="showOldPassword ? 'Hide password' : 'Show password'"
+          >
+            @if (showOldPassword) {
+              <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
+            } @else {
+              <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
+            }
+          </button>
+        </div>
+      </div>
+      <div class="mt-6">
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Password</label>
+        <div class="relative">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
+           focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!isInvalid('password')"
+            [class.focus:ring-lime-200]="!isInvalid('password')"
+            [class.border-red-400]="isInvalid('password')"
+            [class.focus:ring-red-200]="isInvalid('password')"
+          />
+
+          <button
+            type="button"
+            (click)="togglePassword()"
+            class="absolute right-3 top-3/4 -translate-y-3/4 text-neutral-400 hover:text-black cursor-pointer"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+          >
+            @if (showPassword) {
+              <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
+            } @else {
+              <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
+            }
+          </button>
+        </div>
+        @if (isInvalid('password') && f.password.hasError('required')) {
+          <p class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+        }
+        @if (isInvalid('password') && f.password.hasError('minlength')) {
+          <p class="mt-1 text-xs text-red-500">
+            Min 6 chars
+          </p>
+        }
+      </div>
+      <div class="mt-6">
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Confirm password</label>
+        <div class="relative">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
+           focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!(isInvalid('confirmPassword') || mismatchActive)"
+            [class.focus:ring-lime-200]="!(isInvalid('confirmPassword') || mismatchActive)"
+            [class.border-red-400]="isInvalid('confirmPassword') || mismatchActive"
+            [class.focus:ring-red-200]="isInvalid('confirmPassword') || mismatchActive"
+          />
+
+          <button
+            type="button"
+            (click)="toggleConfirmPassword()"
+            class="absolute right-3 top-3/4 -translate-y-3/4 text-neutral-400 hover:text-black cursor-pointer"
+            [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
+          >
+            @if (showConfirmPassword) {
+              <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
+            } @else {
+              <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
+            }
+          </button>
+        </div>
+        @if (f.confirmPassword.touched && f.confirmPassword.hasError('required')) {
+          <p class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+        }
+        @if (passwordMismatch) {
+          <p class="mt-1 text-xs text-red-500">
+            Passwords do not match
+          </p>
+        }
+      </div>
+      <button type="submit" class="mt-8 mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow
+                 hover:bg-lime-200 active:scale-[0.99] cursor-pointer">
+        Confirm
+      </button>
+      @if (submitted) {
+        <div class="mt-3 rounded-md border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-700">
+          Password changed (UI only).
+        </div>
+      }
+      </form>
+    </div>
+  } @else if (selectedTab == 'Driver Information') {
+    <div class="mt-6">
+      <h2 class="text-3xl font-bold">
+        {{selectedTab}}
+      </h2>
+      <p class="mt-3 text-gray-600">
+        View your number of active hours.
+      </p>
+      <div class="flex flex-row gap-15">
+        <app-profile-card
+          title="Active In Last 24H"
+          value="6H 23M"
+          iconName="bootstrapClockFill"
+        ></app-profile-card>
       </div>
     </div>
-    <div class="flex flex-row gap-15">
-      <app-profile-card title="Model" value="Ford Fiesta" iconName=""></app-profile-card>
-      <app-profile-card title="Type" value="Standard" iconName=""></app-profile-card>
+  } @else if (selectedTab == 'Vehicle Information' && !isVehicleEditing) {
+    <div class="mt-6">
+      <div class="flex flex-row justify-between">
+        <div class="flex flex-col">
+          <h2 class="text-3xl font-bold">
+            {{selectedTab}}
+          </h2>
+          <p class="mt-3 text-gray-600">
+            Manage your vehicle information such as model, type, plate number and seating capacity.
+          </p>
+        </div>
+        <div (click)="setIsEditingVehicle(true)" class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50 h-10">
+          <ng-icon name="bootstrapPencilFill" size="20" color="#a1bf3f"></ng-icon>
+          <p class="text-base">Edit Vehicle</p>
+        </div>
+      </div>
+      <div class="flex flex-row gap-15">
+        <app-profile-card
+          title="Model"
+          value="Ford Fiesta"
+          iconName="bootstrapCarFrontFill"
+        ></app-profile-card>
+        <app-profile-card
+          title="Type"
+          value="Standard"
+          iconName="custom"
+          iconImage="icons/diamond.svg"
+        ></app-profile-card>
+      </div>
+      <div class="flex flex-row gap-15">
+        <app-profile-card
+          title="Plate No."
+          value="NS-215-KL"
+          iconName="custom"
+          iconImage="icons/license-plate.svg"
+        ></app-profile-card>
+        <app-profile-card
+          title="Seats"
+          value="5"
+          iconName="custom"
+          iconImage="icons/car-seat.svg"
+        ></app-profile-card>
+      </div>
+      <div class="flex flex-row gap-15">
+        <app-profile-card
+          title="Baby Allowed"
+          value="Yes"
+          iconName="custom"
+          iconImage="icons/baby.svg"
+        ></app-profile-card>
+        <app-profile-card
+          title="Pets Allowed"
+          value="No"
+          iconName="custom"
+          iconImage="icons/pets.svg"
+        ></app-profile-card>
+      </div>
     </div>
-    <div class="flex flex-row gap-15">
-      <app-profile-card title="Plate No." value="NS-215-KL" iconName=""></app-profile-card>
-      <app-profile-card title="Seats" value="5" iconName=""></app-profile-card>
-    </div>
-    <div class="flex flex-row gap-15">
-      <app-profile-card title="Baby Allowed" value="Yes" iconName=""></app-profile-card>
-      <app-profile-card title="Pets Allowed" value="No" iconName=""></app-profile-card>
-    </div>
-  </div>
   } @else if (selectedTab == 'Personal Information' && isEditing) {
-  <div>
-    <h2 class="text-3xl font-bold">Edit {{ selectedTab }}</h2>
-    <p class="mt-3 text-gray-600">
-      Update your personal information such as name, email, address, and phone number.
-    </p>
-    <div class="flex flex-row gap-6">
-      <div class="mt-6 grid grid-cols-2 gap-6">
-        <div>
-          <label class="block text-[12px] text-neutral-300 mb-2.5">Name</label>
-          <input
-            type="text"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-            value="John Doe"
-          />
-        </div>
-        <div>
-          <label class="block text-[12px] text-neutral-300 mb-2.5">Email</label>
-          <input
-            type="email"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-            value="johndoe&#64;gmail.com"
-          />
-        </div>
-        <div>
-          <label class="block text-[12px] text-neutral-300 mb-2.5">Address</label>
-          <input
-            type="text"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-            value="Bulevar Jovana Ducica 35, Novi Sad"
-          />
-        </div>
-        <div>
-          <label class="block text-[12px] text-neutral-300 mb-2.5">Phone number</label>
-          <input
-            type="text"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-            value="+381645712833"
-          />
-        </div>
-      </div>
-      <div class="flex justify-center mt-11">
-        <label
-          class="w-45 h-35 max-w-180 aspect-4/3 rounded-[34px] bg-neutral-200 flex items-center justify-center cursor-pointer relative overflow-hidden"
-        >
-          <input type="file" accept="image/*" class="hidden" (change)="onPickImage($event)" />
-
-          <div class="text-neutral-500">
-            <img src="icons/camera.svg" alt="camera" class="h-18 w-18" />
+    <div>
+      <h2 class="text-3xl font-bold">
+        Edit {{selectedTab}}
+      </h2>
+      <p class="mt-3 text-gray-600">
+        Update your personal information such as name, email, address, and phone number.
+      </p>
+      <div class="flex flex-row gap-6">
+        <div class="mt-6 grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Name</label>
+            <input
+              type="text"
+              class="w-100 h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+              value="John Doe"
+            />
           </div>
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Email</label>
+            <input
+              type="email"
+              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              value="johndoe&#64;gmail.com"
+            />
+          </div>
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Address</label>
+            <input
+              type="text"
+              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              value="Bulevar Jovana Ducica 35, Novi Sad"
+            />
+          </div>
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Phone number</label>
+            <input
+              type="text"
+              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              value="+381645712833"
+            />
+          </div>
+        </div>
+        <div class="flex justify-center mt-11">
+          <label class="w-45 h-35 max-w-180 aspect-4/3 rounded-2xl bg-neutral-200
+                      flex items-center justify-center cursor-pointer relative overflow-hidden">
+            <input type="file" accept="image/*" class="hidden" (change)="onPickImage($event)" />
 
-          <div class="absolute bottom-4 text-xs text-neutral-500">Change profile photo</div>
-        </label>
+            @if (imagePreview) {
+              <img
+                [src]="imagePreview"
+                alt="Profile preview"
+                class="absolute inset-0 w-full h-full object-fit" />
+            } @else {
+                <div class="flex flex-col items-center text-neutral-500">
+                  <ng-icon name="bootstrapCameraFill" size="75"></ng-icon>
+                  <div class="mt-2 text-xs">Change profile photo</div>
+                </div>
+            }
+          </label>
+        </div>
+      </div>
+      <div class="mt-10 flex gap-4">
+        <button (click)="setIsEditing(false)" class="h-10.5 w-32 cursor-pointer rounded-[10px] bg-gray-300 text-black font-semibold shadow
+                 hover:bg-gray-200 active:scale-[0.99]">
+          Cancel
+        </button>
+        <button class="h-10.5 w-32 rounded-[10px] bg-[#C5E55D] cursor-pointer text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]">
+            Save Changes
+        </button>
       </div>
     </div>
-    <div class="mt-10 flex gap-4">
-      <button
-        (click)="setIsEditing(false)"
-        class="h-10.5 w-32 cursor-pointer rounded-[10px] bg-gray-300 text-black font-semibold shadow hover:bg-gray-200 active:scale-[0.99]"
-      >
-        Cancel
-      </button>
-      <button
-        class="h-10.5 w-32 rounded-[10px] bg-lime-300 cursor-pointer text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]"
-      >
-        Save Changes
-      </button>
+  } @else if (selectedTab == 'Vehicle Information' && isVehicleEditing) {
+    <div>
+      <h2 class="text-3xl font-bold">
+        Edit {{selectedTab}}
+      </h2>
+      <p class="mt-3 text-gray-600">
+        Update your vehicle information such as model, type, plate number and seating capacity.
+      </p>
+      <div class="flex flex-row gap-6">
+        <div class="mt-6 grid grid-cols-2 gap-6">
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Model</label>
+            <input
+              type="text"
+              class="w-100 h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+              value="Ford Fiesta"
+            />
+          </div>
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Type</label>
+            <input
+              type="text"
+              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              value="Standard"
+            />
+          </div>
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Plate No.</label>
+            <input
+              type="text"
+              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              value="NS-215-KL"
+            />
+          </div>
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Seats</label>
+            <input
+              type="text"
+              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              value="5"
+            />
+          </div>
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Baby Allowed</label>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" [(ngModel)]="babiesAllowed">
+
+              <div
+                class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
+              ></div>
+
+              <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
+              ></div>
+            </label>
+          </div>
+          <div>
+            <label class="block text-[12px] text-neutral-300 mb-2.5">Pets Allowed</label>
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" class="sr-only peer" [(ngModel)]="petsAllowed">
+
+              <div
+                class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
+              ></div>
+
+              <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
+              ></div>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="mt-10 flex gap-4">
+        <button (click)="setIsEditingVehicle(false)" class="h-10.5 w-32 cursor-pointer rounded-[10px] bg-gray-300 text-black font-semibold shadow
+                 hover:bg-gray-200 active:scale-[0.99]">
+          Cancel
+        </button>
+        <button class="h-10.5 w-32 rounded-[10px] bg-[#C5E55D] cursor-pointer text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]">
+          Save Changes
+        </button>
+      </div>
     </div>
-  </div>
   }
+
 </div>
+
