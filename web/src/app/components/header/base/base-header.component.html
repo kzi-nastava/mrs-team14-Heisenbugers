@@ -1,0 +1,31 @@
+<header class="w-full bg-black h-21.25">
+  <div class="flex h-full items-center justify-between px-17.5">
+    <!-- Logo -->
+    <div class="relative w-18.75 h-12.25">
+      <img src="icons/logo.svg" alt="logo" class="h-12 w-auto" />
+    </div>
+
+    <!-- Navigation -->
+    <nav class="flex items-center gap-10 text-white text-lg">
+      <a
+        class="relative pb-2 text-white hover:text-gray-300 after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:bg-lime-400 after:scale-x-0 after:transition-transform after:duration-300 cursor-pointer"
+        routerLink="home"
+        routerLinkActive="after:scale-x-100"
+      >
+        Home
+      </a>
+      <a
+        class="relative pb-2 text-white hover:text-gray-300 after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:bg-lime-400 after:scale-x-0 after:transition-transform after:duration-300 cursor-pointer"
+        routerLink="auth/register"
+        routerLinkActive="after:scale-x-100"
+        >Sign Up</a
+      >
+      <a
+        class="relative pb-2 text-white hover:text-gray-300 after:absolute after:left-0 after:bottom-0 after:h-1 after:w-full after:bg-lime-400 after:scale-x-0 after:transition-transform after:duration-300 cursor-pointer"
+        routerLink="auth/login"
+        routerLinkActive="after:scale-x-100"
+        >Log In</a
+      >
+    </nav>
+  </div>
+</header>
