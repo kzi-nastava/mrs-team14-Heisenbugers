@@ -7,7 +7,7 @@ import {
   ValidationErrors,
   Validators,
 } from '@angular/forms';
-import {RouterLink} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {NgIcon, provideIcons} from '@ng-icons/core';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {

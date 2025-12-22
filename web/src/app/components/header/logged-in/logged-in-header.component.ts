@@ -2,13 +2,13 @@ import { Component, HostListener } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
 import { bootstrapBell, bootstrapHeart } from '@ng-icons/bootstrap-icons';
 import { provideIcons } from '@ng-icons/core';
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'logged-in-header',
   standalone: true,
   templateUrl: './logged-in-header.component.html',
-  imports: [NgIcon, RouterLink],
+  imports: [NgIcon],
   viewProviders: [provideIcons({bootstrapBell, bootstrapHeart})]
 })
 export class LoggedInHeaderComponent {
@@ -44,7 +44,7 @@ export class LoggedInHeaderComponent {
     this.menuOpen = false
   }
   logOut(){
-    this.router.navigate(['home'])
+    this.router.navigate([''])
     this.menuOpen = false
   }
   goToHome(){

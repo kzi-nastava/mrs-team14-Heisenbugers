@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import {bootstrapCameraFill, bootstrapEye, bootstrapEyeSlash} from '@ng-icons/bootstrap-icons';
 import {NgIcon, provideIcons} from '@ng-icons/core';
 
@@ -18,6 +18,11 @@ import {NgIcon, provideIcons} from '@ng-icons/core';
 
 })
 export class LoginComponent {
+
+  constructor(private router: Router) {
+    
+  }
+
   private fb = inject(FormBuilder);
 
   submitAttempted = false;
@@ -48,6 +53,7 @@ export class LoginComponent {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     console.log(this.form.value);
+    this.router.navigate(['profile'])
     // then there will be a call to the auth service here
   }
 }
