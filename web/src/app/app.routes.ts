@@ -8,7 +8,7 @@ import { ProfileComponent } from './components/profile/profile';
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password';
 import { RideHistoryComponent } from './components/driver-ride-history/driver-ride-history';
 import { RideCardComponent } from './components/driver-ride-history/ride-card/ride-card.component';
-import { BaseLayoutComponent, HeaderlessLayoutComponent, LoggedLayoutComponent } from './layouters';
+import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
 
 /*
 export const routes: Routes = [
@@ -23,12 +23,14 @@ export const routes: Routes = [
 */
 
 export const routes: Routes = [
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   {
     path: '',
-    component: BaseLayoutComponent, // Pages with header
+    component: BaseLayoutComponent,
     children: [
       { path: 'auth/register', component: RegisterComponent },
       { path: 'auth/login', component: LoginComponent },
+      { path: 'auth/forgot-password', component: ForgotPasswordComponent },
     ]
   },
   {
@@ -37,14 +39,7 @@ export const routes: Routes = [
     children: [
       { path: 'profile', component: ProfileComponent },
       { path: 'driver-ride-history', component: RideHistoryComponent },
-      { path: 'driver-ride-history/ride', component: RideCardComponent }
-    ]
-  },
-  {
-    path: '',
-    component: HeaderlessLayoutComponent,
-    children: [
-      { path: 'home', component: HomeComponent },
+      { path: 'driver-ride-history/ride', component: RideCardComponent },
     ]
   }
 ];

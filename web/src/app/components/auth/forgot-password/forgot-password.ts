@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {bootstrapCameraFill, bootstrapEye, bootstrapEyeSlash} from '@ng-icons/bootstrap-icons';
 import {NgIcon, provideIcons} from '@ng-icons/core';
 import { FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { Router } from '@angular/router';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -23,6 +24,11 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   viewProviders: [provideIcons({bootstrapEye,bootstrapEyeSlash})]
 })
 export class ForgotPasswordComponent {
+
+  constructor(private router: Router) {
+    
+  }
+
   private fb = inject(FormBuilder);
 
   submitAttempted = false;
@@ -74,5 +80,7 @@ export class ForgotPasswordComponent {
 
     this.submitted = true;
     console.log('new password:', this.form.value.password);
+
+    this.router.navigate(['auth/login'])
   }
 }
