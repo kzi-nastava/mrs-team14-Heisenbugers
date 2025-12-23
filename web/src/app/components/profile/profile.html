@@ -3,7 +3,7 @@
     Manage Account
   </label>
   <label class="text-base mt-1">
-    Hi, John Doe | <a class="text-[#C5E55D]" routerLink="/auth/login">Sign out</a>
+    Hi, {{ user().name }} | <a class="text-[#C5E55D]" routerLink="/auth/login">Sign out</a>
   </label>
 </div>
 
@@ -12,32 +12,40 @@
     <div
       class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden mb-2"
     >
+      @if (user().profilePicture) {
+        <img
+          [src]="user().profilePicture"
+          alt="Profile Picture"
+          class="w-full h-full object-cover"
+        />
+      } @else {
         <ng-icon name="bootstrapPersonCircle" size="60" color="#fafcfa"></ng-icon>
+      }
     </div>
 
     <p class="font-medium">
-      John Doe
+      {{ user().name }}
     </p>
     <p class="text-sm text-gray-600">
-      johndoe&#64;gmail.com
+      {{ user().email }}
     </p>
     <div class="gap-1.5 flex flex-col">
-      <button class="mt-10 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100 " (click)="setProfileTab('Personal Information')" [class]="{'border-lime-300': selectedTab === 'Personal Information', 'border-gray-200': selectedTab !== 'Personal Information', 'bg-[#C5E55D]': selectedTab === 'Personal Information', 'text-gray-700': selectedTab !== 'Personal Information'}">
+      <button class="mt-10 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100 " (click)="setProfileTab('Personal Information')" [class]="{'border-lime-300': selectedTab === 'Personal Information', 'border-gray-200': selectedTab !== 'Personal Information', 'bg-[#C5E55D]': selectedTab === 'Personal Information', 'text-gray-700': selectedTab !== 'Personal Information'}">
         Personal Information
       </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Manage Password')" [class]="{'border-lime-300': selectedTab === 'Manage Password', 'border-gray-200': selectedTab !== 'Manage Password', 'text-gray-700': selectedTab !== 'Manage Password', 'bg-[#C5E55D]': selectedTab === 'Manage Password'}">
+      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Manage Password')" [class]="{'border-lime-300': selectedTab === 'Manage Password', 'border-gray-200': selectedTab !== 'Manage Password', 'text-gray-700': selectedTab !== 'Manage Password', 'bg-[#C5E55D]': selectedTab === 'Manage Password'}">
         Manage Password
       </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Driver Information')" [class]="{'border-lime-300': selectedTab === 'Driver Information', 'border-gray-200': selectedTab !== 'Driver Information', 'text-gray-700': selectedTab !== 'Driver Information', 'bg-[#C5E55D]': selectedTab === 'Driver Information'}">
+      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Driver Information')" [class]="{'border-lime-300': selectedTab === 'Driver Information', 'border-gray-200': selectedTab !== 'Driver Information', 'text-gray-700': selectedTab !== 'Driver Information', 'bg-[#C5E55D]': selectedTab === 'Driver Information'}">
         Driver Information
       </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Vehicle Information')" [class]="{'border-lime-300': selectedTab === 'Vehicle Information', 'border-gray-200': selectedTab !== 'Vehicle Information', 'text-gray-700': selectedTab !== 'Vehicle Information', 'bg-[#C5E55D]': selectedTab === 'Vehicle Information'}">
+      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Vehicle Information')" [class]="{'border-lime-300': selectedTab === 'Vehicle Information', 'border-gray-200': selectedTab !== 'Vehicle Information', 'text-gray-700': selectedTab !== 'Vehicle Information', 'bg-[#C5E55D]': selectedTab === 'Vehicle Information'}">
         Vehicle Information
       </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Favorite Routes')" [class]="{'border-lime-300': selectedTab === 'Favorite Routes', 'border-gray-200': selectedTab !== 'Favorite Routes', 'text-gray-700': selectedTab !== 'Favorite Routes', 'bg-[#C5E55D]': selectedTab === 'Favorite Routes'}">
+      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Favorite Routes')" [class]="{'border-lime-300': selectedTab === 'Favorite Routes', 'border-gray-200': selectedTab !== 'Favorite Routes', 'text-gray-700': selectedTab !== 'Favorite Routes', 'bg-[#C5E55D]': selectedTab === 'Favorite Routes'}">
         Favorite Routes
       </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-3 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Ride History')" [class]="{'border-lime-300': selectedTab === 'Ride History', 'border-gray-200': selectedTab !== 'Ride History', 'text-gray-700': selectedTab !== 'Ride History', 'bg-[#C5E55D]': selectedTab === 'Ride History'}">
+      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Ride History')" [class]="{'border-lime-300': selectedTab === 'Ride History', 'border-gray-200': selectedTab !== 'Ride History', 'text-gray-700': selectedTab !== 'Ride History', 'bg-[#C5E55D]': selectedTab === 'Ride History'}">
         Ride History
       </button>
     </div>
@@ -62,145 +70,30 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Name"
-          value="John Doe"
+          value={{user().name}}
           iconName="bootstrapPersonFill"
         ></app-profile-card>
         <app-profile-card
           title="Email"
-          value="johndoe&#64;gmail.com"
+          value={{user().email}}
           iconName="bootstrapEnvelopeFill"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Address"
-          value="Bulevar Jovana Ducica 35, Novi Sad"
+          value={{user().address}}
           iconName="bootstrapPinMapFill"
         ></app-profile-card>
         <app-profile-card
           title="Phone number"
-          value="+381645712833"
+          value=+{{user().phoneNumber}}
           iconName="bootstrapTelephoneFill"
         ></app-profile-card>
       </div>
     </div>
   } @else if (selectedTab == 'Manage Password') {
-    <div class="mt-6">
-      <h2 class="text-3xl font-bold">
-        {{selectedTab}}
-      </h2>
-      <p class="mt-3 text-gray-600">
-        To change your password, please enter your current password and the new password you would like to set.
-      </p>
-      <form [formGroup]="form" (ngSubmit)="submit()" class="w-full max-w-120 space-y-5">
-      <div class="mt-6">
-        <label class="block text-[12px] text-neutral-300 mb-2.5">Old password</label>
-        <div class="relative">
-          <input
-            [type]="showOldPassword ? 'text' : 'password'"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
-           focus:outline-none focus:ring-4 focus:ring-lime-200"
-          />
-
-          <button
-            type="button"
-            (click)="toggleOldPassword()"
-            class="absolute right-3 top-3/4 -translate-y-3/4 text-neutral-400 hover:text-black cursor-pointer"
-            [attr.aria-label]="showOldPassword ? 'Hide password' : 'Show password'"
-          >
-            @if (showOldPassword) {
-              <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
-            } @else {
-              <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
-            }
-          </button>
-        </div>
-      </div>
-      <div class="mt-6">
-        <label class="block text-[12px] text-neutral-300 mb-2.5">Password</label>
-        <div class="relative">
-          <input
-            [type]="showPassword ? 'text' : 'password'"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
-           focus:outline-none focus:ring-4 focus:ring-lime-200"
-            [class.border-neutral-200]="!isInvalid('password')"
-            [class.focus:ring-lime-200]="!isInvalid('password')"
-            [class.border-red-400]="isInvalid('password')"
-            [class.focus:ring-red-200]="isInvalid('password')"
-          />
-
-          <button
-            type="button"
-            (click)="togglePassword()"
-            class="absolute right-3 top-3/4 -translate-y-3/4 text-neutral-400 hover:text-black cursor-pointer"
-            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
-          >
-            @if (showPassword) {
-              <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
-            } @else {
-              <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
-            }
-          </button>
-        </div>
-        @if (isInvalid('password') && f.password.hasError('required')) {
-          <p class="mt-1 text-xs text-red-500">
-            Required
-          </p>
-        }
-        @if (isInvalid('password') && f.password.hasError('minlength')) {
-          <p class="mt-1 text-xs text-red-500">
-            Min 6 chars
-          </p>
-        }
-      </div>
-      <div class="mt-6">
-        <label class="block text-[12px] text-neutral-300 mb-2.5">Confirm password</label>
-        <div class="relative">
-          <input
-            [type]="showConfirmPassword ? 'text' : 'password'"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-12 shadow-sm
-           focus:outline-none focus:ring-4 focus:ring-lime-200"
-            [class.border-neutral-200]="!(isInvalid('confirmPassword') || mismatchActive)"
-            [class.focus:ring-lime-200]="!(isInvalid('confirmPassword') || mismatchActive)"
-            [class.border-red-400]="isInvalid('confirmPassword') || mismatchActive"
-            [class.focus:ring-red-200]="isInvalid('confirmPassword') || mismatchActive"
-          />
-
-          <button
-            type="button"
-            (click)="toggleConfirmPassword()"
-            class="absolute right-3 top-3/4 -translate-y-3/4 text-neutral-400 hover:text-black cursor-pointer"
-            [attr.aria-label]="showConfirmPassword ? 'Hide password' : 'Show password'"
-          >
-            @if (showConfirmPassword) {
-              <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
-            } @else {
-              <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
-            }
-          </button>
-        </div>
-        @if (f.confirmPassword.touched && f.confirmPassword.hasError('required')) {
-          <p class="mt-1 text-xs text-red-500">
-            Required
-          </p>
-        }
-        @if (passwordMismatch) {
-          <p class="mt-1 text-xs text-red-500">
-            Passwords do not match
-          </p>
-        }
-      </div>
-      <button type="submit" class="mt-8 mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow
-                 hover:bg-lime-200 active:scale-[0.99] cursor-pointer">
-        Confirm
-      </button>
-      @if (submitted) {
-        <div class="mt-3 rounded-md border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-700">
-          Password changed (UI only).
-        </div>
-      }
-      </form>
-    </div>
+    <app-manage-password></app-manage-password>
   } @else if (selectedTab == 'Driver Information') {
     <div class="mt-6">
       <h2 class="text-3xl font-bold">
@@ -236,203 +129,52 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Model"
-          value="Ford Fiesta"
+          value={{vehicle().model}}
           iconName="bootstrapCarFrontFill"
         ></app-profile-card>
         <app-profile-card
           title="Type"
-          value="Standard"
-          iconName="custom"
+          value={{vehicle().type}}
           iconImage="icons/diamond.svg"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Plate No."
-          value="NS-215-KL"
-          iconName="custom"
+          value={{vehicle().plateNumber}}
           iconImage="icons/license-plate.svg"
         ></app-profile-card>
         <app-profile-card
           title="Seats"
-          value="5"
-          iconName="custom"
+          value={{vehicle().seats}}
           iconImage="icons/car-seat.svg"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Baby Allowed"
-          value="Yes"
-          iconName="custom"
+          [value]="vehicle().babiesAllowed ? 'Yes' : 'No'"
           iconImage="icons/baby.svg"
         ></app-profile-card>
         <app-profile-card
           title="Pets Allowed"
-          value="No"
-          iconName="custom"
+          [value]="vehicle().petsAllowed ? 'Yes' : 'No'"
           iconImage="icons/pets.svg"
         ></app-profile-card>
       </div>
     </div>
   } @else if (selectedTab == 'Personal Information' && isEditing) {
-    <div>
-      <h2 class="text-3xl font-bold">
-        Edit {{selectedTab}}
-      </h2>
-      <p class="mt-3 text-gray-600">
-        Update your personal information such as name, email, address, and phone number.
-      </p>
-      <div class="flex flex-row gap-6">
-        <div class="mt-6 grid grid-cols-2 gap-6">
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Name</label>
-            <input
-              type="text"
-              class="w-100 h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="John Doe"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Email</label>
-            <input
-              type="email"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="johndoe&#64;gmail.com"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Address</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="Bulevar Jovana Ducica 35, Novi Sad"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Phone number</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="+381645712833"
-            />
-          </div>
-        </div>
-        <div class="flex justify-center mt-11">
-          <label class="w-45 h-35 max-w-180 aspect-4/3 rounded-2xl bg-neutral-200
-                      flex items-center justify-center cursor-pointer relative overflow-hidden">
-            <input type="file" accept="image/*" class="hidden" (change)="onPickImage($event)" />
-
-            @if (imagePreview) {
-              <img
-                [src]="imagePreview"
-                alt="Profile preview"
-                class="absolute inset-0 w-full h-full object-fit" />
-            } @else {
-                <div class="flex flex-col items-center text-neutral-500">
-                  <ng-icon name="bootstrapCameraFill" size="75"></ng-icon>
-                  <div class="mt-2 text-xs">Change profile photo</div>
-                </div>
-            }
-          </label>
-        </div>
-      </div>
-      <div class="mt-10 flex gap-4">
-        <button (click)="setIsEditing(false)" class="h-10.5 w-32 cursor-pointer rounded-[10px] bg-gray-300 text-black font-semibold shadow
-                 hover:bg-gray-200 active:scale-[0.99]">
-          Cancel
-        </button>
-        <button class="h-10.5 w-32 rounded-[10px] bg-[#C5E55D] cursor-pointer text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]">
-            Save Changes
-        </button>
-      </div>
-    </div>
+    <app-edit-profile
+      [user]="user()"
+      (saveProfile)="updateUser($event)"
+      (closeEdit)="setIsEditing($event)">
+    ></app-edit-profile>
   } @else if (selectedTab == 'Vehicle Information' && isVehicleEditing) {
-    <div>
-      <h2 class="text-3xl font-bold">
-        Edit {{selectedTab}}
-      </h2>
-      <p class="mt-3 text-gray-600">
-        Update your vehicle information such as model, type, plate number and seating capacity.
-      </p>
-      <div class="flex flex-row gap-6">
-        <div class="mt-6 grid grid-cols-2 gap-6">
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Model</label>
-            <input
-              type="text"
-              class="w-100 h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="Ford Fiesta"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Type</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="Standard"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Plate No.</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="NS-215-KL"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Seats</label>
-            <input
-              type="text"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
-              value="5"
-            />
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Baby Allowed</label>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only peer" [(ngModel)]="babiesAllowed">
-
-              <div
-                class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
-              ></div>
-
-              <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
-              ></div>
-            </label>
-          </div>
-          <div>
-            <label class="block text-[12px] text-neutral-300 mb-2.5">Pets Allowed</label>
-            <label class="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" class="sr-only peer" [(ngModel)]="petsAllowed">
-
-              <div
-                class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
-              ></div>
-
-              <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
-              ></div>
-            </label>
-          </div>
-        </div>
-      </div>
-      <div class="mt-10 flex gap-4">
-        <button (click)="setIsEditingVehicle(false)" class="h-10.5 w-32 cursor-pointer rounded-[10px] bg-gray-300 text-black font-semibold shadow
-                 hover:bg-gray-200 active:scale-[0.99]">
-          Cancel
-        </button>
-        <button class="h-10.5 w-32 rounded-[10px] bg-[#C5E55D] cursor-pointer text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]">
-          Save Changes
-        </button>
-      </div>
-    </div>
+    <app-edit-vehicle
+      [vehicle]="vehicle()"
+      (saveVehicle)="updateVehicle($event)"
+      (closeEdit)="setIsEditingVehicle($event)">
+    ></app-edit-vehicle>
   }
 
 </div>
