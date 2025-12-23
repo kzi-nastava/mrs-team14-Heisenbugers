@@ -137,36 +137,36 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Model"
-          value={{this.vehicle.model}}
+          value={{vehicle().model}}
           iconName="bootstrapCarFrontFill"
         ></app-profile-card>
         <app-profile-card
           title="Type"
-          value={{this.vehicle.type}}
+          value={{vehicle().type}}
           iconImage="icons/diamond.svg"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Plate No."
-          value={{this.vehicle.plateNumber}}
+          value={{vehicle().plateNumber}}
           iconImage="icons/license-plate.svg"
         ></app-profile-card>
         <app-profile-card
           title="Seats"
-          value={{this.vehicle.seats}}
+          value={{vehicle().seats}}
           iconImage="icons/car-seat.svg"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Baby Allowed"
-          [value]="this.vehicle.babiesAllowed ? 'Yes' : 'No'"
+          [value]="vehicle().babiesAllowed ? 'Yes' : 'No'"
           iconImage="icons/baby.svg"
         ></app-profile-card>
         <app-profile-card
           title="Pets Allowed"
-          [value]="this.vehicle.petsAllowed ? 'Yes' : 'No'"
+          [value]="vehicle().petsAllowed ? 'Yes' : 'No'"
           iconImage="icons/pets.svg"
         ></app-profile-card>
       </div>
@@ -179,7 +179,8 @@
     ></app-edit-profile>
   } @else if (selectedTab == 'Vehicle Information' && isVehicleEditing) {
     <app-edit-vehicle
-      [vehicle]="vehicle"
+      [vehicle]="vehicle()"
+      (saveVehicle)="updateVehicle($event)"
       (closeEdit)="setIsEditingVehicle($event)">
     ></app-edit-vehicle>
   }

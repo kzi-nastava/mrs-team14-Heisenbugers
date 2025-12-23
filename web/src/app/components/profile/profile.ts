@@ -11,6 +11,7 @@ import {ManagePassword} from './manage-password/manage-password';
 import {EditProfile} from './edit-profile/edit-profile';
 import {EditVehicle} from './edit-vehicle/edit-vehicle';
 import {User} from './model/user.model';
+import {Vehicle} from './model/vehicle.model';
 
 @Component({
   selector: 'app-profile',
@@ -54,19 +55,26 @@ export class ProfileComponent {
     profilePicture: null
   });
 
-  vehicle = {
+  vehicle = signal<Vehicle>({
     model: 'Ford Fiesta',
     type: 'Standard',
     plateNumber: 'NS-215-KL',
     seats: '5',
     babiesAllowed: true,
     petsAllowed: false
-  };
+  });
 
   updateUser(updatedUser: any) {
     this.user.update(u => ({
       ...u,
       ...updatedUser
+    }));
+  }
+
+  updateVehicle(updatedVehicle: any) {
+    this.vehicle.update(v => ({
+      ...v,
+      ...updatedVehicle
     }));
   }
 }

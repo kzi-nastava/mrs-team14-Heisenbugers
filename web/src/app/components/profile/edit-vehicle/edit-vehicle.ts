@@ -1,5 +1,7 @@
-import {Component, EventEmitter, inject, Input, Output} from '@angular/core';
+import {Component, EventEmitter, inject, input, Input, output, Output} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
+import {Vehicle} from '../model/vehicle.model';
+import {User} from '../model/user.model';
 
 @Component({
   selector: 'app-edit-vehicle',
@@ -11,16 +13,10 @@ import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angula
   styleUrl: './edit-vehicle.css',
 })
 export class EditVehicle {
-  @Output() closeEdit = new EventEmitter<boolean>();
+  closeEdit = output<boolean>();
+  saveVehicle = output<Vehicle>();
 
-  @Input() vehicle!: {
-    model: string;
-    type: string;
-    plateNumber: string;
-    seats: string;
-    babiesAllowed: boolean;
-    petsAllowed: boolean;
-  };
+  vehicle = input<Vehicle>();
 
   cancel() {
     this.closeEdit.emit(false);
@@ -47,9 +43,17 @@ export class EditVehicle {
   }
 
   ngOnInit() {
-    if (this.vehicle) {
-      this.form.patchValue(this.vehicle);
-    }
+    const v = this.vehicle();
+    if (!v) return;
+
+    this.form.patchValue({
+      model: v.model != null ? String(v.model) : '',
+      type: v.type != null ? String(v.type) : '',
+      plateNumber: v.plateNumber != null ? String(v.plateNumber) : '',
+      seats: v.seats != null ? String(v.seats) : '',
+      babiesAllowed: v.babiesAllowed != null ? Boolean(v.babiesAllowed) : false,
+      petsAllowed: v.petsAllowed != null ? Boolean(v.petsAllowed) : false,
+    });
   }
 
   isInvalid(name: string): boolean {
@@ -66,5 +70,11 @@ export class EditVehicle {
 
     this.submitted = true;
     console.log('updated vehicle:', this.form.value);
+
+    /*this.saveVehicle.emit({
+      ...this.form.value,
+    } as Vehicle);
+
+    this.closeEdit.emit(false);*/
   }
 }
