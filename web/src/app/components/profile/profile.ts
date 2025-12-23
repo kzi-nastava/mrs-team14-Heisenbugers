@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, signal} from '@angular/core';
 import {RouterLink} from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { bootstrapPersonCircle, bootstrapPencilFill, bootstrapClockFill, bootstrapEye, bootstrapEyeSlash, bootstrapCameraFill, bootstrapCarFrontFill } from '@ng-icons/bootstrap-icons';
@@ -10,6 +10,7 @@ import {
 import {ManagePassword} from './manage-password/manage-password';
 import {EditProfile} from './edit-profile/edit-profile';
 import {EditVehicle} from './edit-vehicle/edit-vehicle';
+import {User} from './model/user.model';
 
 @Component({
   selector: 'app-profile',
@@ -45,13 +46,13 @@ export class ProfileComponent {
     this.isVehicleEditing = value;
   }
 
-  user = {
+  user = signal<User>({
     name: 'John Doe',
     email: 'johndoe@gmail.com',
     address: 'Bulevar Jovana Ducica 35, Novi Sad',
     phoneNumber: '381645712833',
     profilePicture: null
-  };
+  });
 
   vehicle = {
     model: 'Ford Fiesta',
@@ -61,4 +62,11 @@ export class ProfileComponent {
     babiesAllowed: true,
     petsAllowed: false
   };
+
+  updateUser(updatedUser: any) {
+    this.user.update(u => ({
+      ...u,
+      ...updatedUser
+    }));
+  }
 }

@@ -11,7 +11,7 @@
     Manage Account
   </label>
   <label class="text-base mt-1">
-    Hi, John Doe | <a class="text-[#C5E55D]" routerLink="/auth/login">Sign out</a>
+    Hi, {{ user().name }} | <a class="text-[#C5E55D]" routerLink="/auth/login">Sign out</a>
   </label>
 </div>
 
@@ -20,9 +20,9 @@
     <div
       class="w-20 h-20 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden mb-2"
     >
-      @if (this.user.profilePicture) {
+      @if (user().profilePicture) {
         <img
-          [src]="this.user.profilePicture"
+          [src]="user().profilePicture"
           alt="Profile Picture"
           class="w-full h-full object-cover"
         />
@@ -32,10 +32,10 @@
     </div>
 
     <p class="font-medium">
-      John Doe
+      {{ user().name }}
     </p>
     <p class="text-sm text-gray-600">
-      johndoe&#64;gmail.com
+      {{ user().email }}
     </p>
     <div class="gap-1.5 flex flex-col">
       <button class="mt-10 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100 " (click)="setProfileTab('Personal Information')" [class]="{'border-lime-300': selectedTab === 'Personal Information', 'border-gray-200': selectedTab !== 'Personal Information', 'bg-[#C5E55D]': selectedTab === 'Personal Information', 'text-gray-700': selectedTab !== 'Personal Information'}">
@@ -78,24 +78,24 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Name"
-          value={{this.user.name}}
+          value={{user().name}}
           iconName="bootstrapPersonFill"
         ></app-profile-card>
         <app-profile-card
           title="Email"
-          value={{this.user.email}}
+          value={{user().email}}
           iconName="bootstrapEnvelopeFill"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Address"
-          value={{this.user.address}}
+          value={{user().address}}
           iconName="bootstrapPinMapFill"
         ></app-profile-card>
         <app-profile-card
           title="Phone number"
-          value=+{{this.user.phoneNumber}}
+          value=+{{user().phoneNumber}}
           iconName="bootstrapTelephoneFill"
         ></app-profile-card>
       </div>
@@ -173,7 +173,8 @@
     </div>
   } @else if (selectedTab == 'Personal Information' && isEditing) {
     <app-edit-profile
-      [user]="user"
+      [user]="user()"
+      (saveProfile)="updateUser($event)"
       (closeEdit)="setIsEditing($event)">
     ></app-edit-profile>
   } @else if (selectedTab == 'Vehicle Information' && isVehicleEditing) {

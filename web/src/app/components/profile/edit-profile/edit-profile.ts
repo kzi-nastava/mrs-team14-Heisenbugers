@@ -1,13 +1,12 @@
-import {ChangeDetectorRef, Component, EventEmitter, inject, Input, Output} from '@angular/core';
+import {ChangeDetectorRef, Component, inject, input, output} from '@angular/core';
 import {NgIcon} from "@ng-icons/core";
 import {
-  AbstractControl,
   FormBuilder,
   FormsModule,
   ReactiveFormsModule,
-  ValidationErrors,
   Validators
 } from '@angular/forms';
+import {User} from '../model/user.model';
 
 @Component({
   selector: 'app-edit-profile',
@@ -20,14 +19,10 @@ import {
   styleUrl: './edit-profile.css',
 })
 export class EditProfile {
-  @Output() closeEdit = new EventEmitter<boolean>();
+  closeEdit = output<boolean>()
+  saveProfile = output<User>();
 
-  @Input() user!: {
-    name: string;
-    email: string;
-    address: string;
-    phoneNumber: string;
-  };
+  user = input<User>();
 
   cancel() {
     this.closeEdit.emit(false);
@@ -55,9 +50,17 @@ export class EditProfile {
   }
 
   ngOnInit() {
-    if (this.user) {
-      this.form.patchValue(this.user);
-    }
+    const u = this.user();
+    if (!u) return;
+
+    this.form.patchValue({
+      name: u.name != null ? String(u.name) : '',
+      email: u.email != null ? String(u.email) : '',
+      address: u.address != null ? String(u.address) : '',
+      phoneNumber: u.phoneNumber != null ? String(u.phoneNumber) : '',
+    });
+
+    this.imagePreview = u.profilePicture ?? null;
   }
 
   isInvalid(name: string): boolean {
@@ -74,6 +77,13 @@ export class EditProfile {
 
     this.submitted = true;
     console.log('updated profile:', this.form.value);
+
+    this.saveProfile.emit({
+      ...this.form.value,
+      profilePicture: this.imagePreview,
+    } as User);
+
+    this.closeEdit.emit(false);
   }
 
   constructor(private cdr: ChangeDetectorRef) {
