@@ -1,0 +1,113 @@
+<div class="min-h-screen bg-white">
+
+  <!-- content: left panel + right map -->
+  <div class="grid grid-cols-1 lg:grid-cols-[520px_1fr] min-h-[calc(100vh-85px)]">
+    <!-- LEFT PANEL -->
+    <section class="bg-white px-17.5 py-13.75  border-r border-neutral-200">
+      <h1 class="text-[42px] font-extrabold text-black text-center mb-8.75">Login</h1>
+
+      <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5.5 mt-30">
+        <div>
+          <label class="block text-[12px] text-neutral-300 mb-1.5">Email Address</label>
+          <input
+            type="email"
+            formControlName="email"
+            class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
+                   focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!isInvalid('email')"
+            [class.focus:ring-lime-200]="!isInvalid('email')"
+            [class.border-red-400]="isInvalid('email')"
+            [class.focus:ring-red-200]="isInvalid('email')"
+          />
+
+          @if (f.email.touched && f.email.hasError('required')) {
+            <p class="mt-1 text-xs text-red-500">
+              Required
+            </p>
+          }
+
+          @if (f.email.touched && f.email.hasError('email')) {
+            <p  class="mt-1 text-xs text-red-500">
+              Invalid email
+            </p>
+          }
+
+        </div>
+
+        <div>
+          <label class="block text-[12px] text-neutral-300 mb-1.5">Password</label>
+
+          <div class="relative">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              formControlName="password"
+              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 pr-14 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              [class.border-neutral-200]="!isInvalid('password')"
+              [class.focus:ring-lime-200]="!isInvalid('password')"
+              [class.border-red-400]="isInvalid('password')"
+              [class.focus:ring-red-200]="isInvalid('password')"
+            />
+
+            <button
+              type="button"
+              (click)="togglePassword()"
+              class="absolute right-4 top-3/4 -translate-y-3/4 cursor-pointer text-neutral-400 hover:text-black"
+              [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
+            >
+              @if (showPassword) {
+                <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
+              } @else {
+                <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
+              }
+            </button>
+          </div>
+
+          @if (isInvalid('password') && f.password.hasError('required')) {
+            <p  class="mt-1 text-xs text-red-500">
+              Required
+            </p>
+          }
+          @if (isInvalid('password') && f.password.hasError('minlength')) {
+            <p class="mt-1 text-xs text-red-500">
+              Min 6 chars
+            </p>
+          }
+
+        </div>
+
+        <a
+          routerLink="/auth/forgot-password"
+          class="block -mt-4.5 text-[12px] text-neutral-300 hover:underline"
+        >
+          Forgot password?
+        </a>
+
+        <button
+          type="submit"
+          class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow
+                 hover:bg-lime-200 active:scale-[0.99]"
+        >
+          Login
+        </button>
+
+        <p class="text-[10px] text-neutral-300 text-center leading-snug -mt-2">
+          By clicking the Sign Up button, you accept the<br />
+          <a class="underline" href="#" (click)="$event.preventDefault()">terms</a>
+          of the
+          <a class="underline" href="#" (click)="$event.preventDefault()">Privacy Policy</a>.
+        </p>
+
+        <p class="text-[12px] text-neutral-700 text-center">
+          First time here?
+          <a routerLink="/auth/register" class="font-semibold text-black">Sign in</a>
+        </p>
+      </form>
+    </section>
+
+    <!-- RIGHT: MAP IMAGE -->
+    <section class="relative">
+
+    </section>
+  </div>
+</div>

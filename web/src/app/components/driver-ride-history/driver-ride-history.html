@@ -1,0 +1,78 @@
+<div class="flex font-sans h-full">
+  <!-- Sidebar -->
+  <aside class="w-[260px] border-r border-gray-300 p-6">
+    <div class="w-16 h-16 rounded-full bg-gray-200 mb-3"></div>
+    <div class="font-semibold">John Doe</div>
+    <div class="text-sm text-gray-500">johndoe@gmail.com</div>
+  </aside>
+
+  <!-- Content -->
+  <main class="flex-1 p-8 justify-center w-full">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold">Ride History</h2>
+      <span class="text-lg cursor-pointer">⇅</span>
+    </div>
+
+    <!-- Filters -->
+    <div class="flex gap-2 mb-6">
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'date' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('date')"
+      >
+        by date
+      </button>
+
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'price' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('price')"
+      >
+        by price
+      </button>
+
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'route' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('route')"
+      >
+        by route
+      </button>
+    </div>
+
+    <!-- Ride list -->
+    @for (r of rides; track r) {
+    <div
+      [class.border-2]="r.wasPanic"
+      [class.border-red-500]="r.wasPanic"
+      class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
+    >
+      <button
+        class="w-full text-left px-4 py-3 text-sm flex justify-between items-center cursor-pointer"
+        (click)="goToRide()"
+      >
+        <span class="flex items-center">
+          <span class="mr-4">{{ r.startLocation }}</span>
+          <span class="mr-4 flex items-center">
+            <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
+            {{ r.startTime | date : 'HH:mm' }}
+          </span>
+          <ng-icon class="mr-4" name="bootstrapArrowRight"></ng-icon>
+          <span class="mr-4">{{ r.finishLocation }}</span>
+          <span class="mr-4 flex items-center">
+            <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
+            {{ r.endTime | date : 'HH:mm' }}
+          </span>
+          <span class="ml-6 flex items-center">
+            <ng-icon name="bootstrapCash" class="mr-1"></ng-icon>
+            <span>{{ r.price | number : '1.2-2' }} RSD</span>
+          </span>
+        </span>
+        @if(r.wasPanic){
+        <ng-icon name="bootstrapExclamationCircleFill" color="red" size="24"></ng-icon>
+        }
+      </button>
+    </div>
+    }
+  </main>
+</div>

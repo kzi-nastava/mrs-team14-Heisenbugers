@@ -1,0 +1,123 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+  <h2 class="text-3xl font-bold">
+    Edit Vehicle Information
+  </h2>
+  <p class="mt-3 text-gray-600">
+    Update your vehicle information such as model, type, plate number and seating capacity.
+  </p>
+  <div class="flex flex-row gap-6">
+    <div class="mt-6 grid grid-cols-2 gap-6">
+      <div>
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Model</label>
+        <input
+          type="text"
+          formControlName="model"
+          class="w-100 h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+          [class.border-neutral-200]="!isInvalid('model')"
+          [class.focus:ring-lime-200]="!isInvalid('model')"
+          [class.border-red-400]="isInvalid('model')"
+          [class.focus:ring-red-200]="isInvalid('model')"
+        />
+        @if (f.model.touched && f.model.hasError('required')) {
+          <p class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+        }
+      </div>
+      <div>
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Type</label>
+        <input
+          type="text"
+          formControlName="type"
+          class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+          [class.border-neutral-200]="!isInvalid('type')"
+          [class.focus:ring-lime-200]="!isInvalid('type')"
+          [class.border-red-400]="isInvalid('type')"
+          [class.focus:ring-red-200]="isInvalid('type')"
+        />
+        @if (f.type.touched && f.type.hasError('required')) {
+          <p class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+        }
+      </div>
+      <div>
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Plate No.</label>
+        <input
+          type="text"
+          formControlName="plateNumber"
+          class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+          [class.border-neutral-200]="!isInvalid('plateNumber')"
+          [class.focus:ring-lime-200]="!isInvalid('plateNumber')"
+          [class.border-red-400]="isInvalid('plateNumber')"
+          [class.focus:ring-red-200]="isInvalid('plateNumber')"
+        />
+        @if (f.plateNumber.touched && f.plateNumber.hasError('required')) {
+          <p class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+        }
+      </div>
+      <div>
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Seats</label>
+        <input
+          type="number"
+          formControlName="seats"
+          class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-3 shadow-sm
+             focus:outline-none focus:ring-4 focus:ring-lime-200"
+          [class.border-neutral-200]="!isInvalid('seats')"
+          [class.focus:ring-lime-200]="!isInvalid('seats')"
+          [class.border-red-400]="isInvalid('seats')"
+          [class.focus:ring-red-200]="isInvalid('seats')"
+        />
+        @if (f.seats.touched && f.seats.hasError('required')) {
+          <p class="mt-1 text-xs text-red-500">
+            Required
+          </p>
+        }
+      </div>
+      <div>
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Baby Allowed</label>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" class="sr-only peer" formControlName="babiesAllowed" >
+
+          <div
+            class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
+          ></div>
+
+          <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
+          ></div>
+        </label>
+      </div>
+      <div>
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Pets Allowed</label>
+        <label class="relative inline-flex items-center cursor-pointer">
+          <input type="checkbox" class="sr-only peer" formControlName="petsAllowed">
+
+          <div
+            class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
+          ></div>
+
+          <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
+          ></div>
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="mt-10 flex gap-4">
+    <button type="button" (click)="cancel()" class="h-10.5 w-32 cursor-pointer rounded-[10px] bg-gray-300 text-black font-semibold shadow
+                 hover:bg-gray-200 active:scale-[0.99]">
+      Cancel
+    </button>
+    <button type="submit" class="h-10.5 w-32 rounded-[10px] bg-[#C5E55D] cursor-pointer text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]">
+      Save Changes
+    </button>
+  </div>
+  @if (submitted) {
+    <div class="mt-3 rounded-md border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-700">
+      Vehicle Information sent to administrator for review.
+    </div>
+  }
+</form>
