@@ -1,17 +1,17 @@
 package com.example.gotaximobile.fragments;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.fragments.placeholder.PlaceholderContent.PlaceholderItem;
 import com.example.gotaximobile.databinding.FragmentItemBinding;
+import com.example.gotaximobile.fragments.placeholder.PlaceholderContent.PlaceholderItem;
+import com.example.gotaximobile.models.Ride;
 
 import java.util.List;
 
@@ -21,9 +21,9 @@ import java.util.List;
  */
 public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecyclerViewAdapter.ViewHolder> {
 
-    private final List<PlaceholderItem> mValues;
+    private final List<Ride> mValues;
 
-    public MyRideRecyclerViewAdapter(List<PlaceholderItem> items) {
+    public MyRideRecyclerViewAdapter(List<Ride> items) {
         mValues = items;
     }
 
@@ -37,8 +37,8 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        // holder.mIdView.setText(mValues.get(position).id);
+        holder.mContentView.setText(mValues.get(position).getInfoForList());
     }
 
     @Override
@@ -47,20 +47,20 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public final TextView mIdView;
+        // public final TextView mIdView;
         public final TextView mContentView;
-        public PlaceholderItem mItem;
+        public Ride mItem;
 
         public ViewHolder(FragmentItemBinding binding) {
             super(binding.getRoot());
-            mIdView = binding.itemNumber;
+            // mIdView = binding.itemNumber;
             mContentView = binding.content;
 
             itemView.setBackgroundResource(R.drawable.item_background_selector);
             itemView.setClickable(true);
             itemView.setOnClickListener(v -> {
                 v.setPressed(true);
-                Toast.makeText(v.getContext(), mItem.content, Toast.LENGTH_SHORT).show();
+                Toast.makeText(v.getContext(), mItem.getInfoForList(), Toast.LENGTH_SHORT).show();
             });
         }
 

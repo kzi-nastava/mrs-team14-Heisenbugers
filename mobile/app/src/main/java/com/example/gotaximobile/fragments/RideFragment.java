@@ -2,18 +2,18 @@ package com.example.gotaximobile.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.fragments.placeholder.PlaceholderContent;
+import com.example.gotaximobile.fragments.placeholder.PlaceholderHistoryList;
 
 /**
  * A fragment representing a list of Items.
@@ -65,7 +65,10 @@ public class RideFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyRideRecyclerViewAdapter(PlaceholderContent.ITEMS));
+            recyclerView.setAdapter(new MyRideRecyclerViewAdapter(PlaceholderHistoryList.ITEMS));
+            DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),
+                    DividerItemDecoration.VERTICAL);
+            recyclerView.addItemDecoration(divider);
         }
         return view;
     }
