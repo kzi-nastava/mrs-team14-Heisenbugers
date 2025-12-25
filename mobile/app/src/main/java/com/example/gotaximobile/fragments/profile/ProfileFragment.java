@@ -34,7 +34,9 @@ public class ProfileFragment extends Fragment {
 
             new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
                 if (position == 0) tab.setText("Personal");
-                else tab.setText("Driver");
+                else if (position == 1) {
+                    tab.setText("Driver");
+                } else tab.setText("Manage Password");
             }).attach();
         }
 
