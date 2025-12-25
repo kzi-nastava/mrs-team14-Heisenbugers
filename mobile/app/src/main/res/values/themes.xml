@@ -2,7 +2,11 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.GoTaxiMobile" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/app_primary</item>
+    </style>
+
+    <style name="ShapeAppearance.Material3.Corner.Full" parent="">
+        <item name="cornerSize">50%</item>
     </style>
 
     <style name="Theme.GoTaxiMobile" parent="Base.Theme.GoTaxiMobile" />

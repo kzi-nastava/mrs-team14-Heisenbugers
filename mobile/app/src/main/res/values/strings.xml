@@ -5,4 +5,9 @@
     <string name="home_mav">Home</string>
     <string name="favorites_nav">Favorites</string>
     <string name="profile_nav">Profile</string>
+    <string name="card_value">Value</string>
+    <string name="card_title">Title</string>
+    <string name="card_icon">icon</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="profile_information_subtext">Manage your account details and preferences here.</string>
 </resources>

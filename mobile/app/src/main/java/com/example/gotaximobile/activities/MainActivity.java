@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment;
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
-import com.example.gotaximobile.fragments.ProfileFragment;
+import com.example.gotaximobile.fragments.profile.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
