@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- ✅ Auth AppBar: back + centered logo -->
+        <!-- AppBar -->
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/top_app_bar"
             android:layout_width="0dp"
@@ -35,7 +35,7 @@
                 android:textStyle="bold" />
         </com.google.android.material.appbar.MaterialToolbar>
 
-        <!-- ✅ Content -->
+        <!--  Content -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/content"
             android:layout_width="0dp"
