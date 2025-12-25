@@ -10,4 +10,8 @@
     <string name="card_icon">icon</string>
     <string name="personal_information">Personal Information</string>
     <string name="profile_information_subtext">Manage your account details and preferences here.</string>
+    <string name="driver_information">Driver Information</string>
+    <string name="driver_information_subtext">View your number of active hours.</string>
+    <string name="vehicle_information">Vehicle Information</string>
+    <string name="vehicle_information_subtext">Manage your vehicle information such as model, type, plate number and seating capacity.</string>
 </resources>

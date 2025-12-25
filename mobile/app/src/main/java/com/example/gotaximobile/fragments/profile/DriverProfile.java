@@ -10,57 +10,33 @@ import android.view.ViewGroup;
 
 import com.example.gotaximobile.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link DriverProfile#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DriverProfile extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public DriverProfile() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment DriverProfile.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DriverProfile newInstance(String param1, String param2) {
-        DriverProfile fragment = new DriverProfile();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_driver_profile, container, false);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_driver_profile, container, false);
+        ProfileCardView activeTodayCard = view.findViewById(R.id.card_active_hours);
+        activeTodayCard.setData("Active In Last 24H", "6H", R.drawable.ic_person);
+
+        ProfileCardView modelCard = view.findViewById(R.id.card_model);
+        modelCard.setData("Model", "Ford Fiesta", R.drawable.ic_email);
+
+        ProfileCardView typeCard = view.findViewById(R.id.card_type);
+        typeCard.setData("Type", "Standard", R.drawable.ic_address);
+
+        ProfileCardView plateNoCard = view.findViewById(R.id.card_plate_no);
+        plateNoCard.setData("Plate No.", "NS-254-KL", R.drawable.ic_address);
+
+        ProfileCardView seatsCard = view.findViewById(R.id.card_seats);
+        seatsCard.setData("Seats", "5", R.drawable.ic_phone);
+
+        ProfileCardView babiesAllowedCard = view.findViewById(R.id.card_babies_allowed);
+        babiesAllowedCard.setData("Baby Allowed", "Yes", R.drawable.ic_phone);
+
+        ProfileCardView petsAllowedCard = view.findViewById(R.id.card_pets_allowed);
+        petsAllowedCard.setData("Pets Allowed", "No", R.drawable.ic_phone);
+
+        return view;
     }
 }
