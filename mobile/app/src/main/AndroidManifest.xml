@@ -13,6 +13,15 @@
         android:theme="@style/Theme.GoTaxiMobile">
 
         <activity
+            android:name=".activities.auth.ForgotPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.auth.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activities.auth.RegisterActivity"
+            android:exported="false" />
+        <activity
             android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
