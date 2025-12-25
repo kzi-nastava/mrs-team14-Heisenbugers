@@ -1,5 +1,7 @@
 package com.example.gotaximobile.models;
 
+import android.icu.text.NumberFormat;
+
 import androidx.annotation.NonNull;
 
 import java.text.SimpleDateFormat;
@@ -79,6 +81,11 @@ public class Ride {
 
     public double getPrice() {
         return price;
+    }
+
+    public String getFormatedPrice() {
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(Constants.LOCALE);
+        return currencyFormatter.format(price);
     }
 
     public void setPrice(double price) {
