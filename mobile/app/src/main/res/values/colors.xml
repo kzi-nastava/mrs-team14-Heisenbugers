@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="item_bg_normal">#FFFFFFFF</color>
+    <color name="item_bg_pressed">#22000000</color>
 </resources>
