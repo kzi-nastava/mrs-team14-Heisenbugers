@@ -19,7 +19,9 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/sort_by_date"
-            android:layout_marginHorizontal="@dimen/text_margin" />
+            android:layout_marginHorizontal="@dimen/text_margin"
+            android:background="@drawable/button_outline_selector"
+            android:textColor="@color/button_text_selector" />
 
         <Button
             android:id="@+id/btnSortPrice"
@@ -27,7 +29,9 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/sort_by_price"
-            android:layout_marginHorizontal="@dimen/text_margin" />
+            android:layout_marginHorizontal="@dimen/text_margin"
+            android:background="@drawable/button_outline_selector"
+            android:textColor="@color/button_text_selector" />
 
         <Button
             android:id="@+id/btnSortPlace"
@@ -35,7 +39,9 @@
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="@string/sort_by_place"
-            android:layout_marginStart="@dimen/text_margin" />
+            android:layout_marginStart="@dimen/text_margin"
+            android:background="@drawable/button_outline_selector"
+            android:textColor="@color/button_text_selector" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

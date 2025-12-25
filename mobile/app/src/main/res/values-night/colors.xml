@@ -2,4 +2,7 @@
 <resources>
     <color name="item_bg_normal">#FF1C1C1C</color>
     <color name="item_bg_pressed">#22FFFFFF</color>
+    <color name="colorPrimary">#C5E55D</color>
+    <color name="primaryContrast">#000000</color>
+    <color name="colorSurface">#FFFFFF</color>
 </resources>

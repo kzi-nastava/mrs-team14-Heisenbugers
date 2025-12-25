@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -20,26 +21,16 @@ import com.example.gotaximobile.fragments.placeholder.PlaceholderHistoryList;
  */
 public class RideFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
+
+    private Button[] buttons;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
     public RideFragment() {
-    }
-
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
-    public static RideFragment newInstance(int columnCount) {
-        RideFragment fragment = new RideFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -57,6 +48,20 @@ public class RideFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         View targetView = view.findViewById(R.id.list);
 
+        Button btnSortDate = view.findViewById(R.id.btnSortDate);
+        Button btnSortPrice = view.findViewById(R.id.btnSortPrice);
+        Button btnSortPlace = view.findViewById(R.id.btnSortPlace);
+
+        btnSortDate.setSelected(true);
+
+        buttons = new Button[]{btnSortDate, btnSortPrice, btnSortPlace};
+
+        for (Button btn : buttons) {
+            btn.setOnClickListener(v -> {
+                selectButton(btn);
+            });
+        }
+
         // Set the adapter
         if (targetView instanceof RecyclerView) {
             Context context = targetView.getContext();
@@ -73,4 +78,11 @@ public class RideFragment extends Fragment {
         }
         return view;
     }
+
+    private void selectButton(Button selected) {
+        for (Button b : buttons) {
+            b.setSelected(b == selected);
+        }
+    }
+
 }
