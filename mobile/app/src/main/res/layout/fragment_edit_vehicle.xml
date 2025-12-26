@@ -112,7 +112,7 @@
                 android:text="@string/babies_allowed"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switch_babies"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -134,7 +134,7 @@
                 android:text="@string/pets_allowed"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
 
-            <com.google.android.material.switchmaterial.SwitchMaterial
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/switch_pets"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
