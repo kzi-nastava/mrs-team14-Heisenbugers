@@ -3,6 +3,7 @@
     <color name="black">#FF000000</color>
     <color name="black2">#0B0B0B</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="app_primary">#C5E55D</color>
     <color name="item_bg_normal">#FFFFFFFF</color>
     <color name="item_bg_pressed">#22000000</color>
     <color name="colorPrimary">#b8d557</color>
