@@ -12,9 +12,9 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.activities.auth.LoginActivity;
-import com.example.gotaximobile.fragments.DriverHistoryOneRideFragment;
 import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
+import com.example.gotaximobile.fragments.profile.ProfileFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_favorite) {
                 selectedFragment = new FavoriteRoutesFragment();
             } else if (id == R.id.nav_profile) {
-                selectedFragment = new DriverHistoryOneRideFragment();
+                selectedFragment = new ProfileFragment();
             }
 
 
