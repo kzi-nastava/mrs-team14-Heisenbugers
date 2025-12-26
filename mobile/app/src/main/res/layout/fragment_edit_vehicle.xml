@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:navigationIcon="@drawable/ic_back"
-            app:title="Edit Personal Information"
+            app:title="Edit Vehicle Information"
             app:titleCentered="true">
 
 
@@ -27,41 +27,20 @@
             android:orientation="vertical"
             android:gravity="center_horizontal">
 
-            <FrameLayout
-                android:id="@+id/photo_container"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
-                android:layout_marginBottom="24dp">
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/edit_profile_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="2dp"
-                    android:src="@drawable/ic_person"
-                    android:scaleType="centerCrop"
-                    app:strokeWidth="2dp"
-                    app:strokeColor="?attr/colorPrimary"
-                    app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
-
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:contentDescription="@string/image_upload"
-                    app:fabSize="mini"
-                    app:srcCompat="@drawable/ic_edit"
-                    app:tint="@android:color/white"
-                    app:backgroundTint="?attr/colorPrimary" />
-            </FrameLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/edit_vehicle_subtext"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_marginBottom="16dp" />
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_name"
+                android:id="@+id/til_model"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/name"
+                android:hint="@string/model"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -71,12 +50,12 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_email"
+                android:id="@+id/til_type"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/email"
+                android:hint="@string/type"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -86,12 +65,12 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_address"
+                android:id="@+id/til_plateNo"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/address"
+                android:hint="@string/plate_no"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -101,12 +80,12 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/til_phone"
+                android:id="@+id/til_seats"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
                 app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Large"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/phone_number"
+                android:hint="@string/seats"
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -114,6 +93,49 @@
                     android:layout_height="wrap_content"
                     android:inputType="phone" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/babies_allowed"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_babies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="12dp"
+                android:paddingHorizontal="4dp"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="@string/pets_allowed"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge" />
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_pets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save_profile"

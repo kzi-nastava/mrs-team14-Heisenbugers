@@ -20,4 +20,17 @@
     <string name="old_password">Old Password</string>
     <string name="manage_password">Manage Password</string>
     <string name="manage_password_subtext">To change your password, please enter your current password and the new password you would like to set.</string>
+    <string name="edit_vehicle_subtext">Update your vehicle information such as model, type, plate number and seating capacity.</string>
+    <string name="model">Model</string>
+    <string name="type">Type</string>
+    <string name="plate_no">Plate No.</string>
+    <string name="seats">Seats</string>
+    <string name="babies_allowed">Babies Allowed</string>
+    <string name="pets_allowed">Pets Allowed</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="image_upload">Image upload</string>
+    <string name="name">Name</string>
+    <string name="email">Email</string>
+    <string name="address">Address</string>
+    <string name="phone_number">Phone Number</string>
 </resources>

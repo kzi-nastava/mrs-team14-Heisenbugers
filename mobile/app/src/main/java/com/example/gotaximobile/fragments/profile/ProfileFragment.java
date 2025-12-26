@@ -26,17 +26,20 @@ public class ProfileFragment extends Fragment {
 
         MaterialToolbar topAppBar = view.findViewById(R.id.topAppBar);
 
+        TabLayout tabLayout = view.findViewById(R.id.profileTabLayout);
+        ViewPager2 viewPager = view.findViewById(R.id.profileViewPager);
+
         topAppBar.setNavigationOnClickListener(v -> {
-            EditPersonalProfile editFragment = new EditPersonalProfile();
+            EditPersonalProfile editProfileFragment = new EditPersonalProfile();
+            EditVehicle editVehicleFragment = new EditVehicle();
+
+            System.out.println(viewPager.getCurrentItem());
 
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, editFragment)
+                    .replace(R.id.fragment_container, viewPager.getCurrentItem() == 1 ? editVehicleFragment: editProfileFragment)
                     .addToBackStack(null)
                     .commit();
         });
-
-        TabLayout tabLayout = view.findViewById(R.id.profileTabLayout);
-        ViewPager2 viewPager = view.findViewById(R.id.profileViewPager);
 
         if (isDriver) {
             tabLayout.setVisibility(View.VISIBLE);
