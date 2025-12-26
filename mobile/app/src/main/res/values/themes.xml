@@ -1,12 +1,34 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Base.Theme.GoTaxiMobile" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <item name="colorPrimary">@color/app_primary</item>
+      
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorItemNormal">@color/item_bg_normal</item>
+        <item name="colorItemPressed">@color/item_bg_pressed</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- <item name="colorSurface">@color/colorSurface</item> -->
+        <item name="colorOnPrimary">@color/black2</item>
+
+
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/text</item>
+
+
+        <item name="android:fontFamily">sans-serif</item>
+    
     </style>
 
     <style name="ShapeAppearance.Material3.Corner.Full" parent="">
         <item name="cornerSize">50%</item>
+    </style>
+
+    <!-- Round brim-->
+    <style name="Go.TextInput.Outlined" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">14dp</item>
+        <item name="boxCornerRadiusTopEnd">14dp</item>
+        <item name="boxCornerRadiusBottomStart">14dp</item>
+        <item name="boxCornerRadiusBottomEnd">14dp</item>
     </style>
 
     <style name="Theme.GoTaxiMobile" parent="Base.Theme.GoTaxiMobile" />
