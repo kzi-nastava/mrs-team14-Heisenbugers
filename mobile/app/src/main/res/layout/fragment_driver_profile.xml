@@ -17,14 +17,15 @@
             android:layout_height="wrap_content"
             android:text="@string/driver_information"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/driver_information_subtext"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="20dp" />
 
         <com.example.gotaximobile.fragments.profile.ProfileCardView
             android:id="@+id/card_active_hours"
@@ -36,14 +37,15 @@
             android:layout_height="wrap_content"
             android:text="@string/vehicle_information"
             android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/vehicle_information_subtext"
             android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="20dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
