@@ -2,11 +2,9 @@ package com.example.gotaximobile.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
-
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -14,9 +12,9 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.activities.auth.LoginActivity;
+import com.example.gotaximobile.fragments.DriverHistoryOneRideFragment;
 import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
-import com.example.gotaximobile.fragments.profile.ProfileFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -66,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             } else if (id == R.id.nav_favorite) {
                 selectedFragment = new FavoriteRoutesFragment();
             } else if (id == R.id.nav_profile) {
-                selectedFragment = new ProfileFragment();
+                selectedFragment = new DriverHistoryOneRideFragment();
             }
 
 
@@ -78,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void loadFragment(Fragment fragment) {
+    public void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)
