@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.activities.auth.LoginActivity;
 import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
