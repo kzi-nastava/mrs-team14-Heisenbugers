@@ -33,15 +33,7 @@ public class HomeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        android.util.Log.d("HomeFragment", "HomeFragment visible");
 
-        MaterialButton btnLogin = view.findViewById(R.id.btnLogin);
-        if (btnLogin != null) {
-            btnLogin.setOnClickListener(v -> {
-                Intent i = new Intent(requireContext(), AuthActivity.class);
-                startActivity(i);
-            });
-        }
     }
 
 }
