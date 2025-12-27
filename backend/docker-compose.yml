@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-      POSTGRES_DB: springdb
+      POSTGRES_DB: mydb
     ports:
       - "5432:5432"
     secrets:
