@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.activities.auth.LoginActivity;
 import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
@@ -20,39 +19,39 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private MaterialToolbar topAppBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
+        topAppBar = findViewById(R.id.top_app_bar);
 
-        MaterialToolbar topAppBar = findViewById(R.id.top_app_bar);
         if (topAppBar != null) {
-            MenuItem loginItem = topAppBar.getMenu().findItem(R.id.action_login);
-            if (loginItem != null) {
-                SpannableString s = new SpannableString(loginItem.getTitle());
-                s.setSpan(
-                        new ForegroundColorSpan(ContextCompat.getColor(this, R.color.lime)),
-                        0, s.length(),
-                        0
-                );
-                loginItem.setTitle(s);
-            }
+            topAppBar.getMenu().clear();
+            topAppBar.inflateMenu(R.menu.top_app_bar_menu);
+            tintMenuItemText(topAppBar, R.id.action_login, R.color.app_primary);
 
             topAppBar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_login) {
-                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    startActivity(new Intent(MainActivity.this, AuthActivity.class));
                     return true;
                 }
                 return false;
             });
         }
 
+
+
+
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
+
+            updateTopBarVisibility(R.id.nav_home);
         }
 
         bottomNav.setOnItemSelectedListener(item -> {
@@ -70,10 +69,33 @@ public class MainActivity extends AppCompatActivity {
 
             if (selectedFragment != null) {
                 loadFragment(selectedFragment);
+                updateTopBarVisibility(id);
                 return true;
             }
             return false;
         });
+    }
+
+    private void updateTopBarVisibility(int selectedNavId) {
+        if (topAppBar == null) return;
+
+        if (selectedNavId == R.id.nav_home) {
+            topAppBar.setVisibility(android.view.View.VISIBLE);
+        } else {
+            topAppBar.setVisibility(android.view.View.GONE);
+        }
+    }
+    private void tintMenuItemText(MaterialToolbar toolbar, int menuItemId, int colorRes) {
+        MenuItem item = toolbar.getMenu().findItem(menuItemId);
+        if (item == null) return;
+
+        SpannableString s = new SpannableString(item.getTitle());
+        s.setSpan(
+                new ForegroundColorSpan(ContextCompat.getColor(this, colorRes)),
+                0, s.length(),
+                SpannableString.SPAN_INCLUSIVE_INCLUSIVE
+        );
+        item.setTitle(s);
     }
 
     public void loadFragment(Fragment fragment) {
