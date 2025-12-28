@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+
+    <androidx.core.widget.NestedScrollView xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        tools:context=".fragments.DriverHistoryOneRideFragment">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_margin="@dimen/text_margin"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="Driver: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/driver_name_value"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="@dimen/text_margin" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_margin="@dimen/text_margin"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="Start: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/start_value"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="@dimen/text_margin" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_margin="@dimen/text_margin"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="End: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/end_value"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="@dimen/text_margin" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_margin="@dimen/text_margin"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="Time on the road: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/time_value"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="@dimen/text_margin" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_margin="@dimen/text_margin"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="Price: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/price_value"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="@dimen/text_margin" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_margin="@dimen/text_margin"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="Rating: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/rating_value"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="@dimen/text_margin" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_margin="@dimen/text_margin"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:text="Cancelled: "
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/cancelled_value"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_margin="@dimen/text_margin" />
+                </TableRow>
+
+            </TableLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="Passengers:"
+                    android:textStyle="bold" />
+
+                <TableLayout
+                    android:id="@+id/passengers_table"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/text_margin">
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+
+                        <TextView
+                            android:text="Korisnik Korisnikovic"
+                            android:layout_margin="@dimen/text_margin" />
+
+                        <TextView
+                            android:text="Korisnik Drugi Korisnikovic"
+                            android:layout_margin="@dimen/text_margin" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center">
+
+                        <TextView
+                            android:text="Korisnik Treci Korisnikovic"
+                            android:layout_margin="@dimen/text_margin" />
+
+                        <TextView
+                            android:text="Korisnik Cetvrti Korisnikovic"
+                            android:layout_margin="@dimen/text_margin" />
+                    </TableRow>
+                </TableLayout>
+
+                <LinearLayout
+                    android:id="@+id/violations_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Traffic violations:"
+                        android:layout_margin="@dimen/text_margin"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/violations_chip_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_margin="@dimen/text_margin" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/was_panic_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="@color/danger"
+                app:chipStrokeColor="@color/danger"
+                app:chipBackgroundColor="@color/item_bg_pressed"
+                android:text="WAS PANIC" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

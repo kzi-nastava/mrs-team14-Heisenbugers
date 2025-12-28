@@ -1,0 +1,78 @@
+package com.ftn.heisenbugers.gotaxi.models;
+
+import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * Ride entity representing a single trip.
+ */
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "rides")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Ride extends BaseEntity {
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private RideStatus status;
+
+    private LocalDateTime scheduledAt;
+
+    private LocalDateTime startedAt;
+
+    private LocalDateTime endedAt;
+
+    private double price;
+
+    private boolean canceled;
+
+    @ManyToOne
+    @JoinColumn(name = "start_id")
+    private Location start;
+    
+    @ManyToOne
+    @JoinColumn(name = "end_id")
+    private Location end;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "canceled_by_id")
+    private User canceledBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "driver_id")
+    private Driver driver;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
+
+    @ManyToMany
+    @JoinTable(
+            name = "ride_passengers",
+            joinColumns = @JoinColumn(name = "ride_id"),
+            inverseJoinColumns = @JoinColumn(name = "passenger_id")
+    )
+    private List<Passenger> passengers;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "route_id")
+    private Route route;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "rating_id")
+    private Rating rating;
+
+    @OneToMany(mappedBy = "ride", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Notification> notifications;
+
+    @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL)
+    private PanicEvent panicEvent;
+}

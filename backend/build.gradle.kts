@@ -21,10 +21,26 @@ repositories {
 }
 
 dependencies {
+	// Spring Boot
 	implementation("org.springframework.boot:spring-boot-starter")
-	implementation("org.postgresql:postgresql")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+	// PostgreSQL
+	implementation("org.postgresql:postgresql")
+
+	// Lombok
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+
+	// Jakarta Validation
+	implementation("jakarta.validation:jakarta.validation-api")
+
+	// Jackson for Java 17 date/time
+	implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
