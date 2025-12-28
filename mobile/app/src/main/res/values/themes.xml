@@ -14,6 +14,9 @@
         <item name="colorSurface">@color/white</item>
         <item name="colorOnSurface">@color/text</item>
 
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowTranslucentStatus">false</item>
 
         <item name="android:fontFamily">sans-serif</item>
     

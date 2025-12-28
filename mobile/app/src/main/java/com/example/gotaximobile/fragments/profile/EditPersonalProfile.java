@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.gotaximobile.R;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class EditPersonalProfile extends Fragment {
@@ -43,6 +44,18 @@ public class EditPersonalProfile extends Fragment {
         tilEmail = viewEPP.findViewById(R.id.til_email);
         tilAddress = viewEPP.findViewById(R.id.til_address);
         tilPhone = viewEPP.findViewById(R.id.til_phone);
+
+        if (getArguments() != null) {
+            String existingName = getArguments().getString("name");
+            String existingEmail = getArguments().getString("email");
+            String existingAddress = getArguments().getString("address");
+            String existingPhone = getArguments().getString("phone");
+
+            if (tilName.getEditText() != null) tilName.getEditText().setText(existingName);
+            if (tilEmail.getEditText() != null) tilEmail.getEditText().setText(existingEmail);
+            if (tilAddress.getEditText() != null) tilAddress.getEditText().setText(existingAddress);
+            if (tilPhone.getEditText() != null) tilPhone.getEditText().setText(existingPhone);
+        }
 
         viewEPP.findViewById(R.id.photo_container).setOnClickListener(view -> mGetContent.launch("image/*"));
         viewEPP.findViewById(R.id.btn_save_profile).setOnClickListener(view -> validateAndSave());
