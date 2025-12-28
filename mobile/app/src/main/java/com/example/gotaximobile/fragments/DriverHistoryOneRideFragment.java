@@ -1,5 +1,7 @@
 package com.example.gotaximobile.fragments;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
@@ -92,6 +95,8 @@ public class DriverHistoryOneRideFragment extends Fragment {
     }
 
     private void MakeViolationChips(View view, Ride r) {
+        int strokeColor = ContextCompat.getColor(requireContext(), R.color.outline);
+
         ChipGroup chipGroup = view.findViewById(R.id.violations_chip_group);
         chipGroup.removeAllViews();
 
@@ -100,6 +105,9 @@ public class DriverHistoryOneRideFragment extends Fragment {
             chip.setText(violation);
             chip.setClickable(false);
             chip.setCheckable(false);
+            chip.setBackgroundColor(Color.TRANSPARENT);
+            chip.setTextColor(strokeColor);
+            chip.setChipStrokeColor(ColorStateList.valueOf(strokeColor));
             chipGroup.addView(chip);
         }
     }
