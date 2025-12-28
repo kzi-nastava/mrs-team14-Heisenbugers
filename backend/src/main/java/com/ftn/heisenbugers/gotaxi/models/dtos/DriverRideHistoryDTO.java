@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.models.dtos;
 
+import com.ftn.heisenbugers.gotaxi.models.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,8 +19,13 @@ public class DriverRideHistoryDTO {
     private String startAddress;
     private String endAddress;
     private boolean canceled;
-    private String canceledBy;
+    private User canceledBy;
     private double price;
     private boolean panicTriggered;
     private List<PassengerInfoDTO> passengers;
+
+
+    public void addPassenger(PassengerInfoDTO passenger) {
+        passengers.add(passenger);
+    }
 }

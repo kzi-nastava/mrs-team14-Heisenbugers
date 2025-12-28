@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -46,7 +46,9 @@ public class DataLoader implements CommandLineRunner {
         v2.setBabyTransport(false);
         v2.setPetTransport(true);
 
-        Location l = new Location(45.23421, 30.34512, "Nesto");
+        Location l1 = new Location(45.23421, 30.34512, "Nesto");
+        Location l2 = new Location(45.23421, 30.34512, "Adresa 123");
+        Location l3 = new Location(45.23421, 30.34512, "Neka druga adresa");
 
         Driver driver1 = new Driver();
         driver1.setEmail("alice@example.com");
@@ -54,7 +56,7 @@ public class DataLoader implements CommandLineRunner {
         driver1.setFirstName("Alice");
         driver1.setLastName("Smith");
         driver1.setAvailable(true);
-        driver1.setLocation(l);
+        driver1.setLocation(l1);
         driver1.setVehicle(v1);
         v1.setDriver(driver1);
 
@@ -70,11 +72,24 @@ public class DataLoader implements CommandLineRunner {
         Ride ride1 = new Ride();
         ride1.setStatus(RideStatus.ONGOING);
         ride1.setDriver(driver1);
-        ride1.setPrice(new BigDecimal(500));
+        ride1.setPrice(500);
+        ride1.setVehicle(v1);
+        ride1.setStartedAt(LocalDateTime.now().minusHours(2));
+        ride1.setEndedAt(LocalDateTime.now());
+        ride1.setEnd(l2);
 
-        locationRepository.save(l);
+        Ride ride2 = new Ride();
+        ride2.setStatus(RideStatus.FINISHED);
+        ride2.setDriver(driver1);
+        ride2.setPrice(400);
+        ride2.setVehicle(v1);
+        ride2.setStartedAt(LocalDateTime.now().minusHours(3));
+        ride2.setEndedAt(LocalDateTime.now().minusHours(2));
+        ride2.setEnd(l3);
+
+        locationRepository.saveAll(List.of(l1, l2, l3));
         driverRepository.saveAll(List.of(driver1, driver2)); // cascade saves vehicles
-        rideRepository.saveAll(List.of(ride1));
+        rideRepository.saveAll(List.of(ride1, ride2));
 
     }
 }

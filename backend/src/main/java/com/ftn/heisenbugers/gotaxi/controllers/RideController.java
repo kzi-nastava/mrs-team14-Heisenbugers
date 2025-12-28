@@ -9,10 +9,8 @@ import com.ftn.heisenbugers.gotaxi.repositories.RatingRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.TrafficViolationRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -142,7 +140,6 @@ public class RideController {
     @PostMapping("/{rideId}/rate")
     public ResponseEntity<Object> rateDriver(@PathVariable UUID rideId, @RequestBody Map<String, Object> body) {
         Ride ride = rideRepository.findById(rideId).get();
-        Driver driver = ride.getDriver();
 
         Rating rating = new Rating();
         rating.setRide(ride);
@@ -158,24 +155,5 @@ public class RideController {
         return ResponseEntity.ok()
                 .body(Map.of("message", "Ride successfully rated"));
     }
-
-    @ExceptionHandler(ClassCastException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleCastFailure(ClassCastException ex) {
-        return Map.of("error", "Invalid field type", "details", ex.getMessage());
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleNoSuchElement(NoSuchElementException ex) {
-        return Map.of("error", "Resource not found", "details", ex.getMessage());
-    }
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleCastFailure(MethodArgumentTypeMismatchException ex) {
-        return Map.of("error", "Invalid field type", "details", ex.getMessage());
-    }
-
-
+    
 }
