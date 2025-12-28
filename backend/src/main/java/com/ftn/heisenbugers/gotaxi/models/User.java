@@ -26,6 +26,8 @@ public abstract class User extends BaseEntity {
     @Email
     @NotBlank
     @Column(nullable = false, unique = true)
+
+    private boolean activated = false; //for mail
     private String email;
 
     @NotBlank
