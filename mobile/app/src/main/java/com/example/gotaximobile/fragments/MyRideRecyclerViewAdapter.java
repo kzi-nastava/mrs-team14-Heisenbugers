@@ -3,7 +3,6 @@ package com.example.gotaximobile.fragments;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,6 +12,7 @@ import com.example.gotaximobile.databinding.FragmentItemBinding;
 import com.example.gotaximobile.models.Ride;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Ride}.
@@ -20,16 +20,20 @@ import java.util.List;
 public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecyclerViewAdapter.ViewHolder> {
 
     private final List<Ride> mValues;
+    private final Consumer<Ride> handler;
 
-    public MyRideRecyclerViewAdapter(List<Ride> items) {
+    public MyRideRecyclerViewAdapter(List<Ride> items, Consumer<Ride> handler) {
         mValues = items;
+        this.handler = handler;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        return new ViewHolder(FragmentItemBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false));
+        return new ViewHolder(FragmentItemBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false),
+                handler);
 
     }
 
@@ -54,7 +58,7 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
         public final TextView mRightSideView;
         public Ride mItem;
 
-        public ViewHolder(FragmentItemBinding binding) {
+        public ViewHolder(FragmentItemBinding binding, Consumer<Ride> handler) {
             super(binding.getRoot());
             // mIdView = binding.itemNumber;
             mContentView = binding.content;
@@ -64,7 +68,8 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
             itemView.setClickable(true);
             itemView.setOnClickListener(v -> {
                 v.setPressed(true);
-                Toast.makeText(v.getContext(), mItem.getInfoForList(), Toast.LENGTH_SHORT).show();
+                handler.accept(mItem);
+
             });
         }
 

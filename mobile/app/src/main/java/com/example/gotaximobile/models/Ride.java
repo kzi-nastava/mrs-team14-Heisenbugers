@@ -4,11 +4,12 @@ import android.icu.text.NumberFormat;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class Ride {
+public class Ride implements Serializable {
     private Driver driver;
     private String startLocation;
     private String endLocation;
@@ -79,6 +80,11 @@ public class Ride {
         this.endTime = endTime;
     }
 
+    public String getFormatedTime() {
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Constants.LOCALE);
+        return sdf.format(startTime) + " - " + sdf.format(endTime);
+    }
+
     public double getPrice() {
         return price;
     }
@@ -141,7 +147,7 @@ public class Ride {
     }
 
     public String getInfoForList() {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Constants.LOCALE);
 
         return String.format("%s (%s)\n ↓\n %s (%s)",
                 startLocation,

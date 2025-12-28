@@ -1,16 +1,17 @@
 package com.example.gotaximobile.fragments.profile;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.adapters.ProfileTabAdapter;
+import com.example.gotaximobile.fragments.RideFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -36,10 +37,19 @@ public class ProfileFragment extends Fragment {
             System.out.println(viewPager.getCurrentItem());
 
             getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, viewPager.getCurrentItem() == 1 ? editVehicleFragment: editProfileFragment)
+                    .replace(R.id.fragment_container, viewPager.getCurrentItem() == 1 ? editVehicleFragment : editProfileFragment)
                     .addToBackStack(null)
                     .commit();
         });
+
+        ImageView icon = view.findViewById(R.id.history_button);
+        icon.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new RideFragment())
+                    .addToBackStack(null)
+                    .commit();
+        });
+
 
         if (isDriver) {
             tabLayout.setVisibility(View.VISIBLE);

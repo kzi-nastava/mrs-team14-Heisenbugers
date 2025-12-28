@@ -5,4 +5,5 @@
     <color name="colorPrimary">#C5E55D</color>
     <color name="primaryContrast">#000000</color>
     <color name="colorSurface">#FFFFFF</color>
+    <color name="outline">#ffffff</color>
 </resources>

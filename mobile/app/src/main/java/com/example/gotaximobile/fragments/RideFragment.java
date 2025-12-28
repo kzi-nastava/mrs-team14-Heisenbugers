@@ -62,6 +62,8 @@ public class RideFragment extends Fragment {
             });
         }
 
+        getParentFragmentManager();
+
         // Set the adapter
         if (targetView instanceof RecyclerView) {
             Context context = targetView.getContext();
@@ -71,7 +73,16 @@ public class RideFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyRideRecyclerViewAdapter(PlaceholderHistoryList.ITEMS));
+            recyclerView.setAdapter(new MyRideRecyclerViewAdapter(PlaceholderHistoryList.ITEMS, ride -> {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ride", ride);
+                DriverHistoryOneRideFragment fragment = new DriverHistoryOneRideFragment();
+                fragment.setArguments(bundle);
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }));
             DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(),
                     DividerItemDecoration.VERTICAL);
             recyclerView.addItemDecoration(divider);
