@@ -36,7 +36,7 @@ public class PlaceholderHistoryList {
                     5.0,
                     false,
                     createDummyUsers(),
-                    createDummyViolations(),
+                    new ArrayList<>(),
                     false
             );
         else

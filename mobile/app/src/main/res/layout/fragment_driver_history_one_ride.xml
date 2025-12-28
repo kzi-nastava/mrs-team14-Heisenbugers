@@ -161,6 +161,7 @@
                     android:textStyle="bold" />
 
                 <TableLayout
+                    android:id="@+id/passengers_table"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="@dimen/text_margin">
@@ -194,19 +195,27 @@
                     </TableRow>
                 </TableLayout>
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/violations_section"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Traffic violations:"
-                    android:layout_margin="@dimen/text_margin"
-                    android:gravity="center"
-                    android:textStyle="bold" />
+                    android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="None"
-                    android:layout_marginHorizontal="@dimen/text_margin" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="Traffic violations:"
+                        android:layout_margin="@dimen/text_margin"
+                        android:gravity="center"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/violations_chip_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_margin="@dimen/text_margin" />
+                </LinearLayout>
             </LinearLayout>
 
             <com.google.android.material.chip.Chip
