@@ -2,42 +2,84 @@ package com.example.gotaximobile.fragments.profile;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.example.gotaximobile.R;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.imageview.ShapeableImageView;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class EditVehicle extends Fragment {
 
     private TextInputLayout tilModel, tilType, tilPlateNo, tilSeats;
+    private AutoCompleteTextView actType;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View viewEPP = inflater.inflate(R.layout.fragment_edit_vehicle, container, false);
+        View viewEV = inflater.inflate(R.layout.fragment_edit_vehicle, container, false);
 
-        MaterialToolbar toolbar = viewEPP.findViewById(R.id.topAppBar);
+        MaterialToolbar toolbar = viewEV.findViewById(R.id.topAppBar);
 
         toolbar.setNavigationOnClickListener(v -> {
             requireActivity().getOnBackPressedDispatcher().onBackPressed();
         });
 
+        tilModel = viewEV.findViewById(R.id.til_model);
+        tilType = viewEV.findViewById(R.id.til_type);
+        tilPlateNo = viewEV.findViewById(R.id.til_plateNo);
+        tilSeats = viewEV.findViewById(R.id.til_seats);
 
-        tilModel = viewEPP.findViewById(R.id.til_model);
-        tilType = viewEPP.findViewById(R.id.til_type);
-        tilPlateNo = viewEPP.findViewById(R.id.til_plateNo);
-        tilSeats = viewEPP.findViewById(R.id.til_seats);
+        if (getArguments() != null) {
+            String existingModel = getArguments().getString("model");
+            String existingType = getArguments().getString("type");
+            String existingPlate = getArguments().getString("plate");
+            String existingSeats = getArguments().getString("seats");
+            boolean babies = getArguments().getBoolean("babies");
+            boolean pets = getArguments().getBoolean("pets");
 
-        viewEPP.findViewById(R.id.btn_save_profile).setOnClickListener(view -> validateAndSave());
+            if (tilModel.getEditText() != null) tilModel.getEditText().setText(existingModel);
+            if (tilPlateNo.getEditText() != null) tilPlateNo.getEditText().setText(existingPlate);
+            if (tilSeats.getEditText() != null) tilSeats.getEditText().setText(existingSeats);
 
-        return viewEPP;
+            MaterialSwitch switchBabies = viewEV.findViewById(R.id.switch_babies);
+            MaterialSwitch switchPets = viewEV.findViewById(R.id.switch_pets);
+            if (switchBabies != null) switchBabies.setChecked(babies);
+            if (switchPets != null) switchPets.setChecked(pets);
+        }
+
+        actType = viewEV.findViewById(R.id.act_type);
+
+        String[] typeOptions = {"Standard", "Luxury", "Van"};
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                R.layout.list_item,
+                typeOptions
+        );
+
+        actType.setAdapter(adapter);
+
+        if (getArguments() != null) {
+            String existingType = getArguments().getString("type");
+            if (existingType != null) {
+                actType.setText(existingType, false);
+            }
+        }
+
+        viewEV.findViewById(R.id.btn_save_profile).setOnClickListener(view -> validateAndSave());
+
+        return viewEV;
     }
 
     private void validateAndSave() {
@@ -62,7 +104,7 @@ public class EditVehicle extends Fragment {
         }  else tilSeats.setError(null);
 
         if (isValid) {
-            Toast.makeText(getContext(), "Profile Updated Successfully!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Vehicle Information sent to administrator for review.", Toast.LENGTH_SHORT).show();
         }
     }
 }

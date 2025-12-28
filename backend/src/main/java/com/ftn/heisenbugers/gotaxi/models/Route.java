@@ -1,16 +1,14 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
 /**
  * Route entity representing the path of a ride.
  */
+@EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "routes")
 @Data
