@@ -38,6 +38,10 @@ public class Ride extends BaseEntity {
     private Driver driver;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
 

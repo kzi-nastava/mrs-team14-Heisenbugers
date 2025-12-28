@@ -1,5 +1,5 @@
 package com.ftn.heisenbugers.gotaxi;
-
+/*
 import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Location;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
@@ -78,5 +78,5 @@ public class DataLoader implements CommandLineRunner {
 
     }
 }
-
+*/
 

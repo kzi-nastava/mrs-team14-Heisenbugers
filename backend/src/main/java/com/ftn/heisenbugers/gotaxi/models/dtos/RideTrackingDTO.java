@@ -12,9 +12,9 @@ import java.util.UUID;
 @NoArgsConstructor
 public class RideTrackingDTO {
     private UUID rideId;
+    private DriverDto driver;
     private double vehicleLatitude;
     private double vehicleLongitude;
-    private String vehicleAddress;
     private int estimatedTimeRemainingMinutes;
     private List<LocationDTO> route;
 }

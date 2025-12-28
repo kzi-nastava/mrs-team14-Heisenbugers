@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -33,11 +34,14 @@ public class Vehicle extends BaseEntity {
     private int seatCount;
 
     @NotNull
+    @Builder.Default
     private boolean babyTransport = false;
 
     @NotNull
+    @Builder.Default
     private boolean petTransport = false;
 
     @OneToOne(mappedBy = "vehicle")
+    @JsonBackReference
     private Driver driver;
 }
