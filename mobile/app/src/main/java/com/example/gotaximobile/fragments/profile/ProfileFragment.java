@@ -34,7 +34,23 @@ public class ProfileFragment extends Fragment {
             EditPersonalProfile editProfileFragment = new EditPersonalProfile();
             EditVehicle editVehicleFragment = new EditVehicle();
 
-            System.out.println(viewPager.getCurrentItem());
+            Bundle bundle = new Bundle();
+            bundle.putString("model", "Ford Fiesta");
+            bundle.putString("type", "Standard");
+            bundle.putString("plate", "NS-254-KL");
+            bundle.putString("seats", "5");
+            bundle.putBoolean("babies", true);
+            bundle.putBoolean("pets", false);
+
+            editVehicleFragment.setArguments(bundle);
+
+            Bundle bundlePP = new Bundle();
+            bundlePP.putString("name", "John Doe");
+            bundlePP.putString("email", "johndoe@gmail.com");
+            bundlePP.putString("address", "Bulevar Jovana Ducica 15, Novi Sad");
+            bundlePP.putString("phone", "381645412147");
+
+            editProfileFragment.setArguments(bundlePP);
 
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, viewPager.getCurrentItem() == 1 ? editVehicleFragment : editProfileFragment)
