@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="GO"
-        android:textColor="@color/lime"
+        android:textColor="@color/app_primary"
         android:textSize="22sp"
         android:textStyle="bold" />
 </com.google.android.material.appbar.MaterialToolbar>
