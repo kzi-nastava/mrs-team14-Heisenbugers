@@ -9,11 +9,13 @@
     <color name="colorPrimary">#b8d557</color>
     <color name="primaryContrast">#000000</color>
     <color name="colorSurface">#000000</color>
-    <color name="lime">#C5E55D</color>
+    <color name="app_primary">#C5E55D</color>
     <color name="bg">#F5F5F5</color>
     <color name="text">#111111</color>
     <color name="muted">#8A8A8A</color>
     <color name="danger">#ec0000</color>
     <color name="outline">#000000</color>
+
+    <color name="auth_bg">#FFFFFF</color>
 
 </resources>
