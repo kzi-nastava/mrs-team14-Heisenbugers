@@ -1,4 +1,4 @@
-package com.ftn.heisenbugers.gotaxi.controller;
+package com.ftn.heisenbugers.gotaxi.controllers;
 
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreateDriverDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedDriverDTO;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/drivers")
-public class DriverController {
+public class DriverRegistrationController {
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,

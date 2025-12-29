@@ -3,6 +3,7 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CancelRideRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.MessageResponse;
+import com.ftn.heisenbugers.gotaxi.models.dtos.StopRideRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @RestController

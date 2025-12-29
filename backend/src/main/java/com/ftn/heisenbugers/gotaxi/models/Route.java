@@ -35,4 +35,8 @@ public class Route extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "route_id")
     private List<Location> stops;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

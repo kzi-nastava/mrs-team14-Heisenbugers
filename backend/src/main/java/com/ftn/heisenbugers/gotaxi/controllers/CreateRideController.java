@@ -1,4 +1,4 @@
-package com.ftn.heisenbugers.gotaxi.controller;
+package com.ftn.heisenbugers.gotaxi.controllers;
 
 
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreateRideDTO;

@@ -52,5 +52,8 @@ public abstract class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Route> favoriteRoutes;
 }
 

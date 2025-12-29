@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
+import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
@@ -86,7 +87,7 @@ public class AuthController {
         p.setBlocked(false);
         p.setActivated(false);
 
-        passengerRepository.save(p);
+        userRepository.save(p);
 
         RegisterResponseDTO resp = new RegisterResponseDTO(
                 p.getId(),

@@ -3,6 +3,7 @@ package com.ftn.heisenbugers.gotaxi.repositories;
 
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.Driver;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
