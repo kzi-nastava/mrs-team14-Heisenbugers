@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -31,15 +30,37 @@ public class Ride extends BaseEntity {
 
     private LocalDateTime endedAt;
 
-    private BigDecimal price;
+    private double price;
+
+    private boolean canceled;
+
+    @ManyToOne
+    @JoinColumn(name = "start_id")
+    private Location start;
+    
+    @ManyToOne
+    @JoinColumn(name = "end_id")
+    private Location end;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "canceled_by_id")
+    private User canceledBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
     private Driver driver;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "passenger_id")
-    private Passenger passenger;
+    @JoinColumn(name = "vehicle_id")
+    private Vehicle vehicle;
+
+    @ManyToMany
+    @JoinTable(
+            name = "ride_passengers",
+            joinColumns = @JoinColumn(name = "ride_id"),
+            inverseJoinColumns = @JoinColumn(name = "passenger_id")
+    )
+    private List<Passenger> passengers;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "route_id")

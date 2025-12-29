@@ -1,8 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -29,6 +27,14 @@ public class Rating extends BaseEntity {
     private String comment;
 
     private LocalDateTime createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ride_id")
+    private Ride ride;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rater_id")
+    private User rater;
 
     @PrePersist
     public void prePersist() {

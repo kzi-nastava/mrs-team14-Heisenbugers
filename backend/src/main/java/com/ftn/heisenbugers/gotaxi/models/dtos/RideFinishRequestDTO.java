@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class PassengerInfoDTO {
-    private UUID passengerId;
-    private String firstName;
-    private String lastName;
-    private String profileImageUrl;
+@AllArgsConstructor
+public class RideFinishRequestDTO {
+    private UUID rideId;
+    private boolean paid;
+
 }

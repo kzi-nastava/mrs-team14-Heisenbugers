@@ -4,14 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PassengerInfoDTO {
-    private UUID passengerId;
-    private String firstName;
-    private String lastName;
-    private String profileImageUrl;
+public class RideFinishResponseDTO {
+    private UUID rideId;
+    private LocalDateTime finishedAt;
+    private double totalPrice;
+
 }

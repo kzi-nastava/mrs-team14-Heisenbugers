@@ -6,12 +6,13 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PassengerInfoDTO {
-    private UUID passengerId;
-    private String firstName;
-    private String lastName;
-    private String profileImageUrl;
+@Data
+public class RatingRequestDTO {
+    private UUID rideId;
+    private int driverScore;
+    private int vehicleScore;
+    private String comment;
+
 }
