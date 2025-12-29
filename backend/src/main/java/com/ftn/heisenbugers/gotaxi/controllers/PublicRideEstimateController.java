@@ -3,10 +3,12 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideEstimateRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideEstimateResponseDTO;
+import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -29,8 +31,8 @@ public class PublicRideEstimateController {
 
         RideEstimateResponseDTO resp = new RideEstimateResponseDTO(
                 distanceKm,
-                estimatedTimeMin,
-                price,
+                (int) durationSec,
+                estimatedPrice,
                 "",
                 points
         );

@@ -1,4 +1,4 @@
-package com.ftn.heisenbugers.gotaxi.controllers;
+/*package com.ftn.heisenbugers.gotaxi.controllers;
 
 import com.ftn.heisenbugers.gotaxi.models.Location;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
@@ -146,3 +146,4 @@ public class AdminRideController {
         }
     }
 }
+*/
