@@ -1,9 +1,9 @@
 package com.ftn.heisenbugers.gotaxi.controller;
 
-import com.ftn.heisenbugers.gotaxi.dto.CreateDriverDTO;
-import com.ftn.heisenbugers.gotaxi.dto.CreatedDriverDTO;
-import com.ftn.heisenbugers.gotaxi.dto.CreatedVehicleDTO;
-import com.ftn.heisenbugers.gotaxi.dto.SetDriverPasswordDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.CreateDriverDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedDriverDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedVehicleDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.SetDriverPasswordDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.ftn.heisenbugers.gotaxi.dto;
+package com.ftn.heisenbugers.gotaxi.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,10 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChangePasswordDTO {
+public class FavoriteRouteDTO {
     @Getter @Setter
-    private String oldPassword;
+    private Long Id;
     @Getter @Setter
-    private String newPassword;
+    private RouteDTO route;
+
 }

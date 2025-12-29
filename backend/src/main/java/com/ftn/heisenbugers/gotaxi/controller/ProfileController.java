@@ -1,8 +1,8 @@
 package com.ftn.heisenbugers.gotaxi.controller;
 
-import com.ftn.heisenbugers.gotaxi.dto.ChangePasswordDTO;
-import com.ftn.heisenbugers.gotaxi.dto.GetDriverProfileDTO;
-import com.ftn.heisenbugers.gotaxi.dto.GetProfileDto;
+import com.ftn.heisenbugers.gotaxi.models.dtos.ChangePasswordDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.GetDriverProfileDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.GetProfileDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/profile")
 public class ProfileController {
     @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GetProfileDto> getMyProfile() {
+    public ResponseEntity<GetProfileDTO> getMyProfile() {
 
         if (/*loggedUser instanceof Driver*/false) {
 
@@ -27,7 +27,7 @@ public class ProfileController {
             return new ResponseEntity<>(driverProfile, HttpStatus.OK);
         }
 
-        GetProfileDto profile = new GetProfileDto();
+        GetProfileDTO profile = new GetProfileDTO();
         profile.setId(1L);
         profile.setEmail("user@test.com");
         profile.setFirstName("Petar");
@@ -42,10 +42,10 @@ public class ProfileController {
     @PutMapping(value = "/me",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GetProfileDto> updateProfile(
-            @RequestBody GetProfileDto request) {
+    public ResponseEntity<GetProfileDTO> updateProfile(
+            @RequestBody GetProfileDTO request) {
 
-        GetProfileDto profile = new GetProfileDto();
+        GetProfileDTO profile = new GetProfileDTO();
         profile.setId(1L);
         profile.setEmail(request.getEmail());
         profile.setFirstName(request.getFirstName());

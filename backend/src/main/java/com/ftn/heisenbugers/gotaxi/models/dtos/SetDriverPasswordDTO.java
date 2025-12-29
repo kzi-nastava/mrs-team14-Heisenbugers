@@ -1,4 +1,4 @@
-package com.ftn.heisenbugers.gotaxi.dto;
+package com.ftn.heisenbugers.gotaxi.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

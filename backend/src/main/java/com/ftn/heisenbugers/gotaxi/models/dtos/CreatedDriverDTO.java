@@ -1,4 +1,4 @@
-package com.ftn.heisenbugers.gotaxi.dto;
+package com.ftn.heisenbugers.gotaxi.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,9 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateDriverDTO {
+public class CreatedDriverDTO {
+    @Getter @Setter
+    private Long id;
     @Getter @Setter
     private String email;
     @Getter @Setter
@@ -19,7 +21,5 @@ public class CreateDriverDTO {
     @Getter @Setter
     private String address;
     @Getter @Setter
-    private String profileImageUrl;
-    @Getter @Setter
-    private CreateVehicleDTO vehicle;
+    private CreatedVehicleDTO vehicle;
 }

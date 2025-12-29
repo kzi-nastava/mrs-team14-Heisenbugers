@@ -1,4 +1,4 @@
-package com.ftn.heisenbugers.gotaxi.dto;
+package com.ftn.heisenbugers.gotaxi.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetDriverProfileDTO extends GetProfileDto {
+public class GetDriverProfileDTO extends GetProfileDTO {
     @Getter @Setter
     private boolean available;
     @Getter @Setter
