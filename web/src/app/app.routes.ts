@@ -9,6 +9,7 @@ import { ForgotPasswordComponent } from './components/auth/forgot-password/forgo
 import { RideHistoryComponent } from './components/driver-ride-history/driver-ride-history';
 import { RideCardComponent } from './components/driver-ride-history/ride-card/ride-card.component';
 import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
+import { MapComponent } from './components/map/map.component';
 
 /*
 export const routes: Routes = [
@@ -23,7 +24,13 @@ export const routes: Routes = [
 */
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  {path: '', redirectTo: 'home', pathMatch: 'full'},
+  { path: '',
+    component: BaseLayoutComponent,
+    children: [
+      { path: 'home', component: HomeComponent }
+    ]
+  },
   {
     path: '',
     component: BaseLayoutComponent,
