@@ -14,13 +14,5 @@ export class HomeComponent {
 
   pins: MapPin[] = [{ lat: 45.2396, lng: 19.8227, popup: 'This car is available', iconUrl: 'icons/car-available.svg', iconColor: 'blue'},
   { lat: 45.241, lng: 19.823, popup: 'This car is occupied', iconUrl: 'icons/car-occupied.svg', iconColor: 'blue' }];
-
-  constructor() {
-
-    const popupEl: HTMLDivElement = document.createElement('div');
-    popupEl.innerHTML = `<h3>${'Title'}</h3><button class="m-4 bg-red-100">Click me</button>`;
-
-    this.pins[0].popup = popupEl;
-    
-  }
+  
 }
