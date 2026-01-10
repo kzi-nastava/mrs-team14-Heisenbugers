@@ -12,8 +12,8 @@ import { MapComponent, MapPin } from "../map/map.component";
 })
 export class HomeComponent {
 
-  pins: MapPin[] = [{ lat: 45.2396, lng: 19.8227, popup: 'Car', iconUrl: 'icons/car-front-fill.svg', iconColor: 'blue'},
-  { lat: 45.241, lng: 19.823, popup: 'Geo Pin', iconUrl: 'icons/car-front-fill.svg', iconColor: 'blue' }];
+  pins: MapPin[] = [{ lat: 45.2396, lng: 19.8227, popup: 'This car is available', iconUrl: 'icons/car-available.svg', iconColor: 'blue'},
+  { lat: 45.241, lng: 19.823, popup: 'This car is occupied', iconUrl: 'icons/car-occupied.svg', iconColor: 'blue' }];
 
   constructor() {
 
