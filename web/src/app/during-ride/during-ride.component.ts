@@ -14,7 +14,11 @@ import { FormsModule, NgForm } from '@angular/forms';
 
 })
 export class DuringRide {
-  NotesIsOpen: boolean = true;
+  @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
+  @ViewChild('noteTitle') noteTitle!: ElementRef<HTMLInputElement>;
+
+  
+  NotesIsOpen: boolean = false;
   location: MapPin = { lat: 45.2396, lng: 19.8227, popup: 'You are here', iconUrl: carSelectedIcon };
   passengers = [
     { name: 'Alice Alisic', avatar: 'https://i.pravatar.cc/150?img=1' },
@@ -28,11 +32,13 @@ export class DuringRide {
   }
 
   openModal() {
+    this.noteFocus.nativeElement.blur();
     this.NotesIsOpen = true;
   }
 
-  submitForm() {
-    console.log("Form submitted");
+  submitForm(form: NgForm) {
+    if(form.valid)
+    console.log(form.value);
     this.closeModal();
   }
 

@@ -27,12 +27,13 @@
         <label class="text-xs text-gray-500">Note:</label>
         <div class="flex items-center gap-2">
           <input
+            #noteFocus
             class="flex-1 border rounded-lg px-3 py-2 text-sm"
             placeholder="Add a note..."
             (focus)="openModal()"
           />
           <button
-            class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100"
+            class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 cursor-pointer"
             (click)="openModal()"
           >
             <ng-icon name="bootstrapFeather" size="18"></ng-icon>
@@ -42,7 +43,7 @@
     </div>
 
     <button
-      class="mt-4 w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg"
+      class="mt-4 w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg cursor-pointer"
     >
       Stop
     </button>
@@ -80,10 +81,11 @@
 @if (NotesIsOpen) {
 <div class="fixed inset-0 flex items-center justify-center bg-black/40 z-50" (click)="closeModal()">
   <div class="bg-white rounded-xl shadow-xl p-6 w-96" (click)="$event.stopPropagation()">
-    <form (submit)="submitForm()" #modalForm="ngForm" class="space-y-4">
+    <form (ngSubmit)="submitForm(modalForm)" #modalForm="ngForm" class="space-y-4">
       <div>
-        <label class="font-semibold text-black">Title:</label>
+        <label class="font-semibold text-black">Title <span class="text-red-500">*</span></label>
         <input
+          #noteTitle
           type="text"
           name="title"
           ngModel
@@ -93,7 +95,7 @@
         />
       </div>
       <div>
-        <label class="text-black">Note:</label>
+        <label class="text-black">Note</label>
         <textarea
           name="note"
           ngModel

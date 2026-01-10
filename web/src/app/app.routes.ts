@@ -29,7 +29,7 @@ export const routes: Routes = [
   { path: '',
     component: BaseLayoutComponent,
     children: [
-      { path: 'home', component: DuringRide }
+      { path: 'home', component: HomeComponent }
     ]
   },
   {
