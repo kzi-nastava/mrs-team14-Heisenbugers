@@ -69,7 +69,9 @@ export class MapComponent implements AfterViewInit, OnChanges {
         }
 
         marker.addTo(this.map)
-            .bindPopup(pin.popup || '');
+        if (pin.popup) {
+            marker.bindPopup(pin.popup);
+        }
         this.markers.push(marker);
         
         });
