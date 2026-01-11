@@ -1,16 +1,18 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { carSelectedIcon, MapComponent } from '../components/map/map.component';
 import { NgIcon, provideIcons } from "@ng-icons/core";
-import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill } from '@ng-icons/bootstrap-icons';
+import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
 import { MapPin } from '../components/map/map.component';
 import { FormsModule, NgForm } from '@angular/forms';
+import { RateModal } from "../rate-modal/rate-modal.component";
+import { RideInfo } from '../components/driver-ride-history/driver-info.model';
 
 
 @Component({
   selector: 'app-during-ride',
-  imports: [MapComponent, NgIcon, FormsModule],
+  imports: [MapComponent, NgIcon, FormsModule, RateModal],
   templateUrl: './during-ride.component.html',
-  viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill })]
+  viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
 
 })
 export class DuringRide {
@@ -18,6 +20,27 @@ export class DuringRide {
   
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   
+  ride: RideInfo = {
+    id: 'ride-123',
+    driverName: 'Vozac Vozacovic',
+    startLocation: 'ул.Атамана Головатого 2а',
+    finishLocation: 'ул.Красная 113',
+    startTime: new Date('2025-12-19T08:12:00'),
+    endTime: new Date('2025-12-19T10:12:00'),
+    price: 350,
+    maxRating: 5,
+    rating: 0,
+    cancelled: false,
+    passengers: [
+      {firstName: 'Alice', lastName: 'Alisic'},
+      {firstName: 'Bob', lastName: 'Bobic'},
+      {firstName: 'Carl', lastName: 'Carlic'},
+      {firstName: 'Denise', lastName: 'Denisic'}
+    ],
+    trafficViolations: [{type: 'Red light'}],
+    wasPanic: false,
+    rated: false
+  };
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = true;
   driverRate = 0;

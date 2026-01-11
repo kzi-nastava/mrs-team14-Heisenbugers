@@ -81,37 +81,51 @@
 <!--  Modal to enter notes  -->
 @if (NotesIsOpen) {
 <div class="fixed inset-0 flex items-center justify-center bg-black/40 z-50" (click)="closeModal()">
-  <div class="bg-white rounded-xl shadow-xl p-6 w-96" (click)="$event.stopPropagation()">
-    <form (ngSubmit)="submitForm(modalForm)" #modalForm="ngForm" class="space-y-4">
-      <div>
-        <label class="font-semibold text-black">Title <span class="text-red-500">*</span></label>
-        <input
-          #noteTitle
-          type="text"
-          name="title"
-          ngModel
-          required
-          class="w-full border rounded-lg p-3 mb-4 text-sm"
-          placeholder="Title"
-        />
-      </div>
-      <div>
-        <label class="text-black">Note</label>
-        <textarea
-          name="note"
-          ngModel
-          class="w-full h-40 border rounded-lg p-3 text-sm resize-none"
-          placeholder="Enter your note here..."
-        ></textarea>
-      </div>
-      <button
-        type="submit"
-        [disabled]="!modalForm.form.valid"
-        class="w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg disabled:bg-gray-300 enabled:cursor-pointer"
-      >
-        Submit
-      </button>
-    </form>
+  <div class="bg-white rounded-xl shadow-xl w-150" (click)="$event.stopPropagation()">
+    <div class="h-11 bg-black rounded-t-xl shadow-xl flex items-center justify-between mb-3">
+      <span class="text-white ml-5 text-xl">Note</span>
+      <ng-icon
+        name="bootstrapX"
+        size="30"
+        color="white"
+        class="cursor-pointer m-3"
+        (click)="closeModal()"
+      />
+    </div>
+    <div class="px-6 pb-6">
+      <form (ngSubmit)="submitForm(modalForm)" #modalForm="ngForm" class="space-y-4">
+        <div>
+          <label class="font-semibold text-black text-xl"
+            >Title <span class="text-red-500">*</span></label
+          >
+          <input
+            #noteTitle
+            type="text"
+            name="title"
+            ngModel
+            required
+            class="w-full border rounded-lg p-3 mb-4 text-sm"
+            placeholder="Title"
+          />
+        </div>
+        <div>
+          <label class="text-black text-lg">Note</label>
+          <textarea
+            name="note"
+            ngModel
+            class="w-full h-40 border rounded-lg p-3 text-sm resize-none"
+            placeholder="Enter your note here..."
+          ></textarea>
+        </div>
+        <button
+          type="submit"
+          [disabled]="!modalForm.form.valid"
+          class="w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg disabled:bg-gray-300 enabled:cursor-pointer"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   </div>
 </div>
 }
@@ -119,73 +133,5 @@
 <!--  Modal to rate  -->
 
 @if (rateIsOpen) {
-<div
-  class="fixed inset-0 flex items-center justify-center bg-black/40 z-50"
-  (click)="closeRateModal()"
->
-  <div class="bg-white rounded-xl shadow-xl p-6 w-170 h-auto" (click)="$event.stopPropagation()">
-    <form (ngSubmit)="submitRateForm(rateForm)" #rateForm="ngForm" class="space-y-4">
-      <div class="flex text-center">
-        <label class="font-semibold text-black mt-auto mb-auto"
-          >Rate the driver <span class="text-red-500 ml-1">*</span></label
-        >
-        <div class="flex space-x-2 mt-2 align-center m-auto">
-          @for(i of getDriverRateArray(); track i){ @if(i) {
-          <ng-icon
-            name="bootstrapStarFill"
-            size="36"
-            class="cursor-pointer ml-4"
-            (click)="setDriverRate($index + 1)"
-          ></ng-icon>
-          } @else {
-          <ng-icon
-            name="bootstrapStar"
-            size="36"
-            class="cursor-pointer ml-4"
-            (click)="setDriverRate($index + 1)"
-          ></ng-icon>
-          } }
-        </div>
-      </div>
-      <div class="flex text-center">
-        <label class="font-semibold text-black mt-auto mb-auto"
-          >Rate the vehicle <span class="text-red-500 ml-1">*</span></label
-        >
-        <div class="flex space-x-2 mt-2 align-center m-auto">
-          @for(i of getVehicleRateArray(); track i){ @if(i) {
-          <ng-icon
-            name="bootstrapStarFill"
-            size="36"
-            class="cursor-pointer ml-4"
-            (click)="setVehicleRate($index + 1)"
-          ></ng-icon>
-          } @else {
-          <ng-icon
-            name="bootstrapStar"
-            size="36"
-            class="cursor-pointer ml-4"
-            (click)="setVehicleRate($index + 1)"
-          ></ng-icon>
-          } }
-        </div>
-      </div>
-      <div>
-        <label class="text-black">Leave a comment</label>
-        <textarea
-          name="comments"
-          ngModel
-          class="w-full h-40 border rounded-lg p-3 text-sm resize-none"
-          placeholder="Enter your comment here..."
-        ></textarea>
-      </div>
-      <button
-        type="submit"
-        [disabled]="!rateForm.form.valid || driverRate === 0 || vehicleRate === 0"
-        class="w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg disabled:bg-gray-300 enabled:cursor-pointer"
-      >
-        Submit
-      </button>
-    </form>
-  </div>
-</div>
+<app-rate-modal [ride]="this.ride" (close)="closeRateModal()"></app-rate-modal>
 }

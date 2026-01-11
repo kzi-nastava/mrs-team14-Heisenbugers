@@ -9,6 +9,7 @@ export interface TrafficViolation {
 }
 
 export interface RideInfo {
+  id: string;
   driverName: string;
   startLocation: string;
   finishLocation: string;
@@ -21,4 +22,5 @@ export interface RideInfo {
   passengers: Passenger[];
   trafficViolations: TrafficViolation[];
   wasPanic: boolean;
+  rated?: boolean;
 }
