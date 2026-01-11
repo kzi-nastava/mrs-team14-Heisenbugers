@@ -1,0 +1,116 @@
+<div class="relative w-full h-full">
+  <div class="w-full h-full z-0">
+    <app-map [pins]="[location]" goBelow></app-map>
+  </div>
+
+  <!-- Order Card -->
+  <div class="absolute bottom-15 left-10 w-80 bg-white rounded-xl shadow-lg p-4">
+    <div class="flex justify-between text-sm text-gray-500 mb-2">
+      <span class="font-semibold text-black">Order</span>
+      <span>Time: <b>35 min 13 sec</b></span>
+    </div>
+
+    <div class="space-y-3">
+      <div>
+        <label class="text-xs text-gray-500">Start:</label>
+        <input
+          class="w-full border rounded-lg px-3 py-2 text-sm"
+          value="ул.Атамана Головатого 2а"
+          readonly
+        />
+      </div>
+      <div>
+        <label class="text-xs text-gray-500">Finish:</label>
+        <input class="w-full border rounded-lg px-3 py-2 text-sm" value="ул.Красная 113" readonly />
+      </div>
+      <div>
+        <label class="text-xs text-gray-500">Note:</label>
+        <div class="flex items-center gap-2">
+          <input
+            #noteFocus
+            class="flex-1 border rounded-lg px-3 py-2 text-sm"
+            placeholder="Add a note..."
+            (focus)="openModal()"
+          />
+          <button
+            class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-gray-100 cursor-pointer"
+            (click)="openModal()"
+          >
+            <ng-icon name="bootstrapFeather" size="18"></ng-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <button
+      class="mt-4 w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg cursor-pointer"
+    >
+      Stop
+    </button>
+  </div>
+
+  <!-- Passengers -->
+  <div class="absolute top-6 right-6 bg-white rounded-xl shadow-lg p-6 w-70">
+    <h3 class="font-semibold mb-3">Passengers:</h3>
+    <div class="grid grid-cols-2 gap-3">
+      @for (p of passengers; track p) {
+      <div class="flex items-center gap-2">
+        <img [src]="p.avatar" class="w-8 h-8 rounded-full" />
+        <span class="text-sm">{{ p.name }}</span>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- Chat Button -->
+  <button
+    class="absolute right-6 bottom-52 bg-white shadow-lg rounded-full w-11 h-11 flex items-center justify-center cursor-pointer"
+  >
+    <ng-icon name="bootstrapChatDots" size="26"></ng-icon>
+  </button>
+
+  <!-- Alert Button -->
+  <button
+    class="absolute right-6 bottom-36 bg-white rounded-full w-11 h-11 flex items-center justify-center cursor-pointer"
+  >
+    <ng-icon name="bootstrapExclamationCircleFill" size="36" color="red"></ng-icon>
+  </button>
+</div>
+
+<!--  Modal to enter notes  -->
+@if (NotesIsOpen) {
+<div class="fixed inset-0 flex items-center justify-center bg-black/40 z-50" (click)="closeModal()">
+  <div class="bg-white rounded-xl shadow-xl p-6 w-96" (click)="$event.stopPropagation()">
+    <form (ngSubmit)="submitForm(modalForm)" #modalForm="ngForm" class="space-y-4">
+      <div>
+        <label class="font-semibold text-black">Title <span class="text-red-500">*</span></label>
+        <input
+          #noteTitle
+          type="text"
+          name="title"
+          ngModel
+          required
+          class="w-full border rounded-lg p-3 mb-4 text-sm"
+          placeholder="Title"
+        />
+      </div>
+      <div>
+        <label class="text-black">Note</label>
+        <textarea
+          name="note"
+          ngModel
+          class="w-full h-40 border rounded-lg p-3 text-sm resize-none"
+          placeholder="Enter your note here..."
+        ></textarea>
+      </div>
+      <button
+        type="submit"
+        [disabled]="!modalForm.form.valid"
+        class="w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg disabled:bg-gray-300 enabled:cursor-pointer"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+}

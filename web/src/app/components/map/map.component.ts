@@ -1,7 +1,13 @@
 // map.component.ts
-import { Component, Input, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, AfterViewInit, OnChanges, SimpleChanges, booleanAttribute } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+
+const carAvailableIcon: string = 'icons/car-available.svg';
+const carOccupiedIcon: string = 'icons/car-occupied.svg';
+const carSelectedIcon: string = 'icons/car-selected.svg';
+
+export {carAvailableIcon, carOccupiedIcon, carSelectedIcon};
 
 export interface MapPin {
   lat: number;
@@ -9,7 +15,6 @@ export interface MapPin {
   snapToRoad?: boolean;
   popup?: string | HTMLElement;
   iconUrl?: string;
-  iconColor?: string;
 }
 
 @Component({
@@ -19,6 +24,7 @@ export interface MapPin {
 })
 export class MapComponent implements AfterViewInit, OnChanges {
   @Input() pins: MapPin[] = [];
+  @Input({ transform: booleanAttribute }) goBelow = false;
   private map!: L.Map;
   private markers: L.Marker[] = [];
 
@@ -28,6 +34,11 @@ export class MapComponent implements AfterViewInit, OnChanges {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
+    if (this.goBelow) {
+        Object.values(this.map.getPanes()).forEach(pane => {
+            pane.style.zIndex = '0';
+        });
+    }
 
     L.control.zoom({ position: 'bottomright' }).addTo(this.map);
     L.control.scale().addTo(this.map);
