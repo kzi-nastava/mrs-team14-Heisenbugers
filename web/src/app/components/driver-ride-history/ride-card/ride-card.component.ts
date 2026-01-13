@@ -16,6 +16,7 @@ import { Router } from '@angular/router';
 })
 export class RideCardComponent {
   @Input() ride: RideInfo = {
+    id: '',
     driverName: 'Vozac Vozacovic',
     startLocation: 'ул.Атамана Головатого 2а',
     finishLocation: 'ул.Красная 113',

@@ -68,11 +68,26 @@
             <span>{{ r.price | number : '1.2-2' }} RSD</span>
           </span>
         </span>
-        @if(r.wasPanic){
-        <ng-icon name="bootstrapExclamationCircleFill" color="red" size="24"></ng-icon>
-        }
+        <div>
+          @if(r.wasPanic){
+          <ng-icon
+            name="bootstrapExclamationCircleFill"
+            color="red"
+            size="24"
+            class="mx-3"
+          ></ng-icon>
+          } @if(!r.rated){
+          <button class="cursor-pointer" (click)="$event.stopPropagation(); openRateModal(r)">
+            <ng-icon name="bootstrapFeather" size="24" class="mx-3"></ng-icon>
+          </button>
+          }
+        </div>
       </button>
     </div>
     }
   </main>
 </div>
+
+@if (this.ratingRide != null) {
+<app-rate-modal [ride]="this.ratingRide" (close)="closeRateModal()"></app-rate-modal>
+}
