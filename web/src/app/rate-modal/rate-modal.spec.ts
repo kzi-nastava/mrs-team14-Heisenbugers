@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DuringRide } from './during-ride.component';
+import { RateModal } from './rate-modal';
 
-describe('DuringRide', () => {
-  let component: DuringRide;
-  let fixture: ComponentFixture<DuringRide>;
+describe('RateModal', () => {
+  let component: RateModal;
+  let fixture: ComponentFixture<RateModal>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DuringRide]
+      imports: [RateModal]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(DuringRide);
+    fixture = TestBed.createComponent(RateModal);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

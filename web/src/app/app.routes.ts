@@ -12,6 +12,7 @@ import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
 import { MapComponent } from './components/map/map.component';
 import { DuringRide } from './during-ride/during-ride.component';
 import {DriverRegistrationComponent} from './components/auth/driver-registration/driver-registration.component';
+import { ScheduledRides } from './scheduled-rides/scheduled-rides.component';
 
 /*
 export const routes: Routes = [

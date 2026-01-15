@@ -44,13 +44,14 @@
 
     <button
       class="mt-4 w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg cursor-pointer"
+      (click)="openRateModal()"
     >
       Stop
     </button>
   </div>
 
   <!-- Passengers -->
-  <div class="absolute top-6 right-6 bg-white rounded-xl shadow-lg p-6 w-70">
+  <div class="absolute top-6 right-6 bg-white rounded-xl shadow-lg p-6 w-70 bg bg-white/75">
     <h3 class="font-semibold mb-3">Passengers:</h3>
     <div class="grid grid-cols-2 gap-3">
       @for (p of passengers; track p) {
@@ -80,37 +81,57 @@
 <!--  Modal to enter notes  -->
 @if (NotesIsOpen) {
 <div class="fixed inset-0 flex items-center justify-center bg-black/40 z-50" (click)="closeModal()">
-  <div class="bg-white rounded-xl shadow-xl p-6 w-96" (click)="$event.stopPropagation()">
-    <form (ngSubmit)="submitForm(modalForm)" #modalForm="ngForm" class="space-y-4">
-      <div>
-        <label class="font-semibold text-black">Title <span class="text-red-500">*</span></label>
-        <input
-          #noteTitle
-          type="text"
-          name="title"
-          ngModel
-          required
-          class="w-full border rounded-lg p-3 mb-4 text-sm"
-          placeholder="Title"
-        />
-      </div>
-      <div>
-        <label class="text-black">Note</label>
-        <textarea
-          name="note"
-          ngModel
-          class="w-full h-40 border rounded-lg p-3 text-sm resize-none"
-          placeholder="Enter your note here..."
-        ></textarea>
-      </div>
-      <button
-        type="submit"
-        [disabled]="!modalForm.form.valid"
-        class="w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg disabled:bg-gray-300 enabled:cursor-pointer"
-      >
-        Submit
-      </button>
-    </form>
+  <div class="bg-white rounded-xl shadow-xl w-150" (click)="$event.stopPropagation()">
+    <div class="h-11 bg-black rounded-t-xl shadow-xl flex items-center justify-between mb-3">
+      <span class="text-white ml-5 text-xl">Note</span>
+      <ng-icon
+        name="bootstrapX"
+        size="30"
+        color="white"
+        class="cursor-pointer m-3"
+        (click)="closeModal()"
+      />
+    </div>
+    <div class="px-6 pb-6">
+      <form (ngSubmit)="submitForm(modalForm)" #modalForm="ngForm" class="space-y-4">
+        <div>
+          <label class="font-semibold text-black text-xl"
+            >Title <span class="text-red-500">*</span></label
+          >
+          <input
+            #noteTitle
+            type="text"
+            name="title"
+            ngModel
+            required
+            class="w-full border rounded-lg p-3 mb-4 text-sm"
+            placeholder="Title"
+          />
+        </div>
+        <div>
+          <label class="text-black text-lg">Note</label>
+          <textarea
+            name="note"
+            ngModel
+            class="w-full h-40 border rounded-lg p-3 text-sm resize-none"
+            placeholder="Enter your note here..."
+          ></textarea>
+        </div>
+        <button
+          type="submit"
+          [disabled]="!modalForm.form.valid"
+          class="w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg disabled:bg-gray-300 enabled:cursor-pointer"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
   </div>
 </div>
+}
+
+<!--  Modal to rate  -->
+
+@if (rateIsOpen) {
+<app-rate-modal [ride]="this.ride" (close)="closeRateModal()"></app-rate-modal>
 }

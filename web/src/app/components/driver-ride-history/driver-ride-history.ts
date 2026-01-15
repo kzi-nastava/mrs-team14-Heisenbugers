@@ -7,17 +7,19 @@ import {
     bootstrapArrowRight,
     bootstrapClock,
     bootstrapCash,
-    bootstrapExclamationCircleFill }
+    bootstrapExclamationCircleFill, 
+    bootstrapFeather}
     from '@ng-icons/bootstrap-icons';
 import { RideInfo } from './driver-info.model';
 import { Router } from '@angular/router';
+import { RateModal } from "../../rate-modal/rate-modal.component";
 
 
 
 
 @Component({
 standalone: true,
-  imports: [CommonModule, NgIcon],
+  imports: [CommonModule, NgIcon, RateModal],
   selector: 'app-ride-history',
   templateUrl: './driver-ride-history.html',
   styleUrls: ['./driver-ride-history.css'],
@@ -26,14 +28,17 @@ standalone: true,
     bootstrapArrowRight,
     bootstrapClock,
     bootstrapCash,
-    bootstrapExclamationCircleFill
+    bootstrapExclamationCircleFill,
+    bootstrapFeather
     })]
 })
 export class RideHistoryComponent {
   sort: 'date' | 'price' | 'route' = 'date';
+  ratingRide: RideInfo | null = null;
 
   rides: RideInfo[] = [
   ...Array.from({ length: 4 }).map(() => ({
+    id: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
     startLocation: 'ул.Атамана Головатого 2а',
     finishLocation: 'ул.Красная 113',
@@ -53,6 +58,7 @@ export class RideHistoryComponent {
     wasPanic: false
   })),
   {
+    id: 'ride-panic-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
     startLocation: 'ул.Атамана Головатого 2а',
     finishLocation: 'ул.Красная 113',
@@ -83,5 +89,14 @@ constructor(private router: Router) {
 
   goToRide(){
     this.router.navigate(['/driver-ride-history/ride'])
+  }
+
+  openRateModal(ride: RideInfo) {
+    this.ratingRide = ride;
+    console.log(this.ratingRide);
+  }
+
+  closeRateModal() {
+    this.ratingRide = null;
   }
 }
