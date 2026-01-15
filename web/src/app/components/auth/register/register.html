@@ -2,8 +2,13 @@
   <main class="px-37.5 py-10.5">
     <h1 class="text-[26px] font-bold text-neutral-800 mb-6">Registration</h1>
     <div class="grid grid-cols-1 lg:grid-cols-[460px_1fr] gap-22.5 items-start">
-      <!-- LEFT: FORM -->
 
+      @if (serverError) {
+        <div class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+          {{ serverError }}
+        </div>
+      }
+      <!-- LEFT: FORM -->
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-4.5">
         <!-- First/Last -->
         <div class="grid grid-cols-2 gap-4.5">
@@ -167,11 +172,7 @@
           Register
         </button>
 
-        @if (serverError) {
-          <div class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-            {{ serverError }}
-          </div>
-        }
+
 
         <p class="text-[10px] text-neutral-300 text-center leading-snug -mt-2">
           By clicking the Sign Up button, you accept the<br />

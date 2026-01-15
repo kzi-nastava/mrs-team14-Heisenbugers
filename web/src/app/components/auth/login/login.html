@@ -6,11 +6,27 @@
     <section class="bg-white px-17.5 py-13.75  border-r border-neutral-200">
       <h1 class="text-[42px] font-extrabold text-black text-center mb-8.75">Login</h1>
 
+
+      @if (serverError) {
+        <div class="mb-5 rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {{ serverError }}
+        </div>
+      }
+
+      @if (activatedMsg) {
+        <div class="mb-5 rounded-[10px] border border-lime-200 bg-lime-50 px-4 py-3 text-sm text-neutral-700">
+          Your account is not activated yet. Please check your email and click the activation link.
+        </div>
+      }
+
+
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5.5 mt-30">
         <div>
           <label class="block text-[12px] text-neutral-300 mb-1.5">Email Address</label>
           <input
             type="email"
+
+            autocomplete="email"
             formControlName="email"
             class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
                    focus:outline-none focus:ring-4 focus:ring-lime-200"
@@ -42,6 +58,7 @@
             <input
               [type]="showPassword ? 'text' : 'password'"
               formControlName="password"
+              autocomplete="current-password"
               class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 pr-14 shadow-sm
              focus:outline-none focus:ring-4 focus:ring-lime-200"
               [class.border-neutral-200]="!isInvalid('password')"
@@ -89,7 +106,11 @@
           class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow
                  hover:bg-lime-200 active:scale-[0.99]"
         >
+          @if (loading) {
+            Logging in...
+          } @else {
           Login
+          }
         </button>
 
         <p class="text-[10px] text-neutral-300 text-center leading-snug -mt-2">

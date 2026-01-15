@@ -1,5 +1,7 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
+import com.ftn.heisenbugers.gotaxi.models.Administrator;
+import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
@@ -141,7 +143,11 @@ public class AuthController {
     }
 
     private String resolveRole(User user) {
-        return "user";
+
+        if (user instanceof Driver) return "DRIVER";
+        if (user instanceof Passenger) return "PASSENGER";
+        if (user instanceof Administrator) return "ADMIN";
+        return "USER";
     }
 
 
