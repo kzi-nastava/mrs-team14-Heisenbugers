@@ -27,7 +27,8 @@ export interface LoginRequestDTO {
 }
 
 export interface LoginResponseDTO {
-  token: string;
+  //token: string;
+  accessToken: string;
   tokenType: string; // "Bearer"
   userId: string;
   role: string;
