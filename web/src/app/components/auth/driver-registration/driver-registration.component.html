@@ -1,0 +1,232 @@
+<div class="mx-40 my-12">
+  <div class="flex flex-row gap-60 ">
+    <h1 class="text-[26px] font-bold text-neutral-800 mb-6 w-1/3">Driver Registration</h1>
+    <h1 class="text-[26px] font-bold text-neutral-800 mb-6 w-1/3">Vehicle Information</h1>
+  </div>
+<form [formGroup]="form" (ngSubmit)="submit()" class="flex gap-60 items-start">
+
+  <div class="justify-center w-1/3">
+  <label
+    class="w-full max-w-40 mb-10 aspect-4/4 rounded-4xl bg-neutral-200 flex items-center justify-center cursor-pointer relative overflow-hidden mx-auto"
+  >
+    <input type="file" accept="image/*" class="hidden" (change)="onPickImage($event)" />
+
+    @if (imagePreview) {
+      <img
+        [src]="imagePreview"
+        alt="Profile preview"
+        class="absolute inset-0 w-full h-full object-fit" />
+    } @else {
+      <div class="flex flex-col items-center text-neutral-500">
+        <ng-icon name="bootstrapCameraFill" size="75"></ng-icon>
+        <div class="mt-2 text-center text-xs">Click to upload photo (optional)</div>
+      </div>
+    }
+  </label>
+  <div class="space-y-4.5">
+    <!-- First/Last -->
+    <div class="grid grid-cols-2 gap-4.5">
+      <div>
+        <label class="block text-[12px] text-neutral-300 mb-2.5">First name</label>
+        <input
+          type="text"
+          formControlName="firstName"
+          class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+          [class.border-neutral-200]="!isInvalid('firstName')"
+          [class.focus:ring-lime-200]="!isInvalid('firstName')"
+          [class.border-red-400]="isInvalid('firstName')"
+          [class.focus:ring-red-200]="isInvalid('firstName')"
+        />
+        @if (f.firstName.touched && f.firstName.invalid) {
+          <p class="mt-1 text-xs text-red-500">Required</p>
+        }
+      </div>
+      <div>
+        <label class="block text-[12px] text-neutral-300 mb-2.5">Last name</label>
+        <input
+          type="text"
+          formControlName="lastName"
+          class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+          [class.border-neutral-200]="!isInvalid('lastName')"
+          [class.focus:ring-lime-200]="!isInvalid('lastName')"
+          [class.border-red-400]="isInvalid('lastName')"
+          [class.focus:ring-red-200]="isInvalid('lastName')"
+        />
+        @if (f.lastName.touched && f.lastName.invalid) {
+          <p class="mt-1 text-xs text-red-500">Required</p>
+        }
+      </div>
+    </div>
+
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Email Address</label>
+      <input
+        type="email"
+        formControlName="email"
+        class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+        [class.border-neutral-200]="!isInvalid('email')"
+        [class.focus:ring-lime-200]="!isInvalid('email')"
+        [class.border-red-400]="isInvalid('email')"
+        [class.focus:ring-red-200]="isInvalid('email')"
+      />
+      @if (f.email.touched && f.email.hasError('required')) {
+        <p class="mt-1 text-xs text-red-500">Required</p>
+      } @if (f.email.touched && f.email.hasError('email')) {
+      <p class="mt-1 text-xs text-red-500">Invalid email</p>
+    }
+    </div>
+
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Phone</label>
+      <input
+        type="text"
+        formControlName="phone"
+        class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+        [class.border-neutral-200]="!isInvalid('phone')"
+        [class.focus:ring-lime-200]="!isInvalid('phone')"
+        [class.border-red-400]="isInvalid('phone')"
+        [class.focus:ring-red-200]="isInvalid('phone')"
+      />
+      @if (f.phone.touched && f.phone.hasError('required')) {
+        <p class="mt-1 text-xs text-red-500">Required</p>
+      } @if (f.phone.touched && f.phone.hasError('pattern')) {
+      <p class="mt-1 text-xs text-red-500">Invalid phone format</p>
+    }
+    </div>
+
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Address</label>
+      <input
+        type="text"
+        formControlName="address"
+        class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+        [class.border-neutral-200]="!isInvalid('address')"
+        [class.focus:ring-lime-200]="!isInvalid('address')"
+        [class.border-red-400]="isInvalid('address')"
+        [class.focus:ring-red-200]="isInvalid('address')"
+      />
+      @if (f.address.touched && f.address.invalid) {
+        <p class="mt-1 text-xs text-red-500">Required</p>
+      }
+    </div>
+
+
+    <button
+      type="submit"
+      class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] mt-15 cursor-pointer"
+    >
+      Register
+    </button>
+
+
+    @if (submitted) {
+      <div class="mt-3 rounded-md border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-700">
+        Activation email sent. Link is valid for 24h.
+      </div>
+    }
+  </div>
+  </div>
+
+  <div class="flex justify-center flex-col w-1/3 space-y-4.5">
+    <div class="my-15"></div>
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Model</label>
+      <input
+        type="text"
+        formControlName="model"
+        class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+        [class.border-neutral-200]="!isInvalid('model')"
+        [class.focus:ring-lime-200]="!isInvalid('model')"
+        [class.border-red-400]="isInvalid('model')"
+        [class.focus:ring-red-200]="isInvalid('model')"
+      />
+      @if (f.model.touched && f.model.hasError('required')) {
+        <p class="mt-1 text-xs text-red-500">Required</p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Type</label>
+      <select
+        id="type"
+        name="type"
+        formControlName="type"
+        class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 pr-6 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+        [class.border-neutral-200]="!isInvalid('type')"
+        [class.focus:ring-lime-200]="!isInvalid('type')"
+        [class.border-red-400]="isInvalid('type')"
+        [class.focus:ring-red-200]="isInvalid('type')"
+      >
+        <option value="" disabled>Select an option</option>
+        <option value="standard">Standard</option>
+        <option value="van">Van</option>
+        <option value="luxury">Luxury</option>
+      </select>
+      @if (f.type.touched && f.type.hasError('required')) {
+        <p class="mt-1 text-xs text-red-500">Required</p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Plate No.</label>
+      <input
+        type="text"
+        formControlName="plateNumber"
+        class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+        [class.border-neutral-200]="!isInvalid('plateNumber')"
+        [class.focus:ring-lime-200]="!isInvalid('plateNumber')"
+        [class.border-red-400]="isInvalid('plateNumber')"
+        [class.focus:ring-red-200]="isInvalid('plateNumber')"
+      />
+      @if (f.plateNumber.touched && f.plateNumber.invalid) {
+        <p class="mt-1 text-xs text-red-500">Required</p>
+      }
+    </div>
+
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Seats</label>
+      <input
+        type="number"
+        formControlName="seats"
+        class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+        [class.border-neutral-200]="!isInvalid('seats')"
+        [class.focus:ring-lime-200]="!isInvalid('seats')"
+        [class.border-red-400]="isInvalid('seats')"
+        [class.focus:ring-red-200]="isInvalid('seats')"
+      />
+      @if (f.seats.touched && f.seats.invalid) {
+        <p class="mt-1 text-xs text-red-500">Required</p>
+      }
+    </div>
+
+    <div class="flex flex-row justify-around">
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Baby Allowed</label>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" class="sr-only peer" formControlName="babiesAllowed">
+
+        <div
+          class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
+        ></div>
+
+        <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
+        ></div>
+      </label>
+    </div>
+    <div>
+      <label class="block text-[12px] text-neutral-300 mb-2.5">Pets Allowed</label>
+      <label class="relative inline-flex items-center cursor-pointer">
+        <input type="checkbox" class="sr-only peer" formControlName="petsAllowed">
+
+        <div
+          class="w-15 h-8.5 bg-gray-300 rounded-full peer-focus:ring-2 peer-focus:ring-[#C5E55D] peer-checked:bg-[#C5E55D] transition-colors duration-300"
+        ></div>
+
+        <div class="absolute left-1 top-1 w-6.5 h-6.5 bg-white rounded-full transition-transform duration-300 peer-checked:translate-x-6.5"
+        ></div>
+      </label>
+    </div>
+    </div>
+  </div>
+</form>
+</div>
