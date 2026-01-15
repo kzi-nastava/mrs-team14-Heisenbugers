@@ -10,6 +10,10 @@ import {
 import {Router, RouterLink} from '@angular/router';
 import {NgIcon, provideIcons} from '@ng-icons/core';
 
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from '../auth.service';
+import { RegisterPassengerRequestDTO } from '../auth.api';
+
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
   const c = group.get('confirmPassword')?.value;
@@ -49,7 +53,8 @@ export class RegisterComponent {
   }
 
 
-
+  private auth = inject(AuthService);
+  serverError: string | null = null;
   private fb = inject(FormBuilder);
 
 
@@ -96,14 +101,38 @@ export class RegisterComponent {
   }
 
   submit() {
+    console.log('SUBMIT CLICKED', this.form.value, this.form.valid);
     this.submitAttempted = true;
+    this.serverError = null;
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
 
+    const dto: RegisterPassengerRequestDTO = {
+      email: this.f.email.value!,
+      password: this.f.password.value!,
+      confirmPassword: this.f.confirmPassword.value!,
+      firstName: this.f.firstName.value!,
+      lastName: this.f.lastName.value!,
+      phone: this.f.phone.value!,
+      address: this.f.address.value!,
+      profileImageUrl: null
+    };
 
-    this.submitted = true;
-    // toast/snackbar
+    this.auth.register(dto).subscribe({
+      next: () => {
+        this.submitted = true; // "Activation email sent..."
+      },
+      error: (err: HttpErrorResponse) => {
+        this.submitted = false;
+        const msg = err.error?.message ?? 'Registration failed.';
+
+        if (err.status === 409) this.serverError = msg;       // Email already exists
+        else if (err.status === 400) this.serverError = msg;  // validation
+        else this.serverError = msg;
+      }
+    });
   }
 }

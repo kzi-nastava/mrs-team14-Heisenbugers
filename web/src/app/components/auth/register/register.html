@@ -167,6 +167,12 @@
           Register
         </button>
 
+        @if (serverError) {
+          <div class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            {{ serverError }}
+          </div>
+        }
+
         <p class="text-[10px] text-neutral-300 text-center leading-snug -mt-2">
           By clicking the Sign Up button, you accept the<br />
           <a class="underline" href="#" (click)="$event.preventDefault()">terms</a>

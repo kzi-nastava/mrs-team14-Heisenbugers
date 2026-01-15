@@ -7,7 +7,6 @@ import {NgIcon, provideIcons} from '@ng-icons/core';
 
 
 
-
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -20,11 +19,11 @@ import {NgIcon, provideIcons} from '@ng-icons/core';
 export class LoginComponent {
 
   constructor(private router: Router) {
-    
+
   }
 
   private fb = inject(FormBuilder);
-
+  activatedMsg = false;
   submitAttempted = false;
   showPassword = false;
 
