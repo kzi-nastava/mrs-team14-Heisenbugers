@@ -12,7 +12,7 @@ import {
     from '@ng-icons/bootstrap-icons';
 import { RideInfo } from './driver-info.model';
 import { Router } from '@angular/router';
-import { RateModal } from "../../rate-modal/rate-modal.component";
+import { RateModal } from "../rate-modal/rate-modal.component";
 
 
 
