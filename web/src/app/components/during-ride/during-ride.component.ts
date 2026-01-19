@@ -1,11 +1,11 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { carSelectedIcon, MapComponent } from '../components/map/map.component';
+import { carSelectedIcon, MapComponent } from '../map/map.component';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
-import { MapPin } from '../components/map/map.component';
+import { MapPin } from '../map/map.component';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RateModal } from "../rate-modal/rate-modal.component";
-import { RideInfo } from '../components/driver-ride-history/driver-info.model';
+import { RideInfo } from '../driver-ride-history/driver-info.model';
 
 
 @Component({
