@@ -5,6 +5,7 @@ import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
+import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.models.services.AuthService;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -15,13 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
 
-@CrossOrigin(
-        origins = "http://localhost:4200",
-        allowedHeaders = "*",
-        methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS}
-)
+
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
@@ -29,6 +27,9 @@ public class AuthController {
 
     private AuthService authService;
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtService jwtService;
 
 
 
@@ -57,8 +58,18 @@ public class AuthController {
                     .body(new MessageResponse("Invalid credentials."));
         }
 
+        String role = resolveRole(user);
+
+        String token = jwtService.generateToken(
+                user.getEmail(),
+                Map.of(
+                        "userId", user.getId().toString(),
+                        "role", role
+                )
+        );
+
         LoginResponseDTO resp = new LoginResponseDTO(
-                "dummy.jwt.token",
+                token,
                 "Bearer",
                 user.getId(),
                 resolveRole(user)
