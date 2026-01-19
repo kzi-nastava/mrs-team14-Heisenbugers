@@ -1,5 +1,5 @@
-<div class="flex flex-col items-center z-50 gap-5">
-  <h1>
+<div class="flex flex-col justify-center z-50 gap-5 p-4">
+  <h1 class="text-3xl font-bold">
     New order
   </h1>
   <div class="flex flex-col">
@@ -19,21 +19,83 @@
     </div>
   </div>
   <div class="flex flex-col">
-    <label>
+    <label class="mb-2">
       Passangers:
     </label>
-    <div class="flex flex-row align-middle">
-      <label
-        class="w-full max-w-10 mb-5 aspect-4/4 rounded-full bg-neutral-200 flex items-center justify-center relative overflow-hidden mx-auto"
-      >
-        <img
-          src="icons/logo.svg"
-          alt="Profile preview"
-          class="absolute inset-0 w-full h-full object-fit" />
-      </label>
-      <p>
-        Name
-      </p>
+    <div>
+      <div class="flex gap-2 items-center">
+        <div class="grid grid-cols-2 gap-2">
+          <!--@for(p of ride.passengers; track p){-->
+            <div class="flex items-center w-50 gap-2">
+              <div
+                class="w-10 aspect-square rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden"
+              >
+                <img
+                  src="icons/logo.svg"
+                  alt="Passanger profile"
+                  class="w-full h-full" />
+              </div>
+
+                <span class="leading-none">Name Surname</span>
+            </div>
+          <div class="flex items-center w-50 gap-2">
+            <div
+              class="w-10 aspect-square rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden"
+            >
+              <img
+                src="icons/logo.svg"
+                alt="Passanger profile"
+                class="w-full h-full" />
+            </div>
+
+            <span class="leading-none">Name Surname</span>
+          </div>
+          <div class="flex items-center w-50 gap-2">
+            <div
+              class="w-10 aspect-square rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden"
+            >
+              <img
+                src="icons/logo.svg"
+                alt="Passanger profile"
+                class="w-full h-full" />
+            </div>
+
+            <span class="leading-none">Name Surname</span>
+          </div>
+          <!--}-->
+        </div>
+      </div>
     </div>
+
+  </div>
+  <div class="flex flex-row justify-start items-center gap-2">
+    <label>
+      Distance:
+    </label>
+    <div class="bg-white rounded-2xl p-1 px-5 justify-start items-center justify-items-start border-black border">
+      <p>15 km</p>
+    </div>
+  </div>
+  <div class="flex flex-row items-center gap-2">
+    <label class="mr-6">
+      Time:
+    </label>
+    <div class="bg-white rounded-2xl p-1 px-5 justify-start items-center justify-items-start border-black border">
+      <p>35 min</p>
+    </div>
+  </div>
+  <div class="flex flex-row">
+    <button
+      type="button"
+      class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] mt-15 cursor-pointer"
+    >
+      Start
+    </button>
+    <button
+      type="button"
+      class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-white border border-[#00000080] text-black font-semibold shadow hover:bg-gray-200 active:scale-[0.99] mt-15 cursor-pointer"
+    >
+      Cancel
+    </button>
   </div>
 </div>
