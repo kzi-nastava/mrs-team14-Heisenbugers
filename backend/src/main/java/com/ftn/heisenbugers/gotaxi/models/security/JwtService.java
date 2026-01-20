@@ -11,6 +11,7 @@ import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class JwtService {
@@ -49,5 +50,14 @@ public class JwtService {
 
     public String extractEmail(String token) {
         return parseClaims(token).getSubject();
+    }
+
+    public UUID extractUserId(String token) {
+        String uid = parseClaims(token).get("uid", String.class);
+        return uid != null ? UUID.fromString(uid) : null;
+    }
+
+    public String extractRole(String token) {
+        return parseClaims(token).get("role", String.class);
     }
 }
