@@ -20,6 +20,9 @@ public class Driver extends User {
     @NotNull
     private boolean available = false;
 
+    @NotNull
+    private boolean active = false;
+
     private int activeHoursLast24h;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
