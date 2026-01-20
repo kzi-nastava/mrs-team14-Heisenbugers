@@ -11,7 +11,8 @@ import { RideCardComponent } from './components/driver-ride-history/ride-card/ri
 import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
 import { MapComponent } from './components/map/map.component';
 import {DriverRegistrationComponent} from './components/auth/driver-registration/driver-registration.component';
-import { ScheduledRides } from './components/scheduled-rides/scheduled-rides.component';
+import { ScheduledRides } from './scheduled-rides/scheduled-rides.component';
+import {StartRideComponent} from './components/start-ride/start-ride.component';
 
 /*
 export const routes: Routes = [
@@ -50,6 +51,7 @@ export const routes: Routes = [
       { path: 'driver-ride-history', component: RideHistoryComponent },
       { path: 'driver-ride-history/ride', component: RideCardComponent },
       { path: 'driver-registration', component: DriverRegistrationComponent},
+      { path: 'start-ride', component: StartRideComponent},
     ]
   }
 ];
