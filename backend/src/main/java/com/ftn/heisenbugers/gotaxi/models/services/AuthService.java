@@ -1,9 +1,14 @@
 package com.ftn.heisenbugers.gotaxi.models.services;
 
+import com.ftn.heisenbugers.gotaxi.models.Administrator;
+import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.LoginRequestDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.LoginResponseDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RegisterPassengerRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.security.ActivationToken;
+import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.repositories.ActivationTokenRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -21,6 +27,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final ActivationTokenRepository activationTokenRepository;
     private final EmailService emailService;
+    private final JwtService jwtService;
 
 
     public UUID registerPassenger(RegisterPassengerRequestDTO request, String appBaseUrl) {
@@ -45,7 +52,7 @@ public class AuthService {
 
         Passenger p = new Passenger();
         p.setEmail(normalizedEmail);
-        p.setPasswordHash(request.getPassword()); // PasswordEncoder позже обсудим
+        p.setPasswordHash(request.getPassword()); // PasswordEncoder wil be hash?
         p.setFirstName(request.getFirstName());
         p.setLastName(request.getLastName());
         p.setPhone(request.getPhone());
@@ -108,4 +115,50 @@ public class AuthService {
     }
 
 
+    public LoginResponseDTO login(LoginRequestDTO dto) {
+        if (dto.getEmail() == null || dto.getEmail().isBlank()
+                || dto.getPassword() == null || dto.getPassword().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email and password are required.");
+        }
+
+        String normalizedEmail = dto.getEmail().trim().toLowerCase();
+
+        User user = userRepository.findByEmail(normalizedEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials."));
+
+        if (!user.isActivated()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is not activated.");
+        }
+
+        // will be passwordEncoder.matches(...)
+        if (!user.getPasswordHash().equals(dto.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
+        }
+
+        String role = resolveRole(user);
+
+        Map<String, Object> claims = Map.of(
+                "uid", user.getId().toString(),
+                "role", role
+        );
+
+        String token = jwtService.generateToken(user.getEmail(), claims);
+
+        return new LoginResponseDTO(
+                token,
+                "Bearer",
+                user.getId(),
+                role
+        );
+    }
+
+    private String resolveRole(User user) {
+        if (user instanceof Driver) {
+            return "DRIVER";
+        } else if (user instanceof Administrator) {
+            return "ADMIN";
+        } else {
+            return "PASSENGER";
+        }
+    }
 }
