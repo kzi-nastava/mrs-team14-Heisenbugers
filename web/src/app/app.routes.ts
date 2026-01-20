@@ -10,7 +10,6 @@ import { RideHistoryComponent } from './components/driver-ride-history/driver-ri
 import { RideCardComponent } from './components/driver-ride-history/ride-card/ride-card.component';
 import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
 import { MapComponent } from './components/map/map.component';
-import { DuringRide } from './during-ride/during-ride.component';
 import {DriverRegistrationComponent} from './components/auth/driver-registration/driver-registration.component';
 import { ScheduledRides } from './scheduled-rides/scheduled-rides.component';
 import {StartRideComponent} from './components/start-ride/start-ride.component';

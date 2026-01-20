@@ -29,5 +29,11 @@ public class GlobalExceptionHandler {
         return Map.of("error", "Resource not found", "details", ex.getMessage());
     }
 
+    @ExceptionHandler(NumberFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleNumberFormatException(NumberFormatException ex) {
+        return Map.of("error", "Invalid format", "details", ex.getMessage());
+    }
+
 
 }
