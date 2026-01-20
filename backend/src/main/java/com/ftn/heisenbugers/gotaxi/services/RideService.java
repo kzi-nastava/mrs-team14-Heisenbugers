@@ -122,6 +122,10 @@ public class RideService {
     public void rate(UUID rideId, int driverScore, int vehicleScore, String comment) {
         Ride ride = rideRepository.findById(rideId).get();
 
+        if (!isInLastNDays(ride, 3)) {
+            return;
+        }
+
         Rating rating = new Rating();
         rating.setRide(ride);
         rating.setDriverScore(driverScore);
@@ -129,5 +133,9 @@ public class RideService {
 
         rating.setComment(comment);
         ratingRepository.save(rating);
+    }
+
+    private boolean isInLastNDays(Ride r, long n) {
+        return r.getEndedAt().isAfter(LocalDateTime.now().minusDays(n));
     }
 }
