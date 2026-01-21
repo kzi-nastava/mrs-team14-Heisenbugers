@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RateModal } from './rate-modal';
+import { RateModal } from './rate-modal.component';
 
 describe('RateModal', () => {
   let component: RateModal;

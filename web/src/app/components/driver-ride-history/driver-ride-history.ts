@@ -13,6 +13,12 @@ import {
 import { RideInfo } from './driver-info.model';
 import { Router } from '@angular/router';
 import { RateModal } from "../rate-modal/rate-modal.component";
+import { HttpClient } from '@angular/common/http';
+import { OnInit } from '@angular/core';
+import { ChangeDetectorRef } from '@angular/core';
+
+
+
 
 
 
@@ -33,21 +39,23 @@ standalone: true,
     })]
 })
 export class RideHistoryComponent {
+  private baseUrl = 'http://localhost:8081/api';
   sort: 'date' | 'price' | 'route' = 'date';
   ratingRide: RideInfo | null = null;
 
-  rides: RideInfo[] = [
-  ...Array.from({ length: 4 }).map(() => ({
-    id: 'ride-' + Math.random().toString(36).substr(2, 9),
+  rides: RideInfo[] = [];
+  mockRides: RideInfo[] = [
+    ...Array.from({ length: 4 }).map(() => ({
+    rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
-    startLocation: 'ул.Атамана Головатого 2а',
-    finishLocation: 'ул.Красная 113',
-    startTime: new Date('2025-12-19T08:12:00'),
-    endTime: new Date('2025-12-19T10:12:00'),
+    startAddress: 'ул.Атамана Головатого 2а',
+    endAddress: 'ул.Красная 113',
+    startedAt: new Date('2025-12-19T08:12:00'),
+    endedAt: new Date('2025-12-19T10:12:00'),
     price: 350,
     rating: 3.5,
     maxRating: 5,
-    cancelled: false,
+    canceled: false,
     passengers: [
       {firstName: 'Alice', lastName: 'Alisic'},
       {firstName: 'Bob', lastName: 'Bobic'},
@@ -55,19 +63,19 @@ export class RideHistoryComponent {
       {firstName: 'Denise', lastName: 'Denisic'}
     ],
     trafficViolations: [{type: 'Red light'}],
-    wasPanic: false
+    panicTriggered: false
   })),
   {
-    id: 'ride-panic-' + Math.random().toString(36).substr(2, 9),
+    rideId: 'ride-panic-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
-    startLocation: 'ул.Атамана Головатого 2а',
-    finishLocation: 'ул.Красная 113',
-    startTime: new Date('2025-12-19T08:12:00'),
-    endTime: new Date('2025-12-19T10:12:00'),
+    startAddress: 'ул.Атамана Головатого 2а',
+    endAddress: 'ул.Красная 113',
+    startedAt: new Date('2025-12-19T08:12:00'),
+    endedAt: new Date('2025-12-19T10:12:00'),
     price: 350,
     rating: 3.5,
     maxRating: 5,
-    cancelled: false,
+    canceled: false,
     passengers: [
       {firstName: 'Alice', lastName: 'Alisic'},
       {firstName: 'Bob', lastName: 'Bobic'},
@@ -75,20 +83,41 @@ export class RideHistoryComponent {
       {firstName: 'Denise', lastName: 'Denisic'}
     ],
     trafficViolations: [{type: 'Red light'}],
-    wasPanic: true
-  }
-];
+    panicTriggered: true
+  }];
 
-constructor(private router: Router) {
-  
+
+constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {
+
 }
+
+  ngOnInit(): void {
+    this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`).subscribe({
+      next: (data) => {
+        this.rides = data.map(r => ({
+          ...r,
+          startedAt: new Date(r.startedAt),
+          endedAt: new Date(r.endedAt)
+    }));
+    this.cdr.markForCheck();
+
+
+      },
+      error: (error) => {
+        console.warn('Using mock data due to error fetching ride history:', error);
+        this.rides = this.mockRides;
+      }
+    });
+    
+  }
+
 
   setSort(type: 'date' | 'price' | 'route') {
     this.sort = type;
   }
 
-  goToRide(){
-    this.router.navigate(['/driver-ride-history/ride'])
+  goToRide(ride: RideInfo){
+    this.router.navigate(['/driver-ride-history/ride'], {state: {ride: ride}})
   }
 
   openRateModal(ride: RideInfo) {

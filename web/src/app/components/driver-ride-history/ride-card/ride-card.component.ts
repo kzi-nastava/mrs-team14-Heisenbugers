@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input } from '@angular/core';
 
 import { RideInfo } from '../driver-info.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
@@ -15,42 +15,37 @@ import { Router } from '@angular/router';
   viewProviders: [provideIcons({bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle, bootstrapClock, bootstrapCash, bootstrapArrowRight, bootstrapArrowLeft})]
 })
 export class RideCardComponent {
-  @Input() ride: RideInfo = {
-    id: '',
-    driverName: 'Vozac Vozacovic',
-    startLocation: 'ул.Атамана Головатого 2а',
-    finishLocation: 'ул.Красная 113',
-    startTime: new Date('2025-12-19T08:12:00'),
-    endTime: new Date('2025-12-19T10:12:00'),
-    price: 350,
-    rating: 3.5,
-    maxRating: 5,
-    cancelled: false,
-    passengers: [
-      {firstName: 'Alice', lastName: 'Alisic'},
-      {firstName: 'Bob', lastName: 'Bobic'},
-      {firstName: 'Carl', lastName: 'Carlic'},
-      {firstName: 'Denise', lastName: 'Denisic'}
-    ],
-    trafficViolations: [{type: 'Red light'}],
-    wasPanic: true
-  };
+  ride?: RideInfo;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {
+    setTimeout(() => {
+      this.ride = history.state.ride;
+      cdr.markForCheck();
+    })
     
+  }
+
+  ngOnInit() {
+    /*Promise.resolve().then(() => {
+      this.ride = history.state.ride
+    });
+    */
   }
   
 
   getFormattedTime(): string {
-    const startTime = this.ride.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const endTime = this.ride.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const startTime = this.ride?.startedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const endTime = this.ride?.endedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     return `${startTime} - ${endTime}`;
   }
 
   getStars(): { full: number[], half: boolean, empty: number[] } {
-    const fullStars = Math.floor(this.ride.rating);
-    const hasHalfStar = this.ride.rating % 1 >= 0.5;
-    const emptyStars = this.ride.maxRating - fullStars - (hasHalfStar ? 1 : 0);
+    let rating = this.ride?.rating? this.ride?.rating : 0
+    let maxRating = this.ride?.maxRating? this.ride?.maxRating : 5
+
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = maxRating - fullStars - (hasHalfStar ? 1 : 0);
     
     return {
       full: Array(fullStars).fill(0),
@@ -60,7 +55,8 @@ export class RideCardComponent {
   }
 
   get stars(): number[]{
-    return Array(this.ride.rating).fill(0);
+    let rating = this.ride?.rating? this.ride?.rating : 0
+    return Array(rating).fill(0);
   }
 
   goBack(){
