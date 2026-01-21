@@ -1,4 +1,37 @@
 package com.ftn.heisenbugers.gotaxi;
+
+import com.ftn.heisenbugers.gotaxi.models.Passenger;
+import com.ftn.heisenbugers.gotaxi.models.Ride;
+import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Component
+public class DataLoader implements CommandLineRunner {
+    private final RideRepository rideRepository;
+    private final UserRepository userRepository;
+
+    public DataLoader(RideRepository rideRepository, UserRepository userRepository) {
+        this.rideRepository = rideRepository;
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        Ride r = rideRepository.findRideById(UUID.fromString("80fca1af-445c-4d2b-b2a1-da8da8c038f8"));
+        User p = userRepository.findById(UUID.fromString("874645b9-4653-4ac8-8bed-279a6b3d8762")).orElseThrow();
+        List<Passenger> ps = new ArrayList<>();
+        ps.add((Passenger) p);
+        r.setPassengers(ps);
+        rideRepository.save(r);
+    }
+}
 /*
 import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Location;

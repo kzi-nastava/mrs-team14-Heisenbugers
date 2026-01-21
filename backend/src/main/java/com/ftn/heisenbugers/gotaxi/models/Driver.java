@@ -21,7 +21,7 @@ public class Driver extends User {
     private boolean available = false;
 
     @NotNull
-    private boolean active = false;
+    private boolean working = false;
 
     private int activeHoursLast24h;
 
@@ -36,4 +36,13 @@ public class Driver extends User {
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Ride> rides;
+
+    @Override
+    public String toString() {
+        return "Driver{" +
+                "id=" + getId() +
+                ", email='" + getEmail() + '\'' +
+                // don't include vehicle here
+                '}';
+    }
 }
