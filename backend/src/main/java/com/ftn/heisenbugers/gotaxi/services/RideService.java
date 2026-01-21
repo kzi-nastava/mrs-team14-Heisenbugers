@@ -24,7 +24,8 @@ public class RideService {
     private final TrafficViolationRepository violationRepository;
     private final RatingRepository ratingRepository;
 
-    public RideService(RideRepository rideRepository, UserRepository userRepository, TrafficViolationRepository violationRepository, RatingRepository ratingRepository) {
+    public RideService(RideRepository rideRepository, UserRepository userRepository,
+                       TrafficViolationRepository violationRepository, RatingRepository ratingRepository) {
         this.rideRepository = rideRepository;
         this.userRepository = userRepository;
         this.violationRepository = violationRepository;
@@ -67,7 +68,8 @@ public class RideService {
         if (route != null) {
             // Convert route locations to DTOs
             routeDTOs = route.getStops().stream()
-                    .map(location -> new LocationDTO(location.getLatitude(), location.getLongitude(), location.getAddress()))
+                    .map(location -> new LocationDTO(location.getLatitude(),
+                            location.getLongitude(), location.getAddress()))
                     .toList();
         }
 
@@ -107,31 +109,39 @@ public class RideService {
         return true;
     }
 
-    public boolean finish(UUID rideId) {
+    public boolean finish(UUID rideId, UUID driverId) {
+        Driver driver = (Driver) userRepository.findById(driverId).get();
         Ride ride = rideRepository.findById(rideId).get();
-        if (ride.getStatus() != RideStatus.ONGOING) {
+        Driver rideDriver = ride.getDriver();
+        if (ride.getStatus() != RideStatus.ONGOING || driver != rideDriver) {
             return false;
         }
 
         ride.setEndedAt(LocalDateTime.now());
         ride.setStatus(RideStatus.FINISHED);
+        ride.setLastModifiedBy(driver);
         rideRepository.save(ride);
         return true;
     }
 
-    public void rate(UUID rideId, int driverScore, int vehicleScore, String comment) {
+    public void rate(UUID rideId, UUID raterId, int driverScore, int vehicleScore, String comment) {
         Ride ride = rideRepository.findById(rideId).get();
+        User rater = userRepository.findById(raterId).get();
+
 
         if (!isInLastNDays(ride, 3)) {
             return;
         }
 
         Rating rating = new Rating();
+        
         rating.setRide(ride);
+        rating.setRater(rater);
         rating.setDriverScore(driverScore);
         rating.setVehicleScore(vehicleScore);
-
         rating.setComment(comment);
+
+        rating.setLastModifiedBy(rater);
         ratingRepository.save(rating);
     }
 

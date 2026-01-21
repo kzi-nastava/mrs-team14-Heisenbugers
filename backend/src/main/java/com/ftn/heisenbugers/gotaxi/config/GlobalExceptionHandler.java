@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.config;
 
+import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -33,6 +34,12 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleNumberFormatException(NumberFormatException ex) {
         return Map.of("error", "Invalid format", "details", ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidUserType.class)
+    @ResponseStatus(HttpStatus.BAD_GATEWAY)
+    public Map<String, String> handleInvalidUserType(InvalidUserType ex) {
+        return Map.of("error", "Invalid user type", "details", ex.getMessage() != null ? ex.getMessage() : "");
     }
 
 

@@ -1,5 +1,7 @@
 package com.ftn.heisenbugers.gotaxi.models.security;
 
+import com.ftn.heisenbugers.gotaxi.models.Driver;
+import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import io.jsonwebtoken.JwtException;
@@ -7,7 +9,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             String email = jwtService.extractEmail(token);
+            System.out.println("JWT email: " + email);
 
             if (email != null &&
                     SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -62,7 +64,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
 
 
-                    String role = user.getClass().getSimpleName().toUpperCase(); // PASSENGER / DRIVER / ADMIN
+                    String role = user instanceof Driver ? "DRIVER" :
+                            user instanceof Passenger ? "PASSENGER" :
+                                    "ADMIN"; // PASSENGER / DRIVER / ADMIN
 
                     var authorities = List.of(
                             new SimpleGrantedAuthority("ROLE_" + role)
@@ -80,7 +84,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (JwtException | IllegalArgumentException ex) {
-
+            System.out.println("JWT ERROR: " + ex);
         }
 
         filterChain.doFilter(request, response);
