@@ -37,7 +37,7 @@ public class Ride extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "start_id")
     private Location start;
-    
+
     @ManyToOne
     @JoinColumn(name = "end_id")
     private Location end;
@@ -75,4 +75,12 @@ public class Ride extends BaseEntity {
 
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL)
     private PanicEvent panicEvent;
+
+    public void addPassenger(Passenger p) {
+        this.passengers.add(p);
+    }
+
+    public String toString() {
+        return "Ride{id=" + this.getId() + "}";
+    }
 }

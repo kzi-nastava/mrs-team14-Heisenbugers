@@ -1,9 +1,8 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,6 +17,6 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class Passenger extends User {
 
-    @OneToMany(mappedBy = "passengers", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "passengers", fetch = FetchType.EAGER)
     private List<Ride> rides;
 }
