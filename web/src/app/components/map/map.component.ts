@@ -16,6 +16,10 @@ export interface MapPin {
   popup?: string | HTMLElement;
   iconUrl?: string;
 }
+export type RouteSummary = {
+  distanceKm: number;
+  timeMin: number;
+};
 
 @Component({
   selector: 'app-map',
@@ -27,6 +31,10 @@ export class MapComponent implements AfterViewInit, OnChanges {
   @Input({ transform: booleanAttribute }) goBelow = false;
   private map!: L.Map;
   private markers: L.Marker[] = [];
+
+
+
+  private routingControl: any | null = null;
 
   ngAfterViewInit(): void {
     this.map = L.map('map', { zoomControl: false }).setView([45.2396, 19.8227], 15);
@@ -57,6 +65,60 @@ export class MapComponent implements AfterViewInit, OnChanges {
     }
   }
 
+
+  showRoute(from: L.LatLng, to: L.LatLng, stops: L.LatLng[] = []): Promise<RouteSummary> {
+    return new Promise((resolve, reject) => {
+      if (!this.map) {
+        reject(new Error('Map is not initialized yet'));
+        return;
+      }
+
+      // delete last route
+      if (this.routingControl) {
+        this.map.removeControl(this.routingControl);
+        this.routingControl = null;
+      }
+
+      const waypoints = [from, ...stops, to];
+
+      const Routing = (L as any).Routing;
+      if (!Routing) {
+        reject(new Error('Leaflet Routing Machine is not available (L.Routing is undefined).'));
+        return;
+      }
+
+      this.routingControl = Routing.control({
+        waypoints,
+        router: Routing.osrmv1({
+          serviceUrl: 'https://router.project-osrm.org/route/v1',
+        }),
+        addWaypoints: false,
+        draggableWaypoints: false,
+        routeWhileDragging: false,
+        show: false,
+        fitSelectedRoutes: true,
+        createMarker: () => null,
+        lineOptions: { styles: [{ weight: 5, opacity: 0.8 }] },
+      }).addTo(this.map);
+
+      this.routingControl.on('routesfound', (e: any) => {
+        const route = e?.routes?.[0];
+        const distM = Number(route?.summary?.totalDistance ?? 0);
+        const timeS = Number(route?.summary?.totalTime ?? 0);
+
+        resolve({
+          distanceKm: Math.round((distM / 1000) * 10) / 10,   // 1 знак
+          timeMin: Math.max(1, Math.round(timeS / 60)),
+        });
+      });
+
+      this.routingControl.on('routingerror', (e: any) => {
+        reject(e);
+      });
+    });
+  }
+
+
   private renderPins(pinArgs: MapPin[]) {
     // remove old markers
     this.markers.forEach(m => m.remove());
@@ -84,7 +146,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
             marker.bindPopup(pin.popup);
         }
         this.markers.push(marker);
-        
+
         });
     }
     private snapPinsToRoad(): Promise<MapPin[]> {
@@ -95,7 +157,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
                 pin.lng = snappedLatLng.lng;
             }
             return pin;
-            
+
         });
 
         return Promise.all(snapPromises);
