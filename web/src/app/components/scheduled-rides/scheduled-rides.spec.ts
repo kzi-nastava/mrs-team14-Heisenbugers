@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ScheduledRides } from './scheduled-rides';
+import { ScheduledRides } from './scheduled-rides.component';
 
 describe('ScheduledRides', () => {
   let component: ScheduledRides;

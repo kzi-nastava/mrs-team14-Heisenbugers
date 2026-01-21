@@ -16,16 +16,16 @@ import { Router } from '@angular/router';
 })
 export class RideCardComponent {
   @Input() ride: RideInfo = {
-    id: '',
+   rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
-    startLocation: 'ул.Атамана Головатого 2а',
-    finishLocation: 'ул.Красная 113',
-    startTime: new Date('2025-12-19T08:12:00'),
-    endTime: new Date('2025-12-19T10:12:00'),
+    startAddress: 'ул.Атамана Головатого 2а',
+    endAddress: 'ул.Красная 113',
+    startedAt: new Date('2025-12-19T08:12:00'),
+    endedAt: new Date('2025-12-19T10:12:00'),
     price: 350,
     rating: 3.5,
     maxRating: 5,
-    cancelled: false,
+    canceled: false,
     passengers: [
       {firstName: 'Alice', lastName: 'Alisic'},
       {firstName: 'Bob', lastName: 'Bobic'},
@@ -33,7 +33,7 @@ export class RideCardComponent {
       {firstName: 'Denise', lastName: 'Denisic'}
     ],
     trafficViolations: [{type: 'Red light'}],
-    wasPanic: true
+    panicTriggered: false
   };
 
   constructor(private router: Router) {
@@ -42,8 +42,8 @@ export class RideCardComponent {
   
 
   getFormattedTime(): string {
-    const startTime = this.ride.startTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const endTime = this.ride.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const startTime = this.ride.startedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const endTime = this.ride.endedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     return `${startTime} - ${endTime}`;
   }
 

@@ -21,16 +21,16 @@ export class DuringRide {
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   
   ride: RideInfo = {
-    id: 'ride-123',
+    rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
-    startLocation: 'ул.Атамана Головатого 2а',
-    finishLocation: 'ул.Красная 113',
-    startTime: new Date('2025-12-19T08:12:00'),
-    endTime: new Date('2025-12-19T10:12:00'),
+    startAddress: 'ул.Атамана Головатого 2а',
+    endAddress: 'ул.Красная 113',
+    startedAt: new Date('2025-12-19T08:12:00'),
+    endedAt: new Date('2025-12-19T10:12:00'),
     price: 350,
+    rating: 3.5,
     maxRating: 5,
-    rating: 0,
-    cancelled: false,
+    canceled: false,
     passengers: [
       {firstName: 'Alice', lastName: 'Alisic'},
       {firstName: 'Bob', lastName: 'Bobic'},
@@ -38,8 +38,8 @@ export class DuringRide {
       {firstName: 'Denise', lastName: 'Denisic'}
     ],
     trafficViolations: [{type: 'Red light'}],
-    wasPanic: false,
-    rated: false
+    panicTriggered: false
+  
   };
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = true;

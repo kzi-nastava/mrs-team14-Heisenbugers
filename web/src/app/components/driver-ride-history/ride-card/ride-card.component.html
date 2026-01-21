@@ -8,20 +8,20 @@
         >
           <ng-icon name="bootstrapArrowLeft" class="my-3 mr-5 ml-5" size="20"></ng-icon>
         </div>
-        <span class="mr-4">{{ ride.startLocation }}</span>
+        <span class="mr-4">{{ ride.startAddress }}</span>
         <span class="mr-4 flex items-center">
           <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
-          {{ ride.startTime | date : 'HH:mm' }}
+          {{ ride.startedAt | date: 'HH:mm' }}
         </span>
         <ng-icon class="mr-4" name="bootstrapArrowRight"></ng-icon>
-        <span class="mr-4">{{ ride.finishLocation }}</span>
+        <span class="mr-4">{{ ride.endAddress }}</span>
         <span class="mr-4 flex items-center">
           <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
-          {{ ride.endTime | date : 'HH:mm' }}
+          {{ ride.endedAt | date: 'HH:mm' }}
         </span>
         <span class="ml-6 flex items-center">
           <ng-icon name="bootstrapCash" class="mr-1"></ng-icon>
-          <span>{{ ride.price | number : '1.2-2' }} RSD</span>
+          <span>{{ ride.price | number: '1.2-2' }} RSD</span>
         </span>
       </span>
     </div>
@@ -38,11 +38,11 @@
         </div>
         <div class="table-row align-top">
           <div class="table-cell pr-4 pb-4 text-gray-700">Start:</div>
-          <div class="table-cell">{{ ride.startLocation }}</div>
+          <div class="table-cell">{{ ride.startAddress }}</div>
         </div>
         <div class="table-row align-top">
           <div class="table-cell pr-4 pb-4 text-gray-700">Finish:</div>
-          <div class="table-cell">{{ ride.finishLocation }}</div>
+          <div class="table-cell">{{ ride.endAddress }}</div>
         </div>
         <div class="table-row align-top">
           <div class="table-cell pr-8 pb-4 text-gray-700">Time on the road:</div>
@@ -55,18 +55,20 @@
         <div class="table-row align-top mb-2">
           <div class="table-cell pr-4 pb-4 text-gray-700">Rating:</div>
           <div class="table-cell flex items-center gap-1">
-            @for(star of getStars().full; track star){
-            <ng-icon name="bootstrapStarFill"></ng-icon>
-            } @if(getStars().half){
-            <ng-icon name="bootstrapStarHalf"></ng-icon>
-            } @for(star of getStars().empty; track star){
-            <ng-icon name="bootstrapStar"></ng-icon>
+            @for (star of getStars().full; track star) {
+              <ng-icon name="bootstrapStarFill"></ng-icon>
+            }
+            @if (getStars().half) {
+              <ng-icon name="bootstrapStarHalf"></ng-icon>
+            }
+            @for (star of getStars().empty; track star) {
+              <ng-icon name="bootstrapStar"></ng-icon>
             }
           </div>
         </div>
         <div class="table-row align-top">
           <div class="table-cell pr-4 pb-2 text-gray-700">Cancelled:</div>
-          <div class="table-cell">{{ ride.cancelled ? 'Yes' : 'No' }}</div>
+          <div class="table-cell">{{ ride.canceled ? 'Yes' : 'No' }}</div>
         </div>
       </div>
 
@@ -75,37 +77,37 @@
         <div class="text-gray-700 text-sm mb-1">Passengers:</div>
         <div class="flex gap-2">
           <div class="grid grid-cols-2 gap-2">
-            @for(p of ride.passengers; track p){
-            <div class="flex items-center">
-              <ng-icon name="bootstrapPersonCircle" size="32" class="m-4"></ng-icon>
-              <span>{{ p.firstName }} {{ p.lastName }}</span>
-            </div>
+            @for (p of ride.passengers; track p) {
+              <div class="flex items-center">
+                <ng-icon name="bootstrapPersonCircle" size="32" class="m-4"></ng-icon>
+                <span>{{ p.firstName }} {{ p.lastName }}</span>
+              </div>
             }
           </div>
         </div>
       </div>
 
       <!-- VIOLATIONS -->
-      @if(ride.trafficViolations.length != 0){
-      <div>
-        <div class="text-gray-700 text-sm mb-2">Traffic violations:</div>
-        <div class="flex flex-wrap gap-2">
-          @for(v of ride.trafficViolations; track v){
-          <div class="flex items-center">
-            <span class="px-3 py-1 border rounded-full text-xs">{{ v.type }}</span>
+      @if (ride.trafficViolations?.length != 0) {
+        <div>
+          <div class="text-gray-700 text-sm mb-2">Traffic violations:</div>
+          <div class="flex flex-wrap gap-2">
+            @for (v of ride.trafficViolations; track v) {
+              <div class="flex items-center">
+                <span class="px-3 py-1 border rounded-full text-xs">{{ v.type }}</span>
+              </div>
+            }
           </div>
-          }
         </div>
-      </div>
       }
 
       <!-- PANIC -->
-      @if(ride.wasPanic){
-      <div class="text-center">
-        <span class="inline-block bg-red-500 text-white text-sm px-4 py-2 rounded-xl">
-          WAS PANIC
-        </span>
-      </div>
+      @if (ride.panicTriggered) {
+        <div class="text-center">
+          <span class="inline-block bg-red-500 text-white text-sm px-4 py-2 rounded-xl">
+            WAS PANIC
+          </span>
+        </div>
       }
     </div>
 

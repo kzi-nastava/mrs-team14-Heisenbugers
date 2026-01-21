@@ -42,52 +42,53 @@
 
     <!-- Ride list -->
     @for (r of rides; track r) {
-    <div
-      [class.border-2]="r.wasPanic"
-      [class.border-red-500]="r.wasPanic"
-      class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
-    >
-      <button
-        class="w-full text-left px-4 py-3 text-sm flex justify-between items-center cursor-pointer"
-        (click)="goToRide()"
+      <div
+        [class.border-2]="r.panicTriggered"
+        [class.border-red-500]="r.panicTriggered"
+        class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
       >
-        <span class="flex items-center">
-          <span class="mr-4">{{ r.startLocation }}</span>
-          <span class="mr-4 flex items-center">
-            <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
-            {{ r.startTime | date : 'HH:mm' }}
+        <button
+          class="w-full text-left px-4 py-3 text-sm flex justify-between items-center cursor-pointer"
+          (click)="goToRide()"
+        >
+          <span class="flex items-center">
+            <span class="mr-4">{{ r.startAddress }}</span>
+            <span class="mr-4 flex items-center">
+              <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
+              {{ r.startedAt | date: 'HH:mm' }}
+            </span>
+            <ng-icon class="mr-4" name="bootstrapArrowRight"></ng-icon>
+            <span class="mr-4">{{ r.endAddress }}</span>
+            <span class="mr-4 flex items-center">
+              <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
+              {{ r.endedAt | date: 'HH:mm' }}
+            </span>
+            <span class="ml-6 flex items-center">
+              <ng-icon name="bootstrapCash" class="mr-1"></ng-icon>
+              <span>{{ r.price | number: '1.2-2' }} RSD</span>
+            </span>
           </span>
-          <ng-icon class="mr-4" name="bootstrapArrowRight"></ng-icon>
-          <span class="mr-4">{{ r.finishLocation }}</span>
-          <span class="mr-4 flex items-center">
-            <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
-            {{ r.endTime | date : 'HH:mm' }}
-          </span>
-          <span class="ml-6 flex items-center">
-            <ng-icon name="bootstrapCash" class="mr-1"></ng-icon>
-            <span>{{ r.price | number : '1.2-2' }} RSD</span>
-          </span>
-        </span>
-        <div>
-          @if(r.wasPanic){
-          <ng-icon
-            name="bootstrapExclamationCircleFill"
-            color="red"
-            size="24"
-            class="mx-3"
-          ></ng-icon>
-          } @if(!r.rated){
-          <button class="cursor-pointer" (click)="$event.stopPropagation(); openRateModal(r)">
-            <ng-icon name="bootstrapFeather" size="24" class="mx-3"></ng-icon>
-          </button>
-          }
-        </div>
-      </button>
-    </div>
+          <div>
+            @if (r.panicTriggered) {
+              <ng-icon
+                name="bootstrapExclamationCircleFill"
+                color="red"
+                size="24"
+                class="mx-3"
+              ></ng-icon>
+            }
+            @if (!r.rated) {
+              <button class="cursor-pointer" (click)="$event.stopPropagation(); openRateModal(r)">
+                <ng-icon name="bootstrapFeather" size="24" class="mx-3"></ng-icon>
+              </button>
+            }
+          </div>
+        </button>
+      </div>
     }
   </main>
 </div>
 
 @if (this.ratingRide != null) {
-<app-rate-modal [ride]="this.ratingRide" (close)="closeRateModal()"></app-rate-modal>
+  <app-rate-modal [ride]="this.ratingRide" (close)="closeRateModal()"></app-rate-modal>
 }

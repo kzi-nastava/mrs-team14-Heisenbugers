@@ -1,6 +1,8 @@
 export interface Passenger {
   firstName: string;
   lastName: string,
+  passengerId?: string;
+  profileImageUrl?: string;
 }
 
 export interface TrafficViolation {
@@ -9,18 +11,19 @@ export interface TrafficViolation {
 }
 
 export interface RideInfo {
-  id: string;
-  driverName: string;
-  startLocation: string;
-  finishLocation: string;
-  startTime: Date;
-  endTime: Date;
+  rideId: string;
+  driverName?: string;
+  startAddress: string;
+  endAddress: string;
+  startedAt: Date;
+  endedAt: Date;
   price: number;
   rating: number;
   maxRating: number;
-  cancelled: boolean;
+  canceled: boolean;
+  canceledBy?: string;
   passengers: Passenger[];
-  trafficViolations: TrafficViolation[];
-  wasPanic: boolean;
+  trafficViolations?: TrafficViolation[];
+  panicTriggered: boolean;
   rated?: boolean;
 }
