@@ -2,11 +2,10 @@ import { Component } from '@angular/core';
 import { provideIcons } from "@ng-icons/core";
 import { bootstrapGeo } from "@ng-icons/bootstrap-icons";
 import { carAvailableIcon, carOccupiedIcon, MapComponent, MapPin } from "../map/map.component";
-import {RideBookingComponent} from '../ride-booking/ride-booking.component';
 
 @Component({
   selector: 'app-home',
-  imports: [MapComponent, RideBookingComponent],
+  imports: [MapComponent],
   templateUrl: './home.html',
   viewProviders: [provideIcons({ bootstrapGeo })]
 })
