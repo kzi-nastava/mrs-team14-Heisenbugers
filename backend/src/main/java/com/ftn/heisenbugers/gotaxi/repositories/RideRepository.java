@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.repositories;
 
+import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,4 +24,16 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
 
     List<Ride> findByDriverIdAndStartedAtBefore(UUID driverId, LocalDateTime end, Sort sort);
 
+    List<Ride> findByPassengersContaining(Passenger passenger, Sort sort);
+
+    List<Ride> findByPassengersContainingAndStartedAtBetween(Passenger passengers, LocalDateTime startedAt,
+                                                             LocalDateTime startedAt2, Sort sort);
+
+    List<Ride> findByPassengersContainingAndStartedAtAfter(Passenger passengers, LocalDateTime startedAt,
+                                                           Sort sort);
+
+    List<Ride> findByPassengersContainingAndStartedAtBefore(Passenger passengers, LocalDateTime startedAtBefore,
+                                                            Sort sort);
+
+    Ride findRideById(UUID id);
 }
