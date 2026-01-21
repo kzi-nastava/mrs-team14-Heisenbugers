@@ -116,8 +116,8 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
     this.sort = type;
   }
 
-  goToRide(){
-    this.router.navigate(['/driver-ride-history/ride'])
+  goToRide(ride: RideInfo){
+    this.router.navigate(['/driver-ride-history/ride'], {state: {ride: ride}})
   }
 
   openRateModal(ride: RideInfo) {
