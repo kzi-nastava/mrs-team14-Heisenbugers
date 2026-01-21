@@ -1,0 +1,96 @@
+<div class="absolute bg-white top-0 bottom-0 left-1/8 -translate-x-1/2 z-50 p-10">
+  <div class="flex flex-row items-center gap-5 mb-6">
+    <ng-icon name="bootstrapPinMapFill" size="26" class="pr-4"></ng-icon>
+    <input
+      type="text"
+      placeholder="Search"
+      class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3
+         focus:outline-none focus:ring-4 focus:ring-lime-200" />
+  </div>
+  <input
+    type="text"
+    placeholder="Start location"
+    class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3 mb-4
+       focus:outline-none focus:ring-4 focus:ring-lime-200" />
+  <input
+    type="text"
+    placeholder="End location"
+    class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3 mb-4
+       focus:outline-none focus:ring-4 focus:ring-lime-200" />
+  <div class="flex flex-row justify-between items-center mb-4">
+    <button type="button" class="cursor-pointer">
+      + Add
+    </button>
+    <button type="button" class="cursor-pointer">
+      Reset
+    </button>
+  </div>
+    <div class="border mt-20 border-gray-300 mb-5"></div>
+  <div class="flex flex-col gap-2 mb-4">
+    <label>
+      Linked passengers:
+    </label>
+    <div class="flex flex-row gap-4 items-center mb-4">
+      <div class="cursor-pointer items-center mt-1.5">
+        <ng-icon name="bootstrapPlusSquare" color="#77777780" size="33"></ng-icon>
+      </div>
+      <input
+        type="text"
+        placeholder="Email address"
+        class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3
+       focus:outline-none focus:ring-4 focus:ring-lime-200" />
+    </div>
+  </div>
+  <div class="flex flex-row gap-2 mb-8">
+    <div>
+      <img src="icons/standard.svg" class="border border-gray-400 rounded-2xl cursor-pointer">
+    </div>
+    <div>
+      <img src="icons/luxury.svg" class="border border-gray-400 rounded-2xl cursor-pointer">
+    </div>
+    <div>
+      <img src="icons/van.svg" class="border border-gray-400 rounded-2xl cursor-pointer">
+    </div>
+  </div>
+
+  <div class="flex flex-row items-center gap-4 mb-10">
+    <div class="flex flex-row items-center gap-2">
+      <div class="bg-[#F5F5F5] w-8 h-8 rounded-xl cursor-pointer">
+      </div>
+      <label>
+        Baby allowed
+      </label>
+    </div>
+    <div class="flex flex-row items-center gap-2">
+      <div class="bg-[#F5F5F5] w-8 h-8 rounded-xl cursor-pointer">
+      </div>
+      <label>
+        Pets allowed
+      </label>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-4 mt-auto pt-6">
+    <button
+      type="button"
+      class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] cursor-pointer"
+    >
+      Order
+    </button>
+    <button
+      type="button"
+      class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#F0F0F0] text-[#000000B3] font-semibold shadow hover:bg-gray-200 active:scale-[0.99] cursor-pointer"
+    >
+      Schedule
+    </button>
+  </div>
+</div>
+<div class="absolute bottom-4 right-4 z-50 p-10">
+  <div class="bg-[#F5F5F5D9] w-40 px-2 py-2 rounded-2xl mb-3">
+    <p>Time:</p>
+    <p></p>
+  </div>
+  <div class="bg-[#F5F5F5D9] w-40 px-2 py-2 rounded-2xl">
+    <p>Cost:</p>
+  </div>
+</div>
