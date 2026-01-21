@@ -30,7 +30,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // AUTH
-                        .requestMatchers("/api/auth/**","/api/auth/register",
+                        .requestMatchers("/api/public/**","/api/auth/**","/api/auth/register",
                                 "/api/auth/login",
                                 "/api/auth/activate").permitAll()
                         .anyRequest().authenticated()

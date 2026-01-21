@@ -18,8 +18,8 @@ public class PublicRideEstimateController {
     @PostMapping("/ride-estimates")
     public ResponseEntity<RideEstimateResponseDTO> estimate(@RequestBody RideEstimateRequestDTO request) {
 
-        double distanceKm = 5.2;
-        long durationSec = 780;
+        double distanceKm = 0;
+        long durationSec = 0;
 
 
         BigDecimal estimatedPrice = BigDecimal.valueOf(distanceKm * 120);
