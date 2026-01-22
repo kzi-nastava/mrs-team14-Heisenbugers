@@ -34,47 +34,8 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MessageResponse("Invalid credentials."));
-        }
-
-
-        if (!user.isActivated()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new MessageResponse("Account is not activated."));
-        }
-
-        if (user.isBlocked()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new MessageResponse("User is blocked."));
-        }
-
-        // without hesh
-        if (!user.getPasswordHash().equals(request.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MessageResponse("Invalid credentials."));
-        }
-
-        String role = resolveRole(user);
-
-        String token = jwtService.generateToken(
-                user.getEmail(),
-                Map.of(
-                        "userId", user.getId().toString(),
-                        "role", role
-                )
-        );
-
-        LoginResponseDTO resp = new LoginResponseDTO(
-                token,
-                "Bearer",
-                user.getId(),
-                resolveRole(user)
-        );
-
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
+        LoginResponseDTO resp = authService.login(request);
         return ResponseEntity.ok(resp);
     }
 
@@ -105,7 +66,7 @@ public class AuthController {
         return new ResponseEntity<>(headers, HttpStatus.FOUND); // 302
     }
 
-    //delete?
+    //admin manual activation
     @PutMapping("/activate/{userId}")
     public ResponseEntity<?> activate(@PathVariable UUID userId) {
         User user = userRepository.findById(userId).orElse(null);
@@ -152,14 +113,5 @@ public class AuthController {
     public ResponseEntity<MessageResponse> logout() {
         return ResponseEntity.ok(new MessageResponse("Logged out."));
     }
-
-    private String resolveRole(User user) {
-
-        if (user instanceof Driver) return "DRIVER";
-        if (user instanceof Passenger) return "PASSENGER";
-        if (user instanceof Administrator) return "ADMIN";
-        return "USER";
-    }
-
 
 }

@@ -13,6 +13,7 @@ import com.ftn.heisenbugers.gotaxi.repositories.ActivationTokenRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -28,6 +29,7 @@ public class AuthService {
     private final ActivationTokenRepository activationTokenRepository;
     private final EmailService emailService;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
 
     public UUID registerPassenger(RegisterPassengerRequestDTO request, String appBaseUrl) {
@@ -52,7 +54,7 @@ public class AuthService {
 
         Passenger p = new Passenger();
         p.setEmail(normalizedEmail);
-        p.setPasswordHash(request.getPassword()); // PasswordEncoder wil be hash?
+        p.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         p.setFirstName(request.getFirstName());
         p.setLastName(request.getLastName());
         p.setPhone(request.getPhone());
@@ -130,8 +132,8 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Account is not activated.");
         }
 
-        // will be passwordEncoder.matches(...)
-        if (!user.getPasswordHash().equals(dto.getPassword())) {
+
+        if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
         }
 
