@@ -79,14 +79,19 @@
 
         @if (estimateResult) {
           <div class="rounded-[10px] border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-800">
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-neutral-500">Distance</span>
+              <b>{{ estimateResult.distanceKm | number:'1.1-1' }} km</b>
+            </div>
             <div class="flex items-center justify-between">
-              <span class="text-neutral-500">Estimated time</span>
+              <span class="text-neutral-500">Time</span>
               <b>{{ estimateResult.estimatedTimeMin }} min</b>
             </div>
             <div class="flex items-center justify-between mt-1">
-              <span class="text-neutral-500">Estimated price</span>
-              <b>{{ estimateResult.estimatedPrice }}</b>
+              <span class="text-neutral-500">Price</span>
+              <b>{{ estimateResult.estimatedPrice | currency:'RSD ':'symbol-narrow':'1.0-0' }}</b>
             </div>
+
           </div>
         }
       </form>
