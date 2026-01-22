@@ -20,13 +20,13 @@ export class RateModal {
     @Output() close = new EventEmitter<void>();
 
     closeRateModal() {
-        this.ride.rated = true;
         this.close.emit();
     }
 
     submitRateForm(form: NgForm) {
         if(form.valid && this.driverRate > 0 && this.vehicleRate > 0)
             console.log(form.value, this.driverRate, this.vehicleRate);
+        this.ride.rated = true;
         this.closeRateModal();
     }
 
@@ -48,8 +48,8 @@ export class RateModal {
     }
 
     getRideDurationMinutes(ride: any): string {
-        const start = new Date(ride.startTime).getTime();
-        const end = new Date(ride.endTime).getTime();
+        const start = new Date(ride.startedAt).getTime();
+        const end = new Date(ride.endedAt).getTime();
 
         if (isNaN(start) || isNaN(end)) return '';
 
