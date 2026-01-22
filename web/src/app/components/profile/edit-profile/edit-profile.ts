@@ -7,6 +7,7 @@ import {
   Validators
 } from '@angular/forms';
 import {User} from '../model/user.model';
+import {UpdateProfileDTO} from '../../../models/profile.model';
 
 @Component({
   selector: 'app-edit-profile',
@@ -20,7 +21,7 @@ import {User} from '../model/user.model';
 })
 export class EditProfile {
   closeEdit = output<boolean>()
-  saveProfile = output<User>();
+  saveProfile = output<UpdateProfileDTO>();
 
   user = input<User>();
 
@@ -78,10 +79,15 @@ export class EditProfile {
     this.submitted = true;
     console.log('updated profile:', this.form.value);
 
-    this.saveProfile.emit({
-      ...this.form.value,
-      profilePicture: this.imagePreview,
-    } as User);
+    const dto: UpdateProfileDTO = {
+      firstName: this.form.value.name?.split(' ')[0]!,
+      lastName: this.form.value.name?.split(' ')[1]!,
+      phoneNumber: this.form.value.phoneNumber!,
+      address: this.form.value.address!,
+      profileImageUrl: this.imagePreview
+    };
+
+    this.saveProfile.emit(dto);
 
     this.closeEdit.emit(false);
   }
