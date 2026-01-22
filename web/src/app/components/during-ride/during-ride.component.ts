@@ -8,6 +8,22 @@ import { RateModal } from "../rate-modal/rate-modal.component";
 import { RideInfo } from '../../models/driver-info.model';
 import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+interface Location {
+  latitude: number,
+  longitude: number,
+  address?: string
+}
+
+interface TrackingDTO {
+  rideId: string,
+  driver: {firstName: string, lastName: string}
+  vehicleLatitude: number,
+  vehicleLongitude: number,
+  estimatedTimeRemainingMinutes: number
+  route: Location[]
+}
 
 
 @Component({
@@ -19,6 +35,7 @@ import { ChangeDetectorRef } from '@angular/core';
 })
 export class DuringRide {
   private stops?: L.LatLng[]
+  private baseUrl = 'http://localhost:8081/api';
 
   private mockStops: L.LatLng[] = [
     new LatLng(45.249570, 19.815809),
@@ -66,7 +83,7 @@ export class DuringRide {
     { name: 'Carl Carlic', avatar: 'https://i.pravatar.cc/150?img=3' },
     { name: 'Denise Denisic', avatar: 'https://i.pravatar.cc/150?img=4' }
   ];
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor(private cdr: ChangeDetectorRef, private http: HttpClient) {
     if (!this.mockStops || this.mockStops.length < 2){
       return;
     }
@@ -77,7 +94,7 @@ export class DuringRide {
         return {...stop, popup: "Stop"}
       }))
       this.locations.push(this.mockStops.at(-1)!)
-      this.mapCmp.showRoute(this.mockStops[0], this.mockStops[this.mockStops.length - 1], this.mockStops.slice(1, -1))
+      //this.mapCmp.showRoute(this.mockStops[0], this.mockStops[this.mockStops.length - 1], this.mockStops.slice(1, -1))
       cdr.markForCheck();
       
 
@@ -90,9 +107,25 @@ export class DuringRide {
 
   }
 
-  drawPins(){
-    
+  ngOnInit(): void {
+    this.http.get<TrackingDTO>(`${this.baseUrl}/rides/c527273a-ba41-43e2-aa7c-ab78560177ee/tracking`).subscribe({
+      next: (data) => {
+        this.stops = data.route.map((l: Location) => {
+          return new LatLng(l.latitude, l.longitude);
+        })
+      this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1))
+    this.cdr.markForCheck();
+
+      },
+      error: (error) => {
+        console.warn('Using mock data due to error fetching ride history:', error);
+        this.stops = this.mockStops;
+        this.cdr.markForCheck();
+      }
+    });
   }
+    
+  
 
   closeModal() {
     this.NotesIsOpen = false;
