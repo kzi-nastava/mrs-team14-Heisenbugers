@@ -5,7 +5,9 @@ import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bo
 import { MapPin } from '../map/map.component';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RateModal } from "../rate-modal/rate-modal.component";
-import { RideInfo } from '../driver-ride-history/driver-info.model';
+import { RideInfo } from '../../models/driver-info.model';
+import { LatLng } from 'leaflet';
+import { ChangeDetectorRef } from '@angular/core';
 
 
 @Component({
@@ -16,9 +18,20 @@ import { RideInfo } from '../driver-ride-history/driver-info.model';
 
 })
 export class DuringRide {
+  private stops?: L.LatLng[]
+
+  private mockStops: L.LatLng[] = [
+    new LatLng(45.249570, 19.815809),
+    new LatLng(45.242299, 19.796333),
+    new LatLng(45.241604, 19.842757),
+    
+  ]
+
+  locations: MapPin[] = [];
   
   
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
+  @ViewChild(MapComponent) mapCmp!: MapComponent;
   
   ride: RideInfo = {
     rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
@@ -42,17 +55,44 @@ export class DuringRide {
   
   };
   NotesIsOpen: boolean = false;
-  rateIsOpen: boolean = true;
+  rateIsOpen: boolean = false;
   driverRate = 0;
   vehicleRate = 0;
 
-  location: MapPin = { lat: 45.2396, lng: 19.8227, popup: 'You are here', iconUrl: carSelectedIcon };
+  location: MapPin = { lat: 45.249570, lng: 19.815809, popup: 'You are here', iconUrl: carSelectedIcon };
   passengers = [
     { name: 'Alice Alisic', avatar: 'https://i.pravatar.cc/150?img=1' },
     { name: 'Bob Bobic', avatar: 'https://i.pravatar.cc/150?img=2' },
     { name: 'Carl Carlic', avatar: 'https://i.pravatar.cc/150?img=3' },
     { name: 'Denise Denisic', avatar: 'https://i.pravatar.cc/150?img=4' }
   ];
+  constructor(private cdr: ChangeDetectorRef) {
+    if (!this.mockStops || this.mockStops.length < 2){
+      return;
+    }
+    setTimeout(() => {
+      let inBetween = this.mockStops.slice(1, -1)
+      this.locations = [{...this.mockStops[0], popup: "You are here", iconUrl: carSelectedIcon}]
+      this.locations.push(...inBetween.map((stop: LatLng) => {
+        return {...stop, popup: "Stop"}
+      }))
+      this.locations.push(this.mockStops.at(-1)!)
+      this.mapCmp.showRoute(this.mockStops[0], this.mockStops[this.mockStops.length - 1], this.mockStops.slice(1, -1))
+      cdr.markForCheck();
+      
+
+    })
+    /*if (!this.stops || this.stops.length < 2){
+      return;
+    }
+    this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1)
+    )*/
+
+  }
+
+  drawPins(){
+    
+  }
 
   closeModal() {
     this.NotesIsOpen = false;

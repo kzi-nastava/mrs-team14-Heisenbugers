@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
-import { RideInfo } from '../driver-ride-history/driver-info.model';
+import { RideInfo } from '../../models/driver-info.model';
 
 @Component({
     selector: 'app-rate-modal',

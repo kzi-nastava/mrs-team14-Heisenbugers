@@ -10,17 +10,12 @@ import {
     bootstrapExclamationCircleFill, 
     bootstrapFeather}
     from '@ng-icons/bootstrap-icons';
-import { RideInfo } from './driver-info.model';
+import { RideInfo } from '../../models/driver-info.model';
 import { Router } from '@angular/router';
 import { RateModal } from "../rate-modal/rate-modal.component";
 import { HttpClient } from '@angular/common/http';
 import { OnInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-
-
-
-
-
 
 
 @Component({
@@ -106,6 +101,7 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
       error: (error) => {
         console.warn('Using mock data due to error fetching ride history:', error);
         this.rides = this.mockRides;
+        this.cdr.markForCheck();
       }
     });
     

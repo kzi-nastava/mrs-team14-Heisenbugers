@@ -95,11 +95,12 @@ export class MapComponent implements AfterViewInit, OnChanges {
         addWaypoints: false,
         draggableWaypoints: false,
         routeWhileDragging: false,
-        show: false,
         fitSelectedRoutes: true,
+        show: false,
         createMarker: () => null,
         lineOptions: { styles: [{ weight: 5, opacity: 0.8 }] },
       }).addTo(this.map);
+      
 
       this.routingControl.on('routesfound', (e: any) => {
         const route = e?.routes?.[0];

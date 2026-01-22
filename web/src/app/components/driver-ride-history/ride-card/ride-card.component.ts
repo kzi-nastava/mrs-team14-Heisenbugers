@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input } from '@angular/core';
 
-import { RideInfo } from '../driver-info.model';
+import { RideInfo } from '../../../models/driver-info.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle, bootstrapClock, bootstrapCash, bootstrapArrowRight, bootstrapArrowLeft } from '@ng-icons/bootstrap-icons';
 import { CommonModule } from '@angular/common';

@@ -1,8 +1,10 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
+import com.ftn.heisenbugers.gotaxi.utils.GeoHasher;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,6 +26,9 @@ public class Route extends BaseEntity {
     @Lob
     private String polyline;
 
+    @Setter(AccessLevel.NONE)
+    private int pointCount;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "start_location_id")
     private Location start;
@@ -39,4 +44,20 @@ public class Route extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void setPolyline(List<Location> locations) {
+        double[][] coords = locations.stream()
+                .map(l -> new double[]{l.getLongitude(), l.getLatitude()})
+                .toArray(double[][]::new);
+        this.polyline = GeoHasher.geohash(coords);
+        this.pointCount = locations.size();
+    }
+
+    public List<Location> getStops() {
+        double[][] coords = GeoHasher.decodeGeohash(polyline, pointCount);
+        return Arrays.stream(coords)
+                .map(c -> new Location(c[1], c[0])) // latitude, longitude
+                .toList();
+    }
+
 }

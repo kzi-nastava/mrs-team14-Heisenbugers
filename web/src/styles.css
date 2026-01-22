@@ -8,3 +8,7 @@ body {
   margin: 0;
   font-family: Roboto, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
 }
+
+.leaflet-control-container {
+  display: none !important;
+}
