@@ -1,38 +1,42 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
+import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
+import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.dtos.ChangePasswordDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedVehicleDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.GetDriverProfileDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.GetProfileDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
+import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
+import com.ftn.heisenbugers.gotaxi.services.ProfileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/profile")
 public class ProfileController {
+    private final ProfileService profileService;
+
+    public ProfileController(ProfileService profileService) {
+        this.profileService = profileService;
+    }
+
     @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GetProfileDTO> getMyProfile() {
+    public ResponseEntity<GetProfileDTO> getMyProfile() throws InvalidUserType {
 
-        GetProfileDTO profile = new GetProfileDTO();
-        profile.setId(1L);
-        profile.setEmail("user@test.com");
-        profile.setFirstName("Petar");
-        profile.setLastName("Petrović");
-        profile.setPhoneNumber("061123456");
-        profile.setAddress("Bulevar, Novi Sad");
-        profile.setProfileImageUrl("url");
-
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+        Passenger passenger = AuthContextService.getCurrentPassenger();
+        return ResponseEntity.ok(profileService.getMyProfile(passenger.getEmail()));
     }
 
     @GetMapping(value = "/me/driver", produces = MediaType.APPLICATION_JSON_VALUE)
         public ResponseEntity<GetDriverProfileDTO> getDriverProfile() {
 
         GetDriverProfileDTO driverProfile = new GetDriverProfileDTO();
-        driverProfile.setId(1L);
+        driverProfile.setId(UUID.randomUUID());
         driverProfile.setEmail("driver@test.com");
         driverProfile.setFirstName("Marko");
         driverProfile.setLastName("Marković");
@@ -61,18 +65,11 @@ public class ProfileController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GetProfileDTO> updateProfile(
-            @RequestBody GetProfileDTO request) {
+            @RequestBody GetProfileDTO request) throws InvalidUserType {
 
-        GetProfileDTO profile = new GetProfileDTO();
-        profile.setId(1L);
-        profile.setEmail(request.getEmail());
-        profile.setFirstName(request.getFirstName());
-        profile.setLastName(request.getLastName());
-        profile.setAddress(request.getAddress());
-        profile.setPhoneNumber(request.getPhoneNumber());
-        profile.setProfileImageUrl(request.getProfileImageUrl());
-
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+        Passenger passenger = AuthContextService.getCurrentPassenger();
+        GetProfileDTO updatedProfile = profileService.updateProfile(passenger.getEmail(), request);
+        return ResponseEntity.ok(updatedProfile);
     }
 
     @PutMapping(value = "/me/vehicle",
@@ -96,8 +93,10 @@ public class ProfileController {
     @PutMapping(value = "/me/password",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> changePassword(
-            @RequestBody ChangePasswordDTO request) {
+            @RequestBody ChangePasswordDTO request) throws InvalidUserType {
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        Passenger passenger = AuthContextService.getCurrentPassenger();
+        profileService.changePassword(passenger.getEmail(), request);
+        return ResponseEntity.ok().build();
     }
 }
