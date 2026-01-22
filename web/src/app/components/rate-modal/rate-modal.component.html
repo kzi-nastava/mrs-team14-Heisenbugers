@@ -16,9 +16,9 @@
     <div class="px-6 pb-6">
       <div class="border-b">
         <div class="w-full text-left px-4 py-3 text-sm flex items-center justify-center">
-          <span class="mr-4 font-semibold text-lg">{{ ride.startLocation }}</span>
+          <span class="mr-4 font-semibold text-lg">{{ ride.startAddress }}</span>
           <ng-icon class="mr-4" name="bootstrapArrowRight" size="20"></ng-icon>
-          <span class="mr-4 font-semibold text-lg">{{ ride.finishLocation }}</span>
+          <span class="mr-4 font-semibold text-lg">{{ ride.endAddress }}</span>
         </div>
       </div>
       <div class="flex justify-center border-b py-5">
@@ -52,21 +52,23 @@
             >Rate the driver <span class="text-red-500 ml-1">*</span></label
           >
           <div class="flex space-x-2 mt-2 align-center m-auto">
-            @for(i of getDriverRateArray(); track i){ @if(i) {
-            <ng-icon
-              name="bootstrapStarFill"
-              size="36"
-              class="cursor-pointer ml-4"
-              (click)="setDriverRate($index + 1)"
-            ></ng-icon>
-            } @else {
-            <ng-icon
-              name="bootstrapStar"
-              size="36"
-              class="cursor-pointer ml-4"
-              (click)="setDriverRate($index + 1)"
-            ></ng-icon>
-            } }
+            @for (i of getDriverRateArray(); track i) {
+              @if (i) {
+                <ng-icon
+                  name="bootstrapStarFill"
+                  size="36"
+                  class="cursor-pointer ml-4"
+                  (click)="setDriverRate($index + 1)"
+                ></ng-icon>
+              } @else {
+                <ng-icon
+                  name="bootstrapStar"
+                  size="36"
+                  class="cursor-pointer ml-4"
+                  (click)="setDriverRate($index + 1)"
+                ></ng-icon>
+              }
+            }
           </div>
         </div>
         <div class="flex text-center">
@@ -74,21 +76,23 @@
             >Rate the vehicle <span class="text-red-500 ml-1">*</span></label
           >
           <div class="flex space-x-2 mt-2 align-center m-auto">
-            @for(i of getVehicleRateArray(); track i){ @if(i) {
-            <ng-icon
-              name="bootstrapStarFill"
-              size="36"
-              class="cursor-pointer ml-4"
-              (click)="setVehicleRate($index + 1)"
-            ></ng-icon>
-            } @else {
-            <ng-icon
-              name="bootstrapStar"
-              size="36"
-              class="cursor-pointer ml-4"
-              (click)="setVehicleRate($index + 1)"
-            ></ng-icon>
-            } }
+            @for (i of getVehicleRateArray(); track i) {
+              @if (i) {
+                <ng-icon
+                  name="bootstrapStarFill"
+                  size="36"
+                  class="cursor-pointer ml-4"
+                  (click)="setVehicleRate($index + 1)"
+                ></ng-icon>
+              } @else {
+                <ng-icon
+                  name="bootstrapStar"
+                  size="36"
+                  class="cursor-pointer ml-4"
+                  (click)="setVehicleRate($index + 1)"
+                ></ng-icon>
+              }
+            }
           </div>
         </div>
         <div>
