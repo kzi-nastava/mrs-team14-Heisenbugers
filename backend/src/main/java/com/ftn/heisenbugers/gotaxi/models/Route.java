@@ -23,10 +23,11 @@ public class Route extends BaseEntity {
 
     private int estimatedTimeMin;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
+    @Basic(fetch = FetchType.EAGER)
     private String polyline;
 
-    @Setter(AccessLevel.NONE)
+    @Column(name = "point_count")
     private int pointCount;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -54,9 +55,10 @@ public class Route extends BaseEntity {
     }
 
     public List<Location> getStops() {
+        if (polyline == null || pointCount == 0) return List.of();
         double[][] coords = GeoHasher.decodeGeohash(polyline, pointCount);
         return Arrays.stream(coords)
-                .map(c -> new Location(c[1], c[0])) // latitude, longitude
+                .map(c -> new Location(c[1], c[0]))
                 .toList();
     }
 
