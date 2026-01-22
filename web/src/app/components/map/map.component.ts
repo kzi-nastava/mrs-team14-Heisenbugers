@@ -1,4 +1,4 @@
-// map.component.ts
+
 import { Component, Input, AfterViewInit, OnChanges, SimpleChanges, booleanAttribute } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
@@ -26,6 +26,7 @@ export type RouteSummary = {
   standalone: true,
   templateUrl: './map.component.html',
 })
+
 export class MapComponent implements AfterViewInit, OnChanges {
   @Input() pins: MapPin[] = [];
   @Input({ transform: booleanAttribute }) goBelow = false;
@@ -36,6 +37,22 @@ export class MapComponent implements AfterViewInit, OnChanges {
 
   private routingControl: any | null = null;
 
+  private routeLine: L.Polyline | null = null;
+
+  drawRoute(points: L.LatLng[]) {
+    if (!this.map) return;
+
+
+    if (this.routeLine) {
+      this.routeLine.remove();
+      this.routeLine = null;
+    }
+
+    if (!points.length) return;
+
+    this.routeLine = L.polyline(points, { weight: 5, opacity: 0.8 }).addTo(this.map);
+    this.map.fitBounds(this.routeLine.getBounds(), { padding: [30, 30] });
+  }
   ngAfterViewInit(): void {
     this.map = L.map('map', { zoomControl: false }).setView([45.2396, 19.8227], 15);
 
