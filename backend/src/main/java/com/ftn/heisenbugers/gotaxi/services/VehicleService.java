@@ -18,7 +18,7 @@ public class VehicleService {
     }
 
     public List<VehicleInfoDTO> getActiveVehicleDtos() {
-        List<Vehicle> activeVehicles = vehicleRepository.getVehiclesByDriverActive(true);
+        List<Vehicle> activeVehicles = vehicleRepository.getVehiclesByDriverWorking(true);
 
         return activeVehicles.stream()
                 .map(vehicle -> {

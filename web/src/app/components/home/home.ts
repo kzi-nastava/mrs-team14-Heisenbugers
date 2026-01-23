@@ -1,5 +1,5 @@
 
-import { Component, ViewChild, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {NgIcon, provideIcons} from '@ng-icons/core';
 import { bootstrapGeo } from '@ng-icons/bootstrap-icons';
@@ -9,8 +9,18 @@ import type { RouteSummary } from '../map/map.component'
 import { MapComponent, MapPin, carAvailableIcon, carOccupiedIcon } from '../map/map.component';
 import { RideEstimateService } from '../../services/ride-estimate.service';
 import { RideEstimateRequestDTO, RideEstimateResponseDTO, VehicleType } from '../../models/ride-estimate.model';
+import { HttpClient } from '@angular/common/http';
 
 type FormKeys = 'startAddress' | 'destinationAddress';
+
+interface VehicleLocationDTO {
+  id: string,
+  model: string,
+  licensePlate: string,
+  latitude: number,
+  longitude: number,
+  occupied: boolean,
+}
 
 @Component({
   selector: 'app-home',
@@ -27,10 +37,13 @@ export class HomeComponent {
   private fb = inject(FormBuilder);
   private estimateApi = inject(RideEstimateService);
 
-  pins: MapPin[] = [
+  mockPins: MapPin[] = [
     { lat: 45.2396, lng: 19.8227, popup: 'This car is available', iconUrl: carAvailableIcon, snapToRoad: true },
     { lat: 45.241,  lng: 19.823,  popup: 'This car is occupied',  iconUrl: carOccupiedIcon,  snapToRoad: true },
   ];
+
+  pins: MapPin[] = [];
+  vehicles?: VehicleLocationDTO[];
 
   estimateOpen = false;
   loading = false;
@@ -47,6 +60,11 @@ export class HomeComponent {
     babyTransport: [false],
     petTransport: [false],
   });
+  baseUrl = 'http://localhost:8081/api'
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
+    
+  }
 
   get f() { return this.form.controls; }
 
@@ -58,7 +76,73 @@ export class HomeComponent {
     return !!c && c.invalid && (c.touched || this.submitAttempted);
   }
 
+  ngOnInit(){
+    this.http.get<VehicleLocationDTO[]>(`${this.baseUrl}/public/vehicles`).subscribe({
+      next: (data) => {
 
+        this.vehicles = data
+        this.pins = data.map((dto) => ({
+          lat: dto.latitude,
+          lng: dto.longitude,
+          iconUrl: dto.occupied? carOccupiedIcon : carAvailableIcon,
+          snapToRoad: true,
+          popup: `<div id="overlay" class="fixed inset-0 bg-black/40 flex items-end sm:items-center justify-center z-50 w-60">
+    <div
+      id="modal"
+      class="w-full sm:w-96 bg-white rounded-t-2xl sm:rounded-2xl p-5 shadow-xl animate-slide-up"
+    >
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold">Vehicle details</h2>
+      </div>
+
+      <!-- Content -->
+      <div class="space-y-3">
+        <div class="flex justify-between">
+          <span class="text-gray-500">Model:</span>
+          <span class="font-medium">${dto.model}</span>
+        </div>
+
+        <div class="flex justify-between">
+          <span class="text-gray-500">License plate:</span>
+          <span class="font-mono font-semibold tracking-wide">${dto.licensePlate}</span>
+        </div>
+
+        <div class="flex justify-between">
+          <span class="text-gray-500">Availability:</span>
+          <span class="font-medium">${dto.occupied? 'Occupied' : 'Available'}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <style>
+    @keyframes slide-up {
+      from {
+        transform: translateY(20%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    .animate-slide-up {
+      animation: slide-up 300ms ease-out;
+    }
+  </style>`,
+        }))
+
+        this.cdr.markForCheck();
+      },
+      error: (error) => {
+        console.warn('Using mock data due to error fetching public vehicle info:', error);
+        this.pins = this.mockPins;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  
   async submitEstimate() {
     this.submitAttempted = true;
 

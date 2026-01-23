@@ -11,7 +11,7 @@ import { DuringRide } from '../components/during-ride/during-ride.component';
 export class HomeContainer {
   @ViewChild('host', { read: ViewContainerRef }) host!: ViewContainerRef;
 
-  private rideInProgress: boolean = true
+  private rideInProgress: boolean = false
 
   ngAfterViewInit() {
     let component: Type<any> = this.rideInProgress ?  DuringRide : HomeComponent

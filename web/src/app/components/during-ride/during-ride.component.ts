@@ -106,7 +106,7 @@ export class DuringRide {
       this.locations.push(...inBetween.map((stop: LatLng) => {
         return {...stop, popup: "Stop"}
       }))
-      this.locations.push(this.stops.at(-1)!)
+      this.locations.push({...this.stops.at(-1)!, popup: "Final destination"})
       this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1))
       this.cdr.markForCheck();
 

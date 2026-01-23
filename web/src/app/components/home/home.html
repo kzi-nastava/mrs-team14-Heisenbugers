@@ -1,5 +1,4 @@
 <div class="h-full relative overflow-hidden">
-
   <div class="w-full h-full z-0">
     <app-map [pins]="pins" [goBelow]="true"></app-map>
   </div>
@@ -7,18 +6,16 @@
   <button
     type="button"
     (click)="openEstimate()"
-    class="absolute z-10 top-6 left-6 h-11 w-11
-           rounded-[10px] bg-white border border-neutral-200 shadow
-           flex items-center justify-center
-           hover:bg-neutral-50 active:scale-[0.99]"
+    class="absolute z-10 top-6 left-6 h-11 w-11 rounded-[10px] bg-white border border-neutral-200 shadow flex items-center justify-center hover:bg-neutral-50 active:scale-[0.99]"
     aria-label="Estimate ride"
   >
     <ng-icon name="bootstrapGeo" size="22"></ng-icon>
   </button>
 
   @if (estimateOpen) {
-    <div class="absolute z-10 top-19 left-6 w-[420px] rounded-2xl
-                bg-white shadow-xl border border-neutral-200 p-5">
+    <div
+      class="absolute z-10 top-19 left-6 w-[420px] rounded-2xl bg-white shadow-xl border border-neutral-200 p-5"
+    >
       <div class="flex items-center justify-between mb-4">
         <h2 class="text-[18px] font-bold text-black">Ride estimate</h2>
         <button
@@ -37,14 +34,15 @@
           <input
             type="text"
             formControlName="startAddress"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                   focus:outline-none focus:ring-4 focus:ring-lime-200"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
             [class.border-neutral-200]="!isInvalid('startAddress')"
             [class.focus:ring-lime-200]="!isInvalid('startAddress')"
             [class.border-red-400]="isInvalid('startAddress')"
             [class.focus:ring-red-200]="isInvalid('startAddress')"
           />
-          @if (isInvalid('startAddress')) { <p class="mt-1 text-xs text-red-500">Required</p> }
+          @if (isInvalid('startAddress')) {
+            <p class="mt-1 text-xs text-red-500">Required</p>
+          }
         </div>
 
         <div>
@@ -52,23 +50,27 @@
           <input
             type="text"
             formControlName="destinationAddress"
-            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                   focus:outline-none focus:ring-4 focus:ring-lime-200"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
             [class.border-neutral-200]="!isInvalid('destinationAddress')"
             [class.focus:ring-lime-200]="!isInvalid('destinationAddress')"
             [class.border-red-400]="isInvalid('destinationAddress')"
             [class.focus:ring-red-200]="isInvalid('destinationAddress')"
           />
-          @if (isInvalid('destinationAddress')) { <p class="mt-1 text-xs text-red-500">Required</p> }
+          @if (isInvalid('destinationAddress')) {
+            <p class="mt-1 text-xs text-red-500">Required</p>
+          }
         </div>
 
         <button
           type="submit"
-          class="w-full h-10.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow
-                 hover:bg-lime-200 active:scale-[0.99]"
+          class="w-full h-10.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]"
           [disabled]="loading"
         >
-          @if (loading) { <span>Calculating...</span> } @else { <span>Show route & time</span> }
+          @if (loading) {
+            <span>Calculating...</span>
+          } @else {
+            <span>Show route & time</span>
+          }
         </button>
 
         @if (errorMsg) {
@@ -78,7 +80,9 @@
         }
 
         @if (estimateResult) {
-          <div class="rounded-[10px] border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-800">
+          <div
+            class="rounded-[10px] border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-800"
+          >
             <div class="flex items-center justify-between">
               <span class="text-neutral-500">Estimated time</span>
               <b>{{ estimateResult.estimatedTimeMin }} min</b>
@@ -94,8 +98,9 @@
   }
 
   @if (routeSummary) {
-    <div class="absolute z-10 left-6 bottom-6 w-65 rounded-[14px]
-                bg-white shadow-xl border border-neutral-200 p-4">
+    <div
+      class="absolute z-10 left-6 bottom-6 w-65 rounded-[14px] bg-white shadow-xl border border-neutral-200 p-4"
+    >
       <div class="text-[14px] font-bold text-black mb-2">Route</div>
 
       <div class="flex items-center justify-between text-[13px]">
@@ -110,3 +115,5 @@
     </div>
   }
 </div>
+
+<template id="car-popup"> </template>

@@ -141,7 +141,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
         } else {
             marker = L.marker([pin.lat, pin.lng]);
         }
-
+        marker.unbindPopup()
         marker.addTo(this.map)
         if (pin.popup) {
             marker.bindPopup(pin.popup);
