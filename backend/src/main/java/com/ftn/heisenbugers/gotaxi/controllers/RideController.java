@@ -6,6 +6,7 @@ import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideTrackingDTO;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.services.RideService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,12 +75,18 @@ public class RideController {
     @PostMapping("/{rideId}/rate")
     public ResponseEntity<Object> rateDriver(@PathVariable UUID rideId, @RequestBody Map<String, Object> body) throws InvalidUserType {
         User rater = AuthContextService.getCurrentUser();
-        int driverScore = Integer.parseInt((String) body.get("driverScore"));
-        int vehicleScore = Integer.parseInt((String) body.get("vehicleScore"));
+        System.out.println(body);
+        System.out.println(body.get("driverScore").getClass().getName());
+        int driverScore = (Integer) body.get("driverScore");
+        int vehicleScore = (Integer) body.get("vehicleScore");
         String comment = (String) body.get("comment");
-        rideService.rate(rideId, rater.getId(), driverScore, vehicleScore, comment);
-        return ResponseEntity.ok()
-                .body(Map.of("message", "Ride successfully rated"));
+        boolean ok = rideService.rate(rideId, rater.getId(), driverScore, vehicleScore, comment);
+        if (ok) {
+            return ResponseEntity.ok()
+                    .body(Map.of("message", "Ride successfully rated"));
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
 }

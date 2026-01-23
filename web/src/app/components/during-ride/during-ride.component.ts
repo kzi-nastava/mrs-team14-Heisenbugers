@@ -84,6 +84,11 @@ export class DuringRide {
     { name: 'Carl Carlic', avatar: 'https://i.pravatar.cc/150?img=3' },
     { name: 'Denise Denisic', avatar: 'https://i.pravatar.cc/150?img=4' }
   ];
+
+  toastVisible = false;
+  toastMessage = '';
+
+
   constructor(private cdr: ChangeDetectorRef, private http: HttpClient) {
     if (!this.mockStops || this.mockStops.length < 2){
       return;
@@ -114,7 +119,13 @@ export class DuringRide {
     });
   }
     
-  
+  showToast(message: string, duration: number = 2000) {
+    console.log(`Trying to show ${message}`)
+  this.toastMessage = message;
+  this.toastVisible = true;
+  this.cdr.markForCheck();
+  setTimeout(() => {this.toastVisible = false; this.cdr.markForCheck()}, duration);
+  }
 
   closeModal() {
     this.NotesIsOpen = false;
@@ -139,16 +150,32 @@ export class DuringRide {
       console.log(form.value);
       this.http.post(`${this.baseUrl}/rides/${this.rideId}/report`, form.value)
         .subscribe({
-          next: (response) => console.log('Note submitted successfully', response),
-          error: (err) => console.error('Error submitting note', err)
+          next: () => this.showToast('Note recorded successfully!'),
+          error: () => this.showToast('Failed to record note')
         });
     this.closeModal();
   }
 
-  submitRateForm(form: NgForm) {
-    if(form.valid && this.driverRate > 0 && this.vehicleRate > 0)
-      console.log(form.value, this.driverRate, this.vehicleRate);
+  submitRateForm(data: { driverRate: number; vehicleRate: number; comment: string; }) {
+    let sendingData = {
+        "driverScore": data.driverRate,
+        "vehicleScore": data.vehicleRate,
+        "comment": data.comment,
+      }
+      this.http.post(`${this.baseUrl}/rides/${this.rideId}/rate`, sendingData)
+      .subscribe({
+      next: () => this.showToast('Rating recorded successfully!'),
+      error: (error) => {
+        if (error.status === 409){
+          this.showToast('You have already rated this ride')
+        } else {
+          this.showToast('Failed to record rating')
+        }
+      }
+    })
     this.closeRateModal();
+    console.log(sendingData)
+    
   }
 
   getDriverRateArray(): boolean[] {

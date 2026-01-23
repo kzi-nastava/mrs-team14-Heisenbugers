@@ -106,7 +106,7 @@ public class RideService {
         trafficViolation.setDescription(desc);
         trafficViolation.setCreatedBy(reporter);
         trafficViolation.setLastModifiedBy(reporter);
-        
+
         violationRepository.save(trafficViolation);
         return true;
     }
@@ -126,13 +126,18 @@ public class RideService {
         return true;
     }
 
-    public void rate(UUID rideId, UUID raterId, int driverScore, int vehicleScore, String comment) {
+    public boolean rate(UUID rideId, UUID raterId, int driverScore, int vehicleScore, String comment) {
         Ride ride = rideRepository.findById(rideId).get();
         User rater = userRepository.findById(raterId).get();
 
+        // If already rated
+        if (ratingRepository.findByRaterAndRide(rater, ride).isPresent()) {
+            return false;
+        }
 
+        // If too old to rate
         if (!isInLastNDays(ride, 3)) {
-            return;
+            return false;
         }
 
         Rating rating = new Rating();
@@ -145,6 +150,7 @@ public class RideService {
 
         rating.setLastModifiedBy(rater);
         ratingRepository.save(rating);
+        return true;
     }
 
     private boolean isInLastNDays(Ride r, long n) {

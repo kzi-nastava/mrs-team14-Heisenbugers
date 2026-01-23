@@ -136,5 +136,17 @@
 <!--  Modal to rate  -->
 
 @if (rateIsOpen) {
-  <app-rate-modal [ride]="this.ride" (close)="closeRateModal()"></app-rate-modal>
+  <app-rate-modal
+    [ride]="this.ride"
+    (onClose)="closeRateModal()"
+    (onSubmit)="submitRateForm($event)"
+  ></app-rate-modal>
+}
+
+@if (toastVisible) {
+  <div
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg"
+  >
+    {{ toastMessage }}
+  </div>
 }

@@ -16,16 +16,23 @@ export class RateModal {
     vehicleRate: number = 0;
     @Input() ride!: RideInfo;
     @Input() isOpen: boolean = false;
+    
+    @Output() onSubmit = new EventEmitter<any>();
 
-    @Output() close = new EventEmitter<void>();
+    @Output() onClose = new EventEmitter<void>();
 
     closeRateModal() {
-        this.close.emit();
+        this.onClose.emit();
     }
 
     submitRateForm(form: NgForm) {
         if(form.valid && this.driverRate > 0 && this.vehicleRate > 0)
             console.log(form.value, this.driverRate, this.vehicleRate);
+            this.onSubmit.emit({
+                "comment": form.value.comment,
+                "driverRate": this.driverRate,
+                "vehicleRate": this.vehicleRate
+            })
         this.ride.rated = true;
         this.closeRateModal();
     }
