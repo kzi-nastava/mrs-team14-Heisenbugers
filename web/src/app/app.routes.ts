@@ -13,6 +13,7 @@ import { MapComponent } from './components/map/map.component';
 import {DriverRegistrationComponent} from './components/auth/driver-registration/driver-registration.component';
 import {StartRideComponent} from './components/start-ride/start-ride.component';
 import { DuringRide } from './components/during-ride/during-ride.component';
+import { HomeContainer } from './home-container/home-container.component';
 
 /*
 export const routes: Routes = [
@@ -31,7 +32,7 @@ export const routes: Routes = [
   { path: '',
     component: BaseLayoutComponent,
     children: [
-      { path: 'home', component: HomeComponent }
+      { path: 'home', component: HomeContainer }
     ]
   },
   {
