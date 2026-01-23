@@ -86,7 +86,7 @@ public class RideService {
 
     }
 
-    public boolean report(UUID rideId, UUID reporterId, String desc) {
+    public boolean report(UUID rideId, UUID reporterId, String title, String desc) {
         Optional<Ride> rideOpt = rideRepository.findById(rideId);
         Ride ride = rideOpt.orElse(null);
 
@@ -102,9 +102,11 @@ public class RideService {
         }
         trafficViolation.setReporter(reporter);
         trafficViolation.setRide(ride);
+        trafficViolation.setTitle(title);
         trafficViolation.setDescription(desc);
         trafficViolation.setCreatedBy(reporter);
         trafficViolation.setLastModifiedBy(reporter);
+        
         violationRepository.save(trafficViolation);
         return true;
     }
@@ -134,7 +136,7 @@ public class RideService {
         }
 
         Rating rating = new Rating();
-        
+
         rating.setRide(ride);
         rating.setRater(rater);
         rating.setDriverScore(driverScore);

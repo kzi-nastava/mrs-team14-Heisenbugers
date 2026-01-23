@@ -47,7 +47,8 @@ public class RideController {
     public ResponseEntity<Object> reportDriver(@PathVariable UUID rideId, @RequestBody Map<String, Object> body) throws InvalidUserType {
         User user = AuthContextService.getCurrentUser();
         boolean ok = rideService.report(rideId, user.getId(),
-                (String) body.get("description"));
+                (String) body.get("title"),
+                (String) body.get("desc"));
         if (!ok) {
             return ResponseEntity.badRequest().build();
         } else {

@@ -36,6 +36,7 @@ interface TrackingDTO {
 export class DuringRide {
   private stops?: L.LatLng[]
   private baseUrl = 'http://localhost:8081/api';
+  private rideId: string = "c527273a-ba41-43e2-aa7c-ab78560177ee";
 
   private mockStops: L.LatLng[] = [
     new LatLng(45.249570, 19.815809),
@@ -87,34 +88,22 @@ export class DuringRide {
     if (!this.mockStops || this.mockStops.length < 2){
       return;
     }
-    setTimeout(() => {
-      let inBetween = this.mockStops.slice(1, -1)
-      this.locations = [{...this.mockStops[0], popup: "You are here", iconUrl: carSelectedIcon}]
-      this.locations.push(...inBetween.map((stop: LatLng) => {
-        return {...stop, popup: "Stop"}
-      }))
-      this.locations.push(this.mockStops.at(-1)!)
-      //this.mapCmp.showRoute(this.mockStops[0], this.mockStops[this.mockStops.length - 1], this.mockStops.slice(1, -1))
-      cdr.markForCheck();
-      
-
-    })
-    /*if (!this.stops || this.stops.length < 2){
-      return;
-    }
-    this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1)
-    )*/
-
   }
 
   ngOnInit(): void {
-    this.http.get<TrackingDTO>(`${this.baseUrl}/rides/c527273a-ba41-43e2-aa7c-ab78560177ee/tracking`).subscribe({
+    this.http.get<TrackingDTO>(`${this.baseUrl}/rides/${this.rideId}/tracking`).subscribe({
       next: (data) => {
         this.stops = data.route.map((l: Location) => {
           return new LatLng(l.latitude, l.longitude);
         })
+        let inBetween = this.stops.slice(1, -1)
+      this.locations = [{...this.stops[0], popup: "You are here", iconUrl: carSelectedIcon}]
+      this.locations.push(...inBetween.map((stop: LatLng) => {
+        return {...stop, popup: "Stop"}
+      }))
+      this.locations.push(this.stops.at(-1)!)
       this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1))
-    this.cdr.markForCheck();
+      this.cdr.markForCheck();
 
       },
       error: (error) => {
@@ -148,6 +137,11 @@ export class DuringRide {
   submitForm(form: NgForm) {
     if(form.valid)
       console.log(form.value);
+      this.http.post(`${this.baseUrl}/rides/${this.rideId}/report`, form.value)
+        .subscribe({
+          next: (response) => console.log('Note submitted successfully', response),
+          error: (err) => console.error('Error submitting note', err)
+        });
     this.closeModal();
   }
 
