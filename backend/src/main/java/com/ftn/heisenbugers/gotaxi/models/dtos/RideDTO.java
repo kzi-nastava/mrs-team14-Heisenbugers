@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -16,4 +17,6 @@ public class RideDTO {
     private LocationDTO startLocation;
     private LocationDTO endLocation;
     private double price;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

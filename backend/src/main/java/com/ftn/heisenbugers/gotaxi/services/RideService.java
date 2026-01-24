@@ -63,7 +63,9 @@ public class RideService {
                 r.getRoute().getStops().stream().map(LocationDTO::new).toList(),
                 new LocationDTO(r.getStart()),
                 new LocationDTO(r.getEnd()),
-                r.getPrice()
+                r.getPrice(),
+                r.getStartedAt(),
+                r.getEndedAt()
         );
     }
 

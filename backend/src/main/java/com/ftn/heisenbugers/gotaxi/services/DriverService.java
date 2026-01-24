@@ -1,8 +1,10 @@
 package com.ftn.heisenbugers.gotaxi.services;
 
+import com.ftn.heisenbugers.gotaxi.models.Location;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DriverRideHistoryDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.PassengerInfoDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
@@ -49,14 +51,14 @@ public class DriverService {
         List<DriverRideHistoryDTO> rideHistoryDTOS = new ArrayList<>();
         for (Ride r : rides) {
             DriverRideHistoryDTO dto = new DriverRideHistoryDTO();
-            PopulateDto(r, dto);
+            populateDto(r, dto);
             rideHistoryDTOS.add(dto);
         }
 
         return rideHistoryDTOS;
     }
 
-    private static void PopulateDto(Ride r, DriverRideHistoryDTO dto) {
+    private static void populateDto(Ride r, DriverRideHistoryDTO dto) {
         dto.setRideId(r.getId());
         dto.setCanceled(r.isCanceled());
         dto.setPrice(r.getPrice());
@@ -74,19 +76,36 @@ public class DriverService {
         dto.setPanicTriggered(r.getPanicEvent() == null);
         dto.setCanceledBy(r.getCanceledBy());
         dto.setStartedAt(r.getStartedAt());
-
+        try {
+            List<Location> locations = r.getRoute().getStops();
+            List<LocationDTO> outputLocations = new ArrayList<>();
+            for (Location l : locations) {
+                LocationDTO locationDTO = new LocationDTO();
+                populateDto(l, locationDTO);
+                outputLocations.add(locationDTO);
+            }
+            dto.setRoute(outputLocations);
+        } catch (NullPointerException e) {
+            dto.setRoute(new ArrayList<>());
+        }
         List<Passenger> passengers = r.getPassengers();
         for (Passenger p : passengers) {
             PassengerInfoDTO passengerDTO = new PassengerInfoDTO();
-            PopulateDto(p, passengerDTO);
+            populateDto(p, passengerDTO);
             dto.addPassenger(passengerDTO);
         }
     }
 
-    private static void PopulateDto(Passenger p, PassengerInfoDTO passengerDTO) {
+    private static void populateDto(Passenger p, PassengerInfoDTO passengerDTO) {
         passengerDTO.setPassengerId(p.getId());
         passengerDTO.setFirstName(p.getFirstName());
         passengerDTO.setLastName(p.getLastName());
         passengerDTO.setProfileImageUrl(p.getProfileImageUrl());
+    }
+
+    private static void populateDto(Location l, LocationDTO dto) {
+        dto.setAddress(l.getAddress());
+        dto.setLongitude(l.getLongitude());
+        dto.setLatitude(l.getLatitude());
     }
 }

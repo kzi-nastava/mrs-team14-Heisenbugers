@@ -7,7 +7,7 @@
   <div class="absolute bottom-15 left-10 w-80 bg-white rounded-xl shadow-lg p-4">
     <div class="flex justify-between text-sm text-gray-500 mb-2">
       <span class="font-semibold text-black">Order</span>
-      <span>Time: <b>35 min</b></span>
+      <span>Time: <b>17 min</b></span>
     </div>
 
     <div class="space-y-3">
@@ -141,7 +141,7 @@
 
 @if (rateIsOpen) {
   <app-rate-modal
-    [ride]="this.ride"
+    [ride]="this.rideRate!"
     (onClose)="closeRateModal()"
     (onSubmit)="submitRateForm($event)"
   ></app-rate-modal>

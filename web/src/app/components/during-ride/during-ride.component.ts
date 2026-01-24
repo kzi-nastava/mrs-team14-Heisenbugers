@@ -9,6 +9,7 @@ import { RideInfo } from '../../models/driver-info.model';
 import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { RideRateInfo } from '../../models/ride.model';
 
 interface Location {
   latitude: number,
@@ -33,7 +34,9 @@ interface RideDTO {
   route: Location[],
   startLocation: Location,
   endLocation: Location,
-  price: number
+  startTime: string,
+  endTime: string,
+  price: number,
 }
 
 
@@ -61,13 +64,14 @@ export class DuringRide {
   vehicleCoords?: {vehicleLatitude: number, vehicleLongitude: number};
   startLocation?: Location
   endLocation?: Location
+  rideRate?: RideRateInfo
 
   
   
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   @ViewChild(MapComponent) mapCmp!: MapComponent;
   
-  ride: RideInfo = {
+  /*ride: RideInfo = {
     rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
     startAddress: 'ул.Атамана Головатого 2а',
@@ -87,7 +91,7 @@ export class DuringRide {
     trafficViolations: [{type: 'Red light'}],
     panicTriggered: false
   
-  };
+  };*/
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = false;
   driverRate = 0;
@@ -124,14 +128,14 @@ export class DuringRide {
           vehicleLatitude: data.vehicleLatitude,
           vehicleLongitude: data.vehicleLongitude,
         }
-        this.locations.push({
+        this.locations = [...this.locations,
+          {
           lat: data.vehicleLatitude,
           lng: data.vehicleLongitude,
           popup: "You are here",
           iconUrl: carSelectedIcon,
           snapToRoad: true,
-        })
-        console.log(this.locations)
+        }]
       },
       error: (error) => this.useMockData(error)
     });
@@ -143,17 +147,27 @@ export class DuringRide {
         })
         this.startLocation = data.startLocation
         this.endLocation = data.endLocation
+        this.rideRate = {
+          startAddress: data.startLocation.address!,
+          endAddress: data.endLocation.address!,
+          price: data.price,
+          rated: false,
+          startTime: new Date(data.startTime),
+          endTime: new Date(data.endTime),
+
+        }
         let inBetween = this.stops.slice(1, -1)
         this.locations = [...this.locations, {...this.stops[0], popup: "Start"}]
         this.locations.push(...inBetween.map((stop: LatLng) => {
         return {...stop, popup: "Stop"}
       }))
+
+      
+
         
       this.locations.push({...this.stops.at(-1)!, popup: "Final destination"})
       this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1))
       this.cdr.markForCheck();
-      console.log(data)
-      console.log(this.locations)
       },
       error: (error) => this.useMockData(error)
     })
