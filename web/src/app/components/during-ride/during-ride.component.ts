@@ -21,8 +21,19 @@ interface TrackingDTO {
   driver: {firstName: string, lastName: string}
   vehicleLatitude: number,
   vehicleLongitude: number,
-  estimatedTimeRemainingMinutes: number
-  route: Location[]
+  estimatedTimeRemainingMinutes: number,
+  route: Location[],
+  startLocation: Location,
+  endLocation: Location,
+}
+
+interface RideDTO {
+  rideId: string,
+  driver: {firstName: string, lastName: string}
+  route: Location[],
+  startLocation: Location,
+  endLocation: Location,
+  price: number
 }
 
 
@@ -48,6 +59,9 @@ export class DuringRide {
   locations: MapPin[] = [];
 
   vehicleCoords?: {vehicleLatitude: number, vehicleLongitude: number};
+  startLocation?: Location
+  endLocation?: Location
+
   
   
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
@@ -98,7 +112,7 @@ export class DuringRide {
   }
 
   useMockData(error: any): void {
-        console.warn('Using mock data due to error fetching ride history:', error);
+        console.warn('Using mock data due to error fetching current ride:', error);
         this.stops = this.mockStops;
         this.cdr.markForCheck();
   }
@@ -106,18 +120,10 @@ export class DuringRide {
   ngOnInit(): void {
     this.http.get<TrackingDTO>(`${this.baseUrl}/rides/${this.rideId}/tracking`).subscribe({
       next: (data) => {
-        this.stops = data.route.map((l: Location) => {
-          return new LatLng(l.latitude, l.longitude);
-        })
         this.vehicleCoords = {
           vehicleLatitude: data.vehicleLatitude,
           vehicleLongitude: data.vehicleLongitude,
         }
-        let inBetween = this.stops.slice(1, -1)
-        this.locations = [{...this.stops[0], popup: "Start"}]
-        this.locations.push(...inBetween.map((stop: LatLng) => {
-        return {...stop, popup: "Stop"}
-      }))
         this.locations.push({
           lat: data.vehicleLatitude,
           lng: data.vehicleLongitude,
@@ -125,13 +131,32 @@ export class DuringRide {
           iconUrl: carSelectedIcon,
           snapToRoad: true,
         })
+        console.log(this.locations)
+      },
+      error: (error) => this.useMockData(error)
+    });
+
+    this.http.get<RideDTO>(`${this.baseUrl}/rides/${this.rideId}`).subscribe({
+      next: (data) => {
+        this.stops = data.route.map((l: Location) => {
+          return new LatLng(l.latitude, l.longitude);
+        })
+        this.startLocation = data.startLocation
+        this.endLocation = data.endLocation
+        let inBetween = this.stops.slice(1, -1)
+        this.locations = [...this.locations, {...this.stops[0], popup: "Start"}]
+        this.locations.push(...inBetween.map((stop: LatLng) => {
+        return {...stop, popup: "Stop"}
+      }))
+        
       this.locations.push({...this.stops.at(-1)!, popup: "Final destination"})
       this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1))
       this.cdr.markForCheck();
-
+      console.log(data)
+      console.log(this.locations)
       },
-      error: this.useMockData
-    });
+      error: (error) => this.useMockData(error)
+    })
   }
     
   showToast(message: string, duration: number = 2000) {

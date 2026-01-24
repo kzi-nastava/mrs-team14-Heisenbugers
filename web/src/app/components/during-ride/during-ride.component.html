@@ -7,7 +7,7 @@
   <div class="absolute bottom-15 left-10 w-80 bg-white rounded-xl shadow-lg p-4">
     <div class="flex justify-between text-sm text-gray-500 mb-2">
       <span class="font-semibold text-black">Order</span>
-      <span>Time: <b>35 min 13 sec</b></span>
+      <span>Time: <b>35 min</b></span>
     </div>
 
     <div class="space-y-3">
@@ -15,13 +15,17 @@
         <label class="text-xs text-gray-500">Start:</label>
         <input
           class="w-full border rounded-lg px-3 py-2 text-sm"
-          value="ул.Атамана Головатого 2а"
+          [value]="startLocation?.address"
           readonly
         />
       </div>
       <div>
         <label class="text-xs text-gray-500">Finish:</label>
-        <input class="w-full border rounded-lg px-3 py-2 text-sm" value="ул.Красная 113" readonly />
+        <input
+          class="w-full border rounded-lg px-3 py-2 text-sm"
+          [value]="endLocation?.address"
+          readonly
+        />
       </div>
       <div>
         <label class="text-xs text-gray-500">Note:</label>
@@ -50,7 +54,7 @@
     </button>
   </div>
 
-  <!-- Passengers -->
+  <!-- Passengers 
   <div class="absolute top-6 right-6 bg-white rounded-xl shadow-lg p-6 w-70 bg bg-white/75">
     <h3 class="font-semibold mb-3">Passengers:</h3>
     <div class="grid grid-cols-2 gap-3">
@@ -62,7 +66,7 @@
       }
     </div>
   </div>
-
+-->
   <!-- Chat Button -->
   <button
     class="absolute right-6 bottom-52 bg-white shadow-lg rounded-full w-11 h-11 flex items-center justify-center cursor-pointer"

@@ -38,9 +38,11 @@ public class TestTriggerController {
         Ride r = rideRepository.findRideById(UUID.fromString("c527273a-ba41-43e2-aa7c-ab78560177ee"));
         r.setRoute(new Route());
         List<Location> coords = new ArrayList<>();
-        coords.add(new Location(45.249570, 19.815809));
-        coords.add(new Location(45.242299, 19.796333));
-        coords.add(new Location(45.241604, 19.842757));
+        coords.add(new Location(45.252223, 19.802843));
+        coords.add(new Location(45.242322, 19.796309));
+        coords.add(new Location(45.239936, 19.825872));
+        coords.add(new Location(45.248063, 19.840472));
+
         r.getRoute().setPolyline(coords);
 
         rideRepository.save(r);

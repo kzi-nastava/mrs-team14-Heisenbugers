@@ -3,6 +3,7 @@ package com.ftn.heisenbugers.gotaxi.services;
 import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DriverDto;
 import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.RideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideTrackingDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.repositories.RatingRepository;
@@ -48,6 +49,22 @@ public class RideService {
                     return dto;
                 })
                 .toList();
+    }
+
+    public RideDTO getRide(UUID rideId) {
+        Ride r = rideRepository.findRideById(rideId);
+        Driver d = r.getDriver();
+        return new RideDTO(
+                r.getId().toString(),
+                new DriverDto(
+                        d.getFirstName(),
+                        d.getLastName()
+                ),
+                r.getRoute().getStops().stream().map(LocationDTO::new).toList(),
+                new LocationDTO(r.getStart()),
+                new LocationDTO(r.getEnd()),
+                r.getPrice()
+        );
     }
 
     public RideTrackingDTO getRideTrackingById(UUID rideId) {

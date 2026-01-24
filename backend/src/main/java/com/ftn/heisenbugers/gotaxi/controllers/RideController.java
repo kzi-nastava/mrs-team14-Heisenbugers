@@ -3,6 +3,7 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.RideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideTrackingDTO;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.services.RideService;
@@ -33,6 +34,15 @@ public class RideController {
         return ResponseEntity.ok(rideService.getAll());
     }
 
+    @GetMapping("/{rideId}")
+    public ResponseEntity<RideDTO> getRide(@PathVariable UUID rideId) {
+        RideDTO ride = rideService.getRide(rideId);
+        if (ride == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(ride);
+        }
+    }
 
     @GetMapping("/{rideId}/tracking")
     public ResponseEntity<RideTrackingDTO> getRideTracking(@PathVariable UUID rideId) {
