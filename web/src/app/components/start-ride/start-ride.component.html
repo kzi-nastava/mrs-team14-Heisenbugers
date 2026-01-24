@@ -1,101 +1,159 @@
-<div class="absolute bg-white rounded-2xl top-15 bottom-15 left-1/7 -translate-x-1/2 z-50 p-10">
-    <h1 class="text-3xl font-bold mb-10 text-center">
-      New order
-    </h1>
+
+<div class="h-full relative overflow-hidden">
+
+    <div class="absolute top-15 bottom-15 left-1/7 -translate-x-1/2 z-40
+              w-[460px] bg-white rounded-2xl shadow-xl p-10 flex flex-col">
+
+    <h1 class="text-3xl font-bold mb-10 text-center">New order</h1>
+
+    <!-- Start -->
     <div class="flex flex-col gap-2 mb-4">
-      <label>
-        Start:
-      </label>
-      <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-20 justify-start justify-items-start border-[#BEBEBE85] border">
-        <p>Bulevar Jovana Ducica 15</p>
+      <label class="text-sm text-neutral-700">Start:</label>
+      <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-6 border border-[#BEBEBE85]">
+        <p class="text-sm text-neutral-900">
+          {{ ride?.start?.address ?? '—' }}
+        </p>
       </div>
     </div>
+
+    <!-- End -->
     <div class="flex flex-col gap-2 mb-4">
-      <label>
-        End:
-      </label>
-      <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-20 justify-start justify-items-start border-[#BEBEBE85] border">
-        <p>Bulevar Oslobodjenja 42</p>
+      <label class="text-sm text-neutral-700">End:</label>
+      <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-6 border border-[#BEBEBE85]">
+        <p class="text-sm text-neutral-900">
+          {{ ride?.end?.address ?? '—' }}
+        </p>
       </div>
     </div>
-    <div class="flex flex-col gap-2 mb-4">
-      <label>
-        Passangers:
-      </label>
-      <div>
-        <div class="flex gap-2 items-center">
-          <div class="grid grid-cols-2 gap-2">
-            <!--@for(p of ride.passengers; track p){-->
-              <div class="flex items-center w-50 gap-2">
-                <div
-                  class="w-10 aspect-square rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden"
-                >
-                  <img
-                    src="icons/logo.svg"
-                    alt="Passanger profile"
-                    class="w-full h-full" />
-                </div>
 
-                  <span class="leading-none">Name Surname</span>
-              </div>
-            <div class="flex items-center w-50 gap-2">
-              <div
-                class="w-10 aspect-square rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden"
-              >
-                <img
-                  src="icons/logo.svg"
-                  alt="Passanger profile"
-                  class="w-full h-full" />
-              </div>
+    <!-- Passengers -->
+    <div class="flex flex-col gap-2 mb-6">
+      <label class="text-sm text-neutral-700">Passengers:</label>
 
-              <span class="leading-none">Name Surname</span>
+      <div class="grid grid-cols-2 gap-3">
+        @for (p of (ride?.passengers ?? []); track p.id) {
+          <div class="flex items-center gap-2">
+            <div class="w-9 h-9 rounded-full bg-neutral-200 overflow-hidden flex items-center justify-center">
+              <img
+                [src]="p.profileImageUrl ?? 'icons/logo.svg'"
+                alt="Passenger"
+                class="w-full h-full object-cover"
+              />
             </div>
-            <div class="flex items-center w-50 gap-2">
-              <div
-                class="w-10 aspect-square rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden"
-              >
-                <img
-                  src="icons/logo.svg"
-                  alt="Passanger profile"
-                  class="w-full h-full" />
-              </div>
-
-              <span class="leading-none">Name Surname</span>
-            </div>
-            <!--}-->
+            <span class="text-sm text-neutral-900 leading-none">
+              {{ p.firstName }} {{ p.lastName }}
+            </span>
           </div>
-        </div>
-      </div>
+        }
 
-    </div>
-    <div class="flex flex-row items-center gap-4 mb-4">
-      <label>
-        Distance:
-      </label>
-      <div class="bg-white rounded-xl p-1 px-5 justify-start items-center justify-items-start border-black border">
-        <p>15 km</p>
+        @if (!(ride?.passengers?.length)) {
+          <div class="text-sm text-neutral-400">No passengers</div>
+        }
       </div>
     </div>
-    <div class="flex flex-row items-center gap-4 mb-4">
-      <label class="mr-6">
-        Time:
-      </label>
-      <div class="bg-white rounded-xl p-1 px-5 justify-start items-center justify-items-start border-black border">
-        <p>35 min</p>
+
+    <!-- Distance / Time -->
+    <div class="flex items-center gap-4 mb-3">
+      <label class="text-sm text-neutral-700 w-[72px]">Distance:</label>
+      <div class="bg-white rounded-xl px-5 py-1 border border-black/80">
+        <p class="text-sm font-medium">
+          {{ distanceKm ?? '—' }} km
+        </p>
       </div>
     </div>
+
+    <div class="flex items-center gap-4 mb-2">
+      <label class="text-sm text-neutral-700 w-[72px]">Time:</label>
+      <div class="bg-white rounded-xl px-5 py-1 border border-black/80">
+        <p class="text-sm font-medium">
+          {{ timeMin ?? '—' }} min
+        </p>
+      </div>
+    </div>
+
+    <!-- Buttons -->
     <div class="flex gap-4 mt-auto pt-6">
       <button
         type="button"
-        class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] mt-15 cursor-pointer"
+        (click)="startRide()"
+        class="flex-1 h-10.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow
+               hover:bg-lime-200 active:scale-[0.99] cursor-pointer"
       >
         Start
       </button>
+
       <button
         type="button"
-        class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-white border border-[#00000080] text-black font-semibold shadow hover:bg-gray-200 active:scale-[0.99] mt-15 cursor-pointer"
+        (click)="openCancel()"
+        class="flex-1 h-10.5 rounded-[10px] bg-white border border-black/50 text-black font-semibold shadow
+               hover:bg-neutral-100 active:scale-[0.99] cursor-pointer"
       >
         Cancel
       </button>
     </div>
+  </div>
+
+  <!-- MODAL: Order cancellation -->
+  @if (cancelOpen) {
+    <!-- dim background -->
+    <div class="absolute inset-0 z-50 bg-black/25"></div>
+
+    <!-- modal -->
+    <div class="absolute inset-0 z-60 flex items-center justify-center">
+      <div class="w-[360px] rounded-2xl bg-white shadow-2xl border border-neutral-200 p-6">
+        <h2 class="text-lg font-bold text-center mb-4">Order cancellation</h2>
+
+        <div class="space-y-3 text-sm text-neutral-800">
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="radio" name="cancelReason" value="HEALTH_PROBLEM"
+                   [(ngModel)]="cancelReason"
+                   class="accent-lime-400" />
+            <span>Health problem</span>
+          </label>
+
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="radio" name="cancelReason" value="CUSTOMER_NOT_HERE"
+                   [(ngModel)]="cancelReason"
+                   class="accent-lime-400" />
+            <span>The customer is not here</span>
+          </label>
+
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="radio" name="cancelReason" value="CAR_PROBLEM"
+                   [(ngModel)]="cancelReason"
+                   class="accent-lime-400" />
+            <span>Problem with the car</span>
+          </label>
+
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="radio" name="cancelReason" value="OTHER"
+                   [(ngModel)]="cancelReason"
+                   class="accent-lime-400" />
+            <span>Other</span>
+          </label>
+
+          @if (cancelReason === 'OTHER') {
+            <textarea
+              [(ngModel)]="cancelReasonText"
+              rows="3"
+              class="w-full mt-2 rounded-xl border border-neutral-200 p-3 text-sm
+                     focus:outline-none focus:ring-4 focus:ring-lime-200"
+              placeholder="Write your reason..."
+            ></textarea>
+          }
+        </div>
+
+        <div class="mt-5 flex justify-center">
+          <button
+            type="button"
+            (click)="confirmCancel()"
+            class="h-10 w-28 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow
+                   hover:bg-lime-200 active:scale-[0.99]"
+          >
+            Stop
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>
