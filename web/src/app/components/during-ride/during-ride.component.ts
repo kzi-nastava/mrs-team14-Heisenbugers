@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { carSelectedIcon, MapComponent } from '../map/map.component';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
@@ -36,7 +36,7 @@ interface TrackingDTO {
 export class DuringRide {
   private stops?: L.LatLng[]
   private baseUrl = 'http://localhost:8081/api';
-  private rideId: string = "c527273a-ba41-43e2-aa7c-ab78560177ee";
+  @Input() rideId!: string;
 
   private mockStops: L.LatLng[] = [
     new LatLng(45.249570, 19.815809),
@@ -95,6 +95,12 @@ export class DuringRide {
     }
   }
 
+  useMockData(error: any): void {
+        console.warn('Using mock data due to error fetching ride history:', error);
+        this.stops = this.mockStops;
+        this.cdr.markForCheck();
+  }
+
   ngOnInit(): void {
     this.http.get<TrackingDTO>(`${this.baseUrl}/rides/${this.rideId}/tracking`).subscribe({
       next: (data) => {
@@ -111,11 +117,7 @@ export class DuringRide {
       this.cdr.markForCheck();
 
       },
-      error: (error) => {
-        console.warn('Using mock data due to error fetching ride history:', error);
-        this.stops = this.mockStops;
-        this.cdr.markForCheck();
-      }
+      error: this.useMockData
     });
   }
     

@@ -3,6 +3,7 @@ package com.ftn.heisenbugers.gotaxi.services;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideHistoryDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.UserStateDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.enums.UserState;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -26,15 +28,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserState getState(UUID userId) {
+    public UserStateDTO getState(UUID userId) {
         Passenger p = userRepository.findPassengerById(userId);
-        boolean riding = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ONGOING).isPresent();
+        Optional<Ride> rideOpt = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ONGOING);
 
-        if (riding) {
-            return UserState.RIDING;
-        } else {
-            return UserState.LOOKING;
-        }
+        return rideOpt.map(ride -> new UserStateDTO(UserState.RIDING, ride.getId()))
+                .orElseGet(() -> new UserStateDTO(UserState.LOOKING));
 
 
     }
