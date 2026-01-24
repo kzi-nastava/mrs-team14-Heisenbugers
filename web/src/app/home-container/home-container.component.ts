@@ -2,6 +2,7 @@ import { Component, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { HomeComponent } from '../components/home/home';
 import { DuringRide } from '../components/during-ride/during-ride.component';
 import { HttpClient } from '@angular/common/http';
+import { DriverDriving } from '../driver-driving/driver-driving';
 
 interface UserStateDTO {
   rideId: string,
@@ -17,7 +18,6 @@ interface UserStateDTO {
 export class HomeContainer {
   @ViewChild('host', { read: ViewContainerRef }) host!: ViewContainerRef;
 
-  private rideInProgress: boolean = false
   private rideId?: string;
 
   private baseUrl = 'http://localhost:8081/api';
@@ -32,21 +32,27 @@ export class HomeContainer {
     this.http.get<UserStateDTO>(`${this.baseUrl}/users/state`).subscribe(
       {
         next: (data) => {
+          let component: Type<any>
           if (data.state === 'LOOKING'){
-            this.rideInProgress = false;
+            component = HomeComponent
           } else if (data.state === 'RIDING') {
             this.rideId = data.rideId;
-            this.rideInProgress = true
+            component = DuringRide
+          } else if (data.state === 'DRIVING'){
+            this.rideId = data.rideId;
+            component = DriverDriving
+          } else if (data.state === 'READY'){
+            component = HomeComponent
+          } else {
+            component = HomeComponent
           }
-          let component: Type<any> = this.rideInProgress ?  DuringRide : HomeComponent
           this.host.clear();
           const ref = this.host.createComponent(component)
           ref.setInput('rideId', this.rideId);
         },
 
         error: (data) => {
-          this.rideInProgress = false
-          let component: Type<any> = this.rideInProgress ?  DuringRide : HomeComponent
+          let component: Type<any> = HomeComponent
           this.host.clear();
           const ref = this.host.createComponent(component)
           ref.setInput('rideId', this.rideId);

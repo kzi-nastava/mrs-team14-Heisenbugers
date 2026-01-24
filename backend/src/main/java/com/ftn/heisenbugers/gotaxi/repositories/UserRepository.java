@@ -27,4 +27,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<Driver> findDriverById(@Param("id") UUID id);
 
     Passenger findPassengerById(UUID uuid);
+
+    User findUserById(UUID id);
 }

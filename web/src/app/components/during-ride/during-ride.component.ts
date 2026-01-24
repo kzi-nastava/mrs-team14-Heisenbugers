@@ -28,7 +28,7 @@ interface TrackingDTO {
   endLocation: Location,
 }
 
-interface RideDTO {
+export interface RideDTO {
   rideId: string,
   driver: {firstName: string, lastName: string}
   route: Location[],
@@ -96,6 +96,7 @@ export class DuringRide {
   rateIsOpen: boolean = false;
   driverRate = 0;
   vehicleRate = 0;
+  etimateMinutes?: number;
 
   location: MapPin = { lat: 45.249570, lng: 19.815809, popup: 'You are here', iconUrl: carSelectedIcon };
   passengers = [
@@ -168,9 +169,25 @@ export class DuringRide {
       this.locations.push({...this.stops.at(-1)!, popup: "Final destination"})
       this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1))
       this.cdr.markForCheck();
+      this.addEstimateMinutes()
       },
       error: (error) => this.useMockData(error)
     })
+  }
+
+  addEstimateMinutes(): void {
+    const map = new MapComponent()
+    const stops = this.locations.map(l => {
+      return new LatLng(l.lat, l.lng)
+    })
+    map.initMap().then(() => {
+    map.showRoute(stops[0], stops[stops.length - 1], stops.slice(1, -1), map.dummyMap).then(
+      (summary) => {
+        this.etimateMinutes = summary.timeMin
+        this.cdr.markForCheck()
+      }
+    )
+  })
   }
     
   showToast(message: string, duration: number = 2000) {

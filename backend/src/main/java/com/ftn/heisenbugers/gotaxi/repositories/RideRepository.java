@@ -43,4 +43,5 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
 
     Optional<Ride> findByPassengersContainingAndStatus(Passenger passenger, RideStatus status);
 
+    Optional<Ride> findByDriverIdAndStatus(UUID driver_id, RideStatus status);
 }

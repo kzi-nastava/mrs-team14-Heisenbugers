@@ -1,7 +1,9 @@
 package com.ftn.heisenbugers.gotaxi.services;
 
+import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
+import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideHistoryDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.UserStateDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
@@ -29,12 +31,20 @@ public class UserService {
     }
 
     public UserStateDTO getState(UUID userId) {
-        Passenger p = userRepository.findPassengerById(userId);
-        Optional<Ride> rideOpt = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ONGOING);
+        User u = userRepository.findUserById(userId);
+        if (u instanceof Passenger p) {
+            Optional<Ride> rideOpt = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ONGOING);
 
-        return rideOpt.map(ride -> new UserStateDTO(UserState.RIDING, ride.getId()))
-                .orElseGet(() -> new UserStateDTO(UserState.LOOKING));
+            return rideOpt.map(ride -> new UserStateDTO(UserState.RIDING, ride.getId()))
+                    .orElseGet(() -> new UserStateDTO(UserState.LOOKING));
+        } else if (u instanceof Driver d) {
+            Optional<Ride> rideOpt = rideRepository.findByDriverIdAndStatus(d.getId(), RideStatus.ONGOING);
+            return rideOpt.map(ride -> new UserStateDTO(UserState.DRIVING, ride.getId()))
+                    .orElseGet(() -> new UserStateDTO(UserState.READY));
 
+        } else {
+            return new UserStateDTO();
+        }
 
     }
 
