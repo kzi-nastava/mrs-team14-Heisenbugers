@@ -46,6 +46,8 @@ export class DuringRide {
   ]
 
   locations: MapPin[] = [];
+
+  vehicleCoords?: {vehicleLatitude: number, vehicleLongitude: number};
   
   
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
@@ -107,11 +109,22 @@ export class DuringRide {
         this.stops = data.route.map((l: Location) => {
           return new LatLng(l.latitude, l.longitude);
         })
+        this.vehicleCoords = {
+          vehicleLatitude: data.vehicleLatitude,
+          vehicleLongitude: data.vehicleLongitude,
+        }
         let inBetween = this.stops.slice(1, -1)
-      this.locations = [{...this.stops[0], popup: "You are here", iconUrl: carSelectedIcon}]
-      this.locations.push(...inBetween.map((stop: LatLng) => {
+        this.locations = [{...this.stops[0], popup: "Start"}]
+        this.locations.push(...inBetween.map((stop: LatLng) => {
         return {...stop, popup: "Stop"}
       }))
+        this.locations.push({
+          lat: data.vehicleLatitude,
+          lng: data.vehicleLongitude,
+          popup: "You are here",
+          iconUrl: carSelectedIcon,
+          snapToRoad: true,
+        })
       this.locations.push({...this.stops.at(-1)!, popup: "Final destination"})
       this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1))
       this.cdr.markForCheck();

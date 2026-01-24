@@ -17,4 +17,6 @@ public class RideTrackingDTO {
     private double vehicleLongitude;
     private int estimatedTimeRemainingMinutes;
     private List<LocationDTO> route;
+    private LocationDTO startLocation;
+    private LocationDTO endLocation;
 }

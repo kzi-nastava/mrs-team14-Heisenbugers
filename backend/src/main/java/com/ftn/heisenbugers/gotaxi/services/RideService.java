@@ -74,6 +74,13 @@ public class RideService {
         }
 
         DriverDto driverDto = new DriverDto(driver.getFirstName(), driver.getLastName());
+        Location startLocation = ride.getStart();
+        LocationDTO startLocationDTO = new LocationDTO(startLocation.getLatitude(),
+                startLocation.getLongitude(), startLocation.getAddress());
+
+        Location endLocation = ride.getEnd();
+        LocationDTO endLocationDTO = new LocationDTO(endLocation.getLatitude(),
+                endLocation.getLongitude(), endLocation.getAddress());
 
         return new RideTrackingDTO(
                 rideId,
@@ -81,7 +88,9 @@ public class RideService {
                 currentLocation.getLatitude(),
                 currentLocation.getLongitude(),
                 0,
-                routeDTOs
+                routeDTOs,
+                startLocationDTO,
+                endLocationDTO
         );
 
     }
