@@ -4,20 +4,39 @@ import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideHistoryDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
+import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import com.ftn.heisenbugers.gotaxi.models.enums.UserState;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserService {
     private final RideRepository rideRepository;
+    private final UserRepository userRepository;
 
-    public UserService(RideRepository rideRepository) {
+    public UserService(RideRepository rideRepository, UserRepository userRepository) {
         this.rideRepository = rideRepository;
+        this.userRepository = userRepository;
+    }
+
+    public UserState getState(UUID userId) {
+        Passenger p = userRepository.findPassengerById(userId);
+        boolean riding = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ONGOING).isPresent();
+
+        if (riding) {
+            return UserState.RIDING;
+        } else {
+            return UserState.LOOKING;
+        }
+
+
     }
 
     public List<RideHistoryDTO> getUserHistory(Passenger passenger, LocalDate startDate, LocalDate endDate,

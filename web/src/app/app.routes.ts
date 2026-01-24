@@ -32,7 +32,7 @@ export const routes: Routes = [
   { path: '',
     component: BaseLayoutComponent,
     children: [
-      { path: 'home', component: HomeContainer }
+      { path: 'home', component: HomeComponent }
     ]
   },
   {
@@ -54,6 +54,7 @@ export const routes: Routes = [
       { path: 'driver-registration', component: DriverRegistrationComponent},
       { path: 'start-ride', component: StartRideComponent},
       { path: 'during-ride', component: DuringRide},
+      { path: 'base', component: HomeContainer},
     ]
   }
 ];
