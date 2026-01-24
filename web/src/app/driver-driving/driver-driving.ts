@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, Input } from '@angular/core';
 import { LocationDTO } from '../models/ride-estimate.model';
 import { MapComponent } from '../components/map/map.component';
 import { RideDTO } from '../components/during-ride/during-ride.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-driver-driving',
@@ -16,7 +17,7 @@ export class DriverDriving {
   startLocation?: LocationDTO
   endLocation?: LocationDTO
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private router: Router) {
     
   }
 
@@ -33,7 +34,13 @@ export class DriverDriving {
   }
 
   stopRide(): void {
-    
+    this.http.post<RideDTO>(`${this.baseUrl}/rides/${this.rideId}/finish`, null).subscribe(
+      () => {
+        window.location.reload()
+      }
+    )
   }
 
+  
+  
 }

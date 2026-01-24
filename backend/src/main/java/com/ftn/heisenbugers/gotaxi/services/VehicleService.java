@@ -34,7 +34,7 @@ public class VehicleService {
                         dto.setLongitude(driver.getLocation().getLongitude());
 
                         // Check if vehicle is occupied (has active ride)
-                        dto.setOccupied(driver.isAvailable());
+                        dto.setOccupied(!driver.isAvailable());
                     }
 
 

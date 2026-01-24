@@ -6,6 +6,7 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideTrackingDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import com.ftn.heisenbugers.gotaxi.models.services.EmailService;
 import com.ftn.heisenbugers.gotaxi.repositories.RatingRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.TrafficViolationRepository;
@@ -24,13 +25,15 @@ public class RideService {
     private final UserRepository userRepository;
     private final TrafficViolationRepository violationRepository;
     private final RatingRepository ratingRepository;
+    private final EmailService emailService;
 
     public RideService(RideRepository rideRepository, UserRepository userRepository,
-                       TrafficViolationRepository violationRepository, RatingRepository ratingRepository) {
+                       TrafficViolationRepository violationRepository, RatingRepository ratingRepository, EmailService emailService) {
         this.rideRepository = rideRepository;
         this.userRepository = userRepository;
         this.violationRepository = violationRepository;
         this.ratingRepository = ratingRepository;
+        this.emailService = emailService;
     }
 
     public List<RideTrackingDTO> getAll() {
@@ -151,6 +154,13 @@ public class RideService {
         ride.setStatus(RideStatus.FINISHED);
         ride.setLastModifiedBy(driver);
         rideRepository.save(ride);
+
+        rideDriver.setAvailable(true);
+        userRepository.save(rideDriver);
+
+        for (User u : ride.getPassengers()) {
+            sendFinishedRideEmail(u, ride);
+        }
         return true;
     }
 
@@ -181,7 +191,27 @@ public class RideService {
         return true;
     }
 
+    private void sendFinishedRideEmail(User recipient, Ride ride) {
+        String subject = "Subject: Your Ride Has Completed – Share Your Feedback!";
+        String body =
+                """
+                        Dear %s %s,
+                        
+                        Your ride from %s to %s with us has successfully concluded. We hope you had a smooth and enjoyable journey!
+                        
+                        We would love to hear about your experience. You can leave a review by visiting your ride history in your profile.
+                        
+                        Thank you for choosing our service. We look forward to serving you again soon!
+                        
+                        Best regards, \s
+                        GoTaxi 
+                        """.formatted(recipient.getFirstName(), recipient.getLastName(),
+                        ride.getStart().getAddress(), ride.getEnd().getAddress());
+        emailService.sendMail(recipient.getEmail(), subject, body);
+    }
+
     private boolean isInLastNDays(Ride r, long n) {
         return r.getEndedAt().isAfter(LocalDateTime.now().minusDays(n));
     }
+
 }
