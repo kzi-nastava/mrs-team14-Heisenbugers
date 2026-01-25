@@ -6,10 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.UUID;
 
 public class CreatedRideDTO {
     @Setter @Getter
-    private Long Id;
+    private UUID Id;
     @Setter @Getter
     private RouteDTO route;
     @Setter @Getter
