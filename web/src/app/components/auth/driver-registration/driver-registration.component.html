@@ -157,10 +157,10 @@
         [class.border-red-400]="isInvalid('type')"
         [class.focus:ring-red-200]="isInvalid('type')"
       >
-        <option value="" disabled>Select an option</option>
-        <option value="standard">Standard</option>
-        <option value="van">Van</option>
-        <option value="luxury">Luxury</option>
+        <option [ngValue]="null" disabled>Select an option</option>
+        <option value="STANDARD">Standard</option>
+        <option value="VAN">Van</option>
+        <option value="LUXURY">Luxury</option>
       </select>
       @if (f.type.touched && f.type.hasError('required')) {
         <p class="mt-1 text-xs text-red-500">Required</p>
