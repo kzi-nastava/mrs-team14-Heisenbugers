@@ -5,11 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreatedDriverDTO {
     @Getter @Setter
-    private Long id;
+    private UUID id;
     @Getter @Setter
     private String email;
     @Getter @Setter

@@ -4,6 +4,7 @@ import com.ftn.heisenbugers.gotaxi.models.Administrator;
 import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.CreateDriverDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.LoginRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.LoginResponseDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RegisterPassengerRequestDTO;
@@ -84,6 +85,48 @@ public class AuthService {
         emailService.sendActivationEmail(normalizedEmail, activationLink);
 
         return p.getId();
+    }
+
+    public UUID registerDriver(CreateDriverDTO request) {
+
+        if (request.getEmail() == null || request.getEmail().isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required.");
+        }
+
+        String normalizedEmail = request.getEmail().trim().toLowerCase();
+
+        if (userRepository.existsByEmail(normalizedEmail)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists.");
+        }
+
+        Driver d = new Driver();
+        d.setEmail(normalizedEmail);
+        d.setFirstName(request.getFirstName());
+        d.setLastName(request.getLastName());
+        d.setPhone(request.getPhone());
+        d.setAddress(request.getAddress());
+        d.setProfileImageUrl(request.getProfileImageUrl());
+        d.setBlocked(false);
+        d.setActivated(false);
+
+        userRepository.save(d);
+
+        String token = UUID.randomUUID().toString().replace("-", "") + UUID.randomUUID().toString().replace("-", "");
+
+        ActivationToken activationToken = ActivationToken.builder()
+                .token(token)
+                .user(d)
+                .expiresAt(Instant.now().plus(Duration.ofHours(24)))
+                .used(false)
+                .build();
+
+        activationTokenRepository.save(activationToken);
+
+
+        String activationLink = "http://localhost:8081/api/drivers/activate?token=" + token;
+        emailService.sendActivationEmail(normalizedEmail, activationLink);
+
+        return d.getId();
     }
 
 

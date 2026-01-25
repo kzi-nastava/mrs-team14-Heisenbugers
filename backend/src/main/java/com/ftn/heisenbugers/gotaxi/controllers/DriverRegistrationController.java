@@ -4,14 +4,21 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.CreateDriverDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedDriverDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedVehicleDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.SetDriverPasswordDTO;
+import com.ftn.heisenbugers.gotaxi.models.services.AuthService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/api/drivers")
 public class DriverRegistrationController {
+
+    private AuthService authService;
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -20,8 +27,10 @@ public class DriverRegistrationController {
     public ResponseEntity<CreatedDriverDTO> createDriver(
             @RequestBody CreateDriverDTO request) {
 
+        var userId = authService.registerDriver(request);
+
         CreatedVehicleDTO vehicle = new CreatedVehicleDTO();
-        vehicle.setId(1L);
+        vehicle.setId(UUID.randomUUID());
         vehicle.setModel(request.getVehicle().getVehicleModel());
         vehicle.setType(request.getVehicle().getVehicleType());
         vehicle.setLicensePlate(request.getVehicle().getLicensePlate());
@@ -30,7 +39,7 @@ public class DriverRegistrationController {
         vehicle.setPetTransport(request.getVehicle().isPetTransport());
 
         CreatedDriverDTO driver = new CreatedDriverDTO();
-        driver.setId(1L);
+        driver.setId(userId);
         driver.setEmail(request.getEmail());
         driver.setFirstName(request.getFirstName());
         driver.setLastName(request.getLastName());
@@ -41,12 +50,16 @@ public class DriverRegistrationController {
         return new ResponseEntity<>(driver, HttpStatus.CREATED);
     }
 
-    @GetMapping(value = "/activation/{token}",
+    @GetMapping(value = "/activate",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> validateActivationToken(
-            @PathVariable String token) {
+            @RequestParam("token") String token) {
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        authService.activateByToken(token);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("http://localhost:4200/auth/login?activated=1"));
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
     @PutMapping(value = "/activation/{token}",

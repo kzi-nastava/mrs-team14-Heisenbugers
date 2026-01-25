@@ -6,11 +6,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreatedVehicleDTO {
     @Getter @Setter
-    private Long id;
+    private UUID id;
     @Getter @Setter
     private String model;
     @Getter @Setter
