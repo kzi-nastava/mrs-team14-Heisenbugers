@@ -46,9 +46,9 @@ public class ProfileService {
 
     public void changePassword(String email, ChangePasswordDTO request) {
 
-        /*if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
             throw new IllegalArgumentException("New passwords do not match");
-        }*/
+        }
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
