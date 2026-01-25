@@ -51,6 +51,9 @@ export class StartRideComponent {
     this.cancelOpen = false;
   }
 
+  startRide() {}
+
+
   async submitCancel() {
     if (!this.ride?.rideId && !this.ride?.id) return;
 

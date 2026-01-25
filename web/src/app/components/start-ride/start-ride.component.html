@@ -1,91 +1,131 @@
-@if (ride) {
-  <div class="absolute bg-white rounded-2xl top-15 bottom-15 left-1/7 -translate-x-1/2 z-50 p-10 w-[520px] shadow-xl">
-    <h1 class="text-3xl font-bold mb-10 text-center">New order</h1>
-
-    <div class="flex flex-col gap-2 mb-4">
-      <label>Start:</label>
-      <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-20 border-[#BEBEBE85] border">
-        <p>{{ ride?.start?.address ?? '—' }}</p>
+<div class="h-full relative overflow-hidden">
+  @if (loadingRide) {
+    <div class="absolute inset-0 flex items-center justify-center z-50">
+      <div class="rounded-xl bg-white border border-neutral-200 shadow p-4 text-sm text-neutral-700">
+        Loading ride...
       </div>
     </div>
+  }
 
-    <div class="flex flex-col gap-2 mb-4">
-      <label>End:</label>
-      <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-20 border-[#BEBEBE85] border">
-        <p>{{ ride?.end?.address ?? '—' }}</p>
-      </div>
-    </div>
+  @if (ride) {
+    <div class="absolute bg-white rounded-2xl top-15 bottom-15 left-1/7 -translate-x-1/2 z-50 p-10
+                flex flex-col w-[520px] shadow-xl border border-neutral-200">
+      <h1 class="text-3xl font-bold mb-10 text-center">New order</h1>
 
-    <div class="flex flex-row items-center gap-4 mb-4">
-      <label class="mr-6">Time:</label>
-      <div class="bg-white rounded-xl p-1 px-5 border-black border">
-        <p>{{ ride?.estimatedTimeMin ?? '—' }} min</p>
-      </div>
-    </div>
-
-    <div class="flex gap-4 mt-auto pt-6">
-      <button
-        type="button"
-        class="h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] cursor-pointer"
-      >
-        Start
-      </button>
-
-      <button
-        type="button"
-        (click)="openCancel()"
-        class="h-10.5 w-47.5 rounded-[10px] bg-white border border-[#00000080] text-black font-semibold shadow hover:bg-gray-200 active:scale-[0.99] cursor-pointer"
-      >
-        Cancel
-      </button>
-    </div>
-  </div>
-}
-@else {
-  <div class="absolute bg-white rounded-2xl top-15 bottom-15 left-1/7 -translate-x-1/2 z-50 p-10">
-    <h1 class="text-3xl font-bold mb-6 text-center">New order</h1>
-    <p class="text-center text-neutral-500">No active ride yet</p>
-  </div>
-}
-
-@if (cancelOpen) {
-  <!-- overlay -->
-  <div class="fixed inset-0 bg-black/40 z-[60]"></div>
-
-  <!-- modal -->
-  <div class="fixed z-[70] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-              w-[420px] rounded-2xl bg-white shadow-2xl border border-neutral-200 p-6">
-    <div class="flex items-center justify-between mb-4">
-      <h2 class="text-lg font-bold">Order cancellation</h2>
-      <button class="h-8 w-8 rounded-full hover:bg-neutral-100" (click)="closeCancel()">✕</button>
-    </div>
-
-    <form [formGroup]="cancelForm" (ngSubmit)="submitCancel()" class="space-y-4">
-      <label class="text-sm text-neutral-600">Write your reason</label>
-      <textarea
-        formControlName="reason"
-        rows="4"
-        class="w-full rounded-xl border border-neutral-200 p-3 focus:outline-none focus:ring-4 focus:ring-lime-200"
-        placeholder="e.g. customer is not here / health problem..."
-      ></textarea>
-
-      @if (cancelForm.controls.reason.touched && cancelForm.controls.reason.invalid) {
-        <p class="text-xs text-red-500">Reason is required</p>
-      }
-
-      @if (cancelError) {
-        <div class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-          {{ cancelError }}
+      <!-- Start -->
+      <div class="flex flex-col gap-2 mb-4">
+        <label class="text-sm text-neutral-700">Start:</label>
+        <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-6 border-[#BEBEBE85] border">
+          <p class="text-neutral-900">{{ ride?.start?.address ?? '-' }}</p>
         </div>
-      }
+      </div>
 
-      <button
-        type="submit"
-        class="w-full h-10 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow hover:bg-lime-200"
-        [disabled]="cancelSubmitting"
-      >
-        @if (cancelSubmitting) { <span>Canceling...</span> } @else { <span>Stop</span> }
-      </button>
-    </form>
-  </div>
-}
+      <!-- End -->
+      <div class="flex flex-col gap-2 mb-6">
+        <label class="text-sm text-neutral-700">End:</label>
+        <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-6 border-[#BEBEBE85] border">
+          <p class="text-neutral-900">{{ ride?.end?.address ?? '-' }}</p>
+        </div>
+      </div>
+
+      <!-- Distance -->
+      <div class="flex flex-row items-center gap-4 mb-4">
+        <label class="text-sm text-neutral-700 w-20">Distance:</label>
+        <div class="bg-white rounded-xl p-1 px-5 border-black border">
+          <p class="text-neutral-900">
+            {{ ride?.distanceKm ?? '-' }} km
+          </p>
+        </div>
+      </div>
+
+      <!-- Time -->
+      <div class="flex flex-row items-center gap-4 mb-8">
+        <label class="text-sm text-neutral-700 w-20">Time:</label>
+        <div class="bg-white rounded-xl p-1 px-5 border-black border">
+          <p class="text-neutral-900">
+            {{ ride?.estimatedTimeMin ?? '-' }} min
+          </p>
+        </div>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex gap-4 mt-auto pt-6">
+        <button
+          type="button"
+          (click)="startRide()"
+          class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D]
+                 text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] cursor-pointer"
+        >
+          Start
+        </button>
+
+        <button
+          type="button"
+          (click)="openCancel()"
+          class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-white border border-[#00000080]
+                 text-black font-semibold shadow hover:bg-gray-200 active:scale-[0.99] cursor-pointer"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  } @else {
+    <!-- чтобы не было "пусто", если ride=null -->
+    <div class="absolute bg-white rounded-2xl top-15 left-6 z-50 p-6 shadow border border-neutral-200">
+      <p class="text-sm text-neutral-600">No active ride to show.</p>
+    </div>
+  }
+
+  <!-- Cancel modal -->
+  @if (cancelOpen) {
+    <div class="absolute inset-0 z-[60] bg-black/30 flex items-center justify-center">
+      <div class="w-[520px] rounded-2xl bg-white shadow-2xl border border-neutral-200 p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-black">Order cancellation</h2>
+          <button
+            type="button"
+            (click)="closeCancel()"
+            class="h-9 w-9 rounded-full hover:bg-neutral-100 text-neutral-500"
+            aria-label="Close"
+          >
+            ✕
+          </button>
+        </div>
+
+        <form [formGroup]="cancelForm" (ngSubmit)="submitCancel()" class="space-y-4">
+          <div>
+            <label class="block text-[12px] text-neutral-400 mb-2">Write your reason</label>
+            <textarea
+              formControlName="reason"
+              rows="3"
+              class="w-full rounded-[12px] border border-neutral-200 bg-white px-4 py-3 shadow-sm
+                     focus:outline-none focus:ring-4 focus:ring-lime-200"
+              [class.border-red-400]="cancelForm.controls.reason.touched && cancelForm.controls.reason.invalid"
+              [class.focus:ring-red-200]="cancelForm.controls.reason.touched && cancelForm.controls.reason.invalid"
+              placeholder="e.g. customer is not here / health problem..."
+            ></textarea>
+
+            @if (cancelForm.controls.reason.touched && cancelForm.controls.reason.invalid) {
+              <p class="mt-1 text-xs text-red-500">Reason is required (min 3 chars)</p>
+            }
+          </div>
+
+          @if (cancelError) {
+            <div class="rounded-[12px] border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+              {{ cancelError }}
+            </div>
+          }
+
+          <button
+            type="submit"
+            class="w-full h-11 rounded-[12px] bg-[#C5E55D] text-black font-semibold shadow
+                   hover:bg-lime-200 active:scale-[0.99]"
+            [disabled]="cancelSubmitting"
+          >
+            @if (cancelSubmitting) { Canceling... } @else { Stop }
+          </button>
+        </form>
+      </div>
+    </div>
+  }
+</div>
