@@ -6,8 +6,13 @@ import { CancelRideRequestDTO, MessageResponse } from '../models/cancel-ride.mod
 @Injectable({ providedIn: 'root' })
 export class RideActionsService {
   private http = inject(HttpClient);
+  private base = 'http://localhost:8081/api/rides';
 
-  cancelRide(rideId: string, body: CancelRideRequestDTO): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>(`http://localhost:8081/api/rides/${rideId}/cancel`, body);
+  cancelRide(rideId: string, reason: string) {
+    return this.http.post(`${this.base}/${rideId}/cancel`, { reason });
+  }
+
+  getMyActiveRide() {
+    return this.http.get<any>(`${this.base}/me/active`);
   }
 }
