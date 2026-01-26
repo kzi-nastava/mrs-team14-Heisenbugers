@@ -44,7 +44,11 @@ public abstract class User extends BaseEntity {
 
     private String address;
 
-    private String profileImageUrl;
+    //private String profileImageUrl;
+
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name = "profile_image")
+    private byte[] profileImage;
 
     @NotNull
     private boolean blocked = false;

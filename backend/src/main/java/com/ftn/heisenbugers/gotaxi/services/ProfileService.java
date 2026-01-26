@@ -37,8 +37,8 @@ public class ProfileService {
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhoneNumber());
         user.setAddress(request.getAddress());
-        user.setProfileImageUrl(request.getProfileImageUrl());
-
+        //user.setProfileImageUrl(request.getProfileImageUrl());
+        //need to new image upload
         User savedUser = userRepository.save(user);
 
         return mapToDto(savedUser);
@@ -70,7 +70,8 @@ public class ProfileService {
         dto.setLastName(user.getLastName());
         dto.setPhoneNumber(user.getPhone());
         dto.setAddress(user.getAddress());
-        dto.setProfileImageUrl(user.getProfileImageUrl());
+        //dto.setProfileImageUrl(user.getProfileImageUrl());
+        //new image upload
         return dto;
     }
 }

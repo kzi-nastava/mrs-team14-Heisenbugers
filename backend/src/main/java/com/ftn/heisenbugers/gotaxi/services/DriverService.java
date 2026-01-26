@@ -87,6 +87,9 @@ public class DriverService {
         passengerDTO.setPassengerId(p.getId());
         passengerDTO.setFirstName(p.getFirstName());
         passengerDTO.setLastName(p.getLastName());
-        passengerDTO.setProfileImageUrl(p.getProfileImageUrl());
+        //passengerDTO.setProfileImageUrl(p.getProfileImageUrl());
+        //new image upload
+
+
     }
 }
