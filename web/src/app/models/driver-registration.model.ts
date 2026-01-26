@@ -16,3 +16,8 @@ export interface CreateVehicleDTO {
   babyTransport: boolean;
   petTransport: boolean;
 }
+
+export interface SetDriverPasswordDTO {
+  password: string;
+  confirmPassword: string;
+}
