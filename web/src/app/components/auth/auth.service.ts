@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import {
-  RegisterPassengerRequestDTO,
   RegisterResponseDTO,
   MessageResponse,
   LoginRequestDTO,
@@ -16,8 +15,9 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  register(dto: RegisterPassengerRequestDTO): Observable<RegisterResponseDTO> {
-    return this.http.post<RegisterResponseDTO>(`${this.baseUrl}/register`, dto);
+  register(formData: FormData): Observable<RegisterResponseDTO> {
+    //return this.http.post<RegisterResponseDTO>(`${this.baseUrl}/register`, dto);
+    return this.http.post<RegisterResponseDTO>(`${this.baseUrl}/register`, formData);
   }
 
   activate(token: string): Observable<MessageResponse> {
