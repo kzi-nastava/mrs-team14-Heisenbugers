@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, inject, signal} from '@angular/core';
+import {ChangeDetectorRef, Component, inject} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -8,12 +8,10 @@ import {
   Validators
 } from "@angular/forms";
 import {NgIcon, provideIcons} from "@ng-icons/core";
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import {bootstrapEye, bootstrapEyeSlash} from '@ng-icons/bootstrap-icons';
-import {GetProfileDTO} from '../../../models/profile.model';
 import {HttpClient} from '@angular/common/http';
 import {CreateVehicleDTO, SetDriverPasswordDTO} from '../../../models/driver-registration.model';
-import {Vehicle} from '../../profile/model/vehicle.model';
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -34,7 +32,7 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   viewProviders: [provideIcons({bootstrapEye,bootstrapEyeSlash})]
 })
 export class SetPasswordComponent {
-  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private route: ActivatedRoute) {
 
   }
 
@@ -92,13 +90,24 @@ export class SetPasswordComponent {
       confirmPassword: this.f.confirmPassword.value!,
     }
 
-    this.http.put<SetDriverPasswordDTO>('http://localhost:8081/api/drivers/password?token=', passwordDTO)
-      .subscribe(updated => {
-        console.log('new password set:', updated.password);
+    const token = this.route.snapshot.queryParamMap.get('token') || '';
+
+    if (!token) {
+      console.error('No token provided in URL for set-password');
+      return;
+    }
+
+    const url = `http://localhost:8081/api/drivers/password?token=${encodeURIComponent(token)}`;
+
+    this.http.put<SetDriverPasswordDTO>(url, passwordDTO)
+      .subscribe({
+        next: updated => {
+          this.submitted = true;
+          this.router.navigate(['auth/login']);
+        },
+        error: err => {
+          console.error('Failed to set password', err);
+        }
       });
-
-    this.submitted = true;
-
-    this.router.navigate(['auth/login'])
   }
 }
