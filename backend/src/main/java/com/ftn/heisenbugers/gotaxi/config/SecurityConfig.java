@@ -39,11 +39,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // AUTH
-                        .requestMatchers("/api/public/**","/api/auth/**","/api/auth/register",
+                        .requestMatchers("/api/public/**", "/api/auth/**", "/api/auth/register",
 
                                 "/api/auth/login",
                                 "/api/auth/activate",
-                                "/api/drivers/activate").permitAll()
+                                "/api/drivers/activate",
+                                "/api/test/trigger").permitAll()
+                                
 
                         // ERROR
                         .requestMatchers("/error").permitAll()

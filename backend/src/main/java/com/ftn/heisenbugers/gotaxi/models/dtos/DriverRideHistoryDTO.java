@@ -24,6 +24,7 @@ public class DriverRideHistoryDTO {
     private double price;
     private boolean panicTriggered;
     private List<PassengerInfoDTO> passengers = new ArrayList<>();
+    private List<LocationDTO> route;
 
 
     public void addPassenger(PassengerInfoDTO passenger) {

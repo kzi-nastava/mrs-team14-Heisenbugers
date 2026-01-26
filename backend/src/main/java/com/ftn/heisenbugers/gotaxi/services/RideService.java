@@ -3,8 +3,10 @@ package com.ftn.heisenbugers.gotaxi.services;
 import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DriverDto;
 import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.RideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideTrackingDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import com.ftn.heisenbugers.gotaxi.models.services.EmailService;
 import com.ftn.heisenbugers.gotaxi.repositories.RatingRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.TrafficViolationRepository;
@@ -23,13 +25,15 @@ public class RideService {
     private final UserRepository userRepository;
     private final TrafficViolationRepository violationRepository;
     private final RatingRepository ratingRepository;
+    private final EmailService emailService;
 
     public RideService(RideRepository rideRepository, UserRepository userRepository,
-                       TrafficViolationRepository violationRepository, RatingRepository ratingRepository) {
+                       TrafficViolationRepository violationRepository, RatingRepository ratingRepository, EmailService emailService) {
         this.rideRepository = rideRepository;
         this.userRepository = userRepository;
         this.violationRepository = violationRepository;
         this.ratingRepository = ratingRepository;
+        this.emailService = emailService;
     }
 
     public List<RideTrackingDTO> getAll() {
@@ -48,6 +52,24 @@ public class RideService {
                     return dto;
                 })
                 .toList();
+    }
+
+    public RideDTO getRide(UUID rideId) {
+        Ride r = rideRepository.findRideById(rideId);
+        Driver d = r.getDriver();
+        return new RideDTO(
+                r.getId().toString(),
+                new DriverDto(
+                        d.getFirstName(),
+                        d.getLastName()
+                ),
+                r.getRoute().getStops().stream().map(LocationDTO::new).toList(),
+                new LocationDTO(r.getStart()),
+                new LocationDTO(r.getEnd()),
+                r.getPrice(),
+                r.getStartedAt(),
+                r.getEndedAt()
+        );
     }
 
     public RideTrackingDTO getRideTrackingById(UUID rideId) {
@@ -74,6 +96,13 @@ public class RideService {
         }
 
         DriverDto driverDto = new DriverDto(driver.getFirstName(), driver.getLastName());
+        Location startLocation = ride.getStart();
+        LocationDTO startLocationDTO = new LocationDTO(startLocation.getLatitude(),
+                startLocation.getLongitude(), startLocation.getAddress());
+
+        Location endLocation = ride.getEnd();
+        LocationDTO endLocationDTO = new LocationDTO(endLocation.getLatitude(),
+                endLocation.getLongitude(), endLocation.getAddress());
 
         return new RideTrackingDTO(
                 rideId,
@@ -81,12 +110,14 @@ public class RideService {
                 currentLocation.getLatitude(),
                 currentLocation.getLongitude(),
                 0,
-                routeDTOs
+                routeDTOs,
+                startLocationDTO,
+                endLocationDTO
         );
 
     }
 
-    public boolean report(UUID rideId, UUID reporterId, String desc) {
+    public boolean report(UUID rideId, UUID reporterId, String title, String desc) {
         Optional<Ride> rideOpt = rideRepository.findById(rideId);
         Ride ride = rideOpt.orElse(null);
 
@@ -102,9 +133,11 @@ public class RideService {
         }
         trafficViolation.setReporter(reporter);
         trafficViolation.setRide(ride);
+        trafficViolation.setTitle(title);
         trafficViolation.setDescription(desc);
         trafficViolation.setCreatedBy(reporter);
         trafficViolation.setLastModifiedBy(reporter);
+
         violationRepository.save(trafficViolation);
         return true;
     }
@@ -121,20 +154,32 @@ public class RideService {
         ride.setStatus(RideStatus.FINISHED);
         ride.setLastModifiedBy(driver);
         rideRepository.save(ride);
+
+        rideDriver.setAvailable(true);
+        userRepository.save(rideDriver);
+
+        for (User u : ride.getPassengers()) {
+            sendFinishedRideEmail(u, ride);
+        }
         return true;
     }
 
-    public void rate(UUID rideId, UUID raterId, int driverScore, int vehicleScore, String comment) {
+    public boolean rate(UUID rideId, UUID raterId, int driverScore, int vehicleScore, String comment) {
         Ride ride = rideRepository.findById(rideId).get();
         User rater = userRepository.findById(raterId).get();
 
+        // If already rated
+        if (ratingRepository.findByRaterAndRide(rater, ride).isPresent()) {
+            return false;
+        }
 
+        // If too old to rate
         if (!isInLastNDays(ride, 3)) {
-            return;
+            return false;
         }
 
         Rating rating = new Rating();
-        
+
         rating.setRide(ride);
         rating.setRater(rater);
         rating.setDriverScore(driverScore);
@@ -143,9 +188,30 @@ public class RideService {
 
         rating.setLastModifiedBy(rater);
         ratingRepository.save(rating);
+        return true;
+    }
+
+    private void sendFinishedRideEmail(User recipient, Ride ride) {
+        String subject = "Subject: Your Ride Has Completed – Share Your Feedback!";
+        String body =
+                """
+                        Dear %s %s,
+                        
+                        Your ride from %s to %s with us has successfully concluded. We hope you had a smooth and enjoyable journey!
+                        
+                        We would love to hear about your experience. You can leave a review by visiting your ride history in your profile.
+                        
+                        Thank you for choosing our service. We look forward to serving you again soon!
+                        
+                        Best regards, \s
+                        GoTaxi 
+                        """.formatted(recipient.getFirstName(), recipient.getLastName(),
+                        ride.getStart().getAddress(), ride.getEnd().getAddress());
+        emailService.sendMail(recipient.getEmail(), subject, body);
     }
 
     private boolean isInLastNDays(Ride r, long n) {
         return r.getEndedAt().isAfter(LocalDateTime.now().minusDays(n));
     }
+
 }

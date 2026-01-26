@@ -1,8 +1,7 @@
-/*package com.ftn.heisenbugers.gotaxi;
+package com.ftn.heisenbugers.gotaxi;
 
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
-import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -24,14 +23,28 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Ride r = rideRepository.findRideById(UUID.fromString("80fca1af-445c-4d2b-b2a1-da8da8c038f8"));
-        User p = userRepository.findById(UUID.fromString("874645b9-4653-4ac8-8bed-279a6b3d8762")).orElseThrow();
+        Ride r = rideRepository.findRideById(UUID.fromString("c527273a-ba41-43e2-aa7c-ab78560177ee"));
+        Passenger p = (Passenger) userRepository.findPassengerById(UUID.fromString("a770919d-3303-45a8-ba06-6de0a97bda93"));
+        List<Passenger> passengers = new ArrayList<>();
+        passengers.add(p);
+        r.setPassengers(passengers);
+        /*r.setRoute(new Route());
+        List<Location> coords = new ArrayList<>();
+        coords.add(new Location(45.249570, 19.815809));
+        coords.add(new Location(45.242299, 19.796333));
+        coords.add(new Location(45.241604, 19.842757));
+        r.getRoute().setPolyline(coords);*/
+
+        rideRepository.save(r);
+        /*User p = userRepository.findById(UUID.fromString("874645b9-4653-4ac8-8bed-279a6b3d8762")).orElseThrow();
         List<Passenger> ps = new ArrayList<>();
         ps.add((Passenger) p);
         r.setPassengers(ps);
-        rideRepository.save(r);
+        rideRepository.save(r);*/
+
+
     }
-}*/
+}
 /*
 import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Location;
@@ -126,5 +139,6 @@ public class DataLoader implements CommandLineRunner {
 
     }
 }
-*/
 
+
+*/

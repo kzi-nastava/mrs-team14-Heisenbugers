@@ -38,7 +38,7 @@ const phonePattern = /^[0-9+\-\s()]{6,30}$/;
 export class RegisterComponent {
 
   imagePreview: string | null = null;
-
+  selectedImageFile: File | null = null;
   submitted = false;
   submitAttempted = false;
   showPassword = false;
@@ -86,6 +86,8 @@ export class RegisterComponent {
     const file = input.files?.[0];
     if (!file) return;
 
+    this.selectedImageFile = file;
+
     const reader = new FileReader();
     reader.onload = () => (this.imagePreview = String(reader.result));
     reader.readAsDataURL(file);
@@ -110,18 +112,19 @@ export class RegisterComponent {
       return;
     }
 
-    const dto: RegisterPassengerRequestDTO = {
-      email: this.f.email.value!,
-      password: this.f.password.value!,
-      confirmPassword: this.f.confirmPassword.value!,
-      firstName: this.f.firstName.value!,
-      lastName: this.f.lastName.value!,
-      phone: this.f.phone.value!,
-      address: this.f.address.value!,
-      profileImageUrl: null
-    };
+    const formData = new FormData();
+    formData.append('email', this.f.email.value!);
+    formData.append('password', this.f.password.value!);
+    formData.append('confirmPassword', this.f.confirmPassword.value!);
+    formData.append('firstName', this.f.firstName.value!);
+    formData.append('lastName', this.f.lastName.value!);
+    formData.append('phone', this.f.phone.value!);
+    formData.append('address', this.f.address.value!);
 
-    this.auth.register(dto).subscribe({
+    if (this.selectedImageFile) {
+      formData.append('profileImage', this.selectedImageFile);
+    }
+    this.auth.register(formData).subscribe({
       next: () => {
         this.submitted = true; // "Activation email sent..."
       },

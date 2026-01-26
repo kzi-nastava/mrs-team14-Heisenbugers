@@ -87,4 +87,5 @@ public class Ride extends BaseEntity {
     public String toString() {
         return "Ride{id=" + this.getId() + "}";
     }
+
 }

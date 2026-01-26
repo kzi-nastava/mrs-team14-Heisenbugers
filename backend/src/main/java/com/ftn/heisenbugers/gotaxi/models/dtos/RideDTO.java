@@ -4,19 +4,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class RideTrackingDTO {
-    private UUID rideId;
+public class RideDTO {
+    private String rideId;
     private DriverDto driver;
-    private double vehicleLatitude;
-    private double vehicleLongitude;
-    private int estimatedTimeRemainingMinutes;
     private List<LocationDTO> route;
     private LocationDTO startLocation;
     private LocationDTO endLocation;
+    private double price;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 }

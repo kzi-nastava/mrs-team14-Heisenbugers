@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
-import { RideInfo } from '../driver-ride-history/driver-info.model';
+import { RideRateInfo } from '../../models/ride.model';
 
 @Component({
     selector: 'app-rate-modal',
@@ -14,18 +14,25 @@ export class RateModal {
 
     driverRate: number = 0;
     vehicleRate: number = 0;
-    @Input() ride!: RideInfo;
+    @Input() ride!: RideRateInfo;
     @Input() isOpen: boolean = false;
+    
+    @Output() onSubmit = new EventEmitter<any>();
 
-    @Output() close = new EventEmitter<void>();
+    @Output() onClose = new EventEmitter<void>();
 
     closeRateModal() {
-        this.close.emit();
+        this.onClose.emit();
     }
 
     submitRateForm(form: NgForm) {
         if(form.valid && this.driverRate > 0 && this.vehicleRate > 0)
             console.log(form.value, this.driverRate, this.vehicleRate);
+            this.onSubmit.emit({
+                "comment": form.value.comment,
+                "driverRate": this.driverRate,
+                "vehicleRate": this.vehicleRate
+            })
         this.ride.rated = true;
         this.closeRateModal();
     }
@@ -48,8 +55,8 @@ export class RateModal {
     }
 
     getRideDurationMinutes(ride: any): string {
-        const start = new Date(ride.startedAt).getTime();
-        const end = new Date(ride.endedAt).getTime();
+        const start = ride.startTime.getTime();
+        const end = ride.endTime.getTime();
 
         if (isNaN(start) || isNaN(end)) return '';
 

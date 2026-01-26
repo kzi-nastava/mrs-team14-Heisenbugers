@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, UUID> {
     List<Vehicle> getVehiclesByDriverActive(boolean driverActive);
+
+    List<Vehicle> getVehiclesByDriverWorking(boolean b);
 }

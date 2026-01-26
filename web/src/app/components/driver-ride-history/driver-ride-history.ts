@@ -10,17 +10,13 @@ import {
     bootstrapExclamationCircleFill, 
     bootstrapFeather}
     from '@ng-icons/bootstrap-icons';
-import { RideInfo } from './driver-info.model';
+import { RideInfo } from '../../models/driver-info.model';
 import { Router } from '@angular/router';
 import { RateModal } from "../rate-modal/rate-modal.component";
 import { HttpClient } from '@angular/common/http';
 import { OnInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-
-
-
-
-
+import { LatLng } from 'leaflet';
 
 
 @Component({
@@ -52,6 +48,8 @@ export class RideHistoryComponent {
     endAddress: 'ул.Красная 113',
     startedAt: new Date('2025-12-19T08:12:00'),
     endedAt: new Date('2025-12-19T10:12:00'),
+    startTime: new Date('2025-12-19T08:12:00'),
+    endTime: new Date('2025-12-19T10:12:00'),
     price: 350,
     rating: 3.5,
     maxRating: 5,
@@ -72,6 +70,8 @@ export class RideHistoryComponent {
     endAddress: 'ул.Красная 113',
     startedAt: new Date('2025-12-19T08:12:00'),
     endedAt: new Date('2025-12-19T10:12:00'),
+    startTime: new Date('2025-12-19T08:12:00'),
+    endTime: new Date('2025-12-19T10:12:00'),
     price: 350,
     rating: 3.5,
     maxRating: 5,
@@ -97,15 +97,16 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
         this.rides = data.map(r => ({
           ...r,
           startedAt: new Date(r.startedAt),
-          endedAt: new Date(r.endedAt)
-    }));
-    this.cdr.markForCheck();
-
+          endedAt: new Date(r.endedAt),
+        }));
+        this.cdr.markForCheck();
+        console.log(this.rides);
 
       },
       error: (error) => {
         console.warn('Using mock data due to error fetching ride history:', error);
         this.rides = this.mockRides;
+        this.cdr.markForCheck();
       }
     });
     

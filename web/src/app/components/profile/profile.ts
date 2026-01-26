@@ -12,7 +12,6 @@ import {EditProfile} from './edit-profile/edit-profile';
 import {EditVehicle} from './edit-vehicle/edit-vehicle';
 import {User} from './model/user.model';
 import {Vehicle} from './model/vehicle.model';
-import {RideInfo} from '../driver-ride-history/driver-info.model';
 import {HttpClient} from '@angular/common/http';
 import {GetProfileDTO, UpdateProfileDTO} from '../../models/profile.model';
 

@@ -28,6 +28,8 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
 
     List<Ride> findByPassengersContaining(Passenger passenger, Sort sort);
 
+    List<Ride> findByPassengersContaining(Passenger passenger);
+
     List<Ride> findByPassengersContainingAndStartedAtBetween(Passenger passengers, LocalDateTime startedAt,
                                                              LocalDateTime startedAt2, Sort sort);
 
@@ -41,4 +43,8 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
 
 
     Ride findRideById(UUID id);
+
+    Optional<Ride> findByPassengersContainingAndStatus(Passenger passenger, RideStatus status);
+
+    Optional<Ride> findByDriverIdAndStatus(UUID driver_id, RideStatus status);
 }

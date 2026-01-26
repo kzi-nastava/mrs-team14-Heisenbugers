@@ -30,11 +30,20 @@ public class EmailService {
         msg.setSubject("GoTaxi – Activate your account");
         msg.setText("""
                 Thanks for registering!
-
+                
                 Activate your account (valid for 24h):
                 %s
                 """.formatted(activationLink));
 
+        mailSender.send(msg);
+    }
+
+    public void sendMail(String toEmail, String subject, String body) {
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setFrom(from);
+        msg.setTo(toEmail);
+        msg.setSubject(subject);
+        msg.setText(body);
         mailSender.send(msg);
     }
 }

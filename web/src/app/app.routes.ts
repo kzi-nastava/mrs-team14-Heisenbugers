@@ -14,6 +14,8 @@ import {DriverRegistrationComponent} from './components/auth/driver-registration
 import {StartRideComponent} from './components/start-ride/start-ride.component';
 import {SetPasswordComponent} from './components/auth/set-password/set-password.component';
 import {TokenUsedComponent} from './components/auth/token-used/token-used.component';
+import { DuringRide } from './components/during-ride/during-ride.component';
+import { HomeContainer } from './home-container/home-container.component';
 
 /*
 export const routes: Routes = [
@@ -55,6 +57,8 @@ export const routes: Routes = [
       { path: 'driver-ride-history/ride', component: RideCardComponent },
       { path: 'driver-registration', component: DriverRegistrationComponent},
       { path: 'start-ride', component: StartRideComponent},
+      { path: 'during-ride', component: DuringRide},
+      { path: 'base', component: HomeContainer},
     ]
   }
 ];
