@@ -18,7 +18,11 @@ import java.util.UUID;
 @RequestMapping("/api/drivers")
 public class DriverRegistrationController {
 
-    private AuthService authService;
+    private final AuthService authService;
+
+    public DriverRegistrationController (AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -55,19 +59,28 @@ public class DriverRegistrationController {
     public ResponseEntity<?> validateActivationToken(
             @RequestParam("token") String token) {
 
-        authService.activateByToken(token);
+        try{
+            authService.activateByToken(token);
+        } catch (Exception e) {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(URI.create("http://localhost:4200/auth/token-used"));
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        }
+
         HttpHeaders headers = new HttpHeaders();
-        headers.setLocation(URI.create("http://localhost:4200/auth/login?activated=1"));
+        headers.setLocation(URI.create("http://localhost:4200/auth/set-password?token="+token));
 
         return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
-    @PutMapping(value = "/activation/{token}",
+    @PutMapping(value = "/password",
             consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> setInitialPassword(
-            @PathVariable String token,
+            @RequestParam("token") String token,
             @RequestBody SetDriverPasswordDTO request) {
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        authService.setInitialPasswordForDriver(request, token);
+
+        return ResponseEntity.ok().build();
     }
 }

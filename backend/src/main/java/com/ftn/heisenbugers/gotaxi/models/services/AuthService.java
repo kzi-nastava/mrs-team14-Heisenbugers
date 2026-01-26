@@ -1,23 +1,21 @@
 package com.ftn.heisenbugers.gotaxi.models.services;
 
-import com.ftn.heisenbugers.gotaxi.models.Administrator;
-import com.ftn.heisenbugers.gotaxi.models.Driver;
-import com.ftn.heisenbugers.gotaxi.models.Passenger;
-import com.ftn.heisenbugers.gotaxi.models.User;
-import com.ftn.heisenbugers.gotaxi.models.dtos.CreateDriverDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.LoginRequestDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.LoginResponseDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.RegisterPassengerRequestDTO;
+import com.ftn.heisenbugers.gotaxi.models.*;
+import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.security.ActivationToken;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.repositories.ActivationTokenRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.VehicleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
@@ -31,6 +29,7 @@ public class AuthService {
     private final EmailService emailService;
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
+    private final VehicleRepository vehicleRepository;
 
 
     public UUID registerPassenger(RegisterPassengerRequestDTO request, String appBaseUrl) {
@@ -99,15 +98,26 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists.");
         }
 
+        Vehicle v = new Vehicle();
+        v.setModel(request.getVehicle().getVehicleModel());
+        v.setType(request.getVehicle().getVehicleType());
+        v.setLicensePlate(request.getVehicle().getLicensePlate());
+        v.setSeatCount(request.getVehicle().getSeatCount());
+        v.setBabyTransport(request.getVehicle().isBabyTransport());
+        v.setPetTransport(request.getVehicle().isPetTransport());
+
         Driver d = new Driver();
         d.setEmail(normalizedEmail);
         d.setFirstName(request.getFirstName());
         d.setLastName(request.getLastName());
+        d.setPasswordHash(passwordEncoder.encode(request.getEmail()+request.getLastName()));
         d.setPhone(request.getPhone());
         d.setAddress(request.getAddress());
         d.setProfileImageUrl(request.getProfileImageUrl());
         d.setBlocked(false);
         d.setActivated(false);
+        d.setVehicle(v);
+        v.setDriver(d);
 
         userRepository.save(d);
 
@@ -127,6 +137,21 @@ public class AuthService {
         emailService.sendActivationEmail(normalizedEmail, activationLink);
 
         return d.getId();
+    }
+
+    public void setInitialPasswordForDriver(SetDriverPasswordDTO request, String token){
+        if (!request.getPassword().equals(request.getConfirmPassword())) {
+            throw new IllegalArgumentException("New passwords do not match");
+        }
+
+        ActivationToken at = activationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid activation token."));
+
+        User user = userRepository.findByEmail(at.getUser().getEmail())
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
+
+        user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+        userRepository.save(user);
     }
 
 
