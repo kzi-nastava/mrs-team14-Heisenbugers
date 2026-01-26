@@ -1,4 +1,4 @@
-package com.ftn.heisenbugers.gotaxi;
+/*package com.ftn.heisenbugers.gotaxi;
 
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
@@ -33,14 +33,14 @@ public class DataLoader implements CommandLineRunner {
         coords.add(new Location(45.249570, 19.815809));
         coords.add(new Location(45.242299, 19.796333));
         coords.add(new Location(45.241604, 19.842757));
-        r.getRoute().setPolyline(coords);*/
+        r.getRoute().setPolyline(coords);
 
         rideRepository.save(r);
         /*User p = userRepository.findById(UUID.fromString("874645b9-4653-4ac8-8bed-279a6b3d8762")).orElseThrow();
         List<Passenger> ps = new ArrayList<>();
         ps.add((Passenger) p);
         r.setPassengers(ps);
-        rideRepository.save(r);*/
+        rideRepository.save(r);
 
 
     }

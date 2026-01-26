@@ -35,8 +35,8 @@ public class DriverRegistrationController {
 
         CreatedVehicleDTO vehicle = new CreatedVehicleDTO();
         vehicle.setId(UUID.randomUUID());
-        vehicle.setModel(request.getVehicle().getVehicleModel());
-        vehicle.setType(request.getVehicle().getVehicleType());
+        vehicle.setVehicleModel(request.getVehicle().getVehicleModel());
+        vehicle.setVehicleType(request.getVehicle().getVehicleType());
         vehicle.setLicensePlate(request.getVehicle().getLicensePlate());
         vehicle.setSeatCount(request.getVehicle().getSeatCount());
         vehicle.setBabyTransport(request.getVehicle().isBabyTransport());

@@ -14,9 +14,9 @@ public class CreatedVehicleDTO {
     @Getter @Setter
     private UUID id;
     @Getter @Setter
-    private String model;
+    private String vehicleModel;
     @Getter @Setter
-    private VehicleType type;
+    private VehicleType vehicleType;
     @Getter @Setter
     private String licensePlate;
     @Getter @Setter

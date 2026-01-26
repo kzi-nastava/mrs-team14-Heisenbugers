@@ -1,6 +1,7 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
+import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.ChangePasswordDTO;
@@ -29,37 +30,21 @@ public class ProfileController {
     @GetMapping(value = "/me", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GetProfileDTO> getMyProfile() throws InvalidUserType {
 
-        Passenger passenger = AuthContextService.getCurrentPassenger();
-        return ResponseEntity.ok(profileService.getMyProfile(passenger.getEmail()));
+        User user = AuthContextService.getCurrentUser();
+        return ResponseEntity.ok(profileService.getMyProfile(user.getEmail()));
     }
 
     @GetMapping(value = "/me/driver", produces = MediaType.APPLICATION_JSON_VALUE)
-        public ResponseEntity<GetDriverProfileDTO> getDriverProfile() {
+        public ResponseEntity<Integer> getDriverProfile() throws InvalidUserType {
 
-        GetDriverProfileDTO driverProfile = new GetDriverProfileDTO();
-        driverProfile.setId(UUID.randomUUID());
-        driverProfile.setEmail("driver@test.com");
-        driverProfile.setFirstName("Marko");
-        driverProfile.setLastName("Marković");
-        driverProfile.setAvailable(true);
-        driverProfile.setProfileImageUrl("url");
-        driverProfile.setActiveHoursLast24h(5);
+        Driver driver = AuthContextService.getCurrentDriver();
 
-        return new ResponseEntity<>(driverProfile, HttpStatus.OK);
+        return new ResponseEntity<>(driver.getActiveHoursLast24h(), HttpStatus.OK);
     }
 
     @GetMapping(value = "/me/vehicle", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CreatedVehicleDTO> getMyVehicle() {
-        CreatedVehicleDTO vehicle = new CreatedVehicleDTO();
-        vehicle.setId(UUID.randomUUID());
-        vehicle.setModel("Ford Fiesta");
-        vehicle.setType(VehicleType.STANDARD);
-        vehicle.setLicensePlate("NS-253-KL");
-        vehicle.setSeatCount(5);
-        vehicle.setBabyTransport(true);
-        vehicle.setPetTransport(false);
-
-        return new ResponseEntity<>(vehicle, HttpStatus.OK);
+    public ResponseEntity<CreatedVehicleDTO> getMyVehicle() throws InvalidUserType {
+        return ResponseEntity.ok(profileService.getMyVehicle());
     }
 
     @PutMapping(value = "/me",
@@ -77,18 +62,9 @@ public class ProfileController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CreatedVehicleDTO> updateVehicle(
-            @RequestBody CreatedVehicleDTO request) {
+            @RequestBody CreatedVehicleDTO request) throws InvalidUserType {
 
-        CreatedVehicleDTO vehicle = new CreatedVehicleDTO();
-        vehicle.setId(request.getId());
-        vehicle.setModel(request.getModel());
-        vehicle.setType(request.getType());
-        vehicle.setLicensePlate(request.getLicensePlate());
-        vehicle.setSeatCount(request.getSeatCount());
-        vehicle.setBabyTransport(request.isBabyTransport());
-        vehicle.setPetTransport(request.isPetTransport());
-
-        return new ResponseEntity<>(vehicle, HttpStatus.OK);
+        return new ResponseEntity<>(profileService.updateMyVehicle(request), HttpStatus.OK);
     }
 
     @PutMapping(value = "/me/password",

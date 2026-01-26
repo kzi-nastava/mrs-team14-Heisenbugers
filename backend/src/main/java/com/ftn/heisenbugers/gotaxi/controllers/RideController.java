@@ -50,6 +50,8 @@ public class RideController {
         } else {
             return ResponseEntity.ok(ride);
         }
+    }
+
     @GetMapping("/me/active")
     public ResponseEntity<?> getMyActiveRide() throws InvalidUserType {
         Driver driver = AuthContextService.getCurrentDriver();
