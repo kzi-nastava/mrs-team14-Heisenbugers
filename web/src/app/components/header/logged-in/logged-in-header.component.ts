@@ -48,7 +48,7 @@ export class LoggedInHeaderComponent {
     this.menuOpen = false
   }
   goToHome(){
-    this.router.navigate(['profile'])
+    this.router.navigate(['base'])
     this.menuOpen = false
   }
 }

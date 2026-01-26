@@ -1,8 +1,8 @@
 export type VehicleType = 'STANDARD' | 'LUXURY' | 'VAN';
 
 export interface LocationDTO {
-  latitude?: number;
-  longitude?: number;
+  latitude: number;
+  longitude: number;
   address?: string;
 }
 

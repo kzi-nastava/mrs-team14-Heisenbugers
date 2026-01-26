@@ -15,6 +15,8 @@ import lombok.*;
 @Builder
 public class TrafficViolation extends BaseEntity {
 
+    private String title;
+    
     private String description;
 
     @ManyToOne

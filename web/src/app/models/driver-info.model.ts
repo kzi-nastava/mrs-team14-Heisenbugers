@@ -1,3 +1,6 @@
+import { LatLng } from "leaflet";
+import { LocationDTO } from "./ride-estimate.model";
+
 export interface Passenger {
   firstName: string;
   lastName: string,
@@ -17,6 +20,8 @@ export interface RideInfo {
   endAddress: string;
   startedAt: Date;
   endedAt: Date;
+  startTime: Date;
+  endTime: Date;
   price: number;
   rating: number;
   maxRating: number;
@@ -26,4 +31,5 @@ export interface RideInfo {
   trafficViolations?: TrafficViolation[];
   panicTriggered: boolean;
   rated?: boolean;
+  route?: LocationDTO[]
 }

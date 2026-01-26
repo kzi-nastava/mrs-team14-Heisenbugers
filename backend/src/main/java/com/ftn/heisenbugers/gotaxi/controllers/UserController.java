@@ -4,6 +4,7 @@ import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideHistoryDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.UserStateDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
@@ -46,5 +47,11 @@ public class UserController {
         List<RideHistoryDTO> history = userService.getUserHistory(passenger, startDate, endDate, sortBy, direction);
 
         return ResponseEntity.ok(history);
+    }
+
+    @GetMapping("/state")
+    public ResponseEntity<UserStateDTO> getState() throws InvalidUserType {
+        UserStateDTO state = userService.getState(AuthContextService.getCurrentUser().getId());
+        return ResponseEntity.ok(state);
     }
 }

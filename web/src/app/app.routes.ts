@@ -12,6 +12,8 @@ import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
 import { MapComponent } from './components/map/map.component';
 import {DriverRegistrationComponent} from './components/auth/driver-registration/driver-registration.component';
 import {StartRideComponent} from './components/start-ride/start-ride.component';
+import { DuringRide } from './components/during-ride/during-ride.component';
+import { HomeContainer } from './home-container/home-container.component';
 
 /*
 export const routes: Routes = [
@@ -51,6 +53,8 @@ export const routes: Routes = [
       { path: 'driver-ride-history/ride', component: RideCardComponent },
       { path: 'driver-registration', component: DriverRegistrationComponent},
       { path: 'start-ride', component: StartRideComponent},
+      { path: 'during-ride', component: DuringRide},
+      { path: 'base', component: HomeContainer},
     ]
   }
 ];

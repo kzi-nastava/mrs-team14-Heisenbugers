@@ -1,37 +1,45 @@
-import { ChangeDetectorRef, Component, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, ViewChild } from '@angular/core';
 
-import { RideInfo } from '../driver-info.model';
+import { RideInfo } from '../../../models/driver-info.model';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle, bootstrapClock, bootstrapCash, bootstrapArrowRight, bootstrapArrowLeft } from '@ng-icons/bootstrap-icons';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { MapComponent } from '../../map/map.component';
+import { LatLng } from 'leaflet';
 
 
 @Component({
   selector: 'app-driver-card',
   templateUrl: './ride-card.component.html',
   styleUrls: ['./ride-card.component.css'],
-  imports: [NgIcon, CommonModule],
+  standalone: true,
+  imports: [NgIcon, CommonModule, MapComponent],
   viewProviders: [provideIcons({bootstrapStarFill, bootstrapStarHalf, bootstrapStar, bootstrapPersonCircle, bootstrapClock, bootstrapCash, bootstrapArrowRight, bootstrapArrowLeft})]
 })
 export class RideCardComponent {
   ride?: RideInfo;
+  @ViewChild(MapComponent) mapCmp!: MapComponent;
+
 
   constructor(private router: Router, private cdr: ChangeDetectorRef) {
     setTimeout(() => {
       this.ride = history.state.ride;
-      cdr.markForCheck();
+      console.log(this.ride)
+      let stops = this.ride!.route!.map(l => {
+        return new LatLng(l.latitude, l.longitude)
+      })
+      this.cdr.markForCheck();
+      this.mapCmp.showRoute(stops[0], stops[stops.length - 1], stops.slice(1, -1)).then(
+        () => {
+          this.cdr.markForCheck();
+        }
+      )
+      
     })
     
   }
 
-  ngOnInit() {
-    /*Promise.resolve().then(() => {
-      this.ride = history.state.ride
-    });
-    */
-  }
-  
 
   getFormattedTime(): string {
     const startTime = this.ride?.startedAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
