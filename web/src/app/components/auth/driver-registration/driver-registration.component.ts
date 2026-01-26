@@ -7,6 +7,10 @@ import {
 } from '@angular/forms';
 import {NgIcon, provideIcons} from '@ng-icons/core';
 import {bootstrapCameraFill} from '@ng-icons/bootstrap-icons';
+import {RegisterPassengerRequestDTO} from '../auth.api';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
+import {CreateDriverDTO, CreateVehicleDTO} from '../../../models/driver-registration.model';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-driver-registration',
@@ -35,7 +39,7 @@ export class DriverRegistrationComponent {
       phone: ['', [Validators.required, Validators.pattern(/^[0-9+\-\s()]{6,30}$/)]],
       address: ['', [Validators.required, Validators.maxLength(120)]],
       model: ['', [Validators.required]],
-      type: ['', [Validators.required]],
+      type: [null, [Validators.required]],
       plateNumber: ['', [Validators.required]],
       seats: ['', [Validators.required]],
       babiesAllowed: [false],
@@ -45,6 +49,10 @@ export class DriverRegistrationComponent {
 
   get f() {
     return this.form.controls;
+  }
+
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {
+
   }
 
   isInvalid(name: string): boolean {
@@ -59,12 +67,42 @@ export class DriverRegistrationComponent {
       return;
     }
 
+    console.log(this.f.type.value)
 
-    this.submitted = true;
+    const vehicleDTO: CreateVehicleDTO = {
+      vehicleModel: this.f.model.value!,
+      vehicleType: this.f.type.value!,
+      licensePlate: this.f.plateNumber.value!,
+      seatCount: Number(this.f.seats.value!),
+      babyTransport: Boolean(this.f.babiesAllowed.value!),
+      petTransport: Boolean(this.f.petsAllowed.value!),
+    }
+
+    const driverDTO: CreateDriverDTO = {
+      email: this.f.email.value!,
+      firstName: this.f.firstName.value!,
+      lastName: this.f.lastName.value!,
+      phone: this.f.phone.value!,
+      address: this.f.address.value!,
+      profileImageUrl: this.imagePreview,
+      vehicle: vehicleDTO,
+    };
+
+    this.http.post<CreateDriverDTO>("http://localhost:8081/api/drivers", driverDTO).subscribe({
+      next: () => {
+        this.submitted = true; // "Activation email sent..."
+      },
+      error: (err: HttpErrorResponse) => {
+        this.submitted = false;
+        const msg = err.error?.message ?? 'Registration failed.';
+
+        /*if (err.status === 409) this.serverError = msg;       // Email already exists
+        else if (err.status === 400) this.serverError = msg;  // validation
+        else this.serverError = msg;*/
+      }
+    });
   }
 
-  constructor(private cdr: ChangeDetectorRef) {
-  }
 
   onPickImage(ev: Event) {
     const input = ev.target as HTMLInputElement;

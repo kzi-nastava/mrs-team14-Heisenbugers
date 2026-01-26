@@ -12,6 +12,8 @@ import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
 import { MapComponent } from './components/map/map.component';
 import {DriverRegistrationComponent} from './components/auth/driver-registration/driver-registration.component';
 import {StartRideComponent} from './components/start-ride/start-ride.component';
+import {SetPasswordComponent} from './components/auth/set-password/set-password.component';
+import {TokenUsedComponent} from './components/auth/token-used/token-used.component';
 import { DuringRide } from './components/during-ride/during-ride.component';
 import { HomeContainer } from './home-container/home-container.component';
 
@@ -42,6 +44,8 @@ export const routes: Routes = [
       { path: 'auth/register', component: RegisterComponent },
       { path: 'auth/login', component: LoginComponent },
       { path: 'auth/forgot-password', component: ForgotPasswordComponent },
+      { path: 'auth/set-password', component: SetPasswordComponent },
+      { path: 'auth/token-used', component: TokenUsedComponent },
     ]
   },
   {

@@ -51,7 +51,7 @@ public class ProfileController {
     @GetMapping(value = "/me/vehicle", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CreatedVehicleDTO> getMyVehicle() {
         CreatedVehicleDTO vehicle = new CreatedVehicleDTO();
-        vehicle.setId(1L);
+        vehicle.setId(UUID.randomUUID());
         vehicle.setModel("Ford Fiesta");
         vehicle.setType(VehicleType.STANDARD);
         vehicle.setLicensePlate("NS-253-KL");

@@ -43,8 +43,9 @@ public class SecurityConfig {
 
                                 "/api/auth/login",
                                 "/api/auth/activate",
-                                "/api/test/trigger"
-                        ).permitAll()
+                                "/api/drivers/activate",
+                                "/api/test/trigger").permitAll()
+                                
 
                         // ERROR
                         .requestMatchers("/error").permitAll()
