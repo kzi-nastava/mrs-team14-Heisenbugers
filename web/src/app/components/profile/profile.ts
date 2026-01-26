@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, signal} from '@angular/core';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { bootstrapPersonCircle, bootstrapPencilFill, bootstrapClockFill, bootstrapEye, bootstrapEyeSlash, bootstrapCameraFill, bootstrapCarFrontFill } from '@ng-icons/bootstrap-icons';
 import { ProfileCard} from './profile-card/profile-card';
@@ -14,11 +14,12 @@ import {User} from './model/user.model';
 import {Vehicle} from './model/vehicle.model';
 import {HttpClient} from '@angular/common/http';
 import {GetProfileDTO, UpdateProfileDTO} from '../../models/profile.model';
+import {AuthService} from '../auth/auth.service';
+import {CreateVehicleDTO} from '../../models/driver-registration.model';
 
 @Component({
   selector: 'app-profile',
   imports: [
-    RouterLink,
     NgIcon,
     ProfileCard,
     FormsModule,
@@ -36,15 +37,17 @@ export class ProfileComponent {
   selectedTab: string = 'Personal Information';
   isEditing = false;
   isVehicleEditing = false;
+  userRole = "";
+  driverActiveHours = "0 H 0 MIN";
 
-  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private authService: AuthService) {
 
   }
 
   ngOnInit() {
+    this.userRole = this.authService.getRole();
     this.http.get<GetProfileDTO>(`http://localhost:8081/api/profile/me`).subscribe({
       next: (data) => {
-        console.log(data);
         this.user.set({
           name: `${data.firstName} ${data.lastName}`,
           email: data.email,
@@ -58,6 +61,34 @@ export class ProfileComponent {
         console.warn('Error:', error);
       }
     });
+    if (this.userRole === 'DRIVER') {
+      this.http.get<any>(`http://localhost:8081/api/profile/me/driver`).subscribe({
+        next: (data) => {
+          const minutes = Number(data) || 0;
+          this.driverActiveHours = this.formatMinutesToHours(minutes);
+        },
+        error: (error) => {
+          console.warn('Error:', error);
+        }
+      });
+      this.http.get<CreateVehicleDTO>(`http://localhost:8081/api/profile/me/vehicle`).subscribe({
+        next: (data) => {
+          this.vehicle.set({
+            model: data.vehicleModel,
+            type: data.vehicleType,
+            plateNumber: data.licensePlate,
+            seats: data.seatCount.toString(),
+            babiesAllowed: data.babyTransport,
+            petsAllowed: data.petTransport
+          });
+
+        },
+
+        error: (error) => {
+          console.warn('Error:', error);
+        }
+      });
+    }
   }
 
   setProfileTab(tab: string) {
@@ -102,10 +133,26 @@ export class ProfileComponent {
         });
   }
 
+  logOut(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('role');
+    localStorage.removeItem('tokenType');
+    localStorage.removeItem('userId');
+    this.authService.setUser();
+    this.router.navigate(["auth/login"]);
+  }
+
   updateVehicle(updatedVehicle: any) {
     this.vehicle.update(v => ({
       ...v,
       ...updatedVehicle
     }));
+  }
+
+  private formatMinutesToHours(minutes: number): string {
+    if (!Number.isFinite(minutes) || minutes <= 0) return '0 H 0 MIN';
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    return `${hours} H ${mins} MIN`;
   }
 }
