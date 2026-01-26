@@ -72,10 +72,14 @@
 
   <!-- Alert Button -->
   <button
-    class="absolute right-6 bottom-36 bg-white rounded-full w-11 h-11 flex items-center justify-center cursor-pointer"
+    type="button"
+    class="absolute right-6 bottom-36 bg-white rounded-full w-11 h-11 flex items-center justify-center cursor-pointer active:scale-[0.98]"
+    (click)="panicClick()"
   >
     <ng-icon name="bootstrapExclamationCircleFill" size="36" color="red"></ng-icon>
   </button>
+
+
 </div>
 
 <!--  Modal to enter notes  -->
@@ -129,6 +133,7 @@
   </div>
 </div>
 }
+
 
 <!--  Modal to rate  -->
 

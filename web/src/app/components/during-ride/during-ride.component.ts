@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, ViewChild, inject } from '@angular/core';
 import { carSelectedIcon, MapComponent } from '../map/map.component';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
@@ -6,7 +6,7 @@ import { MapPin } from '../map/map.component';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RateModal } from "../rate-modal/rate-modal.component";
 import { RideInfo } from '../driver-ride-history/driver-info.model';
-
+import { PanicService } from '../../services/panic.service';
 
 @Component({
   selector: 'app-during-ride',
@@ -15,11 +15,13 @@ import { RideInfo } from '../driver-ride-history/driver-info.model';
   viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
 
 })
-export class DuringRide {
-  
-  
+export class DuringRideComponent {
+
+  private panicApi = inject(PanicService);
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
-  
+
+  ride: any;
+/*
   ride: RideInfo = {
     rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
@@ -39,8 +41,8 @@ export class DuringRide {
     ],
     trafficViolations: [{type: 'Red light'}],
     panicTriggered: false
-  
-  };
+
+  };*/
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = true;
   driverRate = 0;
@@ -98,6 +100,17 @@ export class DuringRide {
 
   setVehicleRate(value: number) {
     this.vehicleRate = value;
+  }
+
+  async panicClick() {
+    const rideId = this.ride?.rideId;
+    if (!rideId) return;
+
+    const msg = prompt('Describe the problem (optional):') ?? '';
+    this.panicApi.panic(String(rideId), msg).subscribe({
+      next: () => alert('Panic sent to administrators.'),
+      error: (e) => alert(e?.error?.message ?? 'Panic failed')
+    });
   }
 
 }
