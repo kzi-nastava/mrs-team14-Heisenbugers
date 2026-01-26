@@ -42,7 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/**","/api/auth/**","/api/auth/register",
 
                                 "/api/auth/login",
-                                "/api/auth/activate").permitAll()
+                                "/api/auth/activate",
+                                "/api/drivers/activate").permitAll()
 
                         // ERROR
                         .requestMatchers("/error").permitAll()
