@@ -11,12 +11,16 @@ import com.ftn.heisenbugers.gotaxi.models.security.ActivationToken;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.repositories.ActivationTokenRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Map;
@@ -31,6 +35,21 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
+    @Value("classpath:static/images/default-avatar.png")
+    private Resource defaultAvatarResource;
+
+    private byte[] defaultAvatarBytesCache;
+
+    private byte[] getDefaultAvatarBytes() {
+        try {
+            if (defaultAvatarBytesCache == null) {
+                defaultAvatarBytesCache = defaultAvatarResource.getInputStream().readAllBytes();
+            }
+            return defaultAvatarBytesCache;
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot load default avatar", e);
+        }
+    }
 
     public UUID registerPassenger(RegisterPassengerRequestDTO request, String appBaseUrl) {
 
@@ -59,7 +78,20 @@ public class AuthService {
         p.setLastName(request.getLastName());
         p.setPhone(request.getPhone());
         p.setAddress(request.getAddress());
-        p.setProfileImageUrl(request.getProfileImageUrl());
+
+        try {
+            if (request.getProfileImage() != null && !request.getProfileImage().isEmpty()) {
+                p.setProfileImage(request.getProfileImage().getBytes());
+            } else {
+                p.setProfileImage(getDefaultAvatarBytes());
+            }
+        } catch (IOException e) {
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error reading profile image"
+            );
+        }
+
         p.setBlocked(false);
         p.setActivated(false);
 

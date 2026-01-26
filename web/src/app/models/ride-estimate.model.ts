@@ -18,7 +18,7 @@ export interface RideEstimateRequestDTO {
 export interface RideEstimateResponseDTO {
   distanceKm: number;
   estimatedTimeMin: number;
-  estimatedPrice: string;
+  estimatedPrice: string | number;
   polyline?: string;
   routePoints?: LocationDTO[];
 }

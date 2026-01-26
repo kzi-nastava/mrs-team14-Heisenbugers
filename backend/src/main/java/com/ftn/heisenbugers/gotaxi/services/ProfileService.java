@@ -5,6 +5,7 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.ChangePasswordDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.GetProfileDTO;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -13,9 +14,11 @@ import java.util.Objects;
 public class ProfileService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public ProfileService(UserRepository userRepository) {
+    public ProfileService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public GetProfileDTO getMyProfile(String email) {
@@ -34,8 +37,8 @@ public class ProfileService {
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhoneNumber());
         user.setAddress(request.getAddress());
-        user.setProfileImageUrl(request.getProfileImageUrl());
-
+        //user.setProfileImageUrl(request.getProfileImageUrl());
+        //need to new image upload
         User savedUser = userRepository.save(user);
 
         return mapToDto(savedUser);
@@ -43,18 +46,19 @@ public class ProfileService {
 
     public void changePassword(String email, ChangePasswordDTO request) {
 
-        /*if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
+        if (!request.getNewPassword().equals(request.getConfirmNewPassword())) {
             throw new IllegalArgumentException("New passwords do not match");
-        }*/
+        }
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
-        if (!Objects.equals(request.getOldPassword(), user.getPasswordHash())) {
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPasswordHash())) {
             throw new IllegalArgumentException("Old password is incorrect");
         }
 
-        user.setPasswordHash(request.getNewPassword());
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
     }
 
@@ -66,7 +70,8 @@ public class ProfileService {
         dto.setLastName(user.getLastName());
         dto.setPhoneNumber(user.getPhone());
         dto.setAddress(user.getAddress());
-        dto.setProfileImageUrl(user.getProfileImageUrl());
+        //dto.setProfileImageUrl(user.getProfileImageUrl());
+        //new image upload
         return dto;
     }
 }

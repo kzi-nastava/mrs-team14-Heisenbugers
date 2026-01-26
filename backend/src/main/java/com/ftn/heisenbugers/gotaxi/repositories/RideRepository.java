@@ -39,6 +39,9 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
     List<Ride> findByPassengersContainingAndStartedAtBefore(Passenger passengers, LocalDateTime startedAtBefore,
                                                             Sort sort);
 
+    Optional<Ride> findFirstByDriverIdAndStatusInOrderByScheduledAtAsc(UUID driverId, List<RideStatus> statuses);
+
+
     Ride findRideById(UUID id);
 
     Optional<Ride> findByPassengersContainingAndStatus(Passenger passenger, RideStatus status);

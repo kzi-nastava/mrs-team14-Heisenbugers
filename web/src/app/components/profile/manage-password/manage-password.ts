@@ -85,6 +85,7 @@ export class ManagePassword {
     const dto: ChangePasswordDTO = {
       oldPassword: this.form.value.oldPassword!,
       newPassword: this.form.value.password!,
+      confirmNewPassword: this.form.value.confirmPassword!,
     };
 
     this.http.put<void>('http://localhost:8081/api/profile/me/password', dto)

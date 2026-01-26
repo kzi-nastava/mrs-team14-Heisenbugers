@@ -2,6 +2,7 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
+import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.ChangePasswordDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedVehicleDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.GetDriverProfileDTO;
@@ -67,8 +68,8 @@ public class ProfileController {
     public ResponseEntity<GetProfileDTO> updateProfile(
             @RequestBody GetProfileDTO request) throws InvalidUserType {
 
-        Passenger passenger = AuthContextService.getCurrentPassenger();
-        GetProfileDTO updatedProfile = profileService.updateProfile(passenger.getEmail(), request);
+        User user = AuthContextService.getCurrentUser();
+        GetProfileDTO updatedProfile = profileService.updateProfile(user.getEmail(), request);
         return ResponseEntity.ok(updatedProfile);
     }
 
@@ -95,8 +96,8 @@ public class ProfileController {
     public ResponseEntity<?> changePassword(
             @RequestBody ChangePasswordDTO request) throws InvalidUserType {
 
-        Passenger passenger = AuthContextService.getCurrentPassenger();
-        profileService.changePassword(passenger.getEmail(), request);
+        User user = AuthContextService.getCurrentUser();
+        profileService.changePassword(user.getEmail(), request);
         return ResponseEntity.ok().build();
     }
 }

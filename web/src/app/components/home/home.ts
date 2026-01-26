@@ -10,6 +10,7 @@ import { MapComponent, MapPin, carAvailableIcon, carOccupiedIcon } from '../map/
 import { RideEstimateService } from '../../services/ride-estimate.service';
 import { RideEstimateRequestDTO, RideEstimateResponseDTO, VehicleType } from '../../models/ride-estimate.model';
 import { HttpClient } from '@angular/common/http';
+import {CurrencyPipe, DecimalPipe} from '@angular/common';
 
 type FormKeys = 'startAddress' | 'destinationAddress';
 
@@ -25,7 +26,7 @@ interface VehicleLocationDTO {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MapComponent, ReactiveFormsModule, NgIcon],
+  imports: [MapComponent, ReactiveFormsModule, NgIcon, CurrencyPipe, DecimalPipe],
   templateUrl: './home.html',
   viewProviders: [provideIcons({ bootstrapGeo })]
 })
@@ -159,6 +160,7 @@ export class HomeComponent {
       const startText = String(this.form.value.startAddress);
       const destText  = String(this.form.value.destinationAddress);
 
+
       const start = await this.geocode(startText);
       const destination = await this.geocode(destText);
 
@@ -177,12 +179,11 @@ export class HomeComponent {
       this.estimateResult = resp;
 
 
-      const summary = await this.mapCmp.showRoute(
-        L.latLng(start.lat, start.lng),
-        L.latLng(destination.lat, destination.lng)
-      );
+      const pts = (resp.routePoints ?? [])
+        .filter(p => p.latitude != null && p.longitude != null)
+        .map(p => L.latLng(p.latitude as number, p.longitude as number));
 
-      this.routeSummary = summary;
+      this.mapCmp.drawRoute(pts);
 
     } catch (e: any) {
       this.errorMsg = typeof e === 'string' ? e : (e?.message ?? 'Estimate failed');
@@ -190,6 +191,8 @@ export class HomeComponent {
       this.loading = false;
     }
   }
+
+
   private geoCache = new Map<string, { lat: number; lng: number; address: string }>();
 
   private async geocode(q: string): Promise<{ address: string; lat: number; lng: number }> {

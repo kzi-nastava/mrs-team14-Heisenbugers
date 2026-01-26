@@ -33,6 +33,10 @@ public class Ride extends BaseEntity {
     private double price;
 
     private boolean canceled;
+    @Column(name = "cancel_reason", length = 500)
+    private String cancelReason;
+    @Column(name = "canceled_at")
+    private LocalDateTime canceledAt;
 
     @ManyToOne
     @JoinColumn(name = "start_id")

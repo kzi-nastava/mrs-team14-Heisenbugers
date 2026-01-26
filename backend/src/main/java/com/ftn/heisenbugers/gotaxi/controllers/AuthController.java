@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,8 +41,8 @@ public class AuthController {
     }
 
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterPassengerRequestDTO request) {
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> register(@ModelAttribute RegisterPassengerRequestDTO request) {
 
         String appBaseUrl = "http://localhost:4200";
 
