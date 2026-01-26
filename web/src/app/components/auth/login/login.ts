@@ -20,7 +20,7 @@ import { LoginRequestDTO } from '../auth.api';
 })
 export class LoginComponent {
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
 
   }
 
@@ -75,11 +75,10 @@ export class LoginComponent {
         localStorage.setItem('userId', resp.userId);
         localStorage.setItem('role', resp.role);
 
-        if(resp.role === "DRIVER"){
-          this.router.navigate(['/driver-ride-history']);
-        } else{
-          this.router.navigate(['/profile']);
-        }
+        this.authService.setUser();
+
+        this.router.navigate(['/base']);
+
       },
       error: (e:HttpErrorResponse) => {
         this.loading = false;

@@ -145,7 +145,7 @@ public class AuthService {
         d.setPasswordHash(passwordEncoder.encode(request.getEmail()+request.getLastName()));
         d.setPhone(request.getPhone());
         d.setAddress(request.getAddress());
-        d.setProfileImageUrl(request.getProfileImageUrl());
+        d.setProfileImage(null);
         d.setBlocked(false);
         d.setActivated(false);
         d.setVehicle(v);

@@ -1,24 +1,31 @@
 package com.ftn.heisenbugers.gotaxi.services;
 
+import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
+import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.Vehicle;
 import com.ftn.heisenbugers.gotaxi.models.dtos.ChangePasswordDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedVehicleDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.GetProfileDTO;
+import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
+import com.ftn.heisenbugers.gotaxi.repositories.DriverRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.VehicleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Objects;
 
 @Service
 public class ProfileService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DriverRepository driverRepository;
 
-    public ProfileService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public ProfileService(UserRepository userRepository, PasswordEncoder passwordEncoder, DriverRepository driverRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.driverRepository = driverRepository;
     }
 
     public GetProfileDTO getMyProfile(String email) {
@@ -43,6 +50,34 @@ public class ProfileService {
 
         return mapToDto(savedUser);
     }
+
+    public CreatedVehicleDTO getMyVehicle() throws InvalidUserType {
+        User user = AuthContextService.getCurrentDriver();
+
+        Driver driver = driverRepository.findByIdWithVehicle(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Driver not found"));
+
+        return mapToDto(driver.getVehicle());
+    }
+
+    public CreatedVehicleDTO updateMyVehicle(CreatedVehicleDTO request) throws InvalidUserType {
+        User user = AuthContextService.getCurrentDriver();
+
+        Driver driver = driverRepository.findByIdWithVehicle(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Driver not found"));
+
+        driver.getVehicle().setModel(request.getVehicleModel());
+        driver.getVehicle().setType(request.getVehicleType());
+        driver.getVehicle().setLicensePlate(request.getLicensePlate());
+        driver.getVehicle().setSeatCount(request.getSeatCount());
+        driver.getVehicle().setBabyTransport(request.isBabyTransport());
+        driver.getVehicle().setPetTransport(request.isPetTransport());
+
+        Driver savedDriver = userRepository.save(driver);
+
+        return mapToDto(savedDriver.getVehicle());
+    }
+
 
     public void changePassword(String email, ChangePasswordDTO request) {
 
@@ -72,6 +107,18 @@ public class ProfileService {
         dto.setAddress(user.getAddress());
         //dto.setProfileImageUrl(user.getProfileImageUrl());
         //new image upload
+        return dto;
+    }
+
+    private CreatedVehicleDTO mapToDto(Vehicle vehicle) {
+        CreatedVehicleDTO dto = new CreatedVehicleDTO();
+        dto.setId(vehicle.getId());
+        dto.setVehicleModel(vehicle.getModel());
+        dto.setVehicleType(vehicle.getType());
+        dto.setLicensePlate(vehicle.getLicensePlate());
+        dto.setSeatCount(vehicle.getSeatCount());
+        dto.setBabyTransport(vehicle.isBabyTransport());
+        dto.setPetTransport(vehicle.isPetTransport());
         return dto;
     }
 }
