@@ -1,0 +1,83 @@
+<div class="flex gap-6">
+  <!-- left: list -->
+  <div class="w-[420px]">
+    <div class="flex items-center justify-between mb-3">
+      <div class="text-xl font-bold flex items-center gap-2">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-red-500"></span>
+        Panic alerts
+      </div>
+
+      <button
+        type="button"
+        class="px-3 py-1.5 rounded-xl border border-neutral-200 hover:bg-neutral-50 text-sm"
+        (click)="enableSound()"
+      >
+        Enable sound
+      </button>
+    </div>
+
+    @if (!panics.length) {
+      <div class="rounded-2xl border border-neutral-200 bg-white p-4 text-sm text-neutral-600">
+        No active panic alerts
+      </div>
+    } @else {
+      <div class="space-y-2">
+        @for (p of panics; track p.id) {
+          <button
+            type="button"
+            class="w-full text-left rounded-2xl border border-neutral-200 bg-white p-4 hover:bg-neutral-50"
+            (click)="openRide(p)"
+          >
+            <div class="flex items-center justify-between">
+              <div class="font-semibold">
+                Ride: {{ p?.ride?.id ?? p?.rideId }}
+              </div>
+              <div class="text-xs text-neutral-500">
+                #{{ p?.id }}
+              </div>
+            </div>
+            <div class="text-sm text-neutral-600 mt-1">
+              {{ p?.message ?? 'PANIC activated' }}
+            </div>
+          </button>
+        }
+      </div>
+    }
+
+    @if (selectedPanicId) {
+      <button
+        type="button"
+        class="mt-4 w-full h-11 rounded-2xl bg-[#C5E55D] font-semibold hover:bg-lime-200"
+        (click)="resolvePanic()"
+      >
+        Mark as resolved
+      </button>
+    }
+  </div>
+
+  <!-- right: map + notifications -->
+  <div class="flex-1">
+    <div class="rounded-2xl border border-neutral-200 overflow-hidden h-[420px] bg-white">
+      <app-map [pins]="pins"></app-map>
+    </div>
+
+    <div class="mt-6">
+      <div class="text-lg font-bold mb-2">Unread notifications</div>
+
+      @if (!notifications.length) {
+        <div class="rounded-2xl border border-neutral-200 bg-white p-4 text-sm text-neutral-600">
+          No unread notifications
+        </div>
+      } @else {
+        <div class="space-y-2">
+          @for (n of notifications; track n.id) {
+            <div class="rounded-2xl border border-neutral-200 bg-white p-4">
+              <div class="text-sm text-neutral-800">{{ n?.message }}</div>
+              <div class="text-xs text-neutral-500 mt-1">#{{ n?.id }}</div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

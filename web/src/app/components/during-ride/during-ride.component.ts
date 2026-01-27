@@ -1,10 +1,16 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+
+import { Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
+
 import { carSelectedIcon, MapComponent } from '../map/map.component';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
 import { MapPin } from '../map/map.component';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RateModal } from "../rate-modal/rate-modal.component";
+
+//import { RideInfo } from '../driver-ride-history/driver-info.model';
+import { PanicService } from '../../services/panic.service';
+
 import { RideInfo } from '../../models/driver-info.model';
 import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
@@ -40,6 +46,7 @@ export interface RideDTO {
 }
 
 
+
 @Component({
   selector: 'app-during-ride',
   imports: [MapComponent, NgIcon, FormsModule, RateModal],
@@ -47,6 +54,8 @@ export interface RideDTO {
   viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
 
 })
+
+
 export class DuringRide {
   private stops?: L.LatLng[]
   private baseUrl = 'http://localhost:8081/api';
@@ -65,13 +74,15 @@ export class DuringRide {
   startLocation?: Location
   endLocation?: Location
   rideRate?: RideRateInfo
-
   
+  private panicApi = inject(PanicService);
+  ride: any;
   
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   @ViewChild(MapComponent) mapCmp!: MapComponent;
   
   /*ride: RideInfo = {
+
     rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
     startAddress: 'ул.Атамана Головатого 2а',
@@ -90,7 +101,7 @@ export class DuringRide {
     ],
     trafficViolations: [{type: 'Red light'}],
     panicTriggered: false
-  
+
   };*/
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = false;
@@ -263,6 +274,17 @@ export class DuringRide {
 
   setVehicleRate(value: number) {
     this.vehicleRate = value;
+  }
+
+  async panicClick() {
+    const rideId = this.ride?.rideId;
+    if (!rideId) return;
+
+    const msg = prompt('Describe the problem (optional):') ?? '';
+    this.panicApi.panic(String(rideId), msg).subscribe({
+      next: () => alert('Panic sent to administrators.'),
+      error: (e) => alert(e?.error?.message ?? 'Panic failed')
+    });
   }
 
 }

@@ -5,6 +5,7 @@ import { HomeComponent } from './components/home/home';
 import { RegisterComponent } from './components/auth/register/register';
 import { LoginComponent } from './components/auth/login/login';
 import { ProfileComponent } from './components/profile/profile';
+import {AdminPanicComponent} from './components/admin/admin-panic/admin-panic.component';
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password';
 import { RideHistoryComponent } from './components/driver-ride-history/driver-ride-history';
 import { RideCardComponent } from './components/driver-ride-history/ride-card/ride-card.component';
@@ -12,6 +13,10 @@ import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
 import { MapComponent } from './components/map/map.component';
 import {DriverRegistrationComponent} from './components/auth/driver-registration/driver-registration.component';
 import {StartRideComponent} from './components/start-ride/start-ride.component';
+
+import {AdminLayoutComponent} from './components/admin/admin-layout/admin-layout.component';
+import {AdminGuard} from './components/admin/admin.guard';
+
 import {SetPasswordComponent} from './components/auth/set-password/set-password.component';
 import {TokenUsedComponent} from './components/auth/token-used/token-used.component';
 import { DuringRide } from './components/during-ride/during-ride.component';
@@ -52,13 +57,24 @@ export const routes: Routes = [
     path: '',
     component: LoggedLayoutComponent,
     children: [
-      { path: 'profile', component: ProfileComponent },
-      { path: 'driver-ride-history', component: RideHistoryComponent },
-      { path: 'driver-ride-history/ride', component: RideCardComponent },
-      { path: 'driver-registration', component: DriverRegistrationComponent},
-      { path: 'start-ride', component: StartRideComponent},
-      { path: 'during-ride', component: DuringRide},
+      {path: 'profile', component: ProfileComponent},
+      {path: 'driver-ride-history', component: RideHistoryComponent},
+      {path: 'driver-ride-history/ride', component: RideCardComponent},
+      {path: 'driver-registration', component: DriverRegistrationComponent},
+      {path: 'start-ride', component: StartRideComponent},
+      {path: 'during-ride', component: DuringRide},
       { path: 'base', component: HomeContainer},
+
+      {
+        path: 'admin',
+        component: AdminLayoutComponent,
+        canActivate: [AdminGuard],
+        children: [
+          {path: 'panic', component: AdminPanicComponent},
+          {path: '', redirectTo: 'panic', pathMatch: 'full'},
+        ]
+      }
+
     ]
   }
 ];
