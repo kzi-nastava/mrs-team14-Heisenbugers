@@ -7,6 +7,7 @@ import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.repositories.ActivationTokenRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.VehicleRepository;
+import com.ftn.heisenbugers.gotaxi.services.ImageStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -34,22 +35,13 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final VehicleRepository vehicleRepository;
+    private final ImageStorageService imageStorageService;
 
-    @Value("classpath:static/images/default-avatar.png")
-    private Resource defaultAvatarResource;
+    @Value("${app.default.avatar-path:/images/default-avatar.png}")
+    private String defaultAvatarPath;
 
     private byte[] defaultAvatarBytesCache;
 
-    private byte[] getDefaultAvatarBytes() {
-        try {
-            if (defaultAvatarBytesCache == null) {
-                defaultAvatarBytesCache = defaultAvatarResource.getInputStream().readAllBytes();
-            }
-            return defaultAvatarBytesCache;
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot load default avatar", e);
-        }
-    }
 
     public UUID registerPassenger(RegisterPassengerRequestDTO request, String appBaseUrl) {
 
@@ -79,18 +71,14 @@ public class AuthService {
         p.setPhone(request.getPhone());
         p.setAddress(request.getAddress());
 
-        try {
-            if (request.getProfileImage() != null && !request.getProfileImage().isEmpty()) {
-                p.setProfileImage(request.getProfileImage().getBytes());
-            } else {
-                p.setProfileImage(getDefaultAvatarBytes());
-            }
-        } catch (IOException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Error reading profile image"
-            );
+        String profilePath;
+        if (request.getProfileImage() != null && !request.getProfileImage().isEmpty()) {
+            profilePath = imageStorageService.saveProfileImage(request.getProfileImage());
+        } else {
+            profilePath = defaultAvatarPath;
         }
+
+        p.setProfileImagePath(profilePath);
 
         p.setBlocked(false);
         p.setActivated(false);
@@ -145,7 +133,7 @@ public class AuthService {
         d.setPasswordHash(passwordEncoder.encode(request.getEmail()+request.getLastName()));
         d.setPhone(request.getPhone());
         d.setAddress(request.getAddress());
-        d.setProfileImage(null);
+       // d.setProfileImage(null);
         d.setBlocked(false);
         d.setActivated(false);
         d.setVehicle(v);
