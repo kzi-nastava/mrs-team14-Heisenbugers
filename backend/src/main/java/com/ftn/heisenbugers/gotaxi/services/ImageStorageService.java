@@ -17,6 +17,23 @@ import java.util.UUID;
 public class ImageStorageService {
     @Value("${app.upload.dir}")
     private String uploadDir;
+    @Value("${app.upload.url-prefix:/uploads/avatars/}")
+    private String urlPrefix;
+
+    private Path resolveUploadPath() {
+        if (uploadDir == null || uploadDir.isBlank()) {
+            String baseDir = System.getProperty("user.dir");
+            Path path = Paths.get(baseDir, "uploads", "avatars")
+                    .toAbsolutePath()
+                    .normalize();
+            System.out.println("[ImageStorageService] Using default upload dir: " + path);
+            return path;
+        } else {
+            Path path = Paths.get(uploadDir).toAbsolutePath().normalize();
+            System.out.println("[ImageStorageService] Using configured upload dir: " + path);
+            return path;
+        }
+    }
 
     public String saveProfileImage(MultipartFile file) {
         if (file == null || file.isEmpty()) {
@@ -24,8 +41,8 @@ public class ImageStorageService {
         }
 
         try {
+            Path uploadPath = resolveUploadPath();
 
-            Path uploadPath = Paths.get(uploadDir);
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
             }
@@ -36,15 +53,16 @@ public class ImageStorageService {
                 ext = originalName.substring(originalName.lastIndexOf('.'));
             }
 
-            //unic name
             String filename = UUID.randomUUID() + ext;
             Path target = uploadPath.resolve(filename);
 
-            file.transferTo(target.toFile());
+            System.out.println("[ImageStorageService] Saving profile image to: " + target);
 
-            return "/uploads/avatars/" + filename;
+            file.transferTo(target.toFile());
+            return urlPrefix + filename;
 
         } catch (IOException e) {
+            e.printStackTrace();
             throw new RuntimeException("Failed to save profile image", e);
         }
     }
