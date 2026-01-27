@@ -4,6 +4,7 @@ import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.RideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.MessageResponse;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideTrackingDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
@@ -39,6 +40,16 @@ public class RideController {
 
 
         return ResponseEntity.ok(rideService.getAll());
+    }
+
+    @GetMapping("/{rideId}")
+    public ResponseEntity<RideDTO> getRide(@PathVariable UUID rideId) {
+        RideDTO ride = rideService.getRide(rideId);
+        if (ride == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(ride);
+        }
     }
 
     @GetMapping("/me/active")
@@ -81,7 +92,8 @@ public class RideController {
     public ResponseEntity<Object> reportDriver(@PathVariable UUID rideId, @RequestBody Map<String, Object> body) throws InvalidUserType {
         User user = AuthContextService.getCurrentUser();
         boolean ok = rideService.report(rideId, user.getId(),
-                (String) body.get("description"));
+                (String) body.get("title"),
+                (String) body.get("desc"));
         if (!ok) {
             return ResponseEntity.badRequest().build();
         } else {
@@ -107,12 +119,18 @@ public class RideController {
     @PostMapping("/{rideId}/rate")
     public ResponseEntity<Object> rateDriver(@PathVariable UUID rideId, @RequestBody Map<String, Object> body) throws InvalidUserType {
         User rater = AuthContextService.getCurrentUser();
-        int driverScore = Integer.parseInt((String) body.get("driverScore"));
-        int vehicleScore = Integer.parseInt((String) body.get("vehicleScore"));
+        System.out.println(body);
+        System.out.println(body.get("driverScore").getClass().getName());
+        int driverScore = (Integer) body.get("driverScore");
+        int vehicleScore = (Integer) body.get("vehicleScore");
         String comment = (String) body.get("comment");
-        rideService.rate(rideId, rater.getId(), driverScore, vehicleScore, comment);
-        return ResponseEntity.ok()
-                .body(Map.of("message", "Ride successfully rated"));
+        boolean ok = rideService.rate(rideId, rater.getId(), driverScore, vehicleScore, comment);
+        if (ok) {
+            return ResponseEntity.ok()
+                    .body(Map.of("message", "Ride successfully rated"));
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
 }

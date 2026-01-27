@@ -18,7 +18,7 @@ public class VehicleService {
     }
 
     public List<VehicleInfoDTO> getActiveVehicleDtos() {
-        List<Vehicle> activeVehicles = vehicleRepository.getVehiclesByDriverActive(true);
+        List<Vehicle> activeVehicles = vehicleRepository.getVehiclesByDriverWorking(true);
 
         return activeVehicles.stream()
                 .map(vehicle -> {
@@ -34,7 +34,7 @@ public class VehicleService {
                         dto.setLongitude(driver.getLocation().getLongitude());
 
                         // Check if vehicle is occupied (has active ride)
-                        dto.setOccupied(driver.isAvailable());
+                        dto.setOccupied(!driver.isAvailable());
                     }
 
 

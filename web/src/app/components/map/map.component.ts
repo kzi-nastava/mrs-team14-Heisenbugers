@@ -32,6 +32,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
   @Input({ transform: booleanAttribute }) goBelow = false;
   private map!: L.Map;
   private markers: L.Marker[] = [];
+  dummyMap!: L.Map
 
 
 
@@ -71,6 +72,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
      this.snapPinsToRoad().then((pins) => {
             this.renderPins(pins);
         });
+    console.log('Map initialized');
+
   }
 
 
@@ -82,17 +85,24 @@ export class MapComponent implements AfterViewInit, OnChanges {
     }
   }
 
+  initMap(): Promise<void>{
+    return new Promise(resolve => {
+      this.dummyMap = L.map('dummyMap', { zoomControl: false }).setView([45.2396, 19.8227], 15);
+      resolve()
+    })
+  }
 
-  showRoute(from: L.LatLng, to: L.LatLng, stops: L.LatLng[] = []): Promise<RouteSummary> {
+
+  showRoute(from: L.LatLng, to: L.LatLng, stops: L.LatLng[] = [], map = this.map): Promise<RouteSummary> {
     return new Promise((resolve, reject) => {
-      if (!this.map) {
+      if (!map) {
         reject(new Error('Map is not initialized yet'));
         return;
       }
 
       // delete last route
       if (this.routingControl) {
-        this.map.removeControl(this.routingControl);
+        map.removeControl(this.routingControl);
         this.routingControl = null;
       }
 
@@ -112,11 +122,12 @@ export class MapComponent implements AfterViewInit, OnChanges {
         addWaypoints: false,
         draggableWaypoints: false,
         routeWhileDragging: false,
-        show: false,
         fitSelectedRoutes: true,
+        show: false,
         createMarker: () => null,
         lineOptions: { styles: [{ weight: 5, opacity: 0.8 }] },
-      }).addTo(this.map);
+      }).addTo(map);
+      
 
       this.routingControl.on('routesfound', (e: any) => {
         const route = e?.routes?.[0];
@@ -157,7 +168,6 @@ export class MapComponent implements AfterViewInit, OnChanges {
         } else {
             marker = L.marker([pin.lat, pin.lng]);
         }
-
         marker.addTo(this.map)
         if (pin.popup) {
             marker.bindPopup(pin.popup);

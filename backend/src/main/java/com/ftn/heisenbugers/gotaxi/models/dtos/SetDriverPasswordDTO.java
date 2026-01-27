@@ -1,13 +1,11 @@
 package com.ftn.heisenbugers.gotaxi.models.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SetDriverPasswordDTO {
-    @Getter @Setter
     private String password;
+    private String confirmPassword;
 }

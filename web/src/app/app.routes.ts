@@ -13,9 +13,15 @@ import { BaseLayoutComponent, LoggedLayoutComponent } from './layouters';
 import { MapComponent } from './components/map/map.component';
 import {DriverRegistrationComponent} from './components/auth/driver-registration/driver-registration.component';
 import {StartRideComponent} from './components/start-ride/start-ride.component';
-import {DuringRideComponent} from './components/during-ride/during-ride.component';
+
 import {AdminLayoutComponent} from './components/admin/admin-layout/admin-layout.component';
 import {AdminGuard} from './components/admin/admin.guard';
+
+import {SetPasswordComponent} from './components/auth/set-password/set-password.component';
+import {TokenUsedComponent} from './components/auth/token-used/token-used.component';
+import { DuringRide } from './components/during-ride/during-ride.component';
+import { HomeContainer } from './home-container/home-container.component';
+
 /*
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -43,6 +49,8 @@ export const routes: Routes = [
       { path: 'auth/register', component: RegisterComponent },
       { path: 'auth/login', component: LoginComponent },
       { path: 'auth/forgot-password', component: ForgotPasswordComponent },
+      { path: 'auth/set-password', component: SetPasswordComponent },
+      { path: 'auth/token-used', component: TokenUsedComponent },
     ]
   },
   {
@@ -54,7 +62,8 @@ export const routes: Routes = [
       {path: 'driver-ride-history/ride', component: RideCardComponent},
       {path: 'driver-registration', component: DriverRegistrationComponent},
       {path: 'start-ride', component: StartRideComponent},
-      {path: 'during-ride', component: DuringRideComponent},
+      {path: 'during-ride', component: DuringRide},
+      { path: 'base', component: HomeContainer},
 
       {
         path: 'admin',
@@ -65,6 +74,7 @@ export const routes: Routes = [
           {path: '', redirectTo: 'panic', pathMatch: 'full'},
         ]
       }
+
     ]
   }
 ];
