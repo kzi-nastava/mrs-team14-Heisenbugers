@@ -56,7 +56,7 @@ export class DuringRide {
     new LatLng(45.249570, 19.815809),
     new LatLng(45.242299, 19.796333),
     new LatLng(45.241604, 19.842757),
-    
+
   ]
 
   locations: MapPin[] = [];
@@ -66,11 +66,11 @@ export class DuringRide {
   endLocation?: Location
   rideRate?: RideRateInfo
 
-  
-  
+
+
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   @ViewChild(MapComponent) mapCmp!: MapComponent;
-  
+
   /*ride: RideInfo = {
     rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
@@ -90,7 +90,7 @@ export class DuringRide {
     ],
     trafficViolations: [{type: 'Red light'}],
     panicTriggered: false
-  
+
   };*/
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = false;
@@ -163,9 +163,9 @@ export class DuringRide {
         return {...stop, popup: "Stop"}
       }))
 
-      
 
-        
+
+
       this.locations.push({...this.stops.at(-1)!, popup: "Final destination"})
       this.mapCmp.showRoute(this.stops[0], this.stops[this.stops.length - 1], this.stops.slice(1, -1))
       this.cdr.markForCheck();
@@ -176,7 +176,7 @@ export class DuringRide {
   }
 
   addEstimateMinutes(): void {
-    const map = new MapComponent()
+    const map = new MapComponent(this.http)
     const stops = this.locations.map(l => {
       return new LatLng(l.lat, l.lng)
     })
@@ -189,7 +189,7 @@ export class DuringRide {
     )
   })
   }
-    
+
   showToast(message: string, duration: number = 2000) {
     console.log(`Trying to show ${message}`)
   this.toastMessage = message;
@@ -246,7 +246,7 @@ export class DuringRide {
     })
     this.closeRateModal();
     console.log(sendingData)
-    
+
   }
 
   getDriverRateArray(): boolean[] {

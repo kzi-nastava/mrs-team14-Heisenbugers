@@ -6,7 +6,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(req: HttpRequest<any>, next: HttpHandler) {
     let token = localStorage.getItem('accessToken');
-    let tokenType = localStorage.getItem('tokenType');
+    let tokenType = "Bearer";
 
     if (token) {
       req = req.clone({

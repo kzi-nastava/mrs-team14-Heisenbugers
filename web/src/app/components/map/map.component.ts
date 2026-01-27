@@ -1,7 +1,18 @@
 
-import { Component, Input, AfterViewInit, OnChanges, SimpleChanges, booleanAttribute } from '@angular/core';
+import {
+  Component,
+  Input,
+  AfterViewInit,
+  OnChanges,
+  SimpleChanges,
+  booleanAttribute,
+  Output,
+  EventEmitter
+} from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet-routing-machine';
+import {Observable} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
 
 const carAvailableIcon: string = 'icons/car-available.svg';
 const carOccupiedIcon: string = 'icons/car-occupied.svg';
@@ -30,6 +41,7 @@ export type RouteSummary = {
 export class MapComponent implements AfterViewInit, OnChanges {
   @Input() pins: MapPin[] = [];
   @Input({ transform: booleanAttribute }) goBelow = false;
+  @Output() routeSummary = new EventEmitter<RouteSummary>();
   private map!: L.Map;
   private markers: L.Marker[] = [];
   dummyMap!: L.Map
@@ -39,6 +51,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
   private routingControl: any | null = null;
 
   private routeLine: L.Polyline | null = null;
+
+  constructor(private http: HttpClient) {}
 
   drawRoute(points: L.LatLng[]) {
     if (!this.map) return;
@@ -73,7 +87,39 @@ export class MapComponent implements AfterViewInit, OnChanges {
             this.renderPins(pins);
         });
     console.log('Map initialized');
+  }
 
+  private async updateRouteFromPins(pins: MapPin[]) {
+    if (!this.map) return;
+
+    // Remove route if not enough pins
+    if (pins.length < 2) {
+      if (this.routingControl) {
+        this.map.removeControl(this.routingControl);
+        this.routingControl = null;
+      }
+      return;
+    }
+
+    const startPin = pins.find(p=> p.popup == "Start");
+    const endPin = pins.find(p=> p.popup == "End");
+
+    const startLatLng: L.LatLng | null = startPin ? L.latLng(startPin.lat, startPin.lng) : null;
+    const endLatLng: L.LatLng | null = endPin ? L.latLng(endPin.lat, endPin.lng) : null;
+
+    if (!startLatLng || !endLatLng) {
+      console.warn('Start or End pin not found for route rendering.');
+      return;
+    }
+
+    const stopLatLngs = pins.filter(p => p.popup != "Start" && p.popup != "End").map(p =>  L.latLng(p.lat, p.lng));
+
+    const from = startLatLng;
+    const to = endLatLng;
+    const stops = stopLatLngs;
+
+    const summary = await this.showRoute(from, to, stops);
+    this.routeSummary.emit(summary);
   }
 
 
@@ -92,6 +138,29 @@ export class MapComponent implements AfterViewInit, OnChanges {
     })
   }
 
+  registerOnClick(): void {
+    this.map.on('click', (e: any) => {
+      const coord = e.latlng;
+      const lat = coord.lat;
+      const lng = coord.lng;
+      this.reverseSearch(lat, lng).subscribe((res) => {
+        console.log(res.display_name);
+      });
+      console.log(
+        'You clicked the map at latitude: ' + lat + ' and longitude: ' + lng
+      );
+      const mp = new L.Marker([lat, lng]).addTo(this.map);
+    });
+  }
+
+  reverseSearch(lat: number, lon: number): Observable<any> {
+    return this.http.get('http://localhost:8081/api/geocode/reverse', {
+      params: {
+        lat: lat.toString(),
+        lon: lon.toString()
+      }
+    });
+  }
 
   showRoute(from: L.LatLng, to: L.LatLng, stops: L.LatLng[] = [], map = this.map): Promise<RouteSummary> {
     return new Promise((resolve, reject) => {
@@ -127,7 +196,7 @@ export class MapComponent implements AfterViewInit, OnChanges {
         createMarker: () => null,
         lineOptions: { styles: [{ weight: 5, opacity: 0.8 }] },
       }).addTo(map);
-      
+
 
       this.routingControl.on('routesfound', (e: any) => {
         const route = e?.routes?.[0];
@@ -175,6 +244,8 @@ export class MapComponent implements AfterViewInit, OnChanges {
         this.markers.push(marker);
 
         });
+
+      this.updateRouteFromPins(pinArgs);
     }
     private snapPinsToRoad(): Promise<MapPin[]> {
         const snapPromises = this.pins.map(async pin => {
