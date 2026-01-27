@@ -20,5 +20,5 @@ public class CreateRideDTO {
     @Setter @Getter
     private boolean petTransport;
     @Setter @Getter
-    private List<PassengerInfoDTO> passengers;
+    private List<String> passengersEmails;
 }

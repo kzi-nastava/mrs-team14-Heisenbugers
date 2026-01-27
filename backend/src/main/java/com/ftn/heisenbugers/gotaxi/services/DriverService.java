@@ -1,17 +1,18 @@
 package com.ftn.heisenbugers.gotaxi.services;
 
-import com.ftn.heisenbugers.gotaxi.models.Location;
-import com.ftn.heisenbugers.gotaxi.models.Passenger;
-import com.ftn.heisenbugers.gotaxi.models.Ride;
+import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DriverRideHistoryDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.PassengerInfoDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
+import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
+import com.ftn.heisenbugers.gotaxi.repositories.DriverRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -20,9 +21,11 @@ import java.util.UUID;
 public class DriverService {
 
     private final RideRepository rideRepository;
+    private final DriverRepository driverRepository;
 
-    public DriverService(RideRepository rideRepository) {
+    public DriverService(RideRepository rideRepository, DriverRepository driverRepository) {
         this.rideRepository = rideRepository;
+        this.driverRepository = driverRepository;
     }
 
     public List<DriverRideHistoryDTO> getDriverHistory(UUID driverId, LocalDate startDate, LocalDate endDate,
@@ -56,6 +59,65 @@ public class DriverService {
         }
 
         return rideHistoryDTOS;
+    }
+
+    public List<Driver> findActiveDrivers() {
+        return driverRepository.findByWorkingTrue();
+    }
+
+    public boolean canAcceptRide(Driver driver, int estimatedTime) {
+        return driver.getActiveHoursLast24h() + (estimatedTime / 60) < 8;
+    }
+
+    public boolean endsRideWithin(Driver driver, int minutes) {
+
+        List<Ride> activeRides =
+                rideRepository.findActiveRidesByDriver(driver.getId());
+
+        if (activeRides.isEmpty()) {
+            return false;
+        }
+
+        if (activeRides.size() > 1) {
+            return false;
+        }
+
+        Ride ride = activeRides.get(0);
+
+        if (ride.getStartedAt() == null) {
+            return false;
+        }
+
+        LocalDateTime expectedEnd =
+                ride.getStartedAt()
+                        .plusMinutes(ride.getRoute().getEstimatedTimeMin());
+
+        return expectedEnd.isBefore(LocalDateTime.now().plusMinutes(minutes));
+    }
+
+    public boolean vehicleMatchesRequest(
+            Driver driver,
+            boolean petTransport,
+            boolean babyTransport,
+            VehicleType requestedType
+    ) {
+        Vehicle vehicle = driver.getVehicle();
+
+        if (vehicle == null) return false;
+
+        if (vehicle.getType() != requestedType) {
+            return false;
+        }
+
+        if (petTransport && !vehicle.isPetTransport()) {
+            return false;
+        }
+
+        if (babyTransport && !vehicle.isBabyTransport()) {
+            return false;
+        }
+
+        return true;
     }
 
     private static void populateDto(Ride r, DriverRideHistoryDTO dto) {

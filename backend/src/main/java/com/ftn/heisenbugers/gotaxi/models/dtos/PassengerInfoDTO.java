@@ -13,6 +13,7 @@ public class PassengerInfoDTO {
     private UUID passengerId;
     private String firstName;
     private String lastName;
+    private String email;
     //private String profileImageUrl;
     private String profileImage;
 }

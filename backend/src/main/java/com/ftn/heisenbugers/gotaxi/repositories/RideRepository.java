@@ -5,6 +5,8 @@ import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -47,4 +49,12 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
     Optional<Ride> findByPassengersContainingAndStatus(Passenger passenger, RideStatus status);
 
     Optional<Ride> findByDriverIdAndStatus(UUID driver_id, RideStatus status);
+
+    @Query("""
+        SELECT r FROM Ride r
+        WHERE r.driver.id = :driverId
+        AND r.status IN ('ASSIGNED', 'ONGOING')
+    """)
+    List<Ride> findActiveRidesByDriver(@Param("driverId") UUID driverId);
+
 }

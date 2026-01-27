@@ -20,7 +20,7 @@ public class CreatedRideDTO {
     @Setter @Getter
     private boolean petTransport;
     @Setter @Getter
-    private List<PassengerInfoDTO> passengers;
+    private List<String> passengersEmails;
     @Setter @Getter
     private DriverDto driver;
     @Setter @Getter
