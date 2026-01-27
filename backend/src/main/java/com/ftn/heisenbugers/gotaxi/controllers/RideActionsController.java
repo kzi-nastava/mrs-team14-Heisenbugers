@@ -1,22 +1,27 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
-import com.ftn.heisenbugers.gotaxi.models.Driver;
-import com.ftn.heisenbugers.gotaxi.models.Passenger;
-import com.ftn.heisenbugers.gotaxi.models.Ride;
-import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CancelRideRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.MessageResponse;
 import com.ftn.heisenbugers.gotaxi.models.dtos.StopRideRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
+import com.ftn.heisenbugers.gotaxi.repositories.LocationRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -25,6 +30,11 @@ public class RideActionsController {
 
     @Autowired
     private RideRepository rideRepository;
+    @Autowired
+    private LocationRepository locationRepository;
+
+    private final RestTemplate rest = new RestTemplate();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     // Cancel ride
     @PostMapping("/{rideId}/cancel")
@@ -125,7 +135,7 @@ public class RideActionsController {
     // Stop ride
     @PostMapping("/{rideId}/stop")
     public ResponseEntity<?> stopRide(@PathVariable UUID rideId,
-                                      @RequestBody(required = false) StopRideRequestDTO request) {
+                                      @RequestBody(required = false) StopRideRequestDTO request) throws InvalidUserType {
 
         Ride ride = rideRepository.findById(rideId).orElse(null);
         if (ride == null) {
@@ -139,13 +149,137 @@ public class RideActionsController {
         }
 
 
-        ride.setStatus(RideStatus.FINISHED);
+        //
+        Driver currentDriver = AuthContextService.getCurrentDriver();
+        if (ride.getDriver() == null || !ride.getDriver().getId().equals(currentDriver.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new MessageResponse("Only ride driver can stop the ride."));
+        }
+
+        if (request == null || request.getLatitude() == null || request.getLongitude() == null) {
+            return ResponseEntity.badRequest()
+                    .body(new MessageResponse("Stop location (latitude/longitude) is required."));
+        }
+/*
+        //stop point
+        Double lat = request != null ? request.getLatitude() : null;
+        Double lon = request != null ? request.getLongitude() : null;
+        String addr = request != null ? request.getAddress() : null;
+
+        if (lat == null || lon == null) {
+            // fallback: берём location водителя
+            if (currentDriver.getLocation() == null) {
+                return ResponseEntity.badRequest()
+                        .body(new MessageResponse("Stop location is missing (no coords in request and driver has no location)."));
+            }
+            lat = currentDriver.getLocation().getLatitude();
+            lon = currentDriver.getLocation().getLongitude();
+            if (addr == null || addr.isBlank()) {
+                addr = "Stopped location";
+            }
+        } else {
+            if (addr == null || addr.isBlank()) {
+                addr = "Stopped location";
+            }
+        }*/
+        if (ride.getStart() == null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(new MessageResponse("Ride has no start location."));
+        }
+
+        Location oldEnd = ride.getEnd();
+        String addr = (request.getAddress() != null && !request.getAddress().trim().isEmpty())
+                ? request.getAddress().trim()
+                : ("Stopped at: " + request.getLatitude() + ", " + request.getLongitude());
+
+        //save new distance
+        Location stopLocation = Location.builder()
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .address(addr)
+                .build();
+
+        stopLocation = locationRepository.save(stopLocation);
+
+
+
+
+
+
+        ride.setEnd(stopLocation);
         ride.setEndedAt(LocalDateTime.now());
-
-
+        ride.setStatus(RideStatus.FINISHED);
         rideRepository.save(ride);
 
-        return ResponseEntity.ok(new MessageResponse("Ride stopped and finished."));
+        double newPrice = recalcPriceOnStop(ride, oldEnd, stopLocation);
+        ride.setPrice(newPrice);
+        rideRepository.save(ride);
+
+
+
+        //for log
+        return ResponseEntity.ok(Map.of(
+                "message", "Ride stopped and finished.",
+                "rideId", ride.getId(),
+                "endedAt", ride.getEndedAt(),
+                "newDestination", Map.of(
+                        "latitude", stopLocation.getLatitude(),
+                        "longitude", stopLocation.getLongitude(),
+                        "address", stopLocation.getAddress()
+                ),
+                "price", ride.getPrice()
+        ));
+
+        //return ResponseEntity.ok(new MessageResponse("Ride stopped and finished."));
+    }
+
+    private static class OsrmResult {
+        final double distanceKm;
+        final int timeMin;
+        OsrmResult(double distanceKm, int timeMin) {
+            this.distanceKm = distanceKm;
+            this.timeMin = timeMin;
+        }
+    }
+
+
+    //helper func-s
+    private double recalcPriceOnStop(Ride ride, Location oldEnd, Location stop) {
+        double oldPrice = ride.getPrice();
+        if (oldPrice <= 0) return oldPrice;
+
+        Location start = ride.getStart();
+        if (start == null || oldEnd == null) return oldPrice;
+
+        double fullKm = haversineKm(start.getLatitude(), start.getLongitude(),
+                oldEnd.getLatitude(), oldEnd.getLongitude());
+
+        double stopKm = haversineKm(start.getLatitude(), start.getLongitude(),
+                stop.getLatitude(), stop.getLongitude());
+
+        if (fullKm <= 0.1) return oldPrice;
+
+        double ratio = stopKm / fullKm;
+
+        
+        ratio = Math.max(0.10, Math.min(ratio, 1.00));
+
+
+        double newPrice = oldPrice * ratio;
+        return Math.round(newPrice * 100.0) / 100.0;
+    }
+
+    private double haversineKm(double lat1, double lon1, double lat2, double lon2) {
+        final double R = 6371.0;
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
     }
 
 }
