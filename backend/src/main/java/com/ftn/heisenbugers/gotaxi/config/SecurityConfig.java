@@ -49,6 +49,9 @@ public class SecurityConfig {
 
                         // ERROR
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/rides/*/panic").hasAnyRole("DRIVER","PASSENGER")
+
 
 
                         .anyRequest().authenticated()
