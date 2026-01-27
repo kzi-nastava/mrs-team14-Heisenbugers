@@ -14,6 +14,5 @@ public class PassengerInfoDTO {
     private String firstName;
     private String lastName;
     private String email;
-    //private String profileImageUrl;
-    private String profileImage;
+    private String profileImageUrl;
 }

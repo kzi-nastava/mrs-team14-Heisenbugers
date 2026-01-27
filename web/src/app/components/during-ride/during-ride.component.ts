@@ -1,10 +1,16 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+
+import { Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
+
 import { carSelectedIcon, MapComponent } from '../map/map.component';
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
 import { MapPin } from '../map/map.component';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RateModal } from "../rate-modal/rate-modal.component";
+
+//import { RideInfo } from '../driver-ride-history/driver-info.model';
+import { PanicService } from '../../services/panic.service';
+
 import { RideInfo } from '../../models/driver-info.model';
 import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
@@ -28,6 +34,7 @@ interface TrackingDTO {
   endLocation: Location,
 }
 
+
 export interface RideDTO {
   rideId: string,
   driver: {firstName: string, lastName: string}
@@ -40,6 +47,7 @@ export interface RideDTO {
 }
 
 
+
 @Component({
   selector: 'app-during-ride',
   imports: [MapComponent, NgIcon, FormsModule, RateModal],
@@ -47,6 +55,8 @@ export interface RideDTO {
   viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
 
 })
+
+
 export class DuringRide {
   private stops?: L.LatLng[]
   private baseUrl = 'http://localhost:8081/api';
@@ -66,12 +76,14 @@ export class DuringRide {
   endLocation?: Location
   rideRate?: RideRateInfo
 
-
+  private panicApi = inject(PanicService);
+  ride: any;
 
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   @ViewChild(MapComponent) mapCmp!: MapComponent;
 
   /*ride: RideInfo = {
+
     rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
     driverName: 'Vozac Vozacovic',
     startAddress: 'ул.Атамана Головатого 2а',
@@ -217,7 +229,7 @@ export class DuringRide {
   }
 
   submitForm(form: NgForm) {
-    if(form.valid)
+    if(form.valid){
       console.log(form.value);
       this.http.post(`${this.baseUrl}/rides/${this.rideId}/report`, form.value)
         .subscribe({
@@ -225,8 +237,11 @@ export class DuringRide {
           error: () => this.showToast('Failed to record note')
         });
     this.closeModal();
+    }
   }
 
+
+  //нужно ли эта кнапка
   submitRateForm(data: { driverRate: number; vehicleRate: number; comment: string; }) {
     let sendingData = {
         "driverScore": data.driverRate,
@@ -263,6 +278,85 @@ export class DuringRide {
 
   setVehicleRate(value: number) {
     this.vehicleRate = value;
+  }
+
+  stopConfirmOpen = false;
+  stopSubmitting = false;
+  stopError: string | null = null;
+
+  openStopConfirm() {
+    this.stopError = null;
+    this.stopConfirmOpen = true;
+  }
+
+  closeStopConfirm() {
+    this.stopConfirmOpen = false;
+  }
+
+  private async getCurrentStopPoint(): Promise<{ latitude: number; longitude: number }> {
+    //caording from tracking
+    const lat = this.vehicleCoords?.vehicleLatitude;
+    const lng = this.vehicleCoords?.vehicleLongitude;
+
+    if (typeof lat === 'number' && typeof lng === 'number') {
+      return { latitude: lat, longitude: lng };
+    }
+
+    // fallback: попробуем браузерный GPS (если вдруг tracking не пришёл)
+    return await new Promise((resolve, reject) => {
+      if (!navigator.geolocation) return reject('Geolocation is not available');
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => resolve({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }),
+        () => reject('Cannot get current location')
+      );
+    });
+  }
+
+  async stopRideNow() {
+    if (!this.rideId) return;
+
+    this.stopSubmitting = true;
+    this.stopError = null;
+
+    try {
+      const point = await this.getCurrentStopPoint();
+
+      const body = {
+        note: 'Stopped by driver',
+        latitude: point.latitude,
+        longitude: point.longitude,
+        address: null
+      };
+
+      // /api/rides/{rideId}/stop
+      await this.http.post(`${this.baseUrl}/rides/${this.rideId}/stop`, body).toPromise();
+
+      this.showToast('Ride stopped successfully!');
+      this.stopConfirmOpen = false;
+
+      // В UI можно убрать карточку/кнопки или сделать редирект:
+      // например, на историю поездок:
+      // this.router.navigateByUrl('/driver-ride-history');
+    } catch (e: any) {
+      this.stopError = e?.error?.message ?? (typeof e === 'string' ? e : 'Failed to stop ride');
+    } finally {
+      this.stopSubmitting = false;
+      this.cdr.markForCheck();
+    }
+  }
+
+
+  //ПРОВЕРИТЬ ПАНИК КНОПКУ
+  async panicClick() {
+    //const rideId = this.ride?.rideId;
+    if (!this.rideId) return;
+
+    const msg = prompt('Describe the problem (optional):') ?? '';
+    this.panicApi.panic(String(this.rideId), msg).subscribe({
+      next: () => alert('Panic sent to administrators.'),
+      error: (e) => alert(e?.error?.message ?? 'Panic failed')
+    });
   }
 
 }

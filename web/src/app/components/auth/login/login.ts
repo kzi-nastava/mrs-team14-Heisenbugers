@@ -57,6 +57,7 @@ export class LoginComponent {
   submit() {
     this.submitAttempted = true;
     this.serverError = null;
+
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
 
     /*const dto = {
@@ -70,13 +71,7 @@ export class LoginComponent {
       next: (resp) => {
         this.loading = false;
 
-        localStorage.setItem('accessToken', resp.accessToken);
-        localStorage.setItem('tokenType', resp.tokenType);
-        localStorage.setItem('userId', resp.userId);
-        localStorage.setItem('role', resp.role);
-
-        this.authService.setUser();
-
+        this.authService.setAfterLogin(resp.accessToken);
         this.router.navigate(['/base']);
 
       },
