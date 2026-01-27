@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static tools.jackson.databind.type.LogicalType.DateTime;
+
 @RestController
 @RequestMapping("/api/rides")
 public class RideController {
@@ -71,10 +73,9 @@ public class RideController {
         return ResponseEntity.ok(Map.of(
                 "rideId", ride.getId(),
                 "status", ride.getStatus(),
-                "start", ride.getStart(),
-                "end", ride.getEnd(),
-                "passengers", ride.getPassengers(),
-                "scheduledAt", ride.getScheduledAt()
+                "start", ride.getRoute().getStart(),
+                "end", ride.getRoute().getDestination(),
+                "passengers", ride.getPassengers()
         ));
     }
 

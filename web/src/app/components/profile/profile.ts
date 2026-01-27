@@ -135,9 +135,6 @@ export class ProfileComponent {
 
   logOut(): void {
     localStorage.removeItem('accessToken');
-    localStorage.removeItem('role');
-    localStorage.removeItem('tokenType');
-    localStorage.removeItem('userId');
     this.authService.setUser();
     this.router.navigate(["auth/login"]);
   }

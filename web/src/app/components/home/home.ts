@@ -1,4 +1,3 @@
-
 import { ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {NgIcon, provideIcons} from '@ng-icons/core';
@@ -11,6 +10,8 @@ import { RideEstimateService } from '../../services/ride-estimate.service';
 import { RideEstimateRequestDTO, RideEstimateResponseDTO, VehicleType } from '../../models/ride-estimate.model';
 import { HttpClient } from '@angular/common/http';
 import {CurrencyPipe, DecimalPipe} from '@angular/common';
+import {AuthService} from '../auth/auth.service';
+import {RideBookingComponent} from '../ride-booking/ride-booking.component';
 
 type FormKeys = 'startAddress' | 'destinationAddress';
 
@@ -26,7 +27,7 @@ interface VehicleLocationDTO {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MapComponent, ReactiveFormsModule, NgIcon, CurrencyPipe, DecimalPipe],
+  imports: [MapComponent, ReactiveFormsModule, NgIcon, CurrencyPipe, DecimalPipe, RideBookingComponent],
   templateUrl: './home.html',
   viewProviders: [provideIcons({ bootstrapGeo })]
 })
@@ -63,11 +64,24 @@ export class HomeComponent {
   });
   baseUrl = 'http://localhost:8081/api'
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
-    
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, protected authService: AuthService) {
+
   }
 
   get f() { return this.form.controls; }
+
+  onPinsChange(pins: MapPin[]) {
+    this.pins = pins;
+  }
+
+  onRouteSummary(summary: RouteSummary) {
+    // store the route summary so child components (ride-booking) can consume it
+    this.routeSummary = summary;
+    // update view
+    try { this.cdr.markForCheck(); } catch (e) { /* ignore */ }
+    console.log('Distance:', summary.distanceKm);
+    console.log('Time:', summary.timeMin);
+  }
 
   openEstimate() { this.estimateOpen = true; this.errorMsg = null; }
   closeEstimate() { this.estimateOpen = false; }
@@ -143,7 +157,7 @@ export class HomeComponent {
     });
   }
 
-  
+
   async submitEstimate() {
     this.submitAttempted = true;
 

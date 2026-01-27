@@ -7,7 +7,9 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedRideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DriverDto;
 import com.ftn.heisenbugers.gotaxi.models.dtos.StartedRideDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.services.RideService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,42 +21,21 @@ import java.time.LocalDateTime;
 @RequestMapping("/api/rides")
 public class CreateRideController {
     private final RideRepository rideRepository;
+    private final RideService rideService;
 
-    public CreateRideController(RideRepository rideRepository) {
+    public CreateRideController(RideRepository rideRepository, RideService rideService) {
         this.rideRepository = rideRepository;
+        this.rideService = rideService;
     }
 
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CreatedRideDTO> createRide(@RequestBody CreateRideDTO request) {
+    public ResponseEntity<CreatedRideDTO> createRide(@RequestBody CreateRideDTO request) throws InvalidUserType {
 
-        Ride ride = new Ride();
-        ride.setStatus(RideStatus.REQUESTED);
-        ride.setScheduledAt(null);
-        ride.setCanceled(false);
+        CreatedRideDTO ride = rideService.addRide(request);
 
-        // TODO: later bind start/end/route/passengers/vehicleType etc.
-        // ride.setRoute(...)
-        // ride.setPassengers(...)
-        // ride.setStart(...)
-        // ride.setEnd(...)
-        // ride.setDriver(...)
-
-        ride = rideRepository.save(ride);
-
-
-        CreatedRideDTO response = new CreatedRideDTO();
-        response.setId(ride.getId());
-        response.setStatus(RideStatus.REQUESTED);
-        response.setDriver(new DriverDto("Driver", "Driver"));
-        response.setRoute(request.getRoute());
-        response.setPassengers(request.getPassengers());
-        response.setPetTransport(request.isPetTransport());
-        response.setBabyTransport(request.isBabyTransport());
-        response.setVehicleType(request.getVehicleType());
-
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(ride, HttpStatus.CREATED);
     }
 
     @PutMapping(value = "/{id}/start",

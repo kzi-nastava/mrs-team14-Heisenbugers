@@ -188,7 +188,7 @@ export class DuringRide {
   }
 
   addEstimateMinutes(): void {
-    const map = new MapComponent()
+    const map = new MapComponent(this.http)
     const stops = this.locations.map(l => {
       return new LatLng(l.lat, l.lng)
     })
