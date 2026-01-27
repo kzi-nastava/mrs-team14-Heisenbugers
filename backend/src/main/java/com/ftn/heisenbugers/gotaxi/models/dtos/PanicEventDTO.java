@@ -13,7 +13,7 @@ public class PanicEventDTO {
     private boolean resolved;
 
     private UUID rideId;
-    private String message;      // из Notification или отдельного поля (см. ниже)
+    private String message;
     private LocalDateTime createdAt;
 
     private Double vehicleLat;
