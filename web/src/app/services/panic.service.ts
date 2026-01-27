@@ -9,12 +9,12 @@ export class PanicService {
   private base = 'http://localhost:8081/api';
 
   //POST /api/rides/{rideId}/panic
-  triggerPanic(rideId: string, message: string): Observable<any> {
-    return this.http.post(`${this.base}/${rideId}/panic`, { message });
-  }
-
   panic(rideId: string, message?: string): Observable<any> {
     const body: PanicRequestDTO = { rideId, message };
-    return this.http.post(`${this.base}/api/rides/{id}/panic`, body);
-    }
+    return this.http.post(`${this.base}/rides/${rideId}/panic`, body);
+  }
+
+  triggerPanic(rideId: string, message: string): Observable<any> {
+    return this.panic(rideId, message);
+  }
 }

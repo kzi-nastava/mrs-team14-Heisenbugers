@@ -8,13 +8,13 @@ export class AdminGuard implements CanActivate {
   private router = inject(Router);
 
   canActivate(): boolean {
-    /*const role = this.auth.getRole();
+    const role = this.auth.getRole();
     const ok = role === 'ADMIN';
 
     if (!ok) {
       this.router.navigate(['/home']);
       return false;
-    }*/
+    }
     return true;
   }
 

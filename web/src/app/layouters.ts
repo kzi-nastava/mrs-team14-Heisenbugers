@@ -2,6 +2,7 @@ import { Component } from "@angular/core";
 import { BaseHeaderComponent } from "./components/header/base/base-header.component";
 import { RouterOutlet } from "@angular/router";
 import { LoggedInHeaderComponent } from "./components/header/logged-in/logged-in-header.component";
+import { AuthService } from "./components/auth/auth.service";
 
 // Layout with base header
 @Component({
@@ -9,7 +10,7 @@ import { LoggedInHeaderComponent } from "./components/header/logged-in/logged-in
   template: `
     <div class="flex flex-col h-screen">
   <base-app-header></base-app-header>
-  
+
   <div class="flex-1 min-h-0">
     <router-outlet></router-outlet>
   </div>
@@ -35,7 +36,7 @@ export class HeaderlessLayoutComponent {}
   template: `
   <div class="flex flex-col h-screen">
   <logged-in-header></logged-in-header>
-  
+
   <div class="flex-1 min-h-0">
     <router-outlet></router-outlet>
   </div>
@@ -44,3 +45,33 @@ export class HeaderlessLayoutComponent {}
   imports: [LoggedInHeaderComponent, RouterOutlet]
 })
 export class LoggedLayoutComponent {}
+
+
+// Unified layout with conditional header
+@Component({
+  selector: 'app-layout',
+  standalone: true,
+  imports: [
+    RouterOutlet,
+    BaseHeaderComponent,
+    LoggedInHeaderComponent
+  ],
+  template: `
+    <div class="flex flex-col h-screen">
+
+      @if (auth.isLoggedIn()) {
+        <logged-in-header></logged-in-header>
+      } @else {
+        <base-app-header></base-app-header>
+      }
+
+      <div class="flex-1 min-h-0">
+        <router-outlet></router-outlet>
+      </div>
+
+    </div>
+  `
+})
+export class AppLayoutComponent {
+  constructor(public auth: AuthService) {}
+}

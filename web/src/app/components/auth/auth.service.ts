@@ -19,11 +19,29 @@ export class AuthService {
     skip: 'true',
   });
 
-  user$ = new BehaviorSubject("");
+  user$ = new BehaviorSubject<string | null>(null);
   userState = this.user$.asObservable();
 
+
   constructor(private http: HttpClient) {
-    this.user$.next(this.getRole());
+   // this.user$.next(this.getRole());
+    this.restoreFromStorage();
+  }
+
+  private restoreFromStorage() {
+    const token = localStorage.getItem('accessToken');
+
+    if (token) {
+      const helper = new JwtHelperService();
+      if (!helper.isTokenExpired(token)) {
+        const decoded = helper.decodeToken(token);
+        const role = decoded?.role ?? null;
+        this.user$.next(role);
+        return;
+      }
+    }
+
+    this.user$.next(null);
   }
 
   register(formData: FormData): Observable<RegisterResponseDTO> {
@@ -39,9 +57,11 @@ export class AuthService {
     return this.http.post<LoginResponseDTO>(`${this.baseUrl}/login`, dto);
   }
 
-  logout(): Observable<MessageResponse> {
-    return this.http.delete<MessageResponse>(`${this.baseUrl}/session`);
-  }
+  /*
+  logout() {
+    localStorage.removeItem('accessToken');
+    this.user$.next(null);
+  }*/
 
   getRole(): any {
     if (this.isLoggedIn()) {
@@ -52,11 +72,43 @@ export class AuthService {
     return null;
   }
 
-  isLoggedIn(): boolean {
-    return localStorage.getItem('accessToken') != null;
+  logout(): Observable<MessageResponse> {
+    return this.http.delete<MessageResponse>(`${this.baseUrl}/session`);
   }
+
+  logoutLocal(): void {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('tokenType');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('role');
+
+    this.user$.next(null);
+  }
+
+  isLoggedIn(): boolean {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return false;
+
+    const helper = new JwtHelperService();
+    return !helper.isTokenExpired(token);
+  }
+  /*
+  isLoggedIn$(): Observable<boolean> {
+    return this.loggedIn$.asObservable();
+  }*/
 
   setUser(): void {
     this.user$.next(this.getRole());
   }
+
+  setAfterLogin(token: string) {
+    localStorage.setItem('accessToken', token);
+
+    const helper = new JwtHelperService();
+    const decoded = helper.decodeToken(token);
+    const role = decoded?.role ?? null;
+
+    this.user$.next(role);
+  }
+
 }
