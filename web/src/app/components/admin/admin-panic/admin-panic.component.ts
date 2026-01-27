@@ -3,6 +3,9 @@ import { CommonModule } from '@angular/common';
 import { AdminPanicService } from '../../../services/admin-panic.service';
 import { MapComponent, MapPin, carSelectedIcon } from '../../map/map.component';
 
+
+
+//http://localhost:4200/admin/panic
 @Component({
   selector: 'app-admin-panic',
   standalone: true,
