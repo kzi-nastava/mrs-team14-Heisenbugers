@@ -9,7 +9,7 @@ export interface Passenger {
 }
 
 export interface TrafficViolation {
-  type: string;
+  title: string;
   description?: string;
 }
 

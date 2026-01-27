@@ -80,6 +80,7 @@ public class Ride extends BaseEntity {
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL)
     private PanicEvent panicEvent;
 
+
     public void addPassenger(Passenger p) {
         this.passengers.add(p);
     }

@@ -23,6 +23,7 @@ public class DriverRideHistoryDTO {
     private User canceledBy;
     private double price;
     private boolean panicTriggered;
+    private List<TrafficViolationDTO> trafficViolations;
     private List<PassengerInfoDTO> passengers = new ArrayList<>();
     private List<LocationDTO> route;
 

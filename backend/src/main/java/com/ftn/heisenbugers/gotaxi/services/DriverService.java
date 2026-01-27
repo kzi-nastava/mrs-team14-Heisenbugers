@@ -4,10 +4,12 @@ import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DriverRideHistoryDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.PassengerInfoDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.TrafficViolationDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
 import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import com.ftn.heisenbugers.gotaxi.repositories.DriverRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.TrafficViolationRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +24,12 @@ public class DriverService {
 
     private final RideRepository rideRepository;
     private final DriverRepository driverRepository;
+    private final TrafficViolationRepository trafficViolationRepository;
 
-    public DriverService(RideRepository rideRepository, DriverRepository driverRepository) {
+    public DriverService(RideRepository rideRepository, DriverRepository driverRepository, TrafficViolationRepository trafficViolationRepository) {
         this.rideRepository = rideRepository;
         this.driverRepository = driverRepository;
+        this.trafficViolationRepository = trafficViolationRepository;
     }
 
     public List<DriverRideHistoryDTO> getDriverHistory(UUID driverId, LocalDate startDate, LocalDate endDate,
@@ -54,9 +58,12 @@ public class DriverService {
         List<DriverRideHistoryDTO> rideHistoryDTOS = new ArrayList<>();
         for (Ride r : rides) {
             DriverRideHistoryDTO dto = new DriverRideHistoryDTO();
-            populateDto(r, dto);
+            List<TrafficViolation> trafficViolations = trafficViolationRepository.getAllByRide(r);
+
+            populateDto(r, dto, trafficViolations);
             rideHistoryDTOS.add(dto);
         }
+
 
         return rideHistoryDTOS;
     }
@@ -120,7 +127,7 @@ public class DriverService {
         return true;
     }
 
-    private static void populateDto(Ride r, DriverRideHistoryDTO dto) {
+    private static void populateDto(Ride r, DriverRideHistoryDTO dto, List<TrafficViolation> trafficViolations) {
         dto.setRideId(r.getId());
         dto.setCanceled(r.isCanceled());
         dto.setPrice(r.getPrice());
@@ -156,6 +163,14 @@ public class DriverService {
             populateDto(p, passengerDTO);
             dto.addPassenger(passengerDTO);
         }
+
+        List<TrafficViolationDTO> trafficViolationDTOS = new ArrayList<>();
+        for (TrafficViolation tv : trafficViolations) {
+            TrafficViolationDTO trafficViolationDTO = new TrafficViolationDTO();
+            populateDto(tv, trafficViolationDTO);
+            trafficViolationDTOS.add(trafficViolationDTO);
+        }
+        dto.setTrafficViolations(trafficViolationDTOS);
     }
 
     private static void populateDto(Passenger p, PassengerInfoDTO passengerDTO) {
@@ -172,5 +187,10 @@ public class DriverService {
         dto.setAddress(l.getAddress());
         dto.setLongitude(l.getLongitude());
         dto.setLatitude(l.getLatitude());
+    }
+
+    private static void populateDto(TrafficViolation tv, TrafficViolationDTO dto) {
+        dto.setDescription(tv.getDescription());
+        dto.setTitle(tv.getTitle());
     }
 }

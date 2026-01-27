@@ -1,14 +1,14 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { NgIcon, provideIcons } from "@ng-icons/core";
-import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX } from '@ng-icons/bootstrap-icons';
+import { bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX, bootstrapArrowRight } from '@ng-icons/bootstrap-icons';
 import { RideRateInfo } from '../../models/ride.model';
 
 @Component({
     selector: 'app-rate-modal',
     imports: [NgIcon, FormsModule],
     templateUrl: './rate-modal.component.html',
-    viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
+    viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX, bootstrapArrowRight })],
 })
 export class RateModal {
 
@@ -21,20 +21,25 @@ export class RateModal {
 
     @Output() onClose = new EventEmitter<void>();
 
+    constructor(private cdr: ChangeDetectorRef) {
+        
+    }
+
     closeRateModal() {
         this.onClose.emit();
     }
 
     submitRateForm(form: NgForm) {
-        if(form.valid && this.driverRate > 0 && this.vehicleRate > 0)
+        if(form.valid && this.driverRate > 0 && this.vehicleRate > 0) {
             console.log(form.value, this.driverRate, this.vehicleRate);
             this.onSubmit.emit({
                 "comment": form.value.comment,
                 "driverRate": this.driverRate,
                 "vehicleRate": this.vehicleRate
             })
-        this.ride.rated = true;
-        this.closeRateModal();
+            this.ride.rated = true;
+            this.closeRateModal();
+        }
     }
 
     getDriverRateArray(): boolean[] {
