@@ -20,10 +20,15 @@ public class Driver extends User {
     @NotNull
     private boolean available = false;
 
+    @NotNull
+    private boolean working = false;
+
+    @NotNull
     private int activeHoursLast24h;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
+    @NotNull
     private Vehicle vehicle;
 
     @OneToOne
@@ -33,4 +38,13 @@ public class Driver extends User {
     @OneToMany(mappedBy = "driver", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Ride> rides;
+
+    @Override
+    public String toString() {
+        return "Driver{" +
+                "id=" + getId() +
+                ", email='" + getEmail() + '\'' +
+                // don't include vehicle here
+                '}';
+    }
 }

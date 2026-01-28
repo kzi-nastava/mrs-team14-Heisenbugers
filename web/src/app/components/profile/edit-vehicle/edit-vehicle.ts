@@ -2,6 +2,8 @@ import {Component, EventEmitter, inject, input, Input, output, Output} from '@an
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {Vehicle} from '../model/vehicle.model';
 import {User} from '../model/user.model';
+import {UpdateProfileDTO} from '../../../models/profile.model';
+import {CreateVehicleDTO} from '../../../models/driver-registration.model';
 
 @Component({
   selector: 'app-edit-vehicle',
@@ -14,7 +16,7 @@ import {User} from '../model/user.model';
 })
 export class EditVehicle {
   closeEdit = output<boolean>();
-  saveVehicle = output<Vehicle>();
+  saveVehicle = output<CreateVehicleDTO>();
 
   vehicle = input<Vehicle>();
 
@@ -71,10 +73,17 @@ export class EditVehicle {
     this.submitted = true;
     console.log('updated vehicle:', this.form.value);
 
-    /*this.saveVehicle.emit({
-      ...this.form.value,
-    } as Vehicle);
+    const dto: CreateVehicleDTO = {
+      vehicleModel: this.form.value.model!,
+      vehicleType: this.form.value.type!,
+      licensePlate: this.form.value.plateNumber!,
+      seatCount: Number(this.form.value.seats)!,
+      babyTransport: this.form.value.babiesAllowed!,
+      petTransport: this.form.value.petsAllowed!,
+    };
 
-    this.closeEdit.emit(false);*/
+    this.saveVehicle.emit(dto);
+
+    this.closeEdit.emit(false);
   }
 }

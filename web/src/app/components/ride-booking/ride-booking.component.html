@@ -1,0 +1,168 @@
+<div class="absolute bg-white top-0 bottom-0 left-60 -translate-x-1/2 z-50 p-10 overflow-y-auto max-h-auto">
+  @if (messageText) {
+    <div [class]="(messageType === 'error' ? 'bg-red-600 text-white' : (messageType === 'success' ? 'bg-lime-400 text-black' : 'bg-gray-800 text-white')) + ' fixed top-6 right-6 z-70 p-3 rounded shadow'">
+      {{ messageText }}
+    </div>
+  }
+  <div class="flex flex-row items-center gap-5 mb-6">
+    <ng-icon name="bootstrapPinMapFill" size="26" class="pr-4"></ng-icon>
+  </div>
+  <div class="relative">
+    <input
+      type="text"
+      placeholder="Start location"
+      [ngModel]="startLocation"
+      (ngModelChange)="onStartInput($event)"
+      class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3 mb-4
+         focus:outline-none focus:ring-4 focus:ring-lime-200" />
+    @if (startSuggestionsVisible) {
+      <div class="absolute left-0 right-0 bg-white border mt-1 rounded shadow max-h-40 overflow-auto z-50">
+        @for (s of startSuggestions; track s) {
+          <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-100" (click)="selectSuggestion('start', s)">{{s.label}}</button>
+        }
+      </div>
+    }
+  </div>
+
+  @for (wp of waypoints; track wp) {
+    <div class="mb-4 flex items-center gap-2">
+      <div class="relative w-full">
+        <input
+          type="text"
+          placeholder="Stop"
+          [ngModel]="wp.value"
+          (ngModelChange)="onWaypointInput(wp, $event)"
+          class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3
+             focus:outline-none focus:ring-4 focus:ring-lime-200" />
+        @if (isWaypointSuggestionsVisible(wp)) {
+          <div class="absolute left-0 right-12 bg-white border mt-1 rounded shadow max-h-40 overflow-auto z-50">
+            @for (s of (waypointSuggestions.get(wp) || []); track s) {
+              <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-100" (click)="selectSuggestion('waypoint', s, wp)">{{s.label}}</button>
+            }
+          </div>
+        }
+      </div>
+      <button type="button" class="text-red-500 items-center mt-1.5 cursor-pointer" (click)="removeWaypoint(wp)">
+        <ng-icon name="bootstrapXSquare" size="18"></ng-icon>
+      </button>
+    </div>
+  }
+
+  <div class="relative">
+    <input
+      type="text"
+      placeholder="End location"
+      [ngModel]="endLocation"
+      (ngModelChange)="onEndInput($event)"
+      class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3 mb-4
+         focus:outline-none focus:ring-4 focus:ring-lime-200" />
+    @if (endSuggestionsVisible) {
+      <div class="absolute left-0 right-0 bg-white border mt-1 rounded shadow max-h-40 overflow-auto z-50">
+        @for (s of endSuggestions; track s) {
+          <button type="button" class="w-full text-left px-3 py-2 hover:bg-gray-100" (click)="selectSuggestion('end', s)">{{s.label}}</button>
+        }
+      </div>
+    }
+  </div>
+  <div class="flex flex-row justify-between items-center mb-4">
+    <button type="button" class="cursor-pointer flex items-center gap-2" (click)="addWaypoint()">
+      + Add
+    </button>
+    <button type="button" class="cursor-pointer" (click)="reset()">
+      Reset
+    </button>
+  </div>
+  <div class="border mt-5 border-gray-300 mb-5"></div>
+  <div class="flex flex-col gap-2 mb-4">
+    <label>
+      Linked passengers:
+    </label>
+    <div class="flex flex-row gap-4 items-center mb-4">
+      <div class="cursor-pointer items-center mt-1.5" (click)="addPassenger()">
+        <ng-icon name="bootstrapPlusSquare" color="#77777780" size="33"></ng-icon>
+      </div>
+      <input
+        type="text"
+        placeholder="Passenger email"
+        [(ngModel)]="primaryPassengerEmail"
+        class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3
+       focus:outline-none focus:ring-4 focus:ring-lime-200" />
+    </div>
+
+    @if (extraPassengers.length > 0) {
+      @for (p of extraPassengers; track p) {
+        <div class="mb-2 flex items-center gap-2">
+          <input
+            type="email"
+            placeholder="Passenger email"
+            [(ngModel)]="p.email"
+            class="w-full h-10 rounded-[10px] border border-neutral-200 bg-[#F5F5F5] px-3
+               focus:outline-none focus:ring-4 focus:ring-lime-200" />
+          <button type="button" class="text-red-500 items-center mt-1.5 cursor-pointer" (click)="removePassenger(p)">
+            <ng-icon name="bootstrapXSquare" size="18"></ng-icon>
+          </button>
+        </div>
+      }
+    }
+  </div>
+  <div class="flex flex-row gap-2 mb-8">
+    <div (click)="selectVehicle('STANDARD')" role="button" tabindex="0" (keydown.enter)="selectVehicle('STANDARD')" (keydown.space)="selectVehicle('STANDARD')" [attr.aria-pressed]="selectedVehicle === 'STANDARD'" class="cursor-pointer">
+      <img alt="Standard vehicle" src="icons/standard.svg" [class]="'border-2 rounded-2xl ' + (selectedVehicle === 'STANDARD' ? 'border-lime-400' : 'border-gray-400')" />
+    </div>
+    <div (click)="selectVehicle('LUXURY')" role="button" tabindex="0" (keydown.enter)="selectVehicle('LUXURY')" (keydown.space)="selectVehicle('LUXURY')" [attr.aria-pressed]="selectedVehicle === 'LUXURY'" class="cursor-pointer">
+      <img alt="Luxury vehicle" src="icons/luxury.svg" [class]="'border-2 rounded-2xl ' + (selectedVehicle === 'LUXURY' ? 'border-lime-400' : 'border-gray-400')" />
+    </div>
+    <div (click)="selectVehicle('VAN')" role="button" tabindex="0" (keydown.enter)="selectVehicle('VAN')" (keydown.space)="selectVehicle('VAN')" [attr.aria-pressed]="selectedVehicle === 'VAN'" class="cursor-pointer">
+      <img alt="Van vehicle" src="icons/van.svg" [class]="'border-2 rounded-2xl ' + (selectedVehicle === 'VAN' ? 'border-lime-400' : 'border-gray-400')" />
+    </div>
+  </div>
+
+  <div class="flex flex-row items-center gap-4 mb-10">
+    <div class="flex flex-row items-center gap-2">
+      <div role="button" tabindex="0" (click)="toggleBabyAllowed()" (keydown.enter)="toggleBabyAllowed()" (keydown.space)="toggleBabyAllowed()" [attr.aria-pressed]="babyAllowedSelected" [class]="(babyAllowedSelected ? 'bg-[#C5E55D] border border-lime-500' : 'bg-[#F5F5F5]') + ' w-8 h-8 rounded-xl cursor-pointer transition-colors'">
+      </div>
+      <label>
+        Baby allowed
+      </label>
+    </div>
+    <div class="flex flex-row items-center gap-2">
+      <div role="button" tabindex="0" (click)="togglePetsAllowed()" (keydown.enter)="togglePetsAllowed()" (keydown.space)="togglePetsAllowed()" [attr.aria-pressed]="petsAllowedSelected" [class]="(petsAllowedSelected ? 'bg-[#C5E55D] border border-lime-500' : 'bg-[#F5F5F5]') + ' w-8 h-8 rounded-xl cursor-pointer transition-colors'">
+      </div>
+      <label>
+        Pets allowed
+      </label>
+    </div>
+  </div>
+
+  <div class="flex flex-col gap-4 mt-auto pt-6">
+    <button
+      type="button"
+      class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] cursor-pointer"
+      (click)="orderRide()"
+    >
+      Order
+    </button>
+    <button
+      type="button"
+      class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#F0F0F0] text-[#000000B3] font-semibold shadow hover:bg-gray-200 active:scale-[0.99] cursor-pointer"
+      (click)="showScheduler = true">
+      Schedule
+    </button>
+  </div>
+</div>
+<div class="absolute bottom-4 right-4 z-50 p-10">
+  <div class="bg-[#F5F5F5D9] w-40 px-2 py-2 rounded-2xl mb-3">
+    <p>Time: {{ formatMinutesToHours(routeSummary?.timeMin) }}</p>
+  </div>
+  <div class="bg-[#F5F5F5D9] w-40 px-2 py-2 rounded-2xl mb-3">
+    <p>Distance: {{routeSummary?.distanceKm}} KM</p>
+  </div>
+  <div class="bg-[#F5F5F5D9] w-40 px-2 py-2 rounded-2xl">
+    <p>Cost: {{this.price}} RSD</p>
+  </div>
+</div>
+@if (showScheduler) {
+  <div class="fixed inset-0 bg-black/40 z-60 flex items-center justify-center">
+    <app-schedule (scheduled)="onScheduled($event)" (cancel)="onScheduleCancel()"></app-schedule>
+  </div>
+}

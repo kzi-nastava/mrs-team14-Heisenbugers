@@ -3,7 +3,7 @@
     Manage Account
   </label>
   <label class="text-base mt-1">
-    Hi, {{ user().name }} | <a class="text-[#C5E55D]" routerLink="/auth/login">Sign out</a>
+    Hi, {{ user().name }} | <a class="text-[#C5E55D] cursor-pointer" (click)="logOut()">Sign out</a>
   </label>
 </div>
 
@@ -36,12 +36,14 @@
       <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Manage Password')" [class]="{'border-lime-300': selectedTab === 'Manage Password', 'border-gray-200': selectedTab !== 'Manage Password', 'text-gray-700': selectedTab !== 'Manage Password', 'bg-[#C5E55D]': selectedTab === 'Manage Password'}">
         Manage Password
       </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Driver Information')" [class]="{'border-lime-300': selectedTab === 'Driver Information', 'border-gray-200': selectedTab !== 'Driver Information', 'text-gray-700': selectedTab !== 'Driver Information', 'bg-[#C5E55D]': selectedTab === 'Driver Information'}">
-        Driver Information
-      </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Vehicle Information')" [class]="{'border-lime-300': selectedTab === 'Vehicle Information', 'border-gray-200': selectedTab !== 'Vehicle Information', 'text-gray-700': selectedTab !== 'Vehicle Information', 'bg-[#C5E55D]': selectedTab === 'Vehicle Information'}">
-        Vehicle Information
-      </button>
+      @if (userRole == 'DRIVER') {
+        <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Driver Information')" [class]="{'border-lime-300': selectedTab === 'Driver Information', 'border-gray-200': selectedTab !== 'Driver Information', 'text-gray-700': selectedTab !== 'Driver Information', 'bg-[#C5E55D]': selectedTab === 'Driver Information'}">
+          Driver Information
+        </button>
+        <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Vehicle Information')" [class]="{'border-lime-300': selectedTab === 'Vehicle Information', 'border-gray-200': selectedTab !== 'Vehicle Information', 'text-gray-700': selectedTab !== 'Vehicle Information', 'bg-[#C5E55D]': selectedTab === 'Vehicle Information'}">
+          Vehicle Information
+        </button>
+      }
       <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Favorite Routes')" [class]="{'border-lime-300': selectedTab === 'Favorite Routes', 'border-gray-200': selectedTab !== 'Favorite Routes', 'text-gray-700': selectedTab !== 'Favorite Routes', 'bg-[#C5E55D]': selectedTab === 'Favorite Routes'}">
         Favorite Routes
       </button>
@@ -87,7 +89,7 @@
         ></app-profile-card>
         <app-profile-card
           title="Phone number"
-          value=+{{user().phoneNumber}}
+          value={{user().phoneNumber}}
           iconName="bootstrapTelephoneFill"
         ></app-profile-card>
       </div>
@@ -105,7 +107,7 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Active In Last 24H"
-          value="6H 23M"
+          value={{driverActiveHours}}
           iconName="bootstrapClockFill"
         ></app-profile-card>
       </div>
@@ -175,6 +177,8 @@
       (saveVehicle)="updateVehicle($event)"
       (closeEdit)="setIsEditingVehicle($event)">
     ></app-edit-vehicle>
+  } @else if (selectedTab == 'Favorite Routes') {
+    <app-favorite-routes class="w-full"></app-favorite-routes>
   }
 
 </div>

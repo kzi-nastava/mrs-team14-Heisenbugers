@@ -3,9 +3,8 @@ package com.ftn.heisenbugers.gotaxi.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -18,26 +17,25 @@ public class Rating extends BaseEntity {
 
     @Min(1)
     @Max(5)
+    @NotNull
     private int driverScore;
 
     @Min(1)
     @Max(5)
+    @NotNull
     private int vehicleScore;
 
+    @NotNull
     private String comment;
-
-    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ride_id")
+    @NotNull
     private Ride ride;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rater_id")
+    @NotNull
     private User rater;
 
-    @PrePersist
-    public void prePersist() {
-        createdAt = LocalDateTime.now();
-    }
 }

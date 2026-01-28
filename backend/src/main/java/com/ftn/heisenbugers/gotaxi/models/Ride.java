@@ -33,11 +33,15 @@ public class Ride extends BaseEntity {
     private double price;
 
     private boolean canceled;
+    @Column(name = "cancel_reason", length = 500)
+    private String cancelReason;
+    @Column(name = "canceled_at")
+    private LocalDateTime canceledAt;
 
     @ManyToOne
     @JoinColumn(name = "start_id")
     private Location start;
-    
+
     @ManyToOne
     @JoinColumn(name = "end_id")
     private Location end;
@@ -48,6 +52,7 @@ public class Ride extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
+    @NotNull
     private Driver driver;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -75,4 +80,14 @@ public class Ride extends BaseEntity {
 
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL)
     private PanicEvent panicEvent;
+
+
+    public void addPassenger(Passenger p) {
+        this.passengers.add(p);
+    }
+
+    public String toString() {
+        return "Ride{id=" + this.getId() + "}";
+    }
+
 }

@@ -1,0 +1,117 @@
+<div
+  class="fixed inset-0 flex items-center justify-center bg-black/40 z-50"
+  (click)="closeRateModal()"
+>
+  <div class="bg-white rounded-xl shadow-xl w-170 h-auto" (click)="$event.stopPropagation()">
+    <div class="h-11 bg-black rounded-t-xl shadow-xl flex items-center justify-between mb-2">
+      <span class="text-white ml-5 text-xl font-semibold">Rate your ride</span>
+      <ng-icon
+        name="bootstrapX"
+        size="30"
+        color="white"
+        class="cursor-pointer m-3"
+        (click)="closeRateModal()"
+      />
+    </div>
+    <div class="px-6 pb-6">
+      <div class="border-b">
+        <div class="w-full text-left px-4 py-3 text-sm flex items-center justify-center">
+          <span class="mr-4 font-semibold text-lg">{{ ride.startAddress }}</span>
+          <ng-icon class="mr-4" name="bootstrapArrowRight" size="20"></ng-icon>
+          <span class="mr-4 font-semibold text-lg">{{ ride.endAddress }}</span>
+        </div>
+      </div>
+      <div class="flex justify-center border-b py-5">
+        <div class="flex m-auto items-center">
+          <label class="font-semibold text-xl mr-4">Time</label>
+          <input
+            #noteTitle
+            type="text"
+            name="title"
+            class="border rounded-lg p-3 text-sm h-8 text-center font-semibold w-32"
+            [value]="getRideDurationMinutes(ride) + ' minutes'"
+            readonly
+          />
+        </div>
+        <div class="m-auto flex justify-center items-center">
+          <label class="font-semibold text-xl mr-4">Price</label>
+          <input
+            #noteTitle
+            type="text"
+            name="title"
+            class="border rounded-lg p-3 text-sm h-8 text-center font-semibold w-32 ml-6"
+            [value]="ride.price + ' RSD'"
+            readonly
+          />
+        </div>
+      </div>
+
+      <form (ngSubmit)="submitRateForm(rateForm)" #rateForm="ngForm" class="space-y-4">
+        <div class="flex text-center">
+          <label class="font-semibold text-black mt-auto mb-auto"
+            >Rate the driver <span class="text-red-500 ml-1">*</span></label
+          >
+          <div class="flex space-x-2 mt-2 align-center m-auto">
+            @for (i of getDriverRateArray(); track i) {
+              @if (i) {
+                <ng-icon
+                  name="bootstrapStarFill"
+                  size="36"
+                  class="cursor-pointer ml-4"
+                  (click)="setDriverRate($index + 1)"
+                ></ng-icon>
+              } @else {
+                <ng-icon
+                  name="bootstrapStar"
+                  size="36"
+                  class="cursor-pointer ml-4"
+                  (click)="setDriverRate($index + 1)"
+                ></ng-icon>
+              }
+            }
+          </div>
+        </div>
+        <div class="flex text-center">
+          <label class="font-semibold text-black mt-auto mb-auto"
+            >Rate the vehicle <span class="text-red-500 ml-1">*</span></label
+          >
+          <div class="flex space-x-2 mt-2 align-center m-auto">
+            @for (i of getVehicleRateArray(); track i) {
+              @if (i) {
+                <ng-icon
+                  name="bootstrapStarFill"
+                  size="36"
+                  class="cursor-pointer ml-4"
+                  (click)="setVehicleRate($index + 1)"
+                ></ng-icon>
+              } @else {
+                <ng-icon
+                  name="bootstrapStar"
+                  size="36"
+                  class="cursor-pointer ml-4"
+                  (click)="setVehicleRate($index + 1)"
+                ></ng-icon>
+              }
+            }
+          </div>
+        </div>
+        <div>
+          <label class="text-black">Leave a comment</label>
+          <textarea
+            name="comment"
+            ngModel
+            class="w-full h-40 border rounded-lg p-3 text-sm resize-none"
+            placeholder="Enter your comment here..."
+          ></textarea>
+        </div>
+        <button
+          type="submit"
+          [disabled]="!rateForm.form.valid || driverRate === 0 || vehicleRate === 0"
+          class="w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg disabled:bg-gray-300 enabled:cursor-pointer"
+        >
+          Submit
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

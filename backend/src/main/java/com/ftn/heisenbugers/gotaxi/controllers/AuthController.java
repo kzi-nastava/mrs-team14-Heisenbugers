@@ -1,101 +1,73 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
+import com.ftn.heisenbugers.gotaxi.models.Administrator;
+import com.ftn.heisenbugers.gotaxi.models.Driver;
+import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
+import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
+import com.ftn.heisenbugers.gotaxi.models.services.AuthService;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.util.Map;
 import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/auth")
+@AllArgsConstructor
 public class AuthController {
 
-    @Autowired
+    private AuthService authService;
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtService jwtService;
+
 
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO request) {
-        User user = userRepository.findByEmail(request.getEmail()).orElse(null);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MessageResponse("Invalid credentials."));
-        }
-
-
-        if (!user.isActivated()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new MessageResponse("Account is not activated."));
-        }
-
-        if (user.isBlocked()) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(new MessageResponse("User is blocked."));
-        }
-
-        // without hesh
-        if (!user.getPasswordHash().equals(request.getPassword())) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new MessageResponse("Invalid credentials."));
-        }
-
-        LoginResponseDTO resp = new LoginResponseDTO(
-                "dummy.jwt.token",
-                "Bearer",
-                user.getId(),
-                resolveRole(user)
-        );
-
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO request) {
+        LoginResponseDTO resp = authService.login(request);
         return ResponseEntity.ok(resp);
     }
 
 
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterPassengerRequestDTO request) {
-        if (request.getEmail() == null || request.getEmail().isBlank()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse("Email is required."));
-        }
-        if (request.getPassword() == null || request.getConfirmPassword() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse("Password and confirmPassword are required."));
-        }
-        if (!request.getPassword().equals(request.getConfirmPassword())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new MessageResponse("Passwords do not match."));
-        }
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<?> register(@ModelAttribute RegisterPassengerRequestDTO request) {
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(new MessageResponse("Email already exists."));
-        }
+        String appBaseUrl = "http://localhost:4200";
 
-        Passenger p = new Passenger();
-        p.setEmail(request.getEmail());
-        p.setPasswordHash(request.getPassword());
-        p.setFirstName(request.getFirstName());
-        p.setLastName(request.getLastName());
-        p.setPhone(request.getPhone());
-        p.setAddress(request.getAddress());
-        p.setProfileImageUrl(request.getProfileImageUrl());
-
-        p.setBlocked(false);
-        p.setActivated(false);
-
-        passengerRepository.save(p);
+        var userId = authService.registerPassenger(request, appBaseUrl);
 
         RegisterResponseDTO resp = new RegisterResponseDTO(
-                p.getId(),
-                "Registration successful. Activate your account before login."
+                userId,
+                "Registration successful. Check your email to activate your account."
         );
 
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }
 
+    //activation from token
+    @GetMapping("/activate")
+    public ResponseEntity<?> activate(@RequestParam("token") String token) {
+        authService.activateByToken(token);
+        //return ResponseEntity.ok(new MessageResponse("Account activated. You can log in."));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setLocation(URI.create("http://localhost:4200/auth/login?activated=1"));
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND); // 302
+    }
+
+    //admin manual activation
     @PutMapping("/activate/{userId}")
     public ResponseEntity<?> activate(@PathVariable UUID userId) {
         User user = userRepository.findById(userId).orElse(null);
@@ -142,10 +114,5 @@ public class AuthController {
     public ResponseEntity<MessageResponse> logout() {
         return ResponseEntity.ok(new MessageResponse("Logged out."));
     }
-
-    private String resolveRole(User user) {
-        return "user";
-    }
-
 
 }

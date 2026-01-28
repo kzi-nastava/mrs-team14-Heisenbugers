@@ -1,8 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
-import com.ftn.heisenbugers.gotaxi.models.Location;
-import com.ftn.heisenbugers.gotaxi.models.Ride;
-import com.ftn.heisenbugers.gotaxi.models.Route;
+import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
@@ -11,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.Comparator;
@@ -43,12 +42,13 @@ public class AdminRideController {
                     .body(new MessageResponse("Invalid date format. Use ISO-8601, e.g. 2025-12-28T10:15:30"));
         }
 
-        //
+
         List<Ride> rides = rideRepository.findAll();
 
         rides = rides.stream()
                 .filter(r -> driverId == null || (r.getDriver() != null && driverId.equals(r.getDriver().getId())))
-                .filter(r -> passengerId == null || (r.getPassenger() != null && passengerId.equals(r.getPassenger().getId())))
+
+                .filter(r -> passengerId == null || hasPassenger(r, passengerId))
                 .filter(r -> status == null || status == r.getStatus())
                 .filter(r -> fromDt == null || (r.getStartedAt() != null && !r.getStartedAt().isBefore(fromDt)))
                 .filter(r -> toDt == null || (r.getStartedAt() != null && !r.getStartedAt().isAfter(toDt)))
@@ -73,14 +73,26 @@ public class AdminRideController {
         return ResponseEntity.ok(toDetailsDTO(ride));
     }
 
+    private boolean hasPassenger(Ride ride, UUID passengerId) {
+        if (ride.getPassengers() == null) return false;
+        return ride.getPassengers().stream()
+                .anyMatch(p -> p != null && passengerId.equals(p.getId()));
+    }
+
     private AdminRideListItemDTO toListItemDTO(Ride ride) {
-        Route route = ride.getRoute();
+        //Route route = ride.getRoute();
 
-        String startAddress = route != null && route.getStart() != null ? route.getStart().getAddress() : null;
-        String destAddress = route != null && route.getDestination() != null ? route.getDestination().getAddress() : null;
+        String startAddress = (ride.getStart() != null) ? ride.getStart().getAddress() : null;
+        String destAddress = (ride.getEnd() != null) ? ride.getEnd().getAddress() : null;
 
-        boolean canceled = ride.getStatus() == RideStatus.CANCELED;
+        boolean canceled = ride.isCanceled() || ride.getStatus() == RideStatus.CANCELED;
         boolean panicTriggered = (ride.getPanicEvent() != null);
+
+        String canceledByName = null;
+        if (canceled) {
+            User cb = ride.getCanceledBy();
+            canceledByName = (cb == null) ? "UNKNOWN" : (cb.getFirstName() + " " + cb.getLastName());
+        }
 
         return new AdminRideListItemDTO(
                 ride.getId(),
@@ -90,8 +102,8 @@ public class AdminRideController {
                 startAddress,
                 destAddress,
                 canceled,
-                canceledBy,
-                ride.getPrice(),
+                canceledByName,
+                BigDecimal.valueOf(ride.getPrice()),
                 panicTriggered
         );
     }
@@ -102,15 +114,24 @@ public class AdminRideController {
         LocationDTO start = toLocationDTO(route != null ? route.getStart() : null);
         LocationDTO dest = toLocationDTO(route != null ? route.getDestination() : null);
 
-        List<LocationDTO> stops = route != null && route.getStops() != null
-                ? route.getStops().stream().map(this::toLocationDTO).toList()
+        List<LocationDTO> stops = (route != null && route.getStops() != null)
+                ? route.getStops().stream().map(this::toLocationDTO).collect(Collectors.toList())
                 : List.of();
 
-        UUID driverId = ride.getDriver() != null ? ride.getDriver().getId() : null;
-        String driverName = ride.getDriver() != null ? ride.getDriver().getFirstName() + " " + ride.getDriver().getLastName() : null;
+        UUID driverId = (ride.getDriver() != null) ? ride.getDriver().getId() : null;
+        String driverName = (ride.getDriver() != null)
+                ? ride.getDriver().getFirstName() + " " + ride.getDriver().getLastName()
+                : null;
 
-        UUID passengerId = ride.getPassenger() != null ? ride.getPassenger().getId() : null;
-        String passengerName = ride.getPassenger() != null ? ride.getPassenger().getFirstName() + " " + ride.getPassenger().getLastName() : null;
+        UUID passengerId = null;
+        String passengerName = null;
+        if (ride.getPassengers() != null && !ride.getPassengers().isEmpty()) {
+            Passenger p = ride.getPassengers().get(0);
+            if (p != null) {
+                passengerId = p.getId();
+                passengerName = p.getFirstName() + " " + p.getLastName();
+            }
+        }
 
         boolean panicTriggered = (ride.getPanicEvent() != null);
 
@@ -120,7 +141,7 @@ public class AdminRideController {
                 ride.getScheduledAt(),
                 ride.getStartedAt(),
                 ride.getEndedAt(),
-                ride.getPrice(),
+                BigDecimal.valueOf(ride.getPrice()),
                 start,
                 dest,
                 stops,

@@ -1,0 +1,13 @@
+<div class="p-4 bg-white rounded-lg shadow w-80">
+  <div class="text-lg font-semibold mb-2">Schedule ride</div>
+  <p class="text-sm text-neutral-500 mb-3">You can schedule up to 5 hours from now.</p>
+  <label class="block text-sm text-neutral-500 mb-1">Date & Time</label>
+  <input type="datetime-local" class="w-full p-2 border rounded mb-2" [(ngModel)]="value" [attr.min]="min" [attr.max]="max" />
+  @if (error) {
+    <div class="text-sm text-red-600 mb-2">{{ error }}</div>
+  }
+  <div class="flex gap-2 justify-end">
+    <button class="px-3 py-1 rounded bg-gray-100" (click)="doCancel()">Cancel</button>
+    <button class="px-3 py-1 rounded bg-lime-400 text-black" (click)="confirm()">Schedule</button>
+  </div>
+</div>

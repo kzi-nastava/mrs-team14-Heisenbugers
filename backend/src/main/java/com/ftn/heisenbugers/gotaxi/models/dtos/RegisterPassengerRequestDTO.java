@@ -3,6 +3,7 @@ package com.ftn.heisenbugers.gotaxi.models.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -17,5 +18,6 @@ public class RegisterPassengerRequestDTO {
 
     private String phone;
     private String address;
-    private String profileImageUrl; // optional
+    //private String profileImageUrl; // optional
+    private MultipartFile profileImage;
 }

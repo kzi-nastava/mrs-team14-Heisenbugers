@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,9 @@ public class DriverRideHistoryDTO {
     private User canceledBy;
     private double price;
     private boolean panicTriggered;
-    private List<PassengerInfoDTO> passengers;
+    private List<TrafficViolationDTO> trafficViolations;
+    private List<PassengerInfoDTO> passengers = new ArrayList<>();
+    private List<LocationDTO> route;
 
 
     public void addPassenger(PassengerInfoDTO passenger) {

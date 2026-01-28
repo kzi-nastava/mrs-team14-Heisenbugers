@@ -8,5 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StopRideRequestDTO {
-    private String note;
+    private String note; //??
+    private Double latitude;
+    private Double longitude;
+    private String address;
 }

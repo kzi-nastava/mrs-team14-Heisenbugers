@@ -5,7 +5,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -23,11 +26,10 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User extends BaseEntity {
 
+    private boolean activated = false;
     @Email
     @NotBlank
     @Column(nullable = false, unique = true)
-
-    private boolean activated = false; //for mail
     private String email;
 
     @NotBlank
@@ -41,10 +43,12 @@ public abstract class User extends BaseEntity {
     @NotBlank
     private String lastName;
 
+    @NotBlank
     private String phone;
 
+    @NotBlank
     private String address;
-
+    
     private String profileImageUrl;
 
     @NotNull
@@ -52,5 +56,8 @@ public abstract class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Notification> notifications;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Route> favoriteRoutes;
 }
 

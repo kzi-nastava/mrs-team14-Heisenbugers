@@ -1,0 +1,135 @@
+<div class="h-full relative overflow-hidden">
+  <div class="w-full h-full z-0">
+    <app-map [pins]="pins" (routeSummary)="onRouteSummary($event)" [goBelow]="true"></app-map>
+  </div>
+
+  @if(!rideId){
+    <button
+      type="button"
+      (click)="openEstimate()"
+      class="absolute z-10 top-6 left-6 h-11 w-11 rounded-[10px] bg-white border border-neutral-200 shadow flex items-center justify-center hover:bg-neutral-50 active:scale-[0.99]"
+      aria-label="Estimate ride"
+    >
+      <ng-icon name="bootstrapGeo" size="22"></ng-icon>
+    </button>
+  }
+
+  @if(rideId && authService.getRole() == "DRIVER"){
+    <app-start-ride
+      (pinsChange)="onPinsChange($event)"
+    ></app-start-ride>
+  }
+  @else if (estimateOpen && authService.getRole() == "PASSENGER" && !rideId) {
+    <app-ride-booking
+      [routeSummary]="routeSummary ?? undefined"
+      (pinsChange)="onPinsChange($event)">
+    ></app-ride-booking>
+  }
+  @else if (estimateOpen) {
+    <div
+      class="absolute z-10 top-19 left-6 w-[420px] rounded-2xl bg-white shadow-xl border border-neutral-200 p-5"
+    >
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-[18px] font-bold text-black">Ride estimate</h2>
+        <button
+          type="button"
+          (click)="closeEstimate()"
+          class="h-8 w-8 rounded-full hover:bg-neutral-100 text-neutral-500"
+          aria-label="Close"
+        >
+          ✕
+        </button>
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="submitEstimate()" class="space-y-4">
+        <div>
+          <label class="block text-[12px] text-neutral-400 mb-1.5">From</label>
+          <input
+            type="text"
+            formControlName="startAddress"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!isInvalid('startAddress')"
+            [class.focus:ring-lime-200]="!isInvalid('startAddress')"
+            [class.border-red-400]="isInvalid('startAddress')"
+            [class.focus:ring-red-200]="isInvalid('startAddress')"
+          />
+          @if (isInvalid('startAddress')) {
+            <p class="mt-1 text-xs text-red-500">Required</p>
+          }
+        </div>
+
+        <div>
+          <label class="block text-[12px] text-neutral-400 mb-1.5">To</label>
+          <input
+            type="text"
+            formControlName="destinationAddress"
+            class="w-full h-9.5 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
+            [class.border-neutral-200]="!isInvalid('destinationAddress')"
+            [class.focus:ring-lime-200]="!isInvalid('destinationAddress')"
+            [class.border-red-400]="isInvalid('destinationAddress')"
+            [class.focus:ring-red-200]="isInvalid('destinationAddress')"
+          />
+          @if (isInvalid('destinationAddress')) {
+            <p class="mt-1 text-xs text-red-500">Required</p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="w-full h-10.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]"
+          [disabled]="loading"
+        >
+          @if (loading) {
+            <span>Calculating...</span>
+          } @else {
+            <span>Show route & time</span>
+          }
+        </button>
+
+        @if (errorMsg) {
+          <div class="rounded-[10px] border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            {{ errorMsg }}
+          </div>
+        }
+
+        @if (estimateResult) {
+          <div class="rounded-[10px] border border-lime-200 bg-lime-50 p-3 text-sm text-neutral-800">
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-neutral-500">Distance</span>
+              <b>{{ estimateResult.distanceKm | number:'1.1-1' }} km</b>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-neutral-500">Time</span>
+              <b>{{ estimateResult.estimatedTimeMin }} min</b>
+            </div>
+            <div class="flex items-center justify-between mt-1">
+              <span class="text-neutral-500">Price</span>
+              <b>{{ estimateResult.estimatedPrice | currency:'RSD ':'symbol-narrow':'1.0-0' }}</b>
+            </div>
+
+          </div>
+        }
+      </form>
+    </div>
+  }
+
+  @if (routeSummary && !rideId) {
+    <div
+      class="absolute z-10 left-6 bottom-6 w-65 rounded-[14px] bg-white shadow-xl border border-neutral-200 p-4"
+    >
+      <div class="text-[14px] font-bold text-black mb-2">Route</div>
+
+      <div class="flex items-center justify-between text-[13px]">
+        <span class="text-neutral-500">Time</span>
+        <b class="text-black">{{ routeSummary.timeMin }} min</b>
+      </div>
+
+      <div class="flex items-center justify-between text-[13px] mt-1">
+        <span class="text-neutral-500">Distance</span>
+        <b class="text-black">{{ routeSummary.distanceKm }} km</b>
+      </div>
+    </div>
+  }
+</div>
+
+<template id="car-popup"> </template>
