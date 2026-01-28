@@ -24,4 +24,9 @@ public class PanicEvent extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "administrator_id")
     private Administrator handledBy;
+
+    private Double vehicleLat;
+    private Double vehicleLng;
+
+    private String message;
 }

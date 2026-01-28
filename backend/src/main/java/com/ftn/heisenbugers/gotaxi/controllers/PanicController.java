@@ -75,10 +75,31 @@ public class PanicController {
                 ? req.getMessage().trim()
                 : "PANIC button pressed!";
 
+        Double vehicleLat = null;
+        Double vehicleLng = null;
+        Location loc = null;
+
+        if (current instanceof Driver driver) {
+            loc = driver.getLocation();
+        } else if (current instanceof Passenger) {
+            Driver driver = ride.getDriver();
+            if (driver != null) {
+                loc = driver.getLocation();
+            }
+        }
+
+        if (loc != null) {
+            vehicleLat = loc.getLatitude();
+            vehicleLng = loc.getLongitude();
+        }
+
         PanicEvent pe = PanicEvent.builder()
                 .resolved(false)
                 .ride(ride)
                 .handledBy(null)
+                .vehicleLat(vehicleLat)
+                .vehicleLng(vehicleLng)
+                .message(msg)
                 .build();
 
         panicRepository.save(pe);

@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { RideActionsService } from '../../services/ride-actions.service';
 import { CancelRideModalComponent } from './cancel-ride-modal.component';
 import { HttpClient } from '@angular/common/http';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-start-ride',
@@ -39,7 +39,7 @@ export class StartRideComponent {
     reason: ['', [Validators.required, Validators.minLength(3)]],
   });
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private router: Router) {
   }
 
   async ngOnInit() {
@@ -73,11 +73,23 @@ export class StartRideComponent {
   }
 
   startRide() {
+    if (!this.ride?.rideId && !this.ride?.id) return;
+
+    const rideId = this.ride.rideId ?? this.ride.id;
     this.http.post(
       `http://localhost:8081/api/rides/${this.ride.rideId}/start`,
       {}
-    ).subscribe();
+    ).subscribe({
+      next: () => {
+        //after start
+        this.router.navigate(['/during-ride', rideId]);
+      },
+      error: err => {
+        console.error('Failed to start ride', err);
+      }
+    });
   }
+
 
 
   async submitCancel() {
@@ -94,17 +106,17 @@ export class StartRideComponent {
     this.cancelSubmitting = true;
     this.cancelError = null;
 
-    try {
-      await this.api.cancelRide(rideId, reason).toPromise();
-      this.cancelOpen = false;
-
-      // можно убрать карточку заказа
-      this.ride = null;
-    } catch (e: any) {
-      this.cancelError = e?.error?.message ?? 'Cancel failed';
-    } finally {
-      this.cancelSubmitting = false;
-    }
+    this.api.cancelRide(rideId, reason).subscribe({
+      next: () => {
+        this.cancelSubmitting = false;
+        this.cancelOpen = false;
+        this.ride = null;
+      },
+      error: (e: any) => {
+        this.cancelSubmitting = false;
+        this.cancelError = e?.error?.message ?? 'Cancel failed';
+      },
+    });
   }
 
 }
