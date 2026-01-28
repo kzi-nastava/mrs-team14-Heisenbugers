@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -48,13 +49,15 @@ public class ProfileController {
     }
 
     @PutMapping(value = "/me",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<GetProfileDTO> updateProfile(
-            @RequestBody GetProfileDTO request) throws InvalidUserType {
+            @RequestPart("data") GetProfileDTO request,
+            @RequestPart(value = "image", required = false) MultipartFile image
+    ) throws InvalidUserType {
 
         User user = AuthContextService.getCurrentUser();
-        GetProfileDTO updatedProfile = profileService.updateProfile(user.getEmail(), request);
+        GetProfileDTO updatedProfile = profileService.updateProfile(user.getEmail(), request, image);
         return ResponseEntity.ok(updatedProfile);
     }
 
@@ -76,4 +79,6 @@ public class ProfileController {
         profileService.changePassword(user.getEmail(), request);
         return ResponseEntity.ok().build();
     }
+
+
 }

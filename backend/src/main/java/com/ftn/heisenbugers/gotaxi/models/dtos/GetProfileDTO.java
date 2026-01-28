@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -24,4 +26,6 @@ public class GetProfileDTO {
     private String address;
     @Getter @Setter
     private String profileImageUrl;
+    @Getter @Setter @Nullable
+    private MultipartFile profileImage;
 }

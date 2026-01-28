@@ -1,15 +1,13 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
-import com.ftn.heisenbugers.gotaxi.models.dtos.CreateDriverDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedDriverDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedVehicleDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.SetDriverPasswordDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.services.AuthService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 import java.util.UUID;
@@ -25,13 +23,14 @@ public class DriverRegistrationController {
     }
 
     @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     public ResponseEntity<CreatedDriverDTO> createDriver(
-            @RequestBody CreateDriverDTO request) {
+            @RequestPart("data") CreateDriverDTO request,
+            @RequestPart(value = "image", required = false) MultipartFile image) {
 
-        var userId = authService.registerDriver(request);
+        var userId = authService.registerDriver(request, image);
 
         CreatedVehicleDTO vehicle = new CreatedVehicleDTO();
         vehicle.setId(UUID.randomUUID());
