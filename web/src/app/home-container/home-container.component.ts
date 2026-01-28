@@ -24,7 +24,7 @@ export class HomeContainer {
 
 
   constructor(private http: HttpClient) {
-    
+
   }
 
 
@@ -43,6 +43,9 @@ export class HomeContainer {
             component = DriverDriving
           } else if (data.state === 'READY'){
             component = HomeComponent
+          } else if (data.state === 'STARTING'){
+            this.rideId = data.rideId;
+            component = HomeComponent
           } else {
             component = HomeComponent
           }
@@ -59,7 +62,7 @@ export class HomeContainer {
         }
       }
     )
-    
-   
+
+
   }
 }
