@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
+import {ChangeDetectorRef, Component, ViewChild, inject, Input} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {NgIcon, provideIcons} from '@ng-icons/core';
 import { bootstrapGeo } from '@ng-icons/bootstrap-icons';
@@ -12,6 +12,7 @@ import { HttpClient } from '@angular/common/http';
 import {CurrencyPipe, DecimalPipe} from '@angular/common';
 import {AuthService} from '../auth/auth.service';
 import {RideBookingComponent} from '../ride-booking/ride-booking.component';
+import {StartRideComponent} from '../start-ride/start-ride.component';
 
 type FormKeys = 'startAddress' | 'destinationAddress';
 
@@ -27,7 +28,7 @@ interface VehicleLocationDTO {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [MapComponent, ReactiveFormsModule, NgIcon, CurrencyPipe, DecimalPipe, RideBookingComponent],
+  imports: [MapComponent, ReactiveFormsModule, NgIcon, CurrencyPipe, DecimalPipe, RideBookingComponent, StartRideComponent],
   templateUrl: './home.html',
   viewProviders: [provideIcons({ bootstrapGeo })]
 })
@@ -51,6 +52,7 @@ export class HomeComponent {
   loading = false;
   errorMsg: string | null = null;
   submitAttempted = false;
+  @Input() rideId!: string;
 
   estimateResult: RideEstimateResponseDTO | null = null;
   routeSummary: RouteSummary | null = null;
@@ -92,6 +94,7 @@ export class HomeComponent {
   }
 
   ngOnInit(){
+    console.log(this.rideId)
     this.http.get<VehicleLocationDTO[]>(`${this.baseUrl}/public/vehicles`).subscribe({
       next: (data) => {
 

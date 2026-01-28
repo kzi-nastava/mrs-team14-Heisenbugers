@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core'
+import {Component, OnInit, inject, Input, Output, EventEmitter} from '@angular/core'
 
 import {  ReactiveFormsModule,FormBuilder, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,16 @@ export class StartRideComponent {
   private api = inject(RideActionsService);
   private fb = inject(FormBuilder);
 
+  pins: { lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[] = [];
+
+  @Output() pinsChange = new EventEmitter<
+    { lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[]
+  >();
+
+  private emitPins() {
+    this.pinsChange.emit([...this.pins]);
+  }
+
   ride: any = null;
   loadingRide = false;
 
@@ -29,6 +39,8 @@ export class StartRideComponent {
     reason: ['', [Validators.required, Validators.minLength(3)]],
   });
 
+  constructor(private http: HttpClient) {
+  }
 
   async ngOnInit() {
     this.loadingRide = true;
@@ -38,6 +50,15 @@ export class StartRideComponent {
       this.ride = null;
     } finally {
       this.loadingRide = false;
+      if(this.ride){
+        this.pins.push({ lat: this.ride.start.latitude, lng: this.ride.start.longitude, snapToRoad: true, popup: 'Start', iconUrl: 'icons/pin.svg' });
+        this.pins.push({ lat: this.ride.end.latitude, lng: this.ride.end.longitude, snapToRoad: true, popup: 'End', iconUrl: 'icons/pin.svg' });
+        for (let i = 0; i < this.ride.stops.length; i++){
+          if (i == 0 || i == this.ride.stops.length - 1) continue;
+          this.pins.push({ lat: this.ride.stops[i].latitude, lng: this.ride.stops[i].longitude, snapToRoad: true, popup: `Stop ${i+1}`, iconUrl: 'icons/pin.svg' });
+        }
+        this.emitPins();
+      }
     }
   }
   openCancel() {
@@ -51,7 +72,12 @@ export class StartRideComponent {
     this.cancelOpen = false;
   }
 
-  startRide() {}
+  startRide() {
+    this.http.post(
+      `http://localhost:8081/api/rides/${this.ride.rideId}/start`,
+      {}
+    ).subscribe();
+  }
 
 
   async submitCancel() {

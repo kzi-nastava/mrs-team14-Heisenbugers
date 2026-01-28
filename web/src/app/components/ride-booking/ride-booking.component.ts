@@ -98,7 +98,6 @@ export class RideBookingComponent implements OnDestroy {
   removeWaypoint(wp: { value: string }) {
     const idx = this.waypoints.indexOf(wp);
     if (idx >= 0) this.waypoints.splice(idx, 1);
-    // also remove any suggestions for removed waypoint
     this.waypointSuggestions.delete(wp);
   }
 
