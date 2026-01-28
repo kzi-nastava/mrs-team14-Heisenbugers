@@ -20,5 +20,10 @@ public interface DriverRepository extends JpaRepository<Driver, UUID> {
 
     List<Driver> findByWorkingTrue();
 
-    List<Driver> findByWorkingTrueAndAvailableTrue();
+    @Query("""
+        SELECT d FROM Driver d
+        JOIN FETCH d.vehicle
+        WHERE d.email = :email
+    """)
+    Optional<Driver> findByUserEmailWithVehicle(String email);
 }

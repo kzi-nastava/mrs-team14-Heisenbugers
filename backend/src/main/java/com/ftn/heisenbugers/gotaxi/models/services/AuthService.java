@@ -17,6 +17,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
@@ -104,7 +105,7 @@ public class AuthService {
         return p.getId();
     }
 
-    public UUID registerDriver(CreateDriverDTO request) {
+    public UUID registerDriver(CreateDriverDTO request, MultipartFile image) {
 
         if (request.getEmail() == null || request.getEmail().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required.");
@@ -131,7 +132,15 @@ public class AuthService {
         d.setPasswordHash(passwordEncoder.encode(request.getEmail()+request.getLastName()));
         d.setPhone(request.getPhone());
         d.setAddress(request.getAddress());
-        d.setProfileImageUrl(null);
+
+        String profilePath;
+        if (image != null && !image.isEmpty()) {
+            profilePath = imageStorageService.saveProfileImage(image);
+        } else {
+            profilePath = defaultAvatarPath;
+        }
+        d.setProfileImageUrl(profilePath);
+
         d.setBlocked(false);
         d.setActivated(false);
         d.setVehicle(v);

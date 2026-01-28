@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetProfileDTO {
+public class UpdateProfileDTO {
     @Getter @Setter
     private UUID id;
     @Getter @Setter

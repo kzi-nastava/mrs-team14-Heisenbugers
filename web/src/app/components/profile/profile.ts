@@ -120,8 +120,39 @@ export class ProfileComponent {
     petsAllowed: false
   });
 
+  private base64ToFile(base64: string, filename: string): File {
+    const arr = base64.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], filename, { type: mime });
+  }
+
   updateUser(updatedUser: UpdateProfileDTO) {
-      this.http.put<GetProfileDTO>('http://localhost:8081/api/profile/me', updatedUser)
+      const formData = new FormData();
+      if (updatedUser.image != null) {
+        const image = updatedUser.image;
+        updatedUser.image = null;
+        formData.append(
+          'data',
+          new Blob([JSON.stringify(updatedUser)], { type: 'application/json' })
+        );
+        const file = this.base64ToFile(image, 'profile.png');
+        formData.append('image', file);
+      }else{
+        formData.append(
+          'data',
+          new Blob([JSON.stringify(updatedUser)], { type: 'application/json' })
+        );
+      }
+
+      this.http.put<GetProfileDTO>('http://localhost:8081/api/profile/me', formData)
         .subscribe(updated => {
           this.user.set({
             name: `${updated.firstName} ${updated.lastName}`,
@@ -139,11 +170,18 @@ export class ProfileComponent {
     this.router.navigate(["auth/login"]);
   }
 
-  updateVehicle(updatedVehicle: any) {
-    this.vehicle.update(v => ({
-      ...v,
-      ...updatedVehicle
-    }));
+  updateVehicle(updatedVehicle: CreateVehicleDTO) {
+    this.http.put<CreateVehicleDTO>('http://localhost:8081/api/profile/me/vehicle', updatedVehicle)
+      .subscribe(updated => {
+        this.vehicle.set({
+          model: updated.vehicleModel,
+          type: updated.vehicleType,
+          plateNumber: updated.licensePlate,
+          seats: updated.seatCount.toString(),
+          babiesAllowed: updated.babyTransport,
+          petsAllowed: updated.petTransport
+        });
+      });
   }
 
   private formatMinutesToHours(minutes: number): string {

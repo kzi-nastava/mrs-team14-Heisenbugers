@@ -35,6 +35,7 @@ export class EditProfile {
   submitted = false;
 
   imagePreview: string | null = null;
+  initialImagePreview: string | null = null;
 
   form = this.fb.group(
     {
@@ -62,6 +63,7 @@ export class EditProfile {
     });
 
     this.imagePreview = u.profilePicture ?? null;
+    this.initialImagePreview = this.imagePreview;
   }
 
   isInvalid(name: string): boolean {
@@ -78,16 +80,29 @@ export class EditProfile {
 
     this.submitted = true;
     console.log('updated profile:', this.form.value);
+    if (this.imagePreview != this.initialImagePreview) {
+      const dto: UpdateProfileDTO = {
+        firstName: this.form.value.name?.split(' ')[0]!,
+        lastName: this.form.value.name?.split(' ')[1]!,
+        phoneNumber: this.form.value.phoneNumber!,
+        address: this.form.value.address!,
+        profileImageUrl: this.imagePreview,
+        image: this.imagePreview!
+      };
+      this.saveProfile.emit(dto);
+    }else {
+      const dto: UpdateProfileDTO = {
+        firstName: this.form.value.name?.split(' ')[0]!,
+        lastName: this.form.value.name?.split(' ')[1]!,
+        phoneNumber: this.form.value.phoneNumber!,
+        address: this.form.value.address!,
+        profileImageUrl: this.imagePreview,
+        image: null
+      };
+      this.saveProfile.emit(dto);
+    }
 
-    const dto: UpdateProfileDTO = {
-      firstName: this.form.value.name?.split(' ')[0]!,
-      lastName: this.form.value.name?.split(' ')[1]!,
-      phoneNumber: this.form.value.phoneNumber!,
-      address: this.form.value.address!,
-      profileImageUrl: this.imagePreview
-    };
 
-    this.saveProfile.emit(dto);
 
     this.closeEdit.emit(false);
   }
