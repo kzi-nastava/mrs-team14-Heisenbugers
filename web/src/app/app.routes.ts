@@ -22,6 +22,7 @@ import { AdminPanicComponent } from './components/admin/admin-panic/admin-panic.
 import { AdminGuard } from './components/admin/admin.guard';
 import {DriverProfileRequestComponent} from './components/driver-profile-request/driver-profile-request.component';
 import {ProfileRequestsComponent} from './components/profile-requests/profile-requests.component';
+import {FavoriteRoutesComponent} from './components/favorite-routes/favorite-routes.component';
 
 export const routes: Routes = [
   {
@@ -49,6 +50,7 @@ export const routes: Routes = [
       { path: 'during-ride', component: DuringRide },
       { path: 'profile-requests', component: ProfileRequestsComponent},
       { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
+      { path: 'favorite-rides', component: FavoriteRoutesComponent },
 
       // admin
       {

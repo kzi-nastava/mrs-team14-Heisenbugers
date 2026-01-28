@@ -177,6 +177,8 @@
       (saveVehicle)="updateVehicle($event)"
       (closeEdit)="setIsEditingVehicle($event)">
     ></app-edit-vehicle>
+  } @else if (selectedTab == 'Favorite Routes') {
+    <app-favorite-routes class="w-full"></app-favorite-routes>
   }
 
 </div>

@@ -16,6 +16,7 @@ import {HttpClient} from '@angular/common/http';
 import {GetProfileDTO, UpdateProfileDTO} from '../../models/profile.model';
 import {AuthService} from '../auth/auth.service';
 import {CreateVehicleDTO} from '../../models/driver-registration.model';
+import {FavoriteRoutesComponent} from '../favorite-routes/favorite-routes.component';
 
 @Component({
   selector: 'app-profile',
@@ -26,7 +27,8 @@ import {CreateVehicleDTO} from '../../models/driver-registration.model';
     ReactiveFormsModule,
     ManagePassword,
     EditProfile,
-    EditVehicle
+    EditVehicle,
+    FavoriteRoutesComponent
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
