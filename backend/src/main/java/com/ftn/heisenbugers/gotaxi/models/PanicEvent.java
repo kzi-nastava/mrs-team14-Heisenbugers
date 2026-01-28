@@ -1,6 +1,7 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -12,10 +13,12 @@ import lombok.*;
 @Builder
 public class PanicEvent extends BaseEntity {
 
+    @NotNull
     private boolean resolved;
 
     @OneToOne
     @JoinColumn(name = "ride_id")
+    @NotNull
     private Ride ride;
 
     @ManyToOne(fetch = FetchType.LAZY)

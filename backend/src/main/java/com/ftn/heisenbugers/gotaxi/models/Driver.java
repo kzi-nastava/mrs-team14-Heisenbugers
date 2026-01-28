@@ -23,10 +23,12 @@ public class Driver extends User {
     @NotNull
     private boolean working = false;
 
+    @NotNull
     private int activeHoursLast24h;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "vehicle_id", referencedColumnName = "id")
+    @NotNull
     private Vehicle vehicle;
 
     @OneToOne
