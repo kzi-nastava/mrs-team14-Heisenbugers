@@ -1,0 +1,45 @@
+<div class="p-6 w-full">
+  <div class="flex flex-row justify-between mb-6">
+    <div>
+      <h2 class="text-3xl font-bold">
+        Favorite Routes
+      </h2>
+      <p class="mt-3 text-gray-600">
+        View your favorite routes.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="px-3 py-1 bg-gray-100 rounded-lg" (click)="loadFavorites()">Refresh</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="p-4 bg-white rounded shadow text-center">Loading favorites...</div>
+  }
+
+  @if (error) {
+    <div class="p-4 bg-red-50 rounded shadow text-red-600">{{ error }}</div>
+  }
+
+  @if (favorites.length > 0) {
+    <div class="grid grid-cols-1 gap-4">
+      @for (route of favorites; track route) {
+        <div class="p-4 bg-white rounded-lg shadow flex justify-between items-start">
+          <div>
+            <div class="text-lg font-semibold">{{ route.name || (route.startAddress?.address + ' → ' + route.endAddress?.address) }}</div>
+            <div class="text-sm text-neutral-400 mt-2">Distance: {{ route.distanceKm ? (route.distanceKm | number:'1.1-1') + ' km' : '-' }} • Time: {{ formatMinutes(route.timeMin) }}</div>
+          </div>
+
+          <div class="flex flex-row items-end gap-2 align-middle mt-2">
+            <button class="px-8 py-1.5 bg-lime-300 text-black rounded-lg" (click)="useRoute(route)">Use</button>
+            <button class="px-3 py-1 bg-red-100 text-red-600 rounded-lg items-center" (click)="removeFavorite(route)">
+              <ng-icon name="bootstrapTrash3Fill" class="mt-1"></ng-icon>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="p-6 text-center text-neutral-500">You don't have any favorite routes yet.</div>
+  }
+</div>

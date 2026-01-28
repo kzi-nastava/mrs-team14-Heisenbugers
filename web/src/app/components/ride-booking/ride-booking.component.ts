@@ -5,12 +5,14 @@ import { FormsModule } from '@angular/forms';
 import {Observable, Subject, Subscription, of} from 'rxjs';
 import {debounceTime, distinctUntilChanged, switchMap, catchError} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
+import {ScheduleComponent} from '../schedule/schedule.component';
 
 @Component({
   selector: 'app-ride-booking',
   imports: [
     NgIcon,
-    FormsModule
+    FormsModule,
+    ScheduleComponent
   ],
   templateUrl: './ride-booking.component.html',
   styleUrl: './ride-booking.component.css',
@@ -25,6 +27,7 @@ export class RideBookingComponent implements OnDestroy {
   babyAllowedSelected = false;
   petsAllowedSelected = false;
   price = ""
+  route = history.state.favoriteRoute;
 
   private startInput$ = new Subject<string>();
   private endInput$ = new Subject<string>();
@@ -38,7 +41,7 @@ export class RideBookingComponent implements OnDestroy {
   endSuggestionsVisible = false;
   waypointSuggestionsVisible = new Map<any, boolean>();
 
-  pins: { lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[] = [];
+  pins: { id?: string; lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[] = [];
 
   @Output() pinsChange = new EventEmitter<
     { lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[]
@@ -49,6 +52,45 @@ export class RideBookingComponent implements OnDestroy {
   }
 
   @Input() routeSummary?: { distanceKm?: number; timeMin?: number };
+
+  showScheduler = false;
+  scheduledTime: string | null = null;
+
+  messageText: string | null = null;
+  messageType: 'success' | 'error' | 'info' = 'info';
+  private messageTimeoutId: any = null;
+
+  private showMessage(text: string, type: 'success' | 'error' | 'info' = 'info', autoHideMs = 3000) {
+    this.messageText = text;
+    this.messageType = type;
+    try { this.cd.detectChanges(); } catch (e) {}
+    if (this.messageTimeoutId) {
+      clearTimeout(this.messageTimeoutId);
+      this.messageTimeoutId = null;
+      this.cd.detectChanges();
+    }
+    if (autoHideMs && autoHideMs > 0) {
+      this.messageTimeoutId = setTimeout(() => this.clearMessage(), autoHideMs);
+      this.cd.detectChanges();
+    }
+  }
+
+  private clearMessage() {
+    this.messageText = null;
+    this.messageType = 'info';
+    if (this.messageTimeoutId) { clearTimeout(this.messageTimeoutId); this.messageTimeoutId = null; }
+    try { this.cd.detectChanges(); } catch (e) {}
+  }
+
+  onScheduled(iso: string) {
+    this.showScheduler = false;
+    this.scheduledTime = iso;
+    this.orderRide();
+  }
+
+  onScheduleCancel() {
+    this.showScheduler = false;
+  }
 
   constructor(private http: HttpClient, private cd: ChangeDetectorRef, private zone: NgZone) {
     this.subs.push(
@@ -91,6 +133,14 @@ export class RideBookingComponent implements OnDestroy {
     this.subs.forEach(s => s.unsubscribe());
   }
 
+  ngOnInit(): void {
+    if (this.route) {
+      setTimeout(() => {
+        this.applyFavoriteRoute(this.route);
+      }, 1000);
+    }
+  }
+
   addWaypoint() {
     this.waypoints.push({ value: '' });
   }
@@ -99,6 +149,14 @@ export class RideBookingComponent implements OnDestroy {
     const idx = this.waypoints.indexOf(wp);
     if (idx >= 0) this.waypoints.splice(idx, 1);
     this.waypointSuggestions.delete(wp);
+    const pinId = (wp as any)._pinId;
+    if (pinId) {
+      this.pins = this.pins.filter(p => p.id !== pinId);
+    } else {
+      const idxPin = this.pins.findIndex(p => p.popup && String(p.popup).startsWith('Waypoint'));
+      if (idxPin >= 0) this.pins.splice(idxPin, 1);
+    }
+    this.emitPins();
   }
 
   reset() {
@@ -110,6 +168,13 @@ export class RideBookingComponent implements OnDestroy {
     this.endSuggestions = [];
     this.waypointSuggestions.clear();
     this.pins = [];
+    this.emitPins();
+    this.price = "";
+    this.selectedVehicle = null;
+    this.babyAllowedSelected = false;
+    this.petsAllowedSelected = false;
+    this.routeSummary = undefined;
+    this.scheduledTime = null;
   }
 
   addPassenger() {
@@ -165,11 +230,15 @@ export class RideBookingComponent implements OnDestroy {
   }
 
   private handleSearchResults(type: 'start' | 'end', res: any[]) {
-    console.log(res);
     const list = Array.isArray(res) ? res.slice(0, 5) : [];
     const mapped = list.map(r => ({ result: r, label: r.display_name }));
+    const query = (type === 'start' ? this.startLocation : this.endLocation) || '';
 
     this.zone.run(() => {
+      if (mapped.length > 0) {
+        try { this.clearMessage(); } catch (e) {}
+      }
+
       if (mapped.length > 1) {
         if (type === 'start') {
           this.startSuggestions = mapped;
@@ -179,7 +248,6 @@ export class RideBookingComponent implements OnDestroy {
           this.endSuggestionsVisible = true;
         }
       } else if (mapped.length === 1) {
-
         const resItem = mapped[0].result;
         const lat = parseFloat(resItem.lat);
         const lng = parseFloat(resItem.lon || resItem.lng || resItem.longitude);
@@ -210,6 +278,10 @@ export class RideBookingComponent implements OnDestroy {
           this.endSuggestions = [];
           this.endSuggestionsVisible = false;
         }
+
+        if (query && query.trim().length >= 3) {
+          this.showMessage(`No results found for "${query}"`, 'info');
+        }
       }
       try { this.cd.detectChanges(); } catch (e) {}
     });
@@ -218,13 +290,19 @@ export class RideBookingComponent implements OnDestroy {
   private handleWaypointResults(wp: any, res: any[]) {
     const list = Array.isArray(res) ? res.slice(0, 5) : [];
     const mapped = list.map(r => ({ result: r, label: r.display_name }));
+    const query = (wp && wp.value) ? String(wp.value) : '';
+
     this.zone.run(() => {
       if (mapped.length > 1) {
         this.waypointSuggestions.set(wp, mapped);
         this.waypointSuggestionsVisible.set(wp, true);
+        try { this.clearMessage(); } catch (e) {}
       } else {
         this.waypointSuggestions.delete(wp);
         this.waypointSuggestionsVisible.set(wp, false);
+        if (query && query.trim().length >= 3 && mapped.length === 0) {
+          this.showMessage(`No results found for "${query}"`, 'info');
+        }
       }
       try { this.cd.detectChanges(); } catch (e) {}
     });
@@ -258,28 +336,36 @@ export class RideBookingComponent implements OnDestroy {
 
   private selectSuggestionImpl(type: 'start' | 'end' | 'waypoint', suggestion: any, wp?: any) {
     const res = suggestion.result || suggestion;
-    //const label = this.formatStreetLabel(res) || (res.display_name ? res.display_name.split(',')[0] : '');
     const lat = parseFloat(res.lat);
     const lng = parseFloat(res.lon || res.lng || res.longitude);
-
     this.zone.run(() => {
       if (type === 'start') {
         this.startSuggestions = [];
         this.startSuggestionsVisible = false;
-        this.pins.push({ lat, lng, snapToRoad: true, popup: 'Start', iconUrl: "icons/pin.svg" });
-        this.emitPins();
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          this.pins.push({ lat, lng, snapToRoad: true, popup: 'Start', iconUrl: "icons/pin.svg" });
+          this.emitPins();
+        }
       } else if (type === 'end') {
         this.endSuggestions = [];
         this.endSuggestionsVisible = false;
-        this.pins.push({ lat, lng, snapToRoad: true, popup: 'End', iconUrl: "icons/pin.svg" });
-        this.emitPins();
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          this.pins.push({ lat, lng, snapToRoad: true, popup: 'End', iconUrl: "icons/pin.svg" });
+          this.emitPins();
+        }
       } else if (type === 'waypoint' && wp) {
         this.waypointSuggestions.delete(wp);
         this.waypointSuggestionsVisible.set(wp, false);
         const idx = this.waypoints.indexOf(wp);
         const popup = idx >= 0 ? `Waypoint ${idx + 1}` : 'Waypoint';
-        this.pins.push({ lat, lng, snapToRoad: true, popup, iconUrl: "icons/pin.svg" });
-        this.emitPins();
+        const pinId = 'wp-' + Math.random().toString(36).slice(2, 9) + '-' + Date.now();
+        (wp as any)._pinId = pinId;
+        (wp as any)._lat = lat;
+        (wp as any)._lng = lng;
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          this.pins.push({ id: pinId, lat, lng, snapToRoad: true, popup, iconUrl: "icons/pin.svg" });
+          this.emitPins();
+        }
       }
       try { this.cd.detectChanges(); } catch (e) {}
     });
@@ -326,17 +412,17 @@ export class RideBookingComponent implements OnDestroy {
 
   orderRide(): void {
     if (!this.routeSummary?.distanceKm || !this.routeSummary?.timeMin) {
-      alert('Route is not calculated yet.');
+      this.showMessage('Route is not calculated yet.', 'error');
       return;
     }
 
     if (!this.selectedVehicle) {
-      alert('Please select a vehicle type.');
+      this.showMessage('Please select a vehicle type.', 'error');
       return;
     }
 
     if (this.pins.length < 2) {
-      alert('Start and destination are required.');
+      this.showMessage('Start and destination are required.', 'error');
       return;
     }
 
@@ -344,7 +430,7 @@ export class RideBookingComponent implements OnDestroy {
     const endPin = this.pins.find(p => p.popup === 'End');
 
     if (!startPin || !endPin) {
-      alert('Start or end location missing.');
+      this.showMessage('Start or end location missing.', 'error');
       return;
     }
 
@@ -375,19 +461,53 @@ export class RideBookingComponent implements OnDestroy {
         .filter(e => e && e.trim().length > 0),
       vehicleType: this.selectedVehicle,
       babyTransport: this.babyAllowedSelected,
-      petTransport: this.petsAllowedSelected
+      petTransport: this.petsAllowedSelected,
+      scheduledAt: this.scheduledTime,
     };
 
     this.http.post('http://localhost:8081/api/rides', payload).subscribe({
       next: (res: any) => {
         console.log('Ride created:', res);
-        alert('Ride successfully created!');
+        this.showMessage('Ride successfully created!', 'success');
         this.reset();
       },
       error: (err) => {
         console.error('Ride creation failed', err);
-        alert(err?.error?.message ?? 'Failed to create ride.');
+        this.showMessage(err?.error?.message ?? 'Failed to create ride.', 'error');
       }
+    });
+  }
+
+  private applyFavoriteRoute(route: any) {
+    this.startLocation = route.startAddress.address;
+    this.endLocation = route.endAddress.address;
+
+    this.routeSummary = {
+      distanceKm: route.distanceKm,
+      timeMin: route.timeMin
+    };
+
+    const newPins = [
+      {
+        lat: route.startAddress.latitude,
+        lng: route.startAddress.longitude,
+        snapToRoad: true,
+        popup: 'Start',
+        iconUrl: 'icons/pin.svg'
+      },
+      {
+        lat: route.endAddress.latitude,
+        lng: route.endAddress.longitude,
+        snapToRoad: true,
+        popup: 'End',
+        iconUrl: 'icons/pin.svg'
+      }
+    ];
+
+    Promise.resolve().then(() => {
+      this.pins = newPins;
+      this.emitPins();
+      this.calculatePrice();
     });
   }
 }

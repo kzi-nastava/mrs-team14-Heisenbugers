@@ -19,7 +19,7 @@
       (pinsChange)="onPinsChange($event)"
     ></app-start-ride>
   }
-  @else if (estimateOpen && authService.getRole() == "PASSENGER"){
+  @else if (estimateOpen && authService.getRole() == "PASSENGER" && !rideId) {
     <app-ride-booking
       [routeSummary]="routeSummary ?? undefined"
       (pinsChange)="onPinsChange($event)">
