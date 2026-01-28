@@ -43,5 +43,6 @@ public class Vehicle extends BaseEntity {
 
     @OneToOne(mappedBy = "vehicle")
     @JsonBackReference
+    @NotNull
     private Driver driver;
 }

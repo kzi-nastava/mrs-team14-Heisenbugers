@@ -29,7 +29,7 @@
             type="text"
             name="title"
             class="border rounded-lg p-3 text-sm h-8 text-center font-semibold w-32"
-            value="{{ getRideDurationMinutes(ride) }} minutes"
+            [value]="getRideDurationMinutes(ride) + ' minutes'"
             readonly
           />
         </div>
@@ -40,7 +40,7 @@
             type="text"
             name="title"
             class="border rounded-lg p-3 text-sm h-8 text-center font-semibold w-32 ml-6"
-            value="{{ ride.price }} RSD"
+            [value]="ride.price + ' RSD'"
             readonly
           />
         </div>
@@ -108,7 +108,6 @@
           type="submit"
           [disabled]="!rateForm.form.valid || driverRate === 0 || vehicleRate === 0"
           class="w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg disabled:bg-gray-300 enabled:cursor-pointer"
-          (click)="closeRateModal()"
         >
           Submit
         </button>
