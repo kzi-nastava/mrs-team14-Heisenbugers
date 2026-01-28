@@ -1,0 +1,53 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-semibold">Profile change requests</h2>
+    <button class="px-3 py-1 bg-gray-100 rounded" (click)="loadList()">Refresh</button>
+  </div>
+
+  <div class="grid grid-cols-3 gap-6">
+    <div class="col-span-1">
+      @if (loadingList) {
+        <div class="p-4 bg-white rounded shadow text-center">Loading requests...</div>
+      }
+      @if (listError) {
+        <div class="p-4 bg-red-50 rounded shadow text-red-600">{{ listError }}</div>
+      }
+
+      <ul class="mt-4 space-y-2">
+        @if (requests.length > 0) {
+          @for (r of requests; track r) {
+            <li>
+              <button type="button" class="w-full text-left p-3 rounded border hover:bg-gray-50 flex justify-between items-center" (click)="openRequest(r.id)">
+                <div>
+                  <div class="font-medium">{{ r.firstName }} {{ r.lastName }}</div>
+                  <div class="text-sm text-neutral-500">{{ r.email }}</div>
+                </div>
+                <div class="text-sm text-neutral-400">View</div>
+              </button>
+            </li>
+          }
+        } @else {
+          <div class="p-3 text-sm text-neutral-500">No requests found.</div>
+        }
+      </ul>
+    </div>
+
+    <div class="col-span-2">
+      @if (loadingDetail) {
+        <div class="p-4 bg-white rounded shadow">Loading request...</div>
+      }
+      @if (detailError) {
+        <div class="p-4 bg-red-50 rounded shadow text-red-600">{{ detailError }}</div>
+      }
+
+      @if (selectedRequest) {
+        <div class="mb-4 flex justify-between">
+          <h3 class="text-lg font-medium">Request details</h3>
+          <button class="px-3 py-1 bg-gray-100 rounded" (click)="closeDetail()">Close</button>
+        </div>
+        <app-driver-profile-request [driverRequest]="selectedRequest" [oldProfile]="selectedOldProfile" [newProfile]="selectedNewProfile"></app-driver-profile-request>
+      }
+
+    </div>
+  </div>
+</div>
