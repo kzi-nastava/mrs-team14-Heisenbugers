@@ -26,7 +26,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class User extends BaseEntity {
 
-    private boolean activated = false; //for mail
+    private boolean activated = false;
     @Email
     @NotBlank
     @Column(nullable = false, unique = true)

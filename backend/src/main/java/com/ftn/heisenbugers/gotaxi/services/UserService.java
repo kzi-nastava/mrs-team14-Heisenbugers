@@ -38,6 +38,10 @@ public class UserService {
             return rideOpt.map(ride -> new UserStateDTO(UserState.RIDING, ride.getId()))
                     .orElseGet(() -> new UserStateDTO(UserState.LOOKING));
         } else if (u instanceof Driver d) {
+            Optional<Ride> rideOptStart = rideRepository.findByDriverIdAndStatus(d.getId(), RideStatus.ASSIGNED);
+            if(rideOptStart.isPresent()){
+                return new UserStateDTO(UserState.STARTING, rideOptStart.get().getId());
+            }
             Optional<Ride> rideOpt = rideRepository.findByDriverIdAndStatus(d.getId(), RideStatus.ONGOING);
             return rideOpt.map(ride -> new UserStateDTO(UserState.DRIVING, ride.getId()))
                     .orElseGet(() -> new UserStateDTO(UserState.READY));

@@ -64,6 +64,8 @@ public class RideService {
         ride.setRoute(route);
         ride.setStatus(RideStatus.REQUESTED);
         ride.setCanceled(false);
+        ride.setStart(start);
+        ride.setEnd(end);
         ride.setPassengers(new ArrayList<>());
         for (int i = 0; i<request.getPassengersEmails().size(); i++){
             Optional<Passenger> p = passengerRepository.findByEmail(request.getPassengersEmails().get(i));
@@ -77,6 +79,7 @@ public class RideService {
         }else{
             ride.setDriver(driver.get());
             ride.setStatus(RideStatus.ASSIGNED);
+            ride.setVehicle(driver.get().getVehicle());
             driver.get().setAvailable(false);
             rideRepository.save(ride);
             sendAcceptedRideEmail(ride.getRoute().getUser(), ride);
@@ -251,6 +254,18 @@ public class RideService {
         trafficViolation.setLastModifiedBy(reporter);
 
         violationRepository.save(trafficViolation);
+        return true;
+    }
+
+    public boolean start(UUID rideId){
+        Ride ride = rideRepository.findById(rideId).get();
+
+        ride.setStatus(RideStatus.ONGOING);
+        ride.setStartedAt(LocalDateTime.now());
+        ride.setLastModifiedBy(ride.getDriver());
+        ride.getDriver().setAvailable(true);
+        rideRepository.save(ride);
+
         return true;
     }
 

@@ -4,9 +4,7 @@ import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.User;
-import com.ftn.heisenbugers.gotaxi.models.dtos.RideDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.MessageResponse;
-import com.ftn.heisenbugers.gotaxi.models.dtos.RideTrackingDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
@@ -35,8 +33,6 @@ public class RideController {
         this.rideService = rideService;
     }
 
-
-
     @GetMapping("")
     public ResponseEntity<List<RideTrackingDTO>> getRideTracking() {
 
@@ -58,9 +54,9 @@ public class RideController {
     public ResponseEntity<?> getMyActiveRide() throws InvalidUserType {
         Driver driver = AuthContextService.getCurrentDriver();
 
-        var rideOpt = rideRepository.findFirstByDriverIdAndStatusInOrderByScheduledAtAsc(
+        var rideOpt = rideRepository.findByDriverIdAndStatus(
                 driver.getId(),
-                List.of(RideStatus.ASSIGNED, RideStatus.ONGOING)
+                RideStatus.ASSIGNED
         );
 
         if (rideOpt.isEmpty()) {
@@ -68,15 +64,59 @@ public class RideController {
                     .body(new MessageResponse("No active ride."));
         }
 
-
         Ride ride = rideOpt.get();
-        return ResponseEntity.ok(Map.of(
-                "rideId", ride.getId(),
-                "status", ride.getStatus(),
-                "start", ride.getRoute().getStart(),
-                "end", ride.getRoute().getDestination(),
-                "passengers", ride.getPassengers()
-        ));
+
+        AssignedRideDTO dto = new AssignedRideDTO();
+        dto.setRideId(ride.getId());
+
+        if (ride.getRoute() != null) {
+            if (ride.getRoute().getStart() != null) {
+                dto.setStart(new LocationDTO(ride.getRoute().getStart().getLatitude(), ride.getRoute().getStart().getLongitude(),
+                        ride.getRoute().getStart().getAddress()
+                ));
+            }
+
+            if (ride.getRoute().getDestination() != null) {
+                dto.setEnd(new LocationDTO(ride.getRoute().getDestination().getLatitude(), ride.getRoute().getDestination().getLongitude(),
+                        ride.getRoute().getDestination().getAddress()
+                ));
+            }
+
+            if (ride.getRoute().getStops() != null) {
+                List<LocationDTO> stops = ride.getRoute().getStops().stream()
+                        .map(l -> new LocationDTO(
+                                l.getLongitude(),
+                                l.getLatitude(),
+                                l.getAddress()
+                        ))
+                        .toList();
+                dto.setStops(stops);
+            }
+
+            dto.setDistanceKm(ride.getRoute().getDistanceKm());
+            dto.setEstimatedTimeMin(ride.getRoute().getEstimatedTimeMin());
+        }
+
+        if (ride.getPassengers() != null) {
+            List<PassengerInfoDTO> passengers = ride.getPassengers().stream()
+                    .map(p -> new PassengerInfoDTO(
+                            p.getId(),
+                            p.getFirstName(),
+                            p.getLastName(),
+                            p.getEmail(),
+                            "http://localhost:8081" + p.getProfileImageUrl()
+                    ))
+                    .toList();
+            dto.setPassengers(passengers);
+        }
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @PostMapping("/{id}/start")
+    public ResponseEntity<Void> start(@PathVariable UUID id) {
+        rideService.start(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{rideId}/tracking")
