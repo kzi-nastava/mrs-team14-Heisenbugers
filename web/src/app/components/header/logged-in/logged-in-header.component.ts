@@ -18,7 +18,7 @@ export class LoggedInHeaderComponent {
   //constructor(private router: Router) {}
   constructor(
     private router: Router,
-    private auth: AuthService
+    protected auth: AuthService
   ) {}
 
   toggleMenu() {
@@ -54,6 +54,16 @@ export class LoggedInHeaderComponent {
     this.auth.logoutLocal();          // ⬅️ очищаем токены и состояние
     this.router.navigate(['/home']);  // ⬅️ гость → на публичную страницу
     this.menuOpen = false;
+  }
+
+  goToRegisterDriver(){
+    this.router.navigate(['driver-registration'])
+    this.menuOpen = false
+  }
+
+  goToProfileChanges(){
+    this.router.navigate(['profile-requests'])
+    this.menuOpen = false
   }
 
   goToHome(){
