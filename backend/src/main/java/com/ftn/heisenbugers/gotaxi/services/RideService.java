@@ -74,20 +74,21 @@ public class RideService {
             ride.addPassenger(p.get());
         }
 
-        ZonedDateTime zdt = ZonedDateTime.parse(request.getScheduledAt());
-        ride.setScheduledAt(zdt.withZoneSameInstant(ZoneId.systemDefault())
-                .toLocalDateTime());
-
         if(request.getScheduledAt() != null){
+            ZonedDateTime zdt = ZonedDateTime.parse(request.getScheduledAt());
+            ride.setScheduledAt(zdt.withZoneSameInstant(ZoneId.systemDefault())
+                    .toLocalDateTime());
             rideRepository.save(ride);
             return new CreatedRideDTO(ride.getId(), request.getRoute(), request.getVehicleType(), request.isBabyTransport(),
                     request.isPetTransport(), request.getPassengersEmails(), null, RideStatus.REQUESTED);
+        }else{
+            ride.setScheduledAt(null);
         }
 
         Optional<Driver> driver = assignDriverToRide(ride, request.isPetTransport(), request.isBabyTransport(), request.getVehicleType());
 
         if(driver.isEmpty()){
-            return new CreatedRideDTO();
+            throw new RuntimeException("There is no free driver available!");
         }else{
             ride.setDriver(driver.get());
             ride.setStatus(RideStatus.ASSIGNED);
