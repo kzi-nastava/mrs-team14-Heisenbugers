@@ -4,6 +4,7 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.MessageResponse;
+import com.ftn.heisenbugers.gotaxi.models.dtos.PanicEventDTO;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.NotificationRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.PanicEventRepository;
@@ -30,7 +31,21 @@ public class AdminPanicController {
         // admin?
         AuthContextService.getCurrentAdmin();
 
-        return ResponseEntity.ok(panicRepository.findByResolvedFalseOrderByCreatedAtDesc());
+        //return ResponseEntity.ok(panicRepository.findByResolvedFalseOrderByCreatedAtDesc());
+        var events = panicRepository.findByResolvedFalseOrderByCreatedAtDesc();
+        var dtos = events.stream()
+                .map(pe -> new PanicEventDTO(
+                        pe.getId(),
+                        pe.isResolved(),
+                        pe.getRide() != null ? pe.getRide().getId() : null,
+                        pe.getMessage(),
+                        pe.getCreatedAt(),
+                        pe.getVehicleLat(),
+                        pe.getVehicleLng()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
 
     @PostMapping("/panic/{panicId}/resolve")

@@ -47,7 +47,7 @@ export const routes: Routes = [
       { path: 'driver-ride-history/ride', component: RideCardComponent },
       { path: 'driver-registration', component: DriverRegistrationComponent },
       { path: 'start-ride', component: StartRideComponent },
-      { path: 'during-ride', component: DuringRide },
+      { path: 'during-ride/:rideId', component: DuringRide },
       { path: 'profile-requests', component: ProfileRequestsComponent},
       { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
       { path: 'favorite-rides', component: FavoriteRoutesComponent },
