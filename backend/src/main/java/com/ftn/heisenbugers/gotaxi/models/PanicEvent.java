@@ -25,8 +25,13 @@ public class PanicEvent extends BaseEntity {
     @JoinColumn(name = "administrator_id")
     private Administrator handledBy;
 
-    private Double vehicleLat;
-    private Double vehicleLng;
 
+    @Column(name = "vehicle_lat")
+    private Double vehicleLat;
+
+    @Column(name = "vehicle_lng")
+    private Double vehicleLng;;
+
+    @NotNull
     private String message;
 }

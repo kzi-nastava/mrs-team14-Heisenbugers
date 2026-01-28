@@ -134,13 +134,12 @@ export class AdminPanicComponent implements OnInit, OnDestroy {
 
     try {
       await this.api.resolvePanic(this.selectedPanicId).toPromise();
-      // после resolve обновляем список
+
       await this.poll(true);
       this.selectedPanicId = null;
       this.selectedRideId = null;
       this.pins = [];
     } catch {
-      // можно вывести ошибку в UI, если хочешь
     }
   }
 }
