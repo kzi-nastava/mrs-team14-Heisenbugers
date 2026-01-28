@@ -29,6 +29,7 @@ export class AdminPanicComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadOnce();
+    console.log("123512")
     this.intervalId = setInterval(() => this.poll(), 4000);
   }
 
