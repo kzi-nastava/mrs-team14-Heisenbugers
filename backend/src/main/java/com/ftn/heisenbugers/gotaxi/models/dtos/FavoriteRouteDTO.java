@@ -1,16 +1,20 @@
 package com.ftn.heisenbugers.gotaxi.models.dtos;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.List;
+import java.util.UUID;
+
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class FavoriteRouteDTO {
-    @Getter @Setter
-    private Long Id;
-    @Getter @Setter
-    private RouteDTO route;
+    private UUID Id;
+    private LocationDTO startAddress;
+    private LocationDTO endAddress;
 
+    private List<LocationDTO> stops;
+
+    private double distanceKm;
+    private int timeMin;
 }

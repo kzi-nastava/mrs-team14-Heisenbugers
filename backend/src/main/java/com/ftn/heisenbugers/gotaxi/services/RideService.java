@@ -12,6 +12,8 @@ import com.ftn.heisenbugers.gotaxi.repositories.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -72,6 +74,16 @@ public class RideService {
             ride.addPassenger(p.get());
         }
 
+        ZonedDateTime zdt = ZonedDateTime.parse(request.getScheduledAt());
+        ride.setScheduledAt(zdt.withZoneSameInstant(ZoneId.systemDefault())
+                .toLocalDateTime());
+
+        if(request.getScheduledAt() != null){
+            rideRepository.save(ride);
+            return new CreatedRideDTO(ride.getId(), request.getRoute(), request.getVehicleType(), request.isBabyTransport(),
+                    request.isPetTransport(), request.getPassengersEmails(), null, RideStatus.REQUESTED);
+        }
+
         Optional<Driver> driver = assignDriverToRide(ride, request.isPetTransport(), request.isBabyTransport(), request.getVehicleType());
 
         if(driver.isEmpty()){
@@ -85,7 +97,9 @@ public class RideService {
             sendAcceptedRideEmail(ride.getRoute().getUser(), ride);
         }
 
-        return new CreatedRideDTO();
+        return new CreatedRideDTO(ride.getId(), request.getRoute(), ride.getVehicle().getType(), ride.getVehicle().isBabyTransport(),
+                ride.getVehicle().isPetTransport(), request.getPassengersEmails(),
+                new DriverDto(ride.getDriver().getFirstName(), ride.getDriver().getLastName()), RideStatus.ASSIGNED);
     }
 
     public Optional<Driver> assignDriverToRide(Ride ride, boolean petTransport, boolean babyTransport, VehicleType vehicleType) {

@@ -21,4 +21,6 @@ public class CreateRideDTO {
     private boolean petTransport;
     @Setter @Getter
     private List<String> passengersEmails;
+    @Setter @Getter
+    private String scheduledAt;
 }

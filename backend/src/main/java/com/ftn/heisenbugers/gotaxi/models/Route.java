@@ -46,6 +46,9 @@ public class Route extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder.Default
+    private boolean favorite = false;
+
     public void setPolyline(List<Location> locations) {
         double[][] coords = locations.stream()
                 .map(l -> new double[]{l.getLongitude(), l.getLatitude()})
