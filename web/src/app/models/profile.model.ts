@@ -14,6 +14,7 @@ export interface UpdateProfileDTO {
   phoneNumber: string;
   address: string;
   profileImageUrl: string | null;
+  image: string  | null;
 }
 
 export interface ChangePasswordDTO {

@@ -16,7 +16,7 @@ import {CreateVehicleDTO} from '../../../models/driver-registration.model';
 })
 export class EditVehicle {
   closeEdit = output<boolean>();
-  saveVehicle = output<Vehicle>();
+  saveVehicle = output<CreateVehicleDTO>();
 
   vehicle = input<Vehicle>();
 
@@ -81,10 +81,9 @@ export class EditVehicle {
       babyTransport: this.form.value.babiesAllowed!,
       petTransport: this.form.value.petsAllowed!,
     };
-    /*this.saveVehicle.emit({
-      ...this.form.value,
-    } as Vehicle);
 
-    this.closeEdit.emit(false);*/
+    this.saveVehicle.emit(dto);
+
+    this.closeEdit.emit(false);
   }
 }

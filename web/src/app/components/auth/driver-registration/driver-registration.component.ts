@@ -60,6 +60,20 @@ export class DriverRegistrationComponent {
     return !!c && c.invalid && (c.touched || this.submitAttempted);
   }
 
+  private base64ToFile(base64: string, filename: string): File {
+    const arr = base64.split(',');
+    const mime = arr[0].match(/:(.*?);/)![1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+
+    return new File([u8arr], filename, { type: mime });
+  }
+
   submit() {
     this.submitAttempted = true;
     if (this.form.invalid) {
@@ -78,6 +92,8 @@ export class DriverRegistrationComponent {
       petTransport: Boolean(this.f.petsAllowed.value!),
     }
 
+
+
     const driverDTO: CreateDriverDTO = {
       email: this.f.email.value!,
       firstName: this.f.firstName.value!,
@@ -88,7 +104,24 @@ export class DriverRegistrationComponent {
       vehicle: vehicleDTO,
     };
 
-    this.http.post<CreateDriverDTO>("http://localhost:8081/api/drivers", driverDTO).subscribe({
+    const formData = new FormData();
+    if (this.imagePreview != null) {
+      const image = this.imagePreview
+      driverDTO.profileImageUrl = null;
+      formData.append(
+        'data',
+        new Blob([JSON.stringify(driverDTO)], { type: 'application/json' })
+      );
+      const file = this.base64ToFile(image, 'profile.png');
+      formData.append('image', file);
+    }else{
+      formData.append(
+        'data',
+        new Blob([JSON.stringify(driverDTO)], { type: 'application/json' })
+      );
+    }
+
+    this.http.post<CreateDriverDTO>("http://localhost:8081/api/drivers", formData).subscribe({
       next: () => {
         this.submitted = true; // "Activation email sent..."
       },
