@@ -12,9 +12,19 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.activities.AuthActivity;
+import com.example.gotaximobile.models.dtos.RegisterResponseDTO;
+import com.example.gotaximobile.network.AuthApi;
+import com.example.gotaximobile.network.PartUtil;
+import com.example.gotaximobile.network.RetrofitClient;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.io.IOException;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterFragment extends Fragment {
 
@@ -37,12 +47,62 @@ public class RegisterFragment extends Fragment {
                 Toast.makeText(requireContext(), "Photo upload is optional.", Toast.LENGTH_SHORT).show()
         );
 
+        AuthApi api = RetrofitClient.authApi(requireContext());
+
+
         btnCreate.setOnClickListener(v -> {
             clearErrors();
             if (!validate()) {
                 Toast.makeText(requireContext(), "Please fix the highlighted fields.", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            okhttp3.MultipartBody.Part profileImagePart = null;
+
+
+            okhttp3.MultipartBody.Part imagePart = null;
+            //will be save your photo
+
+            api.registerPassenger(
+                    PartUtil.text(getText(etEmail)),
+                    PartUtil.text(getText(etPassword)),
+                    PartUtil.text(getText(etConfirm)),
+                    PartUtil.text(getText(etName)),
+                    PartUtil.text(getText(etSurname)),
+                    PartUtil.text(getText(etPhone)),
+                    PartUtil.text(getText(etAddress)),
+                    profileImagePart
+            ).enqueue(new retrofit2.Callback<RegisterResponseDTO>() {
+                @Override
+                public void onResponse(retrofit2.Call<RegisterResponseDTO> call, retrofit2.Response<RegisterResponseDTO> res)
+                {
+                    if (res.isSuccessful() && res.body() != null) {
+                        toast(res.body().getMessage()); // "Check email to activate..."
+                        ((AuthActivity) requireActivity()).openLogin(true);
+
+                    }else {
+                        String errorBody = "";
+                        try {
+                            if (res.errorBody() != null) {
+                                errorBody = res.errorBody().string();
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        toast("Register failed " + res.code() + ": " + errorBody);
+
+                        System.out.println("Register error: " + errorBody);
+                    }
+
+
+                    toast("Register failed: " + res.code());
+                }
+                @Override
+                public void onFailure(retrofit2.Call<RegisterResponseDTO> call, Throwable t) {
+                    toast("Network error: " + t.getMessage());
+                    t.printStackTrace();
+                }
+            });
 
 
             Toast.makeText(requireContext(),
@@ -52,6 +112,9 @@ public class RegisterFragment extends Fragment {
         });
 
         btnGoToLogin.setOnClickListener(v -> goToLogin());
+    }
+    private void toast(String message) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show();
     }
 
     private void goToLogin() {
