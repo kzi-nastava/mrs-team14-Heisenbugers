@@ -103,7 +103,7 @@ public class RegisterFragment extends Fragment {
                     t.printStackTrace();
                 }
             });
-            
+
 
             Toast.makeText(requireContext(),
                     "Registered. Now activate via email link.",
