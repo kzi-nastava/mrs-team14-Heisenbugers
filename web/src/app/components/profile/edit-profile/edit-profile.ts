@@ -86,6 +86,7 @@ export class EditProfile {
         lastName: this.form.value.name?.split(' ')[1]!,
         phoneNumber: this.form.value.phoneNumber!,
         address: this.form.value.address!,
+        email: this.form.value.email!,
         profileImageUrl: this.imagePreview,
         image: this.imagePreview!
       };
@@ -96,6 +97,7 @@ export class EditProfile {
         lastName: this.form.value.name?.split(' ')[1]!,
         phoneNumber: this.form.value.phoneNumber!,
         address: this.form.value.address!,
+        email: this.form.value.email!,
         profileImageUrl: this.imagePreview,
         image: null
       };
