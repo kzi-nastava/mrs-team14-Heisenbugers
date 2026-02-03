@@ -58,14 +58,10 @@ public class RegisterFragment extends Fragment {
             }
 
             okhttp3.MultipartBody.Part profileImagePart = null;
-            // если у тебя будет выбранный файл:
-            // File file = ...
-            // RequestBody rb = RequestBody.create(file, MediaType.parse("image/*"));
-            // profileImagePart = MultipartBody.Part.createFormData("profileImage", file.getName(), rb);
 
 
             okhttp3.MultipartBody.Part imagePart = null;
-            // if (selectedImageUri != null) { ... }
+            //will be save your photo
 
             api.registerPassenger(
                     PartUtil.text(getText(etEmail)),
@@ -107,11 +103,7 @@ public class RegisterFragment extends Fragment {
                     t.printStackTrace();
                 }
             });
-
-
-
-
-
+            
 
             Toast.makeText(requireContext(),
                     "Registered. Now activate via email link.",

@@ -8,8 +8,8 @@ import com.example.gotaximobile.models.dtos.LoginResponseDTO;
 public class TokenStorage {
     private static final String PREFS = "auth_prefs";
     private static final String KEY_TOKEN = "access_token";
-    private static final String KEY_ROLE = "role";
-    private static final String KEY_USER_ID = "user_id";
+    //private static final String KEY_ROLE = "role";
+   // private static final String KEY_USER_ID = "user_id";
 
     private final SharedPreferences sp;
 
@@ -19,15 +19,15 @@ public class TokenStorage {
 
     public void save(LoginResponseDTO dto) {
         sp.edit()
-                .putString(KEY_TOKEN, dto.accessToken)
-                .putString(KEY_ROLE, dto.role)
-                .putString(KEY_USER_ID, dto.userId)
-                .apply();
+                .putString(KEY_TOKEN, dto.accessToken).apply();
+                //.putString(KEY_ROLE, dto.role)
+                //.putString(KEY_USER_ID, dto.userId)
+
     }
 
     public String getToken() { return sp.getString(KEY_TOKEN, null); }
-    public String getRole() { return sp.getString(KEY_ROLE, null); }
-    public String getUserId() { return sp.getString(KEY_USER_ID, null); }
+    //public String getRole() { return sp.getString(KEY_ROLE, null); }
+    //public String getUserId() { return sp.getString(KEY_USER_ID, null); }
 
     public void clear() { sp.edit().clear().apply(); }
 }
