@@ -3,8 +3,8 @@ package com.example.gotaximobile.models.dtos;
 public class LoginResponseDTO {
     public String accessToken;
     public String tokenType;
-    public String userId; // UUID как String
-    public String role;   // "PASSENGER"/"DRIVER"/"ADMIN"
+    public String userId;
+    public String role;
 
     public String getAccessToken() {
         return accessToken;
