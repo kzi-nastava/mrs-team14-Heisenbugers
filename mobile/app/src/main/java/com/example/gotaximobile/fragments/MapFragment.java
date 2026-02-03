@@ -60,6 +60,8 @@ public class MapFragment extends Fragment {
         mapController.setCenter(new GeoPoint(45.2571, 19.8335)); // Novi Sad
         MapPin pin = new MapPin(45.2571, 19.8335);
         pin.iconResId = R.drawable.ic_car;
+        pin.popup = "Some popup";
+        pin.snapToRoad = true;
         setPins(Arrays.asList(pin,
                 new MapPin(45.2671, 19.8335)
         ));
@@ -81,15 +83,21 @@ public class MapFragment extends Fragment {
                 public void onSuccess(GeoPoint point) {
                     pin.lat = point.getLatitude();
                     pin.lng = point.getLongitude();
+                    pins.add(pin);
+                    renderSinglePin(pin);
                 }
 
                 @Override
                 public void onError(Exception e) {
+                    pins.add(pin);
+                    renderSinglePin(pin);
                 }
             });
+        } else {
+            pins.add(pin);
+            renderSinglePin(pin);
         }
-        pins.add(pin);
-        renderSinglePin(pin);
+
     }
 
     private void renderPins() {
