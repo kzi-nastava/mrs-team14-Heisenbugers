@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
+import com.example.gotaximobile.fragments.MapFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -44,8 +44,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-
-
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
         if (savedInstanceState == null) {
@@ -61,7 +59,8 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
             } else if (id == R.id.nav_favorite) {
-                selectedFragment = new FavoriteRoutesFragment();
+                selectedFragment = new MapFragment();
+
             } else if (id == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
             }
@@ -85,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
             topAppBar.setVisibility(android.view.View.GONE);
         }
     }
+
     private void tintMenuItemText(MaterialToolbar toolbar, int menuItemId, int colorRes) {
         MenuItem item = toolbar.getMenu().findItem(menuItemId);
         if (item == null) return;

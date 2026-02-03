@@ -46,4 +46,7 @@ dependencies {
     androidTestImplementation libs.espresso.core
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
+    implementation libs.osmdroid.android
+    implementation libs.okhttp
 }
+
