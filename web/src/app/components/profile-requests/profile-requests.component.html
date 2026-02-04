@@ -1,7 +1,7 @@
 <div class="p-6">
   <div class="flex items-center justify-between mb-6">
     <h2 class="text-xl font-semibold">Profile change requests</h2>
-    <button class="px-3 py-1 bg-gray-100 rounded" (click)="loadList()">Refresh</button>
+    <button class="px-4 py-1.5 bg-gray-100 rounded-lg cursor-pointer" (click)="loadList()">Refresh</button>
   </div>
 
   <div class="grid grid-cols-3 gap-6">
@@ -43,7 +43,7 @@
       @if (selectedRequest) {
         <div class="mb-4 flex justify-between">
           <h3 class="text-lg font-medium">Request details</h3>
-          <button class="px-3 py-1 bg-gray-100 rounded" (click)="closeDetail()">Close</button>
+          <button class="px-4 py-1.5 bg-gray-100 rounded-lg cursor-pointer" (click)="closeDetail()">Close</button>
         </div>
         <app-driver-profile-request [driverRequest]="selectedRequest" [oldProfile]="selectedOldProfile" [newProfile]="selectedNewProfile"></app-driver-profile-request>
       }
