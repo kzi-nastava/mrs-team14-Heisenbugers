@@ -1,7 +1,13 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
-import com.ftn.heisenbugers.gotaxi.models.*;
-import com.ftn.heisenbugers.gotaxi.models.dtos.*;
+import com.ftn.heisenbugers.gotaxi.models.Location;
+import com.ftn.heisenbugers.gotaxi.models.Ride;
+import com.ftn.heisenbugers.gotaxi.models.Route;
+import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.AdminRideDetailsDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.AdminRideListItemDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.MessageResponse;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +132,7 @@ public class AdminRideController {
         UUID passengerId = null;
         String passengerName = null;
         if (ride.getPassengers() != null && !ride.getPassengers().isEmpty()) {
-            Passenger p = ride.getPassengers().get(0);
+            User p = ride.getPassengers().get(0);
             if (p != null) {
                 passengerId = p.getId();
                 passengerName = p.getFirstName() + " " + p.getLastName();

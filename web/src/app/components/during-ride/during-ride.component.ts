@@ -58,9 +58,9 @@ export interface RideDTO {
 
 
 export class DuringRide {
+  @Input() rideId!: string;
   private stops?: L.LatLng[]
   private baseUrl = 'http://localhost:8081/api';
-   rideId!: string;
 
   private mockStops: L.LatLng[] = [
     new LatLng(45.249570, 19.815809),
