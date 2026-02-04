@@ -13,6 +13,7 @@ export interface UpdateProfileDTO {
   lastName: string;
   phoneNumber: string;
   address: string;
+  email: string;
   profileImageUrl: string | null;
   image: string  | null;
 }

@@ -23,7 +23,7 @@ public class DriverProfileRequestService {
     private final DriverRepository driverRepository;
 
     public List<DriverProfileRequestListDTO> getAll() {
-        return repository.findAll()
+        return repository.findAllByActiveTrue()
                 .stream()
                 .map(r -> DriverProfileRequestListDTO.builder()
                         .id(r.getId())
@@ -53,6 +53,7 @@ public class DriverProfileRequestService {
                 .orElseThrow(() -> new EntityNotFoundException("Request not found"));
 
         request.setApproved(true);
+        request.setActive(false);
         repository.save(request);
 
         Optional<Driver> driverOptional = driverRepository.findByUserEmailWithVehicle(request.getEmail());
@@ -78,6 +79,7 @@ public class DriverProfileRequestService {
                 .orElseThrow(() -> new EntityNotFoundException("Request not found"));
 
         request.setApproved(false);
+        request.setActive(false);
         repository.save(request);
     }
 
