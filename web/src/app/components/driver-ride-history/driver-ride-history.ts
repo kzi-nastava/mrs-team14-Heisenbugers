@@ -96,6 +96,7 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
   ngOnInit(): void {
     this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`).subscribe({
       next: (data) => {
+        console.log('Fetched ride history:', data);
         this.rides = data.map(r => ({
           ...r,
           startedAt: new Date(r.startedAt),

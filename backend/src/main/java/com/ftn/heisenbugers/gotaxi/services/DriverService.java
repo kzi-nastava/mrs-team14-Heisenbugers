@@ -157,8 +157,8 @@ public class DriverService {
         } catch (NullPointerException e) {
             dto.setRoute(new ArrayList<>());
         }
-        List<Passenger> passengers = r.getPassengers();
-        for (Passenger p : passengers) {
+        List<User> passengers = r.getPassengers();
+        for (User p : passengers) {
             PassengerInfoDTO passengerDTO = new PassengerInfoDTO();
             populateDto(p, passengerDTO);
             dto.addPassenger(passengerDTO);
@@ -173,7 +173,7 @@ public class DriverService {
         dto.setTrafficViolations(trafficViolationDTOS);
     }
 
-    private static void populateDto(Passenger p, PassengerInfoDTO passengerDTO) {
+    private static void populateDto(User p, PassengerInfoDTO passengerDTO) {
         passengerDTO.setPassengerId(p.getId());
         passengerDTO.setFirstName(p.getFirstName());
         passengerDTO.setLastName(p.getLastName());

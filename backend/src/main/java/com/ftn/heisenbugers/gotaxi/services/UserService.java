@@ -33,13 +33,13 @@ public class UserService {
     public UserStateDTO getState(UUID userId) {
         User u = userRepository.findUserById(userId);
         if (u instanceof Passenger p) {
-            Optional<Ride> rideOpt = rideRepository.findByPassengersContainingAndStatus(p, RideStatus.ONGOING);
+            Optional<Ride> rideOpt = rideRepository.findByRoute_User_IdAndStatus(p.getId(), RideStatus.ONGOING);
 
             return rideOpt.map(ride -> new UserStateDTO(UserState.RIDING, ride.getId()))
                     .orElseGet(() -> new UserStateDTO(UserState.LOOKING));
         } else if (u instanceof Driver d) {
             Optional<Ride> rideOptStart = rideRepository.findByDriverIdAndStatus(d.getId(), RideStatus.ASSIGNED);
-            if(rideOptStart.isPresent()){
+            if (rideOptStart.isPresent()) {
                 return new UserStateDTO(UserState.STARTING, rideOptStart.get().getId());
             }
             Optional<Ride> rideOpt = rideRepository.findByDriverIdAndStatus(d.getId(), RideStatus.ONGOING);
