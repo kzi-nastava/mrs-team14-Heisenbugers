@@ -316,7 +316,7 @@ export class DuringRide {
       return { latitude: lat, longitude: lng };
     }
 
-    // fallback: попробуем браузерный GPS (если вдруг tracking не пришёл)
+
     return await new Promise((resolve, reject) => {
       if (!navigator.geolocation) return reject('Geolocation is not available');
 
@@ -349,8 +349,7 @@ export class DuringRide {
       this.showToast('Ride stopped successfully!');
       this.stopConfirmOpen = false;
 
-      // В UI можно убрать карточку/кнопки или сделать редирект:
-      // например, на историю поездок:
+
       // this.router.navigateByUrl('/driver-ride-history');
     } catch (e: any) {
       this.stopError = e?.error?.message ?? (typeof e === 'string' ? e : 'Failed to stop ride');
