@@ -24,6 +24,9 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+                <data
+                    android:scheme="gotaxi"
+                    android:host="reset" />
             </intent-filter>
         </activity>
     </application>
