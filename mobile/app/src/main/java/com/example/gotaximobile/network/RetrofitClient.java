@@ -20,7 +20,7 @@ public class RetrofitClient {
         if(retrofit!=null)
             return retrofit;
 
-        TokenStorage storage = new TokenStorage(context);
+        TokenStorage storage = new TokenStorage(context.getApplicationContext());
 
         HttpLoggingInterceptor log = new HttpLoggingInterceptor();
         log.setLevel(HttpLoggingInterceptor.Level.BODY);

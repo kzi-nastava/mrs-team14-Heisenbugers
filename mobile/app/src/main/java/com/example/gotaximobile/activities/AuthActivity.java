@@ -1,5 +1,7 @@
 package com.example.gotaximobile.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
@@ -8,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.fragments.auth.CheckEmailFragment;
 import com.example.gotaximobile.fragments.auth.ForgotPasswordFragment;
 import com.example.gotaximobile.fragments.auth.LoginFragment;
 import com.example.gotaximobile.fragments.auth.RegisterFragment;
@@ -37,9 +40,19 @@ public class AuthActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             openLogin(false);
         }
+        handleDeepLink(getIntent(),savedInstanceState);
 
         getSupportFragmentManager().addOnBackStackChangedListener(this::updateBackArrow);
         updateBackArrow();
+
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleDeepLink(intent,null);
     }
 
     public void openLogin(boolean addToBackStack) {
@@ -53,9 +66,19 @@ public class AuthActivity extends AppCompatActivity {
     public void openForgotPassword() {
         replaceFragment(new ForgotPasswordFragment(), true, "forgot");
     }
+    public void openCheckEmail() {
+        replaceFragment(new CheckEmailFragment(), true, "check_email");
+    }
 
-    public void openResetPassword() {
-        replaceFragment(new ResetPasswordFragment(), true, "reset");
+    /*public void openResetPassword(String token) {
+        replaceFragment(new ResetPasswordFragment.newInstance(token), true, "reset");
+    }*/
+    public void openResetPassword(String token) {
+        ResetPasswordFragment f = new ResetPasswordFragment();
+        Bundle b = new Bundle();
+        b.putString(ResetPasswordFragment.ARG_TOKEN, token);
+        f.setArguments(b);
+        replaceFragment(f, true, "reset");
     }
 
     private void replaceFragment(Fragment fragment, boolean addToBackStack, String tag) {
@@ -67,6 +90,18 @@ public class AuthActivity extends AppCompatActivity {
         tx.commit();
     }
 
+    private void handleDeepLink(Intent intent, Bundle savedInstanceState) {
+        Uri data = intent.getData();
+        if (data == null) return;
+
+        String token = data.getQueryParameter("token");
+        if (token != null && !token.isEmpty()) {
+            openResetPassword(token);
+        }
+        if(savedInstanceState == null){
+            openLogin(false);
+        }
+    }
 
     private void handleBack() {
         Fragment current = getSupportFragmentManager().findFragmentById(R.id.auth_fragment_container);

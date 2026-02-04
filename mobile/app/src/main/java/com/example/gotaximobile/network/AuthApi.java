@@ -1,6 +1,7 @@
 package com.example.gotaximobile.network;
 
 import com.example.gotaximobile.models.dtos.ForgotPasswordRequestDTO;
+import com.example.gotaximobile.models.dtos.ForgotPasswordResponseDTO;
 import com.example.gotaximobile.models.dtos.LoginRequestDTO;
 import com.example.gotaximobile.models.dtos.LoginResponseDTO;
 import com.example.gotaximobile.models.dtos.MessageResponse;
