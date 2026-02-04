@@ -43,4 +43,8 @@ public class RetrofitClient {
         return get(context).create(AuthApi.class);
     }
 
+    public static ProfileService profileService(Context context){
+        return  get(context).create(ProfileService.class);
+    }
+
 }
