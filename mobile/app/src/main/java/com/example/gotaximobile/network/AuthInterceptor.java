@@ -25,7 +25,7 @@ public class AuthInterceptor implements Interceptor {
             return chain.proceed(original);
         }
         Request withAuth = original.newBuilder()
-                .addHeader("Authorization", "Bearer"+token)
+                .addHeader("Authorization", "Bearer "+token)
                 .build();
     return chain.proceed(withAuth);
     }
