@@ -11,18 +11,23 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.adapters.ProfileTabAdapter;
+import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.RideFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.Objects;
+
 
 public class ProfileFragment extends Fragment {
 
-    private boolean isDriver = true;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        TokenStorage storage = new TokenStorage(requireContext());
+        boolean isDriver = Objects.equals(storage.getRole(), "DRIVER");
+
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         MaterialToolbar topAppBar = view.findViewById(R.id.topAppBar);
@@ -66,11 +71,9 @@ public class ProfileFragment extends Fragment {
                     .commit();
         });
 
-
+        tabLayout.setVisibility(View.VISIBLE);
         if (isDriver) {
-            tabLayout.setVisibility(View.VISIBLE);
-
-            ProfileTabAdapter adapter = new ProfileTabAdapter(this);
+            ProfileTabAdapter adapter = new ProfileTabAdapter(this, isDriver);
             viewPager.setAdapter(adapter);
 
             new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -78,6 +81,16 @@ public class ProfileFragment extends Fragment {
                 else if (position == 1) {
                     tab.setText("Driver");
                 } else tab.setText("Manage Password");
+            }).attach();
+        }else{
+            ProfileTabAdapter adapter = new ProfileTabAdapter(this, isDriver);
+            viewPager.setAdapter(adapter);
+
+            new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+                if (position == 0) tab.setText("Personal");
+                else if (position == 1) {
+                    tab.setText("Manage Password");
+                }
             }).attach();
         }
 
