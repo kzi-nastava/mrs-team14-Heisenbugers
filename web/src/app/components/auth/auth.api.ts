@@ -33,3 +33,19 @@ export interface LoginResponseDTO {
   userId: string;
   role: string;
 }
+
+export interface ForgotPasswordRequestDTO {
+  email: string;
+}
+
+export interface ForgotPasswordResponseDTO {
+  message: string;
+  resetToken?: string;
+}
+
+export interface ResetPasswordRequestDTO {
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+

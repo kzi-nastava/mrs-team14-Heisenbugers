@@ -5,7 +5,10 @@ import {
   RegisterResponseDTO,
   MessageResponse,
   LoginRequestDTO,
-  LoginResponseDTO
+  LoginResponseDTO,
+  ForgotPasswordRequestDTO,
+  ForgotPasswordResponseDTO,
+  ResetPasswordRequestDTO
 } from './auth.api';
 import {JwtHelperService} from '@auth0/angular-jwt';
 
@@ -110,5 +113,22 @@ export class AuthService {
 
     this.user$.next(role);
   }
+
+  forgotPassword(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(
+      `${this.baseUrl}/forgot-password`,
+      { email },
+      { headers: this.headers }
+    );
+  }
+
+  resetPassword(token: string, newPassword: string, confirmPassword: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(
+      `${this.baseUrl}/reset-password`,
+      { token, newPassword, confirmPassword },
+      { headers: this.headers }
+    );
+  }
+
 
 }
