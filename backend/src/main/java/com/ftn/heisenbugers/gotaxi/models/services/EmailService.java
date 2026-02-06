@@ -46,4 +46,27 @@ public class EmailService {
         msg.setText(body);
         mailSender.send(msg);
     }
+
+    public void sendPasswordResetEmail(String toEmail, String resetLink) {
+        try{
+        SimpleMailMessage msg = new SimpleMailMessage();
+        msg.setFrom(from);
+        msg.setTo(toEmail);
+        msg.setSubject("GoTaxi – Password reset");
+        msg.setText("""
+            You requested a password reset.
+
+            Click the link below to set a new password (valid for 24h):
+            %s
+
+            If you did not request this, please ignore this email.
+            """.formatted(resetLink));
+
+        mailSender.send(msg);
+    }catch (Exception ex) {
+        // Чтобы не ронять /forgot-password с 500, но видеть проблему в логах
+        System.err.println("Failed to send password reset email: " + ex.getMessage());
+        ex.printStackTrace();
+    }
+}
 }

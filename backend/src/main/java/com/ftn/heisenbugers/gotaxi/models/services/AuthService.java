@@ -249,6 +249,69 @@ public class AuthService {
         );
     }
 
+
+    public void requestPasswordReset(String email, String appBaseUrl) {
+
+        if (email == null || email.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required.");
+        }
+
+        String normalizedEmail = email.trim().toLowerCase();
+
+        User user = userRepository.findByEmail(normalizedEmail).orElse(null);
+        if (user == null) {
+            return;
+        }
+
+        String token = UUID.randomUUID().toString().replace("-", "") +
+                UUID.randomUUID().toString().replace("-", "");
+
+        ActivationToken resetToken = activationTokenRepository.findByUser(user)
+                .orElseGet(() -> ActivationToken.builder()
+                        .user(user)
+                        .build()
+                );
+
+        resetToken.setToken(token);
+        resetToken.setExpiresAt(Instant.now().plus(Duration.ofHours(24)));
+        resetToken.setUsed(false);
+
+        activationTokenRepository.save(resetToken);
+
+        String resetLink = appBaseUrl + "/auth/reset-password?token=" + token;
+
+        emailService.sendPasswordResetEmail(normalizedEmail, resetLink);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+        if (token == null || token.isBlank()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token is required.");
+        }
+
+        ActivationToken at = activationTokenRepository.findByToken(token)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Invalid password reset token."));
+
+        if (at.isUsed()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token already used.");
+        }
+        if (Instant.now().isAfter(at.getExpiresAt())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Token expired.");
+        }
+
+        User user = at.getUser();
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found for this token.");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        at.setUsed(true);
+        activationTokenRepository.save(at);
+    }
+
+
+
     private String resolveRole(User user) {
         if (user instanceof Driver) {
             return "DRIVER";

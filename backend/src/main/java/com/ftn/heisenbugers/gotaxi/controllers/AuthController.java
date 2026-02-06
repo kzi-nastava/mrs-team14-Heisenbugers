@@ -89,6 +89,10 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<MessageResponse> forgotPassword(@RequestBody ForgotPasswordRequestDTO request) {
 
+        String appBaseUrl = "http://localhost:4200";
+
+        authService.requestPasswordReset(request.getEmail(), appBaseUrl);
+
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(new MessageResponse("If the email exists, a reset link has been sent."));
     }
@@ -103,10 +107,15 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new MessageResponse("Passwords do not match."));
         }
+        if (request.getToken() == null || request.getToken().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Reset token is required."));
+        }
+
+        authService.resetPassword(request.getToken(), request.getNewPassword());
 
 
-        // for future token->user
-        return ResponseEntity.ok(new MessageResponse("Password updated (stub)."));
+        return ResponseEntity.ok(new MessageResponse("Password updated."));
     }
 
     //logout
