@@ -2,8 +2,10 @@ package com.example.gotaximobile.fragments.profile;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +13,16 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.models.dtos.ChangePasswordDTO;
+import com.example.gotaximobile.models.dtos.GetProfileDTO;
+import com.example.gotaximobile.network.RetrofitClient;
 import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Objects;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ManagePassword extends Fragment {
 
@@ -60,7 +71,35 @@ public class ManagePassword extends Fragment {
         } else tilConfirm.setError(null);
 
         if (isValid) {
-            Toast.makeText(getContext(), "Password Updated Successfully!", Toast.LENGTH_SHORT).show();
+            ChangePasswordDTO body = new ChangePasswordDTO(oldPass, newPass, confirmPass);
+            sendRequest(body);
         }
+    }
+
+    private void sendRequest(ChangePasswordDTO body) {
+        RetrofitClient.profileService(getContext()).changePassword(body).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Password Updated Successfully!", Toast.LENGTH_SHORT).show();
+                    clearInputs();
+                } else {
+                    Log.e("API_ERROR", "Response failed: " + response.code());
+                    Toast.makeText(getContext(), "Old password is incorrect!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Log.e("NETWORK_ERROR", Objects.requireNonNull(t.getMessage()));
+                Toast.makeText(getContext(), "There was an error!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void clearInputs(){
+        tilOld.getEditText().setText("");
+        tilNew.getEditText().setText("");
+        tilConfirm.getEditText().setText("");
     }
 }
