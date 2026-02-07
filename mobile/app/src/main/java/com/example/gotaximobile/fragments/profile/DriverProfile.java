@@ -88,5 +88,16 @@ public class DriverProfile extends Fragment {
         seatsCard.setData("Seats", String.valueOf(vehicle.seatCount), R.drawable.ic_car_seat);
         babiesAllowedCard.setData("Baby Allowed", vehicle.babyTransport ? "Yes" : "No", R.drawable.ic_baby);
         petsAllowedCard.setData("Pets Allowed", vehicle.petTransport ? "Yes" : "No", R.drawable.ic_pets);
+
+        Bundle bundle = new Bundle();
+        bundle.putString("model", vehicle.vehicleModel);
+        bundle.putString("type", vehicle.vehicleType);
+        bundle.putString("plate", vehicle.licensePlate);
+        bundle.putString("seats", String.valueOf(vehicle.seatCount));
+        bundle.putBoolean("babies", vehicle.babyTransport);
+        bundle.putBoolean("pets", vehicle.petTransport);
+
+        getParentFragmentManager().setFragmentResult("vehicleInfo", bundle);
+
     }
 }

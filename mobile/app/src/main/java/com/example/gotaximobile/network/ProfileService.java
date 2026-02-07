@@ -4,10 +4,14 @@ import com.example.gotaximobile.models.dtos.ChangePasswordDTO;
 import com.example.gotaximobile.models.dtos.CreateVehicleDTO;
 import com.example.gotaximobile.models.dtos.GetProfileDTO;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.PUT;
+import retrofit2.http.Part;
 
 public interface ProfileService {
     @GET("api/profile/me")
@@ -18,6 +22,16 @@ public interface ProfileService {
 
     @GET("api/profile/me/vehicle")
     Call<CreateVehicleDTO> getDriverVehicle();
+
+    @Multipart
+    @PUT("api/profile/me")
+    Call<GetProfileDTO> updatePersonalInfromation(
+            @Part("data") GetProfileDTO profileDTO,
+            @Part MultipartBody.Part profileImage
+    );
+
+    @PUT("api/profile/me/vehicle")
+    Call<CreateVehicleDTO> updateVehicle(@Body CreateVehicleDTO body);
 
     @PUT("api/profile/me/password")
     Call<Void> changePassword(@Body ChangePasswordDTO body);
