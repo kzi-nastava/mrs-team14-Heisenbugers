@@ -39,6 +39,7 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+        holder.mItem = mValues.get(position);
         Ride currentRide = mValues.get(position);
         holder.mContentView.setText(currentRide.getInfoForList());
         holder.mRightSideView.setText(currentRide.getFormatedPrice());
