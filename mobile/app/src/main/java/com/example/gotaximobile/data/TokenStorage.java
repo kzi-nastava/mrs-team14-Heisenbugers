@@ -9,7 +9,6 @@ public class TokenStorage {
     private static final String PREFS = "auth_prefs";
 
     private static final String KEY_ACCESS_TOKEN = "accessToken";
-    private static final String KEY_TOKEN_TYPE = "tokenType";
     private static final String KEY_ROLE = "role";
    // private static final String KEY_USER_ID = "user_id";
 
@@ -24,7 +23,6 @@ public class TokenStorage {
         if (dto == null) return;
         sp.edit()
                 .putString(KEY_ACCESS_TOKEN, dto.getAccessToken())
-                .putString(KEY_TOKEN_TYPE, dto.getTokenType())
                 .putString(KEY_ROLE, dto.getRole()).apply();
                 //.putString(KEY_USER_ID, dto.userId)
 
@@ -32,10 +30,6 @@ public class TokenStorage {
 
     public String getAccessToken() {
         return sp.getString(KEY_ACCESS_TOKEN, null);
-    }
-
-    public String getTokenType() {
-        return sp.getString(KEY_TOKEN_TYPE, "Bearer");
     }
 
     public String getRole() {
@@ -50,9 +44,7 @@ public class TokenStorage {
     public String getAuthHeaderValue() {
         String token = getAccessToken();
         if (token == null || token.isEmpty()) return null;
-        String type = getTokenType();
-        if (type == null || type.isEmpty()) type = "Bearer";
-        return type + " " + token;
+        return "Bearer " + token;
     }
     public void clear() { sp.edit().clear().apply(); }
 }
