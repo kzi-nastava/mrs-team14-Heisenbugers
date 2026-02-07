@@ -69,5 +69,14 @@ public class PersonalProfile extends Fragment {
         emailCard.setData("Email", profile.email, R.drawable.ic_email);
         addressCard.setData("Address", profile.address, R.drawable.ic_address);
         phoneCard.setData("Phone", profile.phoneNumber, R.drawable.ic_phone);
+
+        Bundle result = new Bundle();
+        result.putString("name", profile.firstName + " " + profile.lastName);
+        result.putString("email", profile.email);
+        result.putString("address", profile.address);
+        result.putString("phone", profile.phoneNumber);
+        result.putString("profilePhoto", profile.profileImageUrl);
+
+        getParentFragmentManager().setFragmentResult("profileKey", result);
     }
 }
