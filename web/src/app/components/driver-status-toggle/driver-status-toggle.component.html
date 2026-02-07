@@ -1,0 +1,51 @@
+<div class="flex items-center gap-3">
+
+  <div class="flex flex-col">
+    <span class="text-xs text-gray-500 uppercase tracking-wide">
+      Driver status
+    </span>
+
+    @if (!loading) {
+      <span class="text-sm text-gray-700">
+        {{ hint }}
+      </span>
+    } @else {
+      <span class="text-sm text-gray-400">
+        Loading status…
+      </span>
+    }
+
+    @if (error) {
+      <span class="text-xs text-red-500 mt-1">
+        {{ error }}
+      </span>
+    }
+  </div>
+
+  <button
+    type="button"
+    class="relative inline-flex items-center rounded-full px-3 py-1.5 text-sm font-semibold
+           border transition"
+    [class.bg-lime-400]="isActive && !disabled"
+    [class.border-lime-500]="isActive && !disabled"
+    [class.text-black]="isActive && !disabled"
+    [class.bg-gray-200]="!isActive || disabled"
+    [class.border-gray-300]="!isActive || disabled"
+    [class.text-gray-600]="!isActive || disabled"
+    [class.opacity-60]="disabled"
+    (click)="toggle()"
+    [disabled]="disabled || loading"
+  >
+    <span
+      class="w-2 h-2 rounded-full mr-2"
+      [class.bg-green-500]="isActive"
+      [class.bg-red-500]="!isActive"
+    ></span>
+
+    @if (!saving) {
+      {{ label }}
+    } @else {
+      Saving…
+    }
+  </button>
+</div>
