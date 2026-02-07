@@ -21,4 +21,20 @@ public class LoginResponseDTO {
     public String getRole() {
         return role;
     }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 }
