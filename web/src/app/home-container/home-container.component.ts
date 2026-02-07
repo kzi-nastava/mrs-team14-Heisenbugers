@@ -2,7 +2,7 @@ import { Component, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { HomeComponent } from '../components/home/home';
 import { DuringRide } from '../components/during-ride/during-ride.component';
 import { HttpClient } from '@angular/common/http';
-import { DriverDriving } from '../driver-driving/driver-driving';
+import DriverDriving from '../driver-driving/driver-driving';
 
 interface UserStateDTO {
   rideId: string,

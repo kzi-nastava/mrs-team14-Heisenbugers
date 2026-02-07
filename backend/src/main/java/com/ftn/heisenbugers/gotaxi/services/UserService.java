@@ -100,7 +100,7 @@ public class UserService {
         } catch (NullPointerException e) {
             dto.setStartAddress("");
         }
-        dto.setPanicTriggered(r.getPanicEvent() == null);
+        dto.setPanicTriggered(r.getPanicEvent() != null);
         dto.setCanceledBy(r.getCanceledBy());
         dto.setStartedAt(r.getStartedAt());
 
