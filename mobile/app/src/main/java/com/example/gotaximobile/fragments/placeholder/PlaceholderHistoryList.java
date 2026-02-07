@@ -4,8 +4,8 @@ import com.example.gotaximobile.models.Driver;
 import com.example.gotaximobile.models.Ride;
 import com.example.gotaximobile.models.User;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class PlaceholderHistoryList {
@@ -29,8 +29,8 @@ public class PlaceholderHistoryList {
                     createDummyDriver(),
                     "123 Main St, Downtown",
                     "456 Park Ave, Uptown",
-                    new Date(),
-                    new Date(System.currentTimeMillis() + 1800000),
+                    LocalDateTime.now(),
+                    LocalDateTime.now().plusHours(1),
                     350.00,
                     4.5,
                     5.0,
@@ -44,8 +44,8 @@ public class PlaceholderHistoryList {
                     createDummyDriver(),
                     "Airport Terminal A",
                     "Grand Hotel & Resort",
-                    new Date(System.currentTimeMillis() - 7200000), // 2 hours ago
-                    new Date(System.currentTimeMillis() - 6600000), // 1 hour 50 mins ago
+                    LocalDateTime.now().minusHours(2), // 2 hours ago
+                    LocalDateTime.now().minusHours(1), // 1 hour ago
                     280.50,
                     4.2,
                     5.0,
