@@ -12,13 +12,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private static Retrofit retrofit;
 
-    private static final String BASE_URL = "http://10.0.2.2:8081/";
-    //private static final String BASE_URL = "http://192.168.0.10:8081/";
+    // private static final String BASE_URL = "http://10.0.2.2:8081/";
+    private static final String BASE_URL = "http://192.168.0.16:8081/";
 
 
-
-    public static Retrofit get(Context context){
-        if(retrofit!=null)
+    public static Retrofit get(Context context) {
+        if (retrofit != null)
             return retrofit;
 
         TokenStorage storage = new TokenStorage(context.getApplicationContext());
@@ -40,12 +39,12 @@ public class RetrofitClient {
 
     }
 
-    public static AuthApi authApi(Context context){
+    public static AuthApi authApi(Context context) {
         return get(context).create(AuthApi.class);
     }
 
-    public static ProfileService profileService(Context context){
-        return  get(context).create(ProfileService.class);
+    public static ProfileService profileService(Context context) {
+        return get(context).create(ProfileService.class);
     }
 
 }

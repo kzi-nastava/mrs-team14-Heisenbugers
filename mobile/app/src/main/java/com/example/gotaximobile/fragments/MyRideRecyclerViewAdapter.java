@@ -40,11 +40,13 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        // holder.mIdView.setText(mValues.get(position).id);
         Ride currentRide = mValues.get(position);
         holder.mContentView.setText(currentRide.getInfoForList());
         holder.mRightSideView.setText(currentRide.getFormatedPrice());
 
+        // Animation
+        holder.itemView.setAlpha(0f);
+        holder.itemView.animate().alpha(1f).setDuration(300).start();
     }
 
     @Override
@@ -60,7 +62,6 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
 
         public ViewHolder(FragmentItemBinding binding, Consumer<Ride> handler) {
             super(binding.getRoot());
-            // mIdView = binding.itemNumber;
             mContentView = binding.content;
             mRightSideView = binding.rightSide;
 
