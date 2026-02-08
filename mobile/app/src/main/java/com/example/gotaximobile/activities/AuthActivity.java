@@ -3,6 +3,7 @@ package com.example.gotaximobile.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
@@ -15,6 +16,8 @@ import com.example.gotaximobile.fragments.auth.ForgotPasswordFragment;
 import com.example.gotaximobile.fragments.auth.LoginFragment;
 import com.example.gotaximobile.fragments.auth.RegisterFragment;
 import com.example.gotaximobile.fragments.auth.ResetPasswordFragment;
+import com.example.gotaximobile.network.AuthApi;
+import com.example.gotaximobile.network.RetrofitClient;
 import com.google.android.material.appbar.MaterialToolbar;
 
 public class AuthActivity extends AppCompatActivity {
@@ -37,9 +40,9 @@ public class AuthActivity extends AppCompatActivity {
 
         topAppBar.setNavigationOnClickListener(v -> handleBack());
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             openLogin(false);
-        }
+        }*/
         handleDeepLink(getIntent(),savedInstanceState);
 
         getSupportFragmentManager().addOnBackStackChangedListener(this::updateBackArrow);
@@ -92,13 +95,31 @@ public class AuthActivity extends AppCompatActivity {
 
     private void handleDeepLink(Intent intent, Bundle savedInstanceState) {
         Uri data = intent.getData();
-        if (data == null) return;
-
-        String token = data.getQueryParameter("token");
-        if (token != null && !token.isEmpty()) {
-            openResetPassword(token);
+        if (data == null) {
+            if (savedInstanceState == null) {
+                openLogin(false);
+            }
+            return;
         }
-        if(savedInstanceState == null){
+
+        String path = data.getPath();
+        String token = data.getQueryParameter("token");
+
+
+        android.util.Log.d("AuthActivity", "handleDeepLink data = " + data);
+
+        if (token != null && !token.isEmpty()) {
+            if ("/reset-password".equals(path)) {
+
+                openResetPassword(token);
+                return;
+            } else if ("/activate-account".equals(path)) {
+                activateAccountFromDeepLink(token);
+                return;
+            }
+        }
+
+        if (savedInstanceState == null) {
             openLogin(false);
         }
     }
@@ -117,6 +138,30 @@ public class AuthActivity extends AppCompatActivity {
         } else {
             finish();
         }
+    }
+
+    private void activateAccountFromDeepLink(String token) {
+        AuthApi api = RetrofitClient.authApi(this);
+
+        api.activateAccount(token).enqueue(new retrofit2.Callback<com.example.gotaximobile.models.dtos.MessageResponse>() {
+            @Override
+            public void onResponse(retrofit2.Call<com.example.gotaximobile.models.dtos.MessageResponse> call,
+                                   retrofit2.Response<com.example.gotaximobile.models.dtos.MessageResponse> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(AuthActivity.this, "Account activated", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AuthActivity.this, "Activation failed", Toast.LENGTH_SHORT).show();
+                }
+                openLogin(false);
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<com.example.gotaximobile.models.dtos.MessageResponse> call,
+                                  Throwable t) {
+                Toast.makeText(AuthActivity.this, "Network error", Toast.LENGTH_SHORT).show();
+                openLogin(false);
+            }
+        });
     }
 
     private void updateBackArrow() {

@@ -103,8 +103,10 @@ public class AuthService {
 
        // String link = appBaseUrl + "/auth/activate?token=" + token;
        // emailService.sendActivationEmail(p.getEmail(), link);
-        String activationLink = "http://localhost:8081/api/auth/activate?token=" + token;
-        emailService.sendActivationEmail(normalizedEmail, activationLink);
+        //String activationLink = "http://localhost:8081/api/auth/activate?token=" + token;
+        String webLink = "http://localhost:8081/api/auth/activate?token=" + token;
+        String androidLink = "http://gotaxi/activate-account?token=" + token;
+        emailService.sendActivationEmail(normalizedEmail, webLink,androidLink);
 
         return p.getId();
     }
@@ -165,7 +167,11 @@ public class AuthService {
 
 
         String activationLink = "http://localhost:8081/api/drivers/activate?token=" + token;
-        emailService.sendActivationEmail(normalizedEmail, activationLink);
+
+        //link for mobile - will change!!!!!
+        String androidLink = "http://gotaxi/activate-account?token=" + token;
+
+        emailService.sendActivationEmail(normalizedEmail, activationLink,androidLink);
 
         return d.getId();
     }
@@ -297,9 +303,11 @@ public class AuthService {
 
         activationTokenRepository.save(resetToken);
 
-        String resetLink = appBaseUrl + "/auth/reset-password?token=" + token;
+        //String resetLink = appBaseUrl + "/auth/reset-password?token=" + token;
+        String webLink = "http://localhost:4200/auth/reset-password?token=" + token;
+        String mobileLink = "http://gotaxi/reset-password?token=" + token;
 
-        emailService.sendPasswordResetEmail(normalizedEmail, resetLink);
+        emailService.sendPasswordResetEmail(normalizedEmail, webLink, mobileLink);
     }
 
     public void resetPassword(String token, String newPassword) {
