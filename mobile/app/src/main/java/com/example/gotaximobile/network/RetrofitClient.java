@@ -2,8 +2,13 @@ package com.example.gotaximobile.network;
 
 import android.content.Context;
 
+import com.example.gotaximobile.adapters.LocalDateTimeAdapter;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.BuildConfig;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.time.LocalDateTime;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -29,10 +34,14 @@ public class RetrofitClient {
                 .addInterceptor(log)
                 .build();
 
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .create();
+
         retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(ok)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
         return retrofit;
 
