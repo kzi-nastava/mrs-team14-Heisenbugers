@@ -57,5 +57,30 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_marginTop="8dp" />
 
+    <LinearLayout
+        android:id="@+id/loggedOutLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_to_access_profile"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
+            android:layout_marginTop="16dp" />
+
+        <Button
+            android:id="@+id/btnLoginRedirect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_now"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

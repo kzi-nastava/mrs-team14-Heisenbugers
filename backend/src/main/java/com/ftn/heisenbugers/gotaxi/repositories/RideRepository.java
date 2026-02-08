@@ -50,11 +50,13 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
 
     Optional<Ride> findByDriverIdAndStatus(UUID driver_id, RideStatus status);
 
+    Optional<Ride> findByRoute_User_IdAndStatus(UUID userId, RideStatus status);
+
     @Query("""
-        SELECT r FROM Ride r
-        WHERE r.driver.id = :driverId
-        AND r.status IN ('ASSIGNED', 'ONGOING')
-    """)
+                SELECT r FROM Ride r
+                WHERE r.driver.id = :driverId
+                AND r.status IN ('ASSIGNED', 'ONGOING')
+            """)
     List<Ride> findActiveRidesByDriver(@Param("driverId") UUID driverId);
 
 }

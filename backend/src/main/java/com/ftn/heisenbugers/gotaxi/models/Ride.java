@@ -63,9 +63,9 @@ public class Ride extends BaseEntity {
     @JoinTable(
             name = "ride_passengers",
             joinColumns = @JoinColumn(name = "ride_id"),
-            inverseJoinColumns = @JoinColumn(name = "passenger_id")
+            inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    private List<Passenger> passengers;
+    private List<User> passengers;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "route_id")

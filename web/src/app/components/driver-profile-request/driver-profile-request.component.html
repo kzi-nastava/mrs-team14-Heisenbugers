@@ -2,10 +2,14 @@
   <div class="flex items-center justify-between mb-6">
     <h2 class="text-xl font-semibold">Driver profile change request</h2>
     <div class="flex gap-3">
-      <button type="button" (click)="approve()" class="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-600">Approve</button>
-      <button type="button" (click)="reject()" class="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">Reject</button>
+      <button type="button" (click)="approve()" [disabled]="disabledDecision" class="px-4 py-2 bg-lime-500 text-white rounded-lg shadow hover:bg-lime-600 cursor-pointer disabled:opacity-50">Approve</button>
+      <button type="button" (click)="reject()" [disabled]="disabledDecision" class="px-6 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 cursor-pointer disabled:opacity-50">Reject</button>
     </div>
   </div>
+
+  @if(decisionMessage){
+    <div class="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800">{{ decisionMessage }}</div>
+  }
 
   <div class="grid grid-cols-2 gap-6">
     <div>

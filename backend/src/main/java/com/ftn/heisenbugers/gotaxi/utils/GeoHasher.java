@@ -47,9 +47,9 @@ public class GeoHasher {
         int bitsPerCoord = 32;
         int index = 0;
         for (int i = 0; i < numCoords; i++) {
-            coords[i][0] = decodeCoord(binary.substring(index, index + bitsPerCoord), -90, 90);
+            coords[i][1] = decodeCoord(binary.substring(index, index + bitsPerCoord), -90, 90);
             index += bitsPerCoord;
-            coords[i][1] = decodeCoord(binary.substring(index, index + bitsPerCoord), -180, 180);
+            coords[i][0] = decodeCoord(binary.substring(index, index + bitsPerCoord), -180, 180);
             index += bitsPerCoord;
         }
         return coords;

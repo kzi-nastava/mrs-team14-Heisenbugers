@@ -6,6 +6,7 @@ import { HomeComponent } from './components/home/home';
 import { RegisterComponent } from './components/auth/register/register';
 import { LoginComponent } from './components/auth/login/login';
 import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password';
+import { RequestPasswordResetComponent } from './components/auth/request-password-reset/request-password-reset.component';
 import { SetPasswordComponent } from './components/auth/set-password/set-password.component';
 import { TokenUsedComponent } from './components/auth/token-used/token-used.component';
 
@@ -37,7 +38,8 @@ export const routes: Routes = [
       // auth
       { path: 'auth/register', component: RegisterComponent },
       { path: 'auth/login', component: LoginComponent },
-      { path: 'auth/forgot-password', component: ForgotPasswordComponent },
+      { path: 'auth/reset-password', component: ForgotPasswordComponent },
+      { path: 'auth/forgot-password', component: RequestPasswordResetComponent },
       { path: 'auth/set-password', component: SetPasswordComponent },
       { path: 'auth/token-used', component: TokenUsedComponent },
 

@@ -125,4 +125,10 @@
     <string name="sort_by_date">Sort by Date</string>
     <string name="sort_by_price">Sort by Price</string>
     <string name="sort_by_place">Sort by Place</string>
+    <string name="admin_panel">Admin Panel</string>
+    <string name="login_to_access_profile">Login to access profile information</string>
+    <string name="login_now">Login Now</string>
+    <string name="admintools">adminTools</string>
+    <string name="register_driver">Register Driver</string>
+    <string name="driver_requests">Driver Requests</string>
 </resources>
