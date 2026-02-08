@@ -2,9 +2,11 @@ package com.ftn.heisenbugers.gotaxi.models.services;
 
 import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
+import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.security.ActivationToken;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.repositories.ActivationTokenRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.VehicleRepository;
 import com.ftn.heisenbugers.gotaxi.services.ImageStorageService;
@@ -24,6 +26,7 @@ import java.net.URI;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -37,6 +40,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final VehicleRepository vehicleRepository;
     private final ImageStorageService imageStorageService;
+    private final RideRepository rideRepository;
 
     @Value("${app.default.avatar-path:/images/default-avatar.png}")
     private String defaultAvatarPath;
@@ -230,6 +234,21 @@ public class AuthService {
 
         if (!passwordEncoder.matches(dto.getPassword(), user.getPasswordHash())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials.");
+        }
+
+        if (user instanceof Driver driver) {
+            List<Ride> activeRides = rideRepository.findActiveRidesByDriver(driver.getId());
+
+            boolean hasAssignedOrOngoing = activeRides.stream()
+                    .anyMatch(r ->
+                            r.getStatus() == RideStatus.ASSIGNED || r.getStatus() == RideStatus.ONGOING);
+
+
+            if (!hasAssignedOrOngoing) {
+                driver.setWorking(true);
+                userRepository.save(driver);
+            }
+
         }
 
         String role = resolveRole(user);

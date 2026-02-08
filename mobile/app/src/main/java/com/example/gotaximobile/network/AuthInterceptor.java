@@ -19,15 +19,23 @@ public class AuthInterceptor implements Interceptor {
     @Override
     public Response intercept (Chain chain) throws IOException{
         Request original = chain.request();
-        String token = storage.getToken();
 
-        if(token == null || token.isEmpty()){
+        String path = original.url().encodedPath();
+        if (path.startsWith("/api/auth/")) {
             return chain.proceed(original);
         }
-        Request withAuth = original.newBuilder()
-                .addHeader("Authorization", "Bearer "+token)
-                .build();
-    return chain.proceed(withAuth);
-    }
 
+        String authHeader = storage.getAuthHeaderValue();
+        if (authHeader == null || authHeader.isEmpty()) {
+            return chain.proceed(original);
+        }
+
+        Request newReq = original.newBuilder()
+                .header("Authorization", authHeader)
+                .build();
+
+        return chain.proceed(newReq);
+    }
 }
+
+

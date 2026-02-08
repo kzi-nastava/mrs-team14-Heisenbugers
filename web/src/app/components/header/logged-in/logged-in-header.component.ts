@@ -4,12 +4,14 @@ import { bootstrapBell, bootstrapHeart } from '@ng-icons/bootstrap-icons';
 import { provideIcons } from '@ng-icons/core';
 import { Router } from "@angular/router";
 import {AuthService} from '../../auth/auth.service';
+import { DriverStatusToggleComponent } from '../../driver-status-toggle/driver-status-toggle.component';
+
 
 @Component({
   selector: 'logged-in-header',
   standalone: true,
   templateUrl: './logged-in-header.component.html',
-  imports: [NgIcon],
+  imports: [NgIcon,DriverStatusToggleComponent],
   viewProviders: [provideIcons({bootstrapBell, bootstrapHeart})]
 })
 export class LoggedInHeaderComponent {
@@ -51,8 +53,8 @@ export class LoggedInHeaderComponent {
     this.menuOpen = false
   }*/
   logOut() {
-    this.auth.logoutLocal();          // ⬅️ очищаем токены и состояние
-    this.router.navigate(['/home']);  // ⬅️ гость → на публичную страницу
+    this.auth.logoutLocal();
+    this.router.navigate(['/home']);
     this.menuOpen = false;
   }
 
