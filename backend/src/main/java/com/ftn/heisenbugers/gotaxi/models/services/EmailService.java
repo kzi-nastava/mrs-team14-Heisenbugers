@@ -47,24 +47,30 @@ public class EmailService {
         mailSender.send(msg);
     }
 
-    public void sendPasswordResetEmail(String toEmail, String resetLink) {
+    public void sendPasswordResetEmail(String toEmail, String resetLink, String mobileDeepLink) {
         try{
-        SimpleMailMessage msg = new SimpleMailMessage();
-        msg.setFrom(from);
-        msg.setTo(toEmail);
-        msg.setSubject("GoTaxi – Password reset");
-        msg.setText("""
+            String subject = "Password reset request";
+
+            String content = """
             You requested a password reset.
 
-            Click the link below to set a new password (valid for 24h):
+            Web version:
+            %s
+
+            Android app:
             %s
 
             If you did not request this, please ignore this email.
-            """.formatted(resetLink));
+            """.formatted(resetLink, mobileDeepLink);
 
-        mailSender.send(msg);
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setFrom(from);
+            msg.setTo(toEmail);
+            msg.setSubject(subject);
+            msg.setText(content);
+
+            mailSender.send(msg);
     }catch (Exception ex) {
-        // Чтобы не ронять /forgot-password с 500, но видеть проблему в логах
         System.err.println("Failed to send password reset email: " + ex.getMessage());
         ex.printStackTrace();
     }

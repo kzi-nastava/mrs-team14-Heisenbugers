@@ -297,9 +297,11 @@ public class AuthService {
 
         activationTokenRepository.save(resetToken);
 
-        String resetLink = appBaseUrl + "/auth/reset-password?token=" + token;
+        //String resetLink = appBaseUrl + "/auth/reset-password?token=" + token;
+        String webLink = "http://localhost:4200/auth/reset-password?token=" + token;
+        String mobileLink = "http://gotaxi/reset-password?token=" + token;
 
-        emailService.sendPasswordResetEmail(normalizedEmail, resetLink);
+        emailService.sendPasswordResetEmail(normalizedEmail, webLink, mobileLink);
     }
 
     public void resetPassword(String token, String newPassword) {

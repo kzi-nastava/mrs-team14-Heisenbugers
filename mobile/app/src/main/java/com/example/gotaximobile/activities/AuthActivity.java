@@ -37,9 +37,9 @@ public class AuthActivity extends AppCompatActivity {
 
         topAppBar.setNavigationOnClickListener(v -> handleBack());
 
-        if (savedInstanceState == null) {
+        /*if (savedInstanceState == null) {
             openLogin(false);
-        }
+        }*/
         handleDeepLink(getIntent(),savedInstanceState);
 
         getSupportFragmentManager().addOnBackStackChangedListener(this::updateBackArrow);
@@ -92,13 +92,19 @@ public class AuthActivity extends AppCompatActivity {
 
     private void handleDeepLink(Intent intent, Bundle savedInstanceState) {
         Uri data = intent.getData();
-        if (data == null) return;
+        android.util.Log.d("AuthActivity", "handleDeepLink data = " + data);
 
-        String token = data.getQueryParameter("token");
-        if (token != null && !token.isEmpty()) {
-            openResetPassword(token);
+        if (data != null) {
+            String token = data.getQueryParameter("token");
+            android.util.Log.d("AuthActivity", "token from URI = " + token);
+
+            if (token != null && !token.isEmpty()) {
+                openResetPassword(token);
+                return;
+            }
         }
-        if(savedInstanceState == null){
+
+        if (savedInstanceState == null) {
             openLogin(false);
         }
     }

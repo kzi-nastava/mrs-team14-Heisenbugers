@@ -16,7 +16,21 @@
         >
         <activity
             android:name=".activities.AuthActivity"
-            android:exported="false" />
+            android:exported="true"
+            >
+
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <data
+                android:scheme="http"
+                android:host="gotaxi"
+                android:path="/reset-password" />
+        </intent-filter>
+        </activity>
         <activity
             android:name=".activities.MainActivity"
             android:exported="true">
@@ -24,9 +38,7 @@
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data
-                    android:scheme="gotaxi"
-                    android:host="reset" />
+
             </intent-filter>
         </activity>
     </application>
