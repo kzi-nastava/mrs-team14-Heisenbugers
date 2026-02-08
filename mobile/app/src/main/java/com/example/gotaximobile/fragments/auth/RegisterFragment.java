@@ -1,11 +1,15 @@
 package com.example.gotaximobile.fragments.auth;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -20,8 +24,13 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -31,6 +40,21 @@ public class RegisterFragment extends Fragment {
     private TextInputLayout tilName, tilSurname, tilAddress, tilPhone, tilEmail, tilPassword, tilConfirm;
     private TextInputEditText etName, etSurname, etAddress, etPhone, etEmail, etPassword, etConfirm;
 
+
+    private ImageView imgCamera;
+    private Uri selectedImageUri;
+    private final ActivityResultLauncher<String> pickImageLauncher =
+            registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
+                if (uri != null) {
+                    selectedImageUri = uri;
+                    if (imgCamera != null) {
+                        imgCamera.setAlpha(1f);
+                        imgCamera.setImageURI(uri);
+                        imgCamera.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                    }
+                }
+            });
+
     public RegisterFragment() {
         super(R.layout.fragment_register);
     }
@@ -39,14 +63,14 @@ public class RegisterFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         bindViews(view);
 
+
+        imgCamera = view.findViewById(R.id.imgCamera);
+
         MaterialButton btnAddPhoto = view.findViewById(R.id.btnAddPhoto);
         MaterialButton btnCreate = view.findViewById(R.id.btnCreateAccount);
         MaterialButton btnGoToLogin = view.findViewById(R.id.btnGoToLogin);
 
-        btnAddPhoto.setOnClickListener(v ->
-                Toast.makeText(requireContext(), "Photo upload is optional.", Toast.LENGTH_SHORT).show()
-        );
-
+        btnAddPhoto.setOnClickListener(v -> pickImageLauncher.launch("image/*"));
         AuthApi api = RetrofitClient.authApi(requireContext());
 
 
@@ -57,8 +81,32 @@ public class RegisterFragment extends Fragment {
                 return;
             }
 
-            okhttp3.MultipartBody.Part profileImagePart = null;
+            MultipartBody.Part profileImagePart = null;
+            if (selectedImageUri != null) {
+                try {
+                    String mimeType = requireContext()
+                            .getContentResolver()
+                            .getType(selectedImageUri);
+                    if (mimeType == null) mimeType = "image/*";
 
+                    byte[] bytes = readAllBytesFromUri(selectedImageUri);
+
+                    RequestBody fileBody = RequestBody.create(
+                            MediaType.parse(mimeType),
+                            bytes
+                    );
+
+                    // имя "profileImage" должно совпадать с параметром на бэке
+                    profileImagePart = MultipartBody.Part.createFormData(
+                            "profileImage",
+                            "avatar.jpg",
+                            fileBody
+                    );
+                }catch (IOException e) {
+                    e.printStackTrace();
+                    profileImagePart = null;
+                }
+            }
 
             okhttp3.MultipartBody.Part imagePart = null;
             //will be save your photo
@@ -121,6 +169,18 @@ public class RegisterFragment extends Fragment {
         requireActivity().getSupportFragmentManager().popBackStack(null,
                 androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
         ((AuthActivity) requireActivity()).openLogin(false);
+    }
+    private byte[] readAllBytesFromUri(Uri uri) throws IOException {
+        try (InputStream is = requireContext().getContentResolver().openInputStream(uri)) {
+            if (is == null) return new byte[0];
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            byte[] data = new byte[8192];
+            int nRead;
+            while ((nRead = is.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            return buffer.toByteArray();
+        }
     }
 
     private void bindViews(View v) {
