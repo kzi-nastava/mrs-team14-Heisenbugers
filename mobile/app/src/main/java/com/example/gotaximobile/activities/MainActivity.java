@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -12,11 +13,14 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.data.TokenStorage;
+import com.example.gotaximobile.fragments.AdminPanelFragment;
 import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -60,7 +64,9 @@ public class MainActivity extends AppCompatActivity {
             updateTopBarVisibility(R.id.nav_home);
         }
 
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav = findViewById(R.id.bottom_navigation);
+
+        checkIsAdmin();
 
         bottomNav.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -70,6 +76,8 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new HomeFragment();
             } else if (id == R.id.nav_favorite) {
                 selectedFragment = new FavoriteRoutesFragment();
+            } else if (id == R.id.nav_admin_panel) {
+                selectedFragment = new AdminPanelFragment();
             } else if (id == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
             }
@@ -108,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void handleLogout() {
         tokenStorage.clear();
+        checkIsAdmin();
         updateAuthMenuItems();
         if (bottomNav != null) {
             bottomNav.setSelectedItemId(R.id.nav_home);
@@ -148,5 +157,15 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();
+    }
+
+    public void checkIsAdmin(){
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        boolean isAdmin = Objects.equals(tokenStorage.getRole(), "ADMIN");
+
+        MenuItem adminItem = bottomNav.getMenu().findItem(R.id.nav_admin_panel);
+        if (adminItem != null) {
+            adminItem.setVisible(isAdmin);
+        }
     }
 }
