@@ -3,6 +3,7 @@ package com.example.gotaximobile.network;
 import android.content.Context;
 
 import com.example.gotaximobile.data.TokenStorage;
+import com.example.gotaximobile.BuildConfig;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -11,10 +12,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     private static Retrofit retrofit;
-
-    // private static final String BASE_URL = "http://10.0.2.2:8081/";
-    private static final String BASE_URL = "http://192.168.0.16:8081/";
-
+    private static final String BASE_URL = BuildConfig.BASE_URL;
+    //private static final String BASE_URL = "http://192.168.0.10:8081/";
 
     public static Retrofit get(Context context) {
         if (retrofit != null)

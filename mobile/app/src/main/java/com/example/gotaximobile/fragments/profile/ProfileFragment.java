@@ -22,6 +22,9 @@ import java.util.Objects;
 
 public class ProfileFragment extends Fragment {
 
+    private Bundle latestProfileData;
+    private Bundle latestVehicleData;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -35,27 +38,25 @@ public class ProfileFragment extends Fragment {
         TabLayout tabLayout = view.findViewById(R.id.profileTabLayout);
         ViewPager2 viewPager = view.findViewById(R.id.profileViewPager);
 
+        getChildFragmentManager().setFragmentResultListener("profileKey", getViewLifecycleOwner(), (requestKey, bundle) -> {
+            this.latestProfileData = bundle;
+        });
+
+        getChildFragmentManager().setFragmentResultListener("vehicleInfo", getViewLifecycleOwner(), (requestKey, bundle) -> {
+            this.latestVehicleData = bundle;
+        });
+
         topAppBar.setNavigationOnClickListener(v -> {
             EditPersonalProfile editProfileFragment = new EditPersonalProfile();
             EditVehicle editVehicleFragment = new EditVehicle();
 
-            Bundle bundle = new Bundle();
-            bundle.putString("model", "Ford Fiesta");
-            bundle.putString("type", "Standard");
-            bundle.putString("plate", "NS-254-KL");
-            bundle.putString("seats", "5");
-            bundle.putBoolean("babies", true);
-            bundle.putBoolean("pets", false);
+            if (latestVehicleData != null) {
+                editVehicleFragment.setArguments(latestVehicleData);
+            }
 
-            editVehicleFragment.setArguments(bundle);
-
-            Bundle bundlePP = new Bundle();
-            bundlePP.putString("name", "John Doe");
-            bundlePP.putString("email", "johndoe@gmail.com");
-            bundlePP.putString("address", "Bulevar Jovana Ducica 15, Novi Sad");
-            bundlePP.putString("phone", "381645412147");
-
-            editProfileFragment.setArguments(bundlePP);
+            if (latestProfileData != null) {
+                editProfileFragment.setArguments(latestProfileData);
+            }
 
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, viewPager.getCurrentItem() == 1 ? editVehicleFragment : editProfileFragment)
