@@ -49,7 +49,7 @@ public class PersonalProfile extends Fragment {
             public void onResponse(@NonNull Call<GetProfileDTO> call, @NonNull Response<GetProfileDTO> response) {
                 if (response.isSuccessful() && response.body() != null) {
                     GetProfileDTO profile = response.body();
-                    updateUI(profile);
+                    updateView(profile);
                 } else {
                     Log.e("API_ERROR", "Response failed: " + response.code());
                 }
@@ -62,7 +62,7 @@ public class PersonalProfile extends Fragment {
         });
     }
 
-    private void updateUI(GetProfileDTO profile) {
+    private void updateView(GetProfileDTO profile) {
         String fullName = profile.firstName + " " + profile.lastName;
 
         nameCard.setData("Name", fullName, R.drawable.ic_person);
