@@ -23,17 +23,24 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    public void sendActivationEmail(String toEmail, String activationLink) {
+    public void sendActivationEmail(String toEmail,
+                                    String webLink,
+                                    String androidLink) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(from);
         msg.setTo(toEmail);
         msg.setSubject("GoTaxi – Activate your account");
         msg.setText("""
                 Thanks for registering!
-                
-                Activate your account (valid for 24h):
-                %s
-                """.formatted(activationLink));
+
+            Web:
+            %s
+
+            Android app:
+            %s
+
+            The link is valid for 24 hours.
+            """.formatted(webLink, androidLink));
 
         mailSender.send(msg);
     }

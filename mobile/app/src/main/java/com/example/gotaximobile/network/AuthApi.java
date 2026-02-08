@@ -38,6 +38,9 @@ public interface AuthApi {
     @DELETE("api/auth/session")
     Call<MessageResponse> logout();
 
+    @GET("api/auth/activate")
+    Call<MessageResponse> activateAccount(@Query("token") String token);
+
 
 
 }

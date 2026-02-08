@@ -103,8 +103,10 @@ public class AuthService {
 
        // String link = appBaseUrl + "/auth/activate?token=" + token;
        // emailService.sendActivationEmail(p.getEmail(), link);
-        String activationLink = "http://localhost:8081/api/auth/activate?token=" + token;
-        emailService.sendActivationEmail(normalizedEmail, activationLink);
+        //String activationLink = "http://localhost:8081/api/auth/activate?token=" + token;
+        String webLink = "http://localhost:8081/api/auth/activate?token=" + token;
+        String androidLink = "http://gotaxi/activate-account?token=" + token;
+        emailService.sendActivationEmail(normalizedEmail, webLink,androidLink);
 
         return p.getId();
     }
@@ -165,7 +167,11 @@ public class AuthService {
 
 
         String activationLink = "http://localhost:8081/api/drivers/activate?token=" + token;
-        emailService.sendActivationEmail(normalizedEmail, activationLink);
+
+        //link for mobile - will change!!!!!
+        String androidLink = "http://gotaxi/activate-account?token=" + token;
+
+        emailService.sendActivationEmail(normalizedEmail, activationLink,androidLink);
 
         return d.getId();
     }
