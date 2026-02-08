@@ -96,7 +96,6 @@ public class RegisterFragment extends Fragment {
                             bytes
                     );
 
-                    // имя "profileImage" должно совпадать с параметром на бэке
                     profileImagePart = MultipartBody.Part.createFormData(
                             "profileImage",
                             "avatar.jpg",
@@ -109,7 +108,7 @@ public class RegisterFragment extends Fragment {
             }
 
             okhttp3.MultipartBody.Part imagePart = null;
-            //will be save your photo
+
 
             api.registerPassenger(
                     PartUtil.text(getText(etEmail)),
