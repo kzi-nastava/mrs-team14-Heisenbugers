@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -14,9 +13,9 @@ import androidx.fragment.app.Fragment;
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.AdminPanelFragment;
-import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
+import com.example.gotaximobile.fragments.ride.DuringRideFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, AuthActivity.class));
                     return true;
                 }
-                if (item.getItemId()== R.id.action_logout) {
+                if (item.getItemId() == R.id.action_logout) {
                     handleLogout();
                     return true;
                 }
@@ -75,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
             } else if (id == R.id.nav_favorite) {
-                selectedFragment = new FavoriteRoutesFragment();
+                selectedFragment = new DuringRideFragment();
             } else if (id == R.id.nav_admin_panel) {
                 selectedFragment = new AdminPanelFragment();
             } else if (id == R.id.nav_profile) {
@@ -114,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private void handleLogout() {
         tokenStorage.clear();
         checkIsAdmin();
@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
             topAppBar.setVisibility(android.view.View.GONE);
         }
     }
+
     private void tintMenuItemText(MaterialToolbar toolbar, int menuItemId, int colorRes) {
         MenuItem item = toolbar.getMenu().findItem(menuItemId);
         if (item == null) return;
@@ -147,11 +148,13 @@ public class MainActivity extends AppCompatActivity {
         );
         item.setTitle(s);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         updateAuthMenuItems();
     }
+
     public void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -159,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public void checkIsAdmin(){
+    public void checkIsAdmin() {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         boolean isAdmin = Objects.equals(tokenStorage.getRole(), "ADMIN");
 

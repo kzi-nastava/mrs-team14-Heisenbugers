@@ -7,6 +7,9 @@
     <color name="colorSurface">#FFFFFF</color>
     <color name="outline">#ffffff</color>
 
+    <color name="noteIconColor">#FFFFFF</color>
+
+
     <color name="auth_bg">#121212</color>
     <color name="auth_surface">#1B1B1B</color>
     <color name="auth_on_surface">#F2F2F2</color>
