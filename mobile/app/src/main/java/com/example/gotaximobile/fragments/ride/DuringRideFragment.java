@@ -20,6 +20,7 @@ import com.example.gotaximobile.fragments.MapFragment;
 import com.example.gotaximobile.models.MapPin;
 import com.example.gotaximobile.models.dtos.LocationDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
+import com.example.gotaximobile.models.dtos.RideTrackingDTO;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.RideService;
 import com.google.android.material.textfield.TextInputEditText;
@@ -38,9 +39,9 @@ import retrofit2.Response;
 public class DuringRideFragment extends Fragment {
 
     private RideDTO ride;
+    private RideTrackingDTO rideTracking;
     private RideService rideService;
     private UUID rideId;
-
     private MapFragment mapFragment;
 
     @Nullable
@@ -76,7 +77,9 @@ public class DuringRideFragment extends Fragment {
 
             }
         });
-        
+
+        updateTracking();
+
         return view;
     }
 
@@ -93,6 +96,30 @@ public class DuringRideFragment extends Fragment {
         noteButton.setOnClickListener(v -> openModal());
         noteLabel.setOnClickListener(v -> openModal());
 
+    }
+
+    private void updateTracking() {
+        rideService.getRideTracking(rideId).enqueue(new Callback<RideTrackingDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<RideTrackingDTO> call,
+                                   @NonNull Response<RideTrackingDTO> response) {
+                rideTracking = response.body();
+                assert rideTracking != null;
+                MapPin carPin = new MapPin(
+                        rideTracking.vehicleLatitude,
+                        rideTracking.vehicleLongitude,
+                        R.drawable.ic_car_map,
+                        "You are here"
+                );
+                carPin.snapToRoad = true;
+                mapFragment.addPin(carPin);
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<RideTrackingDTO> call, @NonNull Throwable t) {
+                Log.e("NETWORK_ERROR", Objects.requireNonNull(t.getMessage()));
+            }
+        });
     }
 
     private void openModal() {
@@ -148,11 +175,10 @@ public class DuringRideFragment extends Fragment {
 
         if (mapFragment != null) {
             List<GeoPoint> stops = new ArrayList<>();
-            List<MapPin> pins = new ArrayList<>();
 
             // Start pin
             GeoPoint startPoint = new GeoPoint(ride.startLocation.latitude, ride.startLocation.longitude);
-            pins.add(new MapPin(startPoint.getLatitude(), startPoint.getLongitude(), R.drawable.ic_map_pin, "Start"));
+            mapFragment.addPin(new MapPin(startPoint.getLatitude(), startPoint.getLongitude(), R.drawable.ic_map_pin, "Start"));
 
             // Stops along the route
 
@@ -161,16 +187,14 @@ public class DuringRideFragment extends Fragment {
                     LocationDTO loc = ride.route.get(i);
                     GeoPoint stopPoint = new GeoPoint(loc.latitude, loc.longitude);
                     stops.add(stopPoint);
-                    pins.add(new MapPin(stopPoint.getLatitude(), stopPoint.getLongitude(), R.drawable.ic_map_pin, loc.address));
+                    mapFragment.addPin(new MapPin(stopPoint.getLatitude(), stopPoint.getLongitude(), R.drawable.ic_map_pin, loc.address));
                 }
             }
 
 
             // End pin
             GeoPoint endPoint = new GeoPoint(ride.endLocation.latitude, ride.endLocation.longitude);
-            pins.add(new MapPin(endPoint.getLatitude(), endPoint.getLongitude(), R.drawable.ic_map_pin, "End"));
-
-            mapFragment.setPins(pins);
+            mapFragment.addPin(new MapPin(endPoint.getLatitude(), endPoint.getLongitude(), R.drawable.ic_map_pin, "End"));
 
             mapFragment.drawRoute(startPoint, endPoint, stops);
         }
