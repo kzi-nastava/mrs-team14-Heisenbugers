@@ -17,11 +17,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osmdroid.api.IMapController;
+import org.osmdroid.bonuspack.routing.OSRMRoadManager;
+import org.osmdroid.bonuspack.routing.Road;
+import org.osmdroid.bonuspack.routing.RoadManager;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 import org.osmdroid.views.overlay.Marker;
+import org.osmdroid.views.overlay.Polyline;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +42,7 @@ public class MapFragment extends Fragment {
     private MapView map;
 
     private final List<MapPin> pins = new ArrayList<>();
-
+    private Polyline routeOverlay;
     private final OkHttpClient httpClient = new OkHttpClient();
 
 
@@ -161,6 +165,31 @@ public class MapFragment extends Fragment {
             }
         });
     }
+
+    public void drawRoute(GeoPoint start, GeoPoint end, List<GeoPoint> stops) {
+        RoadManager roadManager = new OSRMRoadManager(requireContext(),
+                Configuration.getInstance().getUserAgentValue());
+
+        ArrayList<GeoPoint> waypoints = new ArrayList<>();
+        waypoints.add(start);
+        waypoints.addAll(stops);
+        waypoints.add(end);
+
+        new Thread(() -> {
+            Road road = roadManager.getRoad(waypoints);
+            Polyline polyline = RoadManager.buildRoadOverlay(road);
+
+            requireActivity().runOnUiThread(() -> {
+                if (routeOverlay != null) {
+                    map.getOverlays().remove(routeOverlay);
+                }
+                routeOverlay = polyline;
+                map.getOverlays().add(routeOverlay);
+                map.invalidate();
+            });
+        }).start();
+    }
+
 
     public interface Callback {
         void onSuccess(GeoPoint point);
