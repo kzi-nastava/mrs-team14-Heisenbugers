@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.gotaximobile.R;
 import com.example.gotaximobile.models.MapPin;
 
 import org.json.JSONArray;
@@ -29,7 +28,6 @@ import org.osmdroid.views.overlay.Polyline;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.Call;
@@ -62,14 +60,8 @@ public class MapFragment extends Fragment {
         mapController.setZoom(15);
 
         mapController.setCenter(new GeoPoint(45.2571, 19.8335)); // Novi Sad
-        MapPin pin = new MapPin(45.2571, 19.8335);
-        pin.iconResId = R.drawable.ic_car;
-        pin.popup = "Some popup";
-        pin.snapToRoad = true;
-        setPins(Arrays.asList(pin,
-                new MapPin(45.2671, 19.8335)
-        ));
 
+        if (!pins.isEmpty()) renderPins();
         return map;
     }
 
@@ -78,6 +70,7 @@ public class MapFragment extends Fragment {
         for (MapPin pin : newPins) {
             addPin(pin);
         }
+        map.post(this::renderPins);
     }
 
     public void addPin(MapPin pin) {
@@ -110,7 +103,6 @@ public class MapFragment extends Fragment {
         for (MapPin pin : pins) {
             renderSinglePin(pin);
         }
-        map.invalidate();
     }
 
     private void renderSinglePin(MapPin pin) {
@@ -121,6 +113,7 @@ public class MapFragment extends Fragment {
         if (pin.iconResId != 0)
             marker.setIcon(ContextCompat.getDrawable(requireContext(), pin.iconResId));
         map.getOverlays().add(marker);
+        map.invalidate();
     }
 
     public void snapToRoad(MapPin pin, Callback callback) {

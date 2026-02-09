@@ -14,6 +14,13 @@ public class MapPin {
         this.lng = lng;
     }
 
+    public MapPin(double lat, double lng, int iconResId, String popup) {
+        this.lat = lat;
+        this.lng = lng;
+        this.iconResId = iconResId;
+        this.popup = popup;
+    }
+
     public GeoPoint toGeoPoint() {
         return new GeoPoint(lat, lng);
     }

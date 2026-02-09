@@ -16,11 +16,18 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.fragments.MapFragment;
+import com.example.gotaximobile.models.MapPin;
+import com.example.gotaximobile.models.dtos.LocationDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.RideService;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.osmdroid.util.GeoPoint;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -33,6 +40,8 @@ public class DuringRideFragment extends Fragment {
     private RideDTO ride;
     private RideService rideService;
     private UUID rideId;
+
+    private MapFragment mapFragment;
 
     @Nullable
     @Override
@@ -67,7 +76,7 @@ public class DuringRideFragment extends Fragment {
 
             }
         });
-
+        
         return view;
     }
 
@@ -75,6 +84,7 @@ public class DuringRideFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
 
         // Note input and icon
         TextView noteLabel = view.findViewById(R.id.noteLabel);
@@ -135,5 +145,34 @@ public class DuringRideFragment extends Fragment {
 
         startField.setText(ride.startLocation.address);
         finishField.setText(ride.endLocation.address);
+
+        if (mapFragment != null) {
+            List<GeoPoint> stops = new ArrayList<>();
+            List<MapPin> pins = new ArrayList<>();
+
+            // Start pin
+            GeoPoint startPoint = new GeoPoint(ride.startLocation.latitude, ride.startLocation.longitude);
+            pins.add(new MapPin(startPoint.getLatitude(), startPoint.getLongitude(), R.drawable.ic_map_pin, "Start"));
+
+            // Stops along the route
+
+            if (ride.route != null && !ride.route.isEmpty()) {
+                for (int i = 1; i < ride.route.size() - 1; ++i) {
+                    LocationDTO loc = ride.route.get(i);
+                    GeoPoint stopPoint = new GeoPoint(loc.latitude, loc.longitude);
+                    stops.add(stopPoint);
+                    pins.add(new MapPin(stopPoint.getLatitude(), stopPoint.getLongitude(), R.drawable.ic_map_pin, loc.address));
+                }
+            }
+
+
+            // End pin
+            GeoPoint endPoint = new GeoPoint(ride.endLocation.latitude, ride.endLocation.longitude);
+            pins.add(new MapPin(endPoint.getLatitude(), endPoint.getLongitude(), R.drawable.ic_map_pin, "End"));
+
+            mapFragment.setPins(pins);
+
+            mapFragment.drawRoute(startPoint, endPoint, stops);
+        }
     }
 }
