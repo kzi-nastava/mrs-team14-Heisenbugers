@@ -2,7 +2,7 @@ import { Component, Type, ViewChild, ViewContainerRef } from '@angular/core';
 import { HomeComponent } from '../components/home/home';
 import { DuringRide } from '../components/during-ride/during-ride.component';
 import { HttpClient } from '@angular/common/http';
-import { DriverDriving } from '../driver-driving/driver-driving';
+import DriverDriving from '../driver-driving/driver-driving';
 
 interface UserStateDTO {
   rideId: string,
@@ -24,7 +24,7 @@ export class HomeContainer {
 
 
   constructor(private http: HttpClient) {
-    
+
   }
 
 
@@ -43,6 +43,9 @@ export class HomeContainer {
             component = DriverDriving
           } else if (data.state === 'READY'){
             component = HomeComponent
+          } else if (data.state === 'STARTING'){
+            this.rideId = data.rideId;
+            component = HomeComponent
           } else {
             component = HomeComponent
           }
@@ -59,7 +62,7 @@ export class HomeContainer {
         }
       }
     )
-    
-   
+
+
   }
 }

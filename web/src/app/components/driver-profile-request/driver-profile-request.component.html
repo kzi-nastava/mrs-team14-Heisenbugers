@@ -1,0 +1,151 @@
+<div class="p-6">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-xl font-semibold">Driver profile change request</h2>
+    <div class="flex gap-3">
+      <button type="button" (click)="approve()" [disabled]="disabledDecision" class="px-4 py-2 bg-lime-500 text-white rounded-lg shadow hover:bg-lime-600 cursor-pointer disabled:opacity-50">Approve</button>
+      <button type="button" (click)="reject()" [disabled]="disabledDecision" class="px-6 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 cursor-pointer disabled:opacity-50">Reject</button>
+    </div>
+  </div>
+
+  @if(decisionMessage){
+    <div class="mb-4 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800">{{ decisionMessage }}</div>
+  }
+
+  <div class="grid grid-cols-2 gap-6">
+    <div>
+      <div class="mb-4">
+        <h3 class="text-lg font-medium">Old Profile</h3>
+        <p class="text-sm text-neutral-500">Current values</p>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex items-center gap-4 p-4 rounded-lg border bg-white shadow">
+          <div class="w-28 h-28 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+            @if (oldProfile?.profileImageUrl) {
+              <img [src]="oldProfile.profileImageUrl" alt="old profile" class="w-full h-full object-cover" />
+            }
+            @if (!oldProfile?.profileImageUrl) {
+              <div class="text-sm text-neutral-400">No image</div>
+            }
+          </div>
+          <div>
+            <div class="text-sm text-neutral-500">Name</div>
+            <div class="text-lg font-semibold">{{ oldProfile?.firstName }} {{ oldProfile?.lastName }}</div>
+            <div class="text-sm text-neutral-500">Phone: {{ oldProfile?.phone || '-' }}</div>
+            <div class="text-sm text-neutral-500">Address: {{ oldProfile?.address || '-' }}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-lg border bg-white shadow">
+            <div class="text-sm text-neutral-500">Vehicle model</div>
+            <div class="font-medium">{{ oldProfile?.model || '-' }}</div>
+          </div>
+          <div class="p-3 rounded-lg border bg-white shadow">
+            <div class="text-sm text-neutral-500">Vehicle type</div>
+            <div class="font-medium">{{ oldProfile?.type || '-' }}</div>
+          </div>
+          <div class="p-3 rounded-lg border bg-white shadow">
+            <div class="text-sm text-neutral-500">License plate</div>
+            <div class="font-medium">{{ oldProfile?.licensePlate || '-' }}</div>
+          </div>
+          <div class="p-3 rounded-lg border bg-white shadow">
+            <div class="text-sm text-neutral-500">Seats</div>
+            <div class="font-medium">{{ oldProfile?.seatCount ?? '-' }}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-lg border bg-white shadow flex items-center justify-between">
+            <div>
+              <div class="text-sm text-neutral-500">Baby transport</div>
+              <div class="font-medium">{{ oldProfile?.babyTransport ? 'Yes' : 'No' }}</div>
+            </div>
+          </div>
+          <div class="p-3 rounded-lg border bg-white shadow flex items-center justify-between">
+            <div>
+              <div class="text-sm text-neutral-500">Pet transport</div>
+              <div class="font-medium">{{ oldProfile?.petTransport ? 'Yes' : 'No' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="mb-4">
+        <h3 class="text-lg font-medium">Requested Profile</h3>
+        <p class="text-sm text-neutral-500">Proposed values</p>
+      </div>
+
+      <div class="space-y-4">
+        <div class="flex items-center gap-4 p-4 rounded-lg border bg-white shadow" [class.border-lime-400]="oldProfile?.profileImageUrl !== newProfile?.profileImageUrl">
+          <div class="w-28 h-28 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+            @if (newProfile?.profileImageUrl) {
+              <img [src]="newProfile.profileImageUrl" alt="new profile" class="w-full h-full object-cover" />
+            }
+            @if (!newProfile?.profileImageUrl) {
+              <div class="text-sm text-neutral-400">No image</div>
+            }
+          </div>
+          <div>
+            <div class="text-sm text-neutral-500">Name</div>
+            <div [class.font-semibold]="oldProfile?.firstName !== newProfile?.firstName || oldProfile?.lastName !== newProfile?.lastName" class="text-lg">{{ newProfile?.firstName }} {{ newProfile?.lastName }}</div>
+            <div class="text-sm text-neutral-500">Phone: <span [class.font-semibold]="oldProfile?.phone !== newProfile?.phone">{{ newProfile?.phone || '-' }}</span></div>
+            <div class="text-sm text-neutral-500">Address: <span [class.font-semibold]="oldProfile?.address !== newProfile?.address">{{ newProfile?.address || '-' }}</span></div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-lg border bg-white shadow" [class.border-lime-400]="oldProfile?.model !== newProfile?.model">
+            <div class="text-sm text-neutral-500">Vehicle model</div>
+            <div class="font-medium">{{ newProfile?.model || '-' }}</div>
+          </div>
+          <div class="p-3 rounded-lg border bg-white shadow" [class.border-lime-400]="oldProfile?.type !== newProfile?.type">
+            <div class="text-sm text-neutral-500">Vehicle type</div>
+            <div class="font-medium">{{ newProfile?.type || '-' }}</div>
+          </div>
+          <div class="p-3 rounded-lg border bg-white shadow" [class.border-lime-400]="oldProfile?.licensePlate !== newProfile?.licensePlate">
+            <div class="text-sm text-neutral-500">License plate</div>
+            <div class="font-medium">{{ newProfile?.licensePlate || '-' }}</div>
+          </div>
+          <div class="p-3 rounded-lg border bg-white shadow" [class.border-lime-400]="oldProfile?.seatCount !== newProfile?.seatCount">
+            <div class="text-sm text-neutral-500">Seats</div>
+            <div class="font-medium">{{ newProfile?.seatCount ?? '-' }}</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="p-3 rounded-lg border bg-white shadow flex items-center justify-between" [class.border-lime-400]="oldProfile?.babyTransport !== newProfile?.babyTransport">
+            <div>
+              <div class="text-sm text-neutral-500">Baby transport</div>
+              <div class="font-medium">{{ newProfile?.babyTransport ? 'Yes' : 'No' }}</div>
+            </div>
+          </div>
+          <div class="p-3 rounded-lg border bg-white shadow flex items-center justify-between" [class.border-lime-400]="oldProfile?.petTransport !== newProfile?.petTransport">
+            <div>
+              <div class="text-sm text-neutral-500">Pet transport</div>
+              <div class="font-medium">{{ newProfile?.petTransport ? 'Yes' : 'No' }}</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-6 flex gap-3 text-sm">
+    <div class="p-3 rounded-lg border bg-white shadow flex-1">
+      <div class="text-neutral-500">Request approved</div>
+      <div class="font-medium">{{ driverRequest?.approved ? 'Yes' : 'No' }}</div>
+    </div>
+    <div class="p-3 rounded-lg border bg-white shadow flex-1">
+      <div class="text-neutral-500">Submitted by</div>
+      <div class="font-medium">{{ driverRequest?.submittedBy || 'System' }}</div>
+    </div>
+    <div class="p-3 rounded-lg border bg-white shadow flex-1">
+      <div class="text-neutral-500">Submitted at</div>
+      <div class="font-medium">{{ driverRequest?.submittedAt | date:'short' }}</div>
+    </div>
+  </div>
+</div>

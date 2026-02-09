@@ -1,4 +1,4 @@
-<div class="h-full relative overflow-hidden">
+<div class="absolute bg-white top-0 bottom-0 left-2 -translate-x-1/2 z-50">
   @if (loadingRide) {
     <div class="absolute inset-0 flex items-center justify-center z-50">
       <div class="rounded-xl bg-white border border-neutral-200 shadow p-4 text-sm text-neutral-700">
@@ -9,10 +9,9 @@
 
   @if (ride) {
     <div class="absolute bg-white rounded-2xl top-15 bottom-15 left-70 -translate-x-1/2 z-50 p-10
-                flex flex-col w-[520px] shadow-xl border border-neutral-200">
+                flex flex-col w-130 shadow-xl border border-neutral-200 overflow-y-auto">
       <h1 class="text-3xl font-bold mb-10 text-center">New order</h1>
 
-      <!-- Start -->
       <div class="flex flex-col gap-2 mb-4">
         <label class="text-sm text-neutral-700">Start:</label>
         <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-6 border-[#BEBEBE85] border">
@@ -20,7 +19,15 @@
         </div>
       </div>
 
-      <!-- End -->
+<!--      @for(s of ride.stops; track s){-->
+<!--        <div class="flex flex-col gap-2 mb-4">-->
+<!--          <label class="text-sm text-neutral-700">Stop:</label>-->
+<!--          <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-6 border-[#BEBEBE85] border">-->
+<!--            <p class="text-neutral-900">{{ s.address ?? '-' }}</p>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      }-->
+
       <div class="flex flex-col gap-2 mb-6">
         <label class="text-sm text-neutral-700">End:</label>
         <div class="bg-[#F0F0F038] rounded-xl p-2 pl-4 pr-6 border-[#BEBEBE85] border">
@@ -28,7 +35,32 @@
         </div>
       </div>
 
-      <!-- Distance -->
+      <div class="flex flex-col gap-2 mb-6">
+        <label>
+          Passangers:
+        </label>
+        <div>
+          <div class="flex gap-2 items-center">
+            <div class="grid grid-cols-2 gap-2">
+              @for(p of ride.passengers; track p){
+              <div class="flex items-center w-50 gap-2">
+                <div
+                  class="w-10 aspect-square rounded-full bg-neutral-200 flex items-center justify-center overflow-hidden"
+                >
+                  <img
+                    [src]=p.profileImageUrl
+                    alt="Passanger profile"
+                    class="w-full h-full" />
+                </div>
+
+                <span class="leading-none">{{p.firstName}} {{p.lastName}}</span>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="flex flex-row items-center gap-4 mb-4">
         <label class="text-sm text-neutral-700 w-20">Distance:</label>
         <div class="bg-white rounded-xl p-1 px-5 border-black border">
@@ -38,7 +70,6 @@
         </div>
       </div>
 
-      <!-- Time -->
       <div class="flex flex-row items-center gap-4 mb-8">
         <label class="text-sm text-neutral-700 w-20">Time:</label>
         <div class="bg-white rounded-xl p-1 px-5 border-black border">
@@ -48,7 +79,6 @@
         </div>
       </div>
 
-      <!-- Buttons -->
       <div class="flex gap-4 mt-auto pt-6">
         <button
           type="button"
@@ -75,10 +105,9 @@
     </div>
   }
 
-  <!-- Cancel modal -->
   @if (cancelOpen) {
-    <div class="absolute inset-0 z-[60] bg-black/30 flex items-center justify-center">
-      <div class="w-[520px] rounded-2xl bg-white shadow-2xl border border-neutral-200 p-6">
+    <div class="absolute inset-0 left-60 z-60 bg-black/30 flex items-center justify-center">
+      <div class="w-430 rounded-2xl bg-white shadow-2xl border border-neutral-200 p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-bold text-black">Order cancellation</h2>
           <button
@@ -97,7 +126,7 @@
             <textarea
               formControlName="reason"
               rows="3"
-              class="w-full rounded-[12px] border border-neutral-200 bg-white px-4 py-3 shadow-sm
+              class="w-full rounded-xl border border-neutral-200 bg-white px-4 py-3 shadow-sm
                      focus:outline-none focus:ring-4 focus:ring-lime-200"
               [class.border-red-400]="cancelForm.controls.reason.touched && cancelForm.controls.reason.invalid"
               [class.focus:ring-red-200]="cancelForm.controls.reason.touched && cancelForm.controls.reason.invalid"
@@ -110,14 +139,14 @@
           </div>
 
           @if (cancelError) {
-            <div class="rounded-[12px] border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+            <div class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
               {{ cancelError }}
             </div>
           }
 
           <button
             type="submit"
-            class="w-full h-11 rounded-[12px] bg-[#C5E55D] text-black font-semibold shadow
+            class="w-full h-11 rounded-xl bg-[#C5E55D] text-black font-semibold shadow
                    hover:bg-lime-200 active:scale-[0.99]"
             [disabled]="cancelSubmitting"
           >

@@ -5,21 +5,29 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.data.TokenStorage;
+import com.example.gotaximobile.fragments.AdminPanelFragment;
 import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.Objects;
+
 public class MainActivity extends AppCompatActivity {
 
     private MaterialToolbar topAppBar;
+    private TokenStorage tokenStorage;
+
+    private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +36,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         topAppBar = findViewById(R.id.top_app_bar);
+        tokenStorage = new TokenStorage(getApplicationContext());
 
         if (topAppBar != null) {
             topAppBar.getMenu().clear();
             topAppBar.inflateMenu(R.menu.top_app_bar_menu);
-            tintMenuItemText(topAppBar, R.id.action_login, R.color.app_primary);
+
+            updateAuthMenuItems();
+
 
             topAppBar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.action_login) {
                     startActivity(new Intent(MainActivity.this, AuthActivity.class));
+                    return true;
+                }
+                if (item.getItemId()== R.id.action_logout) {
+                    handleLogout();
                     return true;
                 }
                 return false;
@@ -48,9 +63,12 @@ public class MainActivity extends AppCompatActivity {
 
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
-
             updateTopBarVisibility(R.id.nav_home);
         }
+
+        bottomNav = findViewById(R.id.bottom_navigation);
+
+        checkIsAdmin();
 
         bottomNav.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -60,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
                 selectedFragment = new HomeFragment();
             } else if (id == R.id.nav_favorite) {
                 selectedFragment = new FavoriteRoutesFragment();
-
+            } else if (id == R.id.nav_admin_panel) {
+                selectedFragment = new AdminPanelFragment();
             } else if (id == R.id.nav_profile) {
                 selectedFragment = new ProfileFragment();
             }
@@ -73,6 +92,40 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    private void updateAuthMenuItems() {
+        if (topAppBar == null) return;
+
+        boolean loggedIn = tokenStorage.isLoggedIn();
+
+        MenuItem loginItem = topAppBar.getMenu().findItem(R.id.action_login);
+        MenuItem logoutItem = topAppBar.getMenu().findItem(R.id.action_logout);
+
+        if (loginItem != null) {
+            loginItem.setVisible(!loggedIn);
+            if (!loggedIn) {
+                tintMenuItemText(topAppBar, R.id.action_login, R.color.app_primary);
+            }
+        }
+
+        if (logoutItem != null) {
+            logoutItem.setVisible(loggedIn);
+            if (loggedIn) {
+                tintMenuItemText(topAppBar, R.id.action_logout, R.color.app_primary);
+            }
+        }
+    }
+    private void handleLogout() {
+        tokenStorage.clear();
+        checkIsAdmin();
+        updateAuthMenuItems();
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_home);
+        } else {
+            loadFragment(new HomeFragment());
+            updateTopBarVisibility(R.id.nav_home);
+        }
     }
 
     private void updateTopBarVisibility(int selectedNavId) {
@@ -97,11 +150,25 @@ public class MainActivity extends AppCompatActivity {
         );
         item.setTitle(s);
     }
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateAuthMenuItems();
+    }
     public void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .commit();
+    }
+
+    public void checkIsAdmin(){
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        boolean isAdmin = Objects.equals(tokenStorage.getRole(), "ADMIN");
+
+        MenuItem adminItem = bottomNav.getMenu().findItem(R.id.nav_admin_panel);
+        if (adminItem != null) {
+            adminItem.setVisible(isAdmin);
+        }
     }
 }

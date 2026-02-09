@@ -62,7 +62,7 @@ export class AdminPanicComponent implements OnInit, OnDestroy {
       const latest = this.panics[0];
       const latestId = latest?.id ?? null;
 
-      if (!initial && latestId && this.lastPanicId && latestId !== this.lastPanicId) {
+      if (!initial && latestId && latestId !== this.lastPanicId) {
         this.playSound();
       }
 
@@ -94,14 +94,29 @@ export class AdminPanicComponent implements OnInit, OnDestroy {
     this.selectedRideId = rideId;
     this.selectedPanicId = panicId;
 
+    const lat = p?.vehicleLat;
+    const lng = p?.vehicleLng;
+
+    if (typeof lat === 'number' && typeof lng === 'number') {
+      this.pins = [{
+        lat,
+        lng,
+        popup: `PANIC ride: ${rideId}`,
+        iconUrl: carSelectedIcon,
+        snapToRoad: false,
+      }];
+      return;
+    }
+
     try {
       const tr = await this.api.getRideTracking(rideId).toPromise();
-      const lat = tr?.vehicleLatitude;
-      const lng = tr?.vehicleLongitude;
+      const vLat = tr?.vehicleLatitude;
+      const vLng = tr?.vehicleLongitude;
 
-      if (typeof lat === 'number' && typeof lng === 'number') {
+      if (typeof vLat === 'number' && typeof vLng === 'number') {
         this.pins = [{
-          lat, lng,
+          lat: vLat,
+          lng: vLng,
           popup: `PANIC ride: ${rideId}`,
           iconUrl: carSelectedIcon,
           snapToRoad: false,
@@ -119,13 +134,12 @@ export class AdminPanicComponent implements OnInit, OnDestroy {
 
     try {
       await this.api.resolvePanic(this.selectedPanicId).toPromise();
-      // после resolve обновляем список
+
       await this.poll(true);
       this.selectedPanicId = null;
       this.selectedRideId = null;
       this.pins = [];
     } catch {
-      // можно вывести ошибку в UI, если хочешь
     }
   }
 }

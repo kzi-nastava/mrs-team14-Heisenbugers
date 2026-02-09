@@ -40,8 +40,8 @@ public class DriverHistoryOneRideFragment extends Fragment {
                 Ride r = (Ride) ride;
 
                 // COMMON
-                TextView driver = view.findViewById(R.id.driver_name_value);
-                driver.setText(r.getDriver().getFullName());
+                //TextView driver = view.findViewById(R.id.driver_name_value);
+                //driver.setText(r.getDriver().getFullName());
 
                 TextView start = view.findViewById(R.id.start_value);
                 start.setText(r.getStartLocation());

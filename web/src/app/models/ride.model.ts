@@ -6,3 +6,9 @@ export interface RideRateInfo {
   startTime: Date;
   endTime: Date;
 }
+
+export interface LocationDTO {
+  latitude: number;
+  longitude: number;
+  address: string;
+}

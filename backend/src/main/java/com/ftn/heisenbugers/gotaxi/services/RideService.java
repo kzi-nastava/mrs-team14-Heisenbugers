@@ -12,6 +12,8 @@ import com.ftn.heisenbugers.gotaxi.repositories.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -64,25 +66,41 @@ public class RideService {
         ride.setRoute(route);
         ride.setStatus(RideStatus.REQUESTED);
         ride.setCanceled(false);
+        ride.setStart(start);
+        ride.setEnd(end);
         ride.setPassengers(new ArrayList<>());
         for (int i = 0; i<request.getPassengersEmails().size(); i++){
             Optional<Passenger> p = passengerRepository.findByEmail(request.getPassengersEmails().get(i));
             ride.addPassenger(p.get());
         }
 
+        if(request.getScheduledAt() != null){
+            ZonedDateTime zdt = ZonedDateTime.parse(request.getScheduledAt());
+            ride.setScheduledAt(zdt.withZoneSameInstant(ZoneId.systemDefault())
+                    .toLocalDateTime());
+            rideRepository.save(ride);
+            return new CreatedRideDTO(ride.getId(), request.getRoute(), request.getVehicleType(), request.isBabyTransport(),
+                    request.isPetTransport(), request.getPassengersEmails(), null, RideStatus.REQUESTED);
+        }else{
+            ride.setScheduledAt(null);
+        }
+
         Optional<Driver> driver = assignDriverToRide(ride, request.isPetTransport(), request.isBabyTransport(), request.getVehicleType());
 
         if(driver.isEmpty()){
-            return new CreatedRideDTO();
+            throw new RuntimeException("There is no free driver available!");
         }else{
             ride.setDriver(driver.get());
             ride.setStatus(RideStatus.ASSIGNED);
+            ride.setVehicle(driver.get().getVehicle());
             driver.get().setAvailable(false);
             rideRepository.save(ride);
             sendAcceptedRideEmail(ride.getRoute().getUser(), ride);
         }
 
-        return new CreatedRideDTO();
+        return new CreatedRideDTO(ride.getId(), request.getRoute(), ride.getVehicle().getType(), ride.getVehicle().isBabyTransport(),
+                ride.getVehicle().isPetTransport(), request.getPassengersEmails(),
+                new DriverDto(ride.getDriver().getFirstName(), ride.getDriver().getLastName()), RideStatus.ASSIGNED);
     }
 
     public Optional<Driver> assignDriverToRide(Ride ride, boolean petTransport, boolean babyTransport, VehicleType vehicleType) {
@@ -251,6 +269,18 @@ public class RideService {
         trafficViolation.setLastModifiedBy(reporter);
 
         violationRepository.save(trafficViolation);
+        return true;
+    }
+
+    public boolean start(UUID rideId){
+        Ride ride = rideRepository.findById(rideId).get();
+
+        ride.setStatus(RideStatus.ONGOING);
+        ride.setStartedAt(LocalDateTime.now());
+        ride.setLastModifiedBy(ride.getDriver());
+        ride.getDriver().setAvailable(true);
+        rideRepository.save(ride);
+
         return true;
     }
 

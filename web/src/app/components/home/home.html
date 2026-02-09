@@ -3,16 +3,23 @@
     <app-map [pins]="pins" (routeSummary)="onRouteSummary($event)" [goBelow]="true"></app-map>
   </div>
 
-  <button
-    type="button"
-    (click)="openEstimate()"
-    class="absolute z-10 top-6 left-6 h-11 w-11 rounded-[10px] bg-white border border-neutral-200 shadow flex items-center justify-center hover:bg-neutral-50 active:scale-[0.99]"
-    aria-label="Estimate ride"
-  >
-    <ng-icon name="bootstrapGeo" size="22"></ng-icon>
-  </button>
+  @if(!rideId){
+    <button
+      type="button"
+      (click)="openEstimate()"
+      class="absolute z-10 top-6 left-6 h-11 w-11 rounded-[10px] bg-white border border-neutral-200 shadow flex items-center justify-center hover:bg-neutral-50 active:scale-[0.99]"
+      aria-label="Estimate ride"
+    >
+      <ng-icon name="bootstrapGeo" size="22"></ng-icon>
+    </button>
+  }
 
-  @if (estimateOpen && authService.getRole() == "PASSENGER"){
+  @if(rideId && authService.getRole() == "DRIVER"){
+    <app-start-ride
+      (pinsChange)="onPinsChange($event)"
+    ></app-start-ride>
+  }
+  @else if (estimateOpen && authService.getRole() == "PASSENGER" && !rideId) {
     <app-ride-booking
       [routeSummary]="routeSummary ?? undefined"
       (pinsChange)="onPinsChange($event)">
@@ -106,7 +113,7 @@
     </div>
   }
 
-  @if (routeSummary) {
+  @if (routeSummary && !rideId) {
     <div
       class="absolute z-10 left-6 bottom-6 w-65 rounded-[14px] bg-white shadow-xl border border-neutral-200 p-4"
     >

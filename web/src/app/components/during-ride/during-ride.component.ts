@@ -10,7 +10,7 @@ import { RateModal } from "../rate-modal/rate-modal.component";
 
 //import { RideInfo } from '../driver-ride-history/driver-info.model';
 import { PanicService } from '../../services/panic.service';
-
+import { ActivatedRoute } from '@angular/router';
 import { RideInfo } from '../../models/driver-info.model';
 import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
@@ -58,9 +58,9 @@ export interface RideDTO {
 
 
 export class DuringRide {
+  @Input() rideId!: string;
   private stops?: L.LatLng[]
   private baseUrl = 'http://localhost:8081/api';
-  @Input() rideId!: string;
 
   private mockStops: L.LatLng[] = [
     new LatLng(45.249570, 19.815809),
@@ -81,6 +81,7 @@ export class DuringRide {
 
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   @ViewChild(MapComponent) mapCmp!: MapComponent;
+
 
   /*ride: RideInfo = {
 
@@ -122,7 +123,8 @@ export class DuringRide {
   toastMessage = '';
 
 
-  constructor(private cdr: ChangeDetectorRef, private http: HttpClient) {
+  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
+
     if (!this.mockStops || this.mockStops.length < 2){
       return;
     }
@@ -135,6 +137,18 @@ export class DuringRide {
   }
 
   ngOnInit(): void {
+
+    const fromRoute = this.route.snapshot.paramMap.get('rideId');
+    if (!this.rideId && fromRoute) {
+      this.rideId = fromRoute;
+    }
+
+    if (!this.rideId) {
+      console.error('DuringRide: rideId is missing');
+      this.useMockData('Missing rideId');
+      return;
+    }
+
     this.http.get<TrackingDTO>(`${this.baseUrl}/rides/${this.rideId}/tracking`).subscribe({
       next: (data) => {
         this.vehicleCoords = {
@@ -302,7 +316,7 @@ export class DuringRide {
       return { latitude: lat, longitude: lng };
     }
 
-    // fallback: попробуем браузерный GPS (если вдруг tracking не пришёл)
+
     return await new Promise((resolve, reject) => {
       if (!navigator.geolocation) return reject('Geolocation is not available');
 
@@ -335,8 +349,7 @@ export class DuringRide {
       this.showToast('Ride stopped successfully!');
       this.stopConfirmOpen = false;
 
-      // В UI можно убрать карточку/кнопки или сделать редирект:
-      // например, на историю поездок:
+
       // this.router.navigateByUrl('/driver-ride-history');
     } catch (e: any) {
       this.stopError = e?.error?.message ?? (typeof e === 'string' ? e : 'Failed to stop ride');

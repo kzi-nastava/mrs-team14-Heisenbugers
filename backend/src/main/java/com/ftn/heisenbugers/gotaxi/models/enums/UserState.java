@@ -5,4 +5,5 @@ public enum UserState {
     RIDING,
     DRIVING,
     READY,
+    STARTING,
 }

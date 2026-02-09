@@ -9,7 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ForgotPasswordResponseDTO {
     private String message;
-
-    // test wihout email
     private String resetToken;
 }

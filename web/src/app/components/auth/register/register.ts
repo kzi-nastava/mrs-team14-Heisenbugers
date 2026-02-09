@@ -1,4 +1,4 @@
-import { Component,inject } from '@angular/core';
+import {ChangeDetectorRef, Component, inject} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {bootstrapEye,bootstrapEyeSlash,bootstrapCameraFill} from '@ng-icons/bootstrap-icons';
 import {
@@ -57,7 +57,8 @@ export class RegisterComponent {
   serverError: string | null = null;
   private fb = inject(FormBuilder);
 
-
+  constructor(private cdr: ChangeDetectorRef) {
+  }
 
   form = this.fb.group(
     {
@@ -89,7 +90,7 @@ export class RegisterComponent {
     this.selectedImageFile = file;
 
     const reader = new FileReader();
-    reader.onload = () => (this.imagePreview = String(reader.result));
+    reader.onload = () => {this.imagePreview = String(reader.result); this.cdr.markForCheck();};
     reader.readAsDataURL(file);
   }
 

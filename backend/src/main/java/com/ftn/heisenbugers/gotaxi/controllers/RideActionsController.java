@@ -59,7 +59,7 @@ public class RideActionsController {
         }
 
         String reason = request != null ? request.getReason() : null;
-        User currentUser = AuthContextService.getCurrentUser(); // раз Driver наследуется от User — ок
+        User currentUser = AuthContextService.getCurrentUser();
 
         boolean isDriver = (currentUser instanceof Driver);
         boolean isPassenger = (currentUser instanceof Passenger);

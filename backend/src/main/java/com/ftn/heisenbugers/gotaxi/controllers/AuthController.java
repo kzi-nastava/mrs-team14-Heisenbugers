@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
+import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Administrator;
 import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
@@ -7,6 +8,9 @@ import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.models.services.AuthService;
+import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.models.dtos.MessageResponse;
+import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,7 @@ public class AuthController {
 
     private AuthService authService;
     private UserRepository userRepository;
+    private final RideRepository rideRepository;
 
     @Autowired
     private JwtService jwtService;
@@ -89,6 +94,10 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<MessageResponse> forgotPassword(@RequestBody ForgotPasswordRequestDTO request) {
 
+        String appBaseUrl = "http://localhost:4200";
+
+        authService.requestPasswordReset(request.getEmail(), appBaseUrl);
+
         return ResponseEntity.status(HttpStatus.ACCEPTED)
                 .body(new MessageResponse("If the email exists, a reset link has been sent."));
     }
@@ -103,15 +112,37 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new MessageResponse("Passwords do not match."));
         }
+        if (request.getToken() == null || request.getToken().isBlank()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new MessageResponse("Reset token is required."));
+        }
+
+        authService.resetPassword(request.getToken(), request.getNewPassword());
 
 
-        // for future token->user
-        return ResponseEntity.ok(new MessageResponse("Password updated (stub)."));
+        return ResponseEntity.ok(new MessageResponse("Password updated."));
     }
 
     //logout
     @DeleteMapping("/session")
-    public ResponseEntity<MessageResponse> logout() {
+    public ResponseEntity<MessageResponse> logout() throws InvalidUserType {
+
+        User current = AuthContextService.getCurrentUser();
+
+        if (current instanceof Driver driver) {
+
+            boolean hasActiveRide = !rideRepository.findActiveRidesByDriver(driver.getId()).isEmpty();
+
+            if (hasActiveRide) {
+
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(new MessageResponse("You cannot log out while you have an active ride."));
+            }
+
+
+            driver.setWorking(false);
+            userRepository.save(driver);
+        }
         return ResponseEntity.ok(new MessageResponse("Logged out."));
     }
 

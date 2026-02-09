@@ -4,7 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import {bootstrapCameraFill, bootstrapEye, bootstrapEyeSlash} from '@ng-icons/bootstrap-icons';
 import {NgIcon, provideIcons} from '@ng-icons/core';
 import { FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { Router } from '@angular/router';
+
+import { Router, ActivatedRoute } from '@angular/router';
+import { AuthService } from '../auth.service'
 
 function passwordsMatch(group: AbstractControl): ValidationErrors | null {
   const p = group.get('password')?.value;
@@ -25,8 +27,12 @@ function passwordsMatch(group: AbstractControl): ValidationErrors | null {
 })
 export class ForgotPasswordComponent {
 
-  constructor(private router: Router) {
-    
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {
+    this.token = this.route.snapshot.queryParamMap.get('token');
   }
 
   private fb = inject(FormBuilder);
@@ -36,6 +42,7 @@ export class ForgotPasswordComponent {
 
   showPassword = false;
   showConfirmPassword = false;
+  token: string | null = null;
 
   form = this.fb.group(
     {
@@ -73,14 +80,27 @@ export class ForgotPasswordComponent {
 
   submit() {
     this.submitAttempted = true;
-    if (this.form.invalid) {
+    if (this.form.invalid || !this.token) {
       this.form.markAllAsTouched();
       return;
     }
 
     this.submitted = true;
-    console.log('new password:', this.form.value.password);
 
-    this.router.navigate(['auth/login'])
+    const newPassword = this.form.value.password!;
+    const confirmPassword = this.form.value.confirmPassword!;
+
+    this.authService.resetPassword(this.token, newPassword, confirmPassword)
+      .subscribe({
+        next: () => {
+          // TODO: можно вставить snackbar/toast
+          this.router.navigate(['auth/login'], { queryParams: { resetSuccess: 1 } });
+        },
+        error: (err) => {
+          this.submitted = false;
+          // TODO: показать ошибку пользователю
+          console.error(err);
+        }
+      });
   }
 }

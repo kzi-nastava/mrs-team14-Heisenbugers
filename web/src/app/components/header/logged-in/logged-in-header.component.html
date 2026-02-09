@@ -9,6 +9,7 @@
 
     <!-- Right actions -->
     <div class="flex items-center gap-6 text-white">
+      <app-driver-status-toggle></app-driver-status-toggle>
       <!-- Notifications -->
       <div class="relative">
         <button
@@ -64,7 +65,25 @@
           Settings
         </button>
 
+        @if (auth.getRole() == "ADMIN") {
+          <button
+            class="flex w-full items-center gap-2 px-6 py-4 text-sm hover:bg-zinc-800 rounded-lg cursor-pointer"
+            (click)="goToRegisterDriver()"
+          >
+            Register driver
+          </button>
+
+          <button
+            class="flex w-full items-center gap-2 px-6 py-4 text-sm hover:bg-zinc-800 rounded-lg cursor-pointer"
+            (click)="goToProfileChanges()"
+          >
+            Profile changes
+          </button>
+        }
+
         <div class="my-1 h-px bg-white/10"></div>
+
+
 
         <button
           class="flex w-full items-center gap-2 px-6 py-4 text-sm text-red-400 hover:bg-zinc-800 rounded-lg cursor-pointer"

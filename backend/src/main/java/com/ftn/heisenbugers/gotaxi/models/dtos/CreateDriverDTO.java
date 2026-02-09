@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +20,7 @@ public class CreateDriverDTO {
     @Getter @Setter
     private String address;
     @Getter @Setter
-    private String profileImageUrl;
+    private String profileImage;
     @Getter @Setter
     private CreateVehicleDTO vehicle;
 }

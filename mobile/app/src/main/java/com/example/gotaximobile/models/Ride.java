@@ -4,17 +4,20 @@ import android.icu.text.NumberFormat;
 
 import androidx.annotation.NonNull;
 
+import com.example.gotaximobile.models.dtos.DriverRideHistoryDTO;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class Ride implements Serializable {
     private Driver driver;
     private String startLocation;
     private String endLocation;
-    private Date startTime;
-    private Date endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private double price;
     private double rating;
     private double maxRating;
@@ -23,8 +26,14 @@ public class Ride implements Serializable {
     private List<String> trafficViolations;
     private boolean wasPanic;
 
-    public Ride(Driver driver, String startLocation, String endLocation, Date startTime,
-                Date endTime, double price, double rating, double maxRating, boolean cancelled,
+    private static final DateTimeFormatter FMT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+
+    private static final DateTimeFormatter OUT_FMT =
+            DateTimeFormatter.ofPattern("HH:mm");
+
+    public Ride(Driver driver, String startLocation, String endLocation, LocalDateTime startTime,
+                LocalDateTime endTime, double price, double rating, double maxRating, boolean cancelled,
                 List<User> passengers, List<String> trafficViolations, boolean wasPanic) {
         this.driver = driver;
         this.startLocation = startLocation;
@@ -38,6 +47,23 @@ public class Ride implements Serializable {
         this.passengers = passengers;
         this.trafficViolations = trafficViolations;
         this.wasPanic = wasPanic;
+    }
+
+    public Ride(DriverRideHistoryDTO dto) {
+        this.driver = null;
+        this.startLocation = dto.startAddress;
+        this.endLocation = dto.endAddress;
+        this.startTime = dto.startedAt != null ? LocalDateTime.parse(dto.startedAt, FMT) : null;
+        this.endTime = dto.endedAt != null ? LocalDateTime.parse(dto.endedAt, FMT) : null;
+        this.price = dto.price;
+        this.rating = 0.0;
+        this.maxRating = 0.0;
+        this.cancelled = dto.canceled;
+        this.passengers = new java.util.ArrayList<>();
+        this.trafficViolations = dto.trafficViolations != null
+                ? dto.trafficViolations.stream().map(Object::toString).collect(java.util.stream.Collectors.toList())
+                : new java.util.ArrayList<>();
+        this.wasPanic = dto.panicTriggered;
     }
 
     public Driver getDriver() {
@@ -64,25 +90,32 @@ public class Ride implements Serializable {
         this.endLocation = endLocation;
     }
 
-    public Date getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Date startTime) {
+    public String getStartTimeString() {
+        return startTime != null ? startTime.format(OUT_FMT) : "N/A";
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public Date getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public String getEndTimeString() {
+        return endTime != null ? endTime.format(OUT_FMT) : "N/A";
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 
     public String getFormatedTime() {
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Constants.LOCALE);
-        return sdf.format(startTime) + " - " + sdf.format(endTime);
+        return getStartTimeString() + " - " + getEndTimeString();
     }
 
     public double getPrice() {
@@ -151,9 +184,9 @@ public class Ride implements Serializable {
 
         return String.format("%s (%s)\n ↓\n %s (%s)",
                 startLocation,
-                startTime != null ? sdf.format(startTime) : "N/A",
+                startTime != null ? startTime.format(OUT_FMT) : "N/A",
                 endLocation,
-                endTime != null ? sdf.format(endTime) : "N/A");
+                endTime != null ? endTime.format(OUT_FMT) : "N/A");
     }
 
     @NonNull

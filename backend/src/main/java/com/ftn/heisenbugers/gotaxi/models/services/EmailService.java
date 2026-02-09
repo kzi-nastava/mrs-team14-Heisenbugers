@@ -23,17 +23,24 @@ public class EmailService {
         this.mailSender = mailSender;
     }
 
-    public void sendActivationEmail(String toEmail, String activationLink) {
+    public void sendActivationEmail(String toEmail,
+                                    String webLink,
+                                    String androidLink) {
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setFrom(from);
         msg.setTo(toEmail);
         msg.setSubject("GoTaxi – Activate your account");
         msg.setText("""
                 Thanks for registering!
-                
-                Activate your account (valid for 24h):
-                %s
-                """.formatted(activationLink));
+
+            Web:
+            %s
+
+            Android app:
+            %s
+
+            The link is valid for 24 hours.
+            """.formatted(webLink, androidLink));
 
         mailSender.send(msg);
     }
@@ -46,4 +53,33 @@ public class EmailService {
         msg.setText(body);
         mailSender.send(msg);
     }
+
+    public void sendPasswordResetEmail(String toEmail, String resetLink, String mobileDeepLink) {
+        try{
+            String subject = "Password reset request";
+
+            String content = """
+            You requested a password reset.
+
+            Web version:
+            %s
+
+            Android app:
+            %s
+
+            If you did not request this, please ignore this email.
+            """.formatted(resetLink, mobileDeepLink);
+
+            SimpleMailMessage msg = new SimpleMailMessage();
+            msg.setFrom(from);
+            msg.setTo(toEmail);
+            msg.setSubject(subject);
+            msg.setText(content);
+
+            mailSender.send(msg);
+    }catch (Exception ex) {
+        System.err.println("Failed to send password reset email: " + ex.getMessage());
+        ex.printStackTrace();
+    }
+}
 }
