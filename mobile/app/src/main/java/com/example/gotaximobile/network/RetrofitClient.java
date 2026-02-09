@@ -2,9 +2,9 @@ package com.example.gotaximobile.network;
 
 import android.content.Context;
 
+import com.example.gotaximobile.BuildConfig;
 import com.example.gotaximobile.adapters.LocalDateTimeAdapter;
 import com.example.gotaximobile.data.TokenStorage;
-import com.example.gotaximobile.BuildConfig;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -53,6 +53,10 @@ public class RetrofitClient {
 
     public static ProfileService profileService(Context context) {
         return get(context).create(ProfileService.class);
+    }
+
+    public static RideService rideService(Context context) {
+        return get(context).create(RideService.class);
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.gotaximobile.fragments.ride;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,10 +16,23 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.models.dtos.RideDTO;
+import com.example.gotaximobile.network.RetrofitClient;
+import com.example.gotaximobile.network.RideService;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
+import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DuringRideFragment extends Fragment {
+
+    private RideDTO ride;
+    private RideService rideService;
+    private UUID rideId;
 
     @Nullable
     @Override
@@ -27,12 +41,40 @@ public class DuringRideFragment extends Fragment {
             @Nullable ViewGroup container,
             @Nullable Bundle savedInstanceState
     ) {
-        return inflater.inflate(R.layout.fragment_during_ride, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_during_ride, container, false);
+
+        if (getArguments() != null) {
+            String idString = getArguments().getString("rideId");
+            if (idString != null) {
+                rideId = UUID.fromString(idString);
+            }
+        }
+        assert rideId != null;
+
+        rideService = RetrofitClient.rideService(requireContext());
+        rideService.getRide(rideId).enqueue(new Callback<RideDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<RideDTO> call,
+                                   @NonNull Response<RideDTO> response) {
+                ride = response.body();
+                populateRideData();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<RideDTO> call, @NonNull Throwable t) {
+                Log.e("NETWORK_ERROR", Objects.requireNonNull(t.getMessage()));
+
+            }
+        });
+
+        return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         // Note input and icon
         TextView noteLabel = view.findViewById(R.id.noteLabel);
@@ -84,5 +126,14 @@ public class DuringRideFragment extends Fragment {
         Objects.requireNonNull(dialog.getWindow())
                 .setBackgroundDrawableResource(R.color.white); // stylize background
         dialog.show();
+    }
+
+
+    private void populateRideData() {
+        TextInputEditText startField = requireView().findViewById(R.id.start_field);
+        TextInputEditText finishField = requireView().findViewById(R.id.finish_field);
+
+        startField.setText(ride.startLocation.address);
+        finishField.setText(ride.endLocation.address);
     }
 }

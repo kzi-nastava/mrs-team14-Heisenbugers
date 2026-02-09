@@ -76,7 +76,10 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
             } else if (id == R.id.nav_favorite) {
+                Bundle args = new Bundle();
+                args.putString("rideId", "5adcfe6c-b3bd-4f7c-a098-0d8bb0473da3");
                 selectedFragment = new DuringRideFragment();
+                selectedFragment.setArguments(args);
             } else if (id == R.id.nav_admin_panel) {
                 selectedFragment = new AdminPanelFragment();
             } else if (id == R.id.nav_profile) {
