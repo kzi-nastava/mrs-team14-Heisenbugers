@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
             updateTopBarVisibility(R.id.nav_home);
@@ -135,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
             topAppBar.setVisibility(android.view.View.GONE);
         }
     }
+
     private void tintMenuItemText(MaterialToolbar toolbar, int menuItemId, int colorRes) {
         MenuItem item = toolbar.getMenu().findItem(menuItemId);
         if (item == null) return;
