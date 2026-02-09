@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
             updateTopBarVisibility(R.id.nav_home);
