@@ -1,8 +1,8 @@
 package com.example.gotaximobile.fragments.ride;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
@@ -23,6 +24,7 @@ import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.models.dtos.RideTrackingDTO;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.RideService;
+import com.google.android.material.color.MaterialColors;
 import com.google.android.material.textfield.TextInputEditText;
 
 import org.osmdroid.util.GeoPoint;
@@ -123,8 +125,9 @@ public class DuringRideFragment extends Fragment {
     }
 
     private void openModal() {
-        androidx.appcompat.app.AlertDialog.Builder builder =
-                new androidx.appcompat.app.AlertDialog.Builder(requireContext());
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(new ContextThemeWrapper(requireContext(),
+                        androidx.appcompat.R.style.ThemeOverlay_AppCompat_Dialog));
         builder.setTitle("Add a note");
 
         // Create a vertical LinearLayout to hold title and description fields
@@ -136,16 +139,24 @@ public class DuringRideFragment extends Fragment {
         // Title input
         final EditText titleInput = new EditText(requireContext());
         titleInput.setHint("Title");
-        titleInput.setTextColor(Color.BLACK);
+        titleInput.setTextColor(MaterialColors.getColor(titleInput,
+                com.google.android.material.R.attr.colorOnSurface));
+        titleInput.setHintTextColor(
+                MaterialColors.getColor(titleInput,
+                        com.google.android.material.R.attr.colorOnSurfaceVariant));
         titleInput.setTextSize(16);
         layout.addView(titleInput);
 
         // Description input
         final EditText descriptionInput = new EditText(requireContext());
         descriptionInput.setHint("Description");
-        descriptionInput.setTextColor(android.graphics.Color.DKGRAY);
         descriptionInput.setTextSize(14);
         descriptionInput.setGravity(android.view.Gravity.TOP);
+
+        descriptionInput.setTextColor(
+                MaterialColors.getColor(descriptionInput, com.google.android.material.R.attr.colorOnSurface));
+        descriptionInput.setHintTextColor(
+                MaterialColors.getColor(descriptionInput, com.google.android.material.R.attr.colorOnSurfaceVariant));
         layout.addView(descriptionInput);
 
         builder.setView(layout);
@@ -160,8 +171,6 @@ public class DuringRideFragment extends Fragment {
                 (dialog, which) -> dialog.dismiss());
 
         androidx.appcompat.app.AlertDialog dialog = builder.create();
-        Objects.requireNonNull(dialog.getWindow())
-                .setBackgroundDrawableResource(R.color.white); // stylize background
         dialog.show();
     }
 
