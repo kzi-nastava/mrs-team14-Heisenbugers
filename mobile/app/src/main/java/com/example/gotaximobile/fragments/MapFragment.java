@@ -167,6 +167,9 @@ public class MapFragment extends Fragment {
     }
 
     public void drawRoute(GeoPoint start, GeoPoint end, List<GeoPoint> stops) {
+        if (stops == null) {
+            stops = new ArrayList<>();
+        }
         RoadManager roadManager = new OSRMRoadManager(requireContext(),
                 Configuration.getInstance().getUserAgentValue());
 
