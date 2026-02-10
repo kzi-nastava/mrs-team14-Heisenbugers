@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(MainActivity.this, AuthActivity.class));
                     return true;
                 }
-                if (item.getItemId()== R.id.action_logout) {
+                if (item.getItemId() == R.id.action_logout) {
                     handleLogout();
                     return true;
                 }
@@ -116,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private void handleLogout() {
         tokenStorage.clear();
         checkIsAdmin();
@@ -150,11 +150,13 @@ public class MainActivity extends AppCompatActivity {
         );
         item.setTitle(s);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         updateAuthMenuItems();
     }
+
     public void loadFragment(Fragment fragment) {
         getSupportFragmentManager()
                 .beginTransaction()
@@ -162,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    public void checkIsAdmin(){
+    public void checkIsAdmin() {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
         boolean isAdmin = Objects.equals(tokenStorage.getRole(), "ADMIN");
 
