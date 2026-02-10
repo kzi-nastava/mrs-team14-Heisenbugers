@@ -94,6 +94,17 @@ public class DuringRideFragment extends Fragment {
 
         mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
 
+        assert mapFragment != null;
+        mapFragment.setRouteInfoListener((durationSec, distanceKm) -> {
+            long minutes = Math.round(durationSec / 60.0);
+
+            TextView etaView = requireView().findViewById(R.id.eta);
+            TextView distanceView = requireView().findViewById(R.id.eta_distance);
+
+            etaView.setText(minutes + " min");
+            distanceView.setText(String.format("%.1f km", distanceKm));
+        });
+
         // Note input and icon
         TextView noteLabel = view.findViewById(R.id.noteLabel);
         ImageButton noteButton = view.findViewById(R.id.noteButton);

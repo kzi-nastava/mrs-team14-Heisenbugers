@@ -42,6 +42,7 @@ public class MapFragment extends Fragment {
     private final List<MapPin> pins = new ArrayList<>();
     private Polyline routeOverlay;
     private final OkHttpClient httpClient = new OkHttpClient();
+    private RouteInfoListener routeInfoListener;
 
 
     @Nullable
@@ -173,6 +174,14 @@ public class MapFragment extends Fragment {
 
         new Thread(() -> {
             Road road = roadManager.getRoad(waypoints);
+            double durationSeconds = road.mDuration;
+            double distanceKm = road.mLength;
+            requireActivity().runOnUiThread(() -> {
+                if (routeInfoListener != null) {
+                    routeInfoListener.onRouteInfo(durationSeconds, distanceKm);
+                }
+            });
+
             Polyline polyline = RoadManager.buildRoadOverlay(road);
 
             requireActivity().runOnUiThread(() -> {
@@ -186,11 +195,19 @@ public class MapFragment extends Fragment {
         }).start();
     }
 
+    public void setRouteInfoListener(RouteInfoListener listener) {
+        this.routeInfoListener = listener;
+    }
+
 
     public interface Callback {
         void onSuccess(GeoPoint point);
 
         void onError(Exception e);
+    }
+
+    public interface RouteInfoListener {
+        void onRouteInfo(double durationSeconds, double distanceKm);
     }
 
     @Override
