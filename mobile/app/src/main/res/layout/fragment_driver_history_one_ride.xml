@@ -1,4 +1,5 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
@@ -7,13 +8,14 @@
     <androidx.core.widget.NestedScrollView xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:fillViewport="true"
+
         android:padding="16dp"
         tools:context=".fragments.DriverHistoryOneRideFragment">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             android:background="@drawable/fragment_bg"
             android:padding="16dp"
@@ -240,6 +242,7 @@
                         android:orientation="horizontal"
                         app:chipSpacing="8dp" />
                 </LinearLayout>
+
             </LinearLayout>
 
             <com.google.android.material.chip.Chip
@@ -252,7 +255,25 @@
                 app:chipBackgroundColor="@color/item_bg_pressed"
                 android:text="WAS PANIC"
                 android:layout_marginTop="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/rate_ride_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rate Ride"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="16dp"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/black" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
