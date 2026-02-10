@@ -10,6 +10,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +31,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -164,7 +167,7 @@ public class DuringRideFragment extends Fragment {
         builder.setPositiveButton("OK", (dialog, which) -> {
             String title = titleInput.getText().toString();
             String description = descriptionInput.getText().toString();
-            // TODO: handle title and description
+            sendNotes(title, description);
         });
 
         builder.setNegativeButton("Cancel",
@@ -172,6 +175,23 @@ public class DuringRideFragment extends Fragment {
 
         androidx.appcompat.app.AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private void sendNotes(String title, String description) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("title", title);
+        body.put("desc", description);
+        rideService.reportRide(rideId, body).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                Toast.makeText(requireContext(), "Report sent", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(requireContext(), "Failed to send report", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
