@@ -1,11 +1,14 @@
 package com.example.gotaximobile.activities;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -16,21 +19,34 @@ import com.example.gotaximobile.fragments.AdminPanelFragment;
 import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
+import com.example.gotaximobile.fragments.ride.DuringRideFragment;
+import com.example.gotaximobile.models.dtos.UserStateDTO;
+import com.example.gotaximobile.models.enums.UserState;
+import com.example.gotaximobile.network.RetrofitClient;
+import com.example.gotaximobile.network.UserService;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.Objects;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
 
     private MaterialToolbar topAppBar;
     private TokenStorage tokenStorage;
+    private UserService userService;
+    private UserStateDTO userState;
 
     private BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        userService = RetrofitClient.userService(this);
 
         setContentView(R.layout.activity_main);
 
@@ -61,8 +77,10 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
 
         if (savedInstanceState == null) {
-            loadFragment(new HomeFragment());
-            updateTopBarVisibility(R.id.nav_home);
+            decideOnHomeFragment(fragment -> {
+                loadFragment(fragment);
+                updateTopBarVisibility(R.id.nav_home);
+            });
         }
 
         bottomNav = findViewById(R.id.bottom_navigation);
@@ -74,22 +92,28 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_home) {
-                selectedFragment = new HomeFragment();
-            } else if (id == R.id.nav_favorite) {
-                selectedFragment = new FavoriteRoutesFragment();
-            } else if (id == R.id.nav_admin_panel) {
-                selectedFragment = new AdminPanelFragment();
-            } else if (id == R.id.nav_profile) {
-                selectedFragment = new ProfileFragment();
-            }
-
-
-            if (selectedFragment != null) {
-                loadFragment(selectedFragment);
-                updateTopBarVisibility(id);
+                decideOnHomeFragment(fragment -> {
+                    loadFragment(fragment);
+                    updateTopBarVisibility(id);
+                });
                 return true;
+            } else {
+                if (id == R.id.nav_favorite) {
+                    selectedFragment = new FavoriteRoutesFragment();
+                } else if (id == R.id.nav_admin_panel) {
+                    selectedFragment = new AdminPanelFragment();
+                } else if (id == R.id.nav_profile) {
+                    selectedFragment = new ProfileFragment();
+                }
+
+
+                if (selectedFragment != null) {
+                    loadFragment(selectedFragment);
+                    updateTopBarVisibility(id);
+                    return true;
+                }
+                return false;
             }
-            return false;
         });
     }
 
@@ -172,5 +196,42 @@ public class MainActivity extends AppCompatActivity {
         if (adminItem != null) {
             adminItem.setVisible(isAdmin);
         }
+    }
+
+
+    private void decideOnHomeFragment(FragmentCallback callback) {
+        userService.getUserState().enqueue(new Callback<UserStateDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<UserStateDTO> call,
+                                   @NonNull Response<UserStateDTO> response) {
+                UserStateDTO userState = response.body();
+                Fragment fragment;
+                if (userState != null) {
+                    if (userState.state == UserState.RIDING) {
+                        Bundle args = new Bundle();
+                        args.putString("rideId", userState.rideId.toString());
+                        fragment = new DuringRideFragment();
+                        fragment.setArguments(args);// ride ongoing
+                    } else {
+                        fragment = new HomeFragment();
+                    }
+
+                } else {
+                    fragment = new HomeFragment();
+                }
+                callback.onFragmentReady(fragment);
+
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<UserStateDTO> call, @NonNull Throwable t) {
+                Log.e("NETWORK_ERROR", Objects.requireNonNull(t.getMessage()));
+                callback.onFragmentReady(new HomeFragment()); // fallback
+            }
+        });
+    }
+
+    interface FragmentCallback {
+        void onFragmentReady(Fragment fragment);
     }
 }
