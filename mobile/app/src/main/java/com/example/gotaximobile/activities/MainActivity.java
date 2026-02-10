@@ -13,9 +13,9 @@ import androidx.fragment.app.Fragment;
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.AdminPanelFragment;
+import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
-import com.example.gotaximobile.fragments.ride.DuringRideFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -76,10 +76,7 @@ public class MainActivity extends AppCompatActivity {
             if (id == R.id.nav_home) {
                 selectedFragment = new HomeFragment();
             } else if (id == R.id.nav_favorite) {
-                Bundle args = new Bundle();
-                args.putString("rideId", "5adcfe6c-b3bd-4f7c-a098-0d8bb0473da3");
-                selectedFragment = new DuringRideFragment();
-                selectedFragment.setArguments(args);
+                selectedFragment = new FavoriteRoutesFragment();
             } else if (id == R.id.nav_admin_panel) {
                 selectedFragment = new AdminPanelFragment();
             } else if (id == R.id.nav_profile) {
