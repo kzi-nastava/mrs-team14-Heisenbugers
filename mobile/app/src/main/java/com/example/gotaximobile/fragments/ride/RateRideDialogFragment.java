@@ -15,6 +15,16 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.network.RetrofitClient;
+import com.example.gotaximobile.network.RideService;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RateRideDialogFragment extends DialogFragment {
 
@@ -32,13 +42,15 @@ public class RateRideDialogFragment extends DialogFragment {
     private TextView priceValueView;
     private EditText commentInput;
 
-    public static RateRideDialogFragment newInstance(String startAddress, String endAddress, String time, String price) {
+    public static RateRideDialogFragment newInstance(String startAddress, String endAddress,
+                                                     String time, String price, String rideId) {
         RateRideDialogFragment fragment = new RateRideDialogFragment();
         Bundle args = new Bundle();
         args.putString("start", startAddress);
         args.putString("end", endAddress);
         args.putString("time", time);
         args.putString("price", price);
+        args.putString("rideId", rideId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -125,8 +137,42 @@ public class RateRideDialogFragment extends DialogFragment {
     }
 
     private void submitRate() {
-        String comment = commentInput.getText().toString();
-        // Handle your rating submission here (e.g., API call)
+        Map<String, Object> body = new HashMap<>();
+        body.put("driverScore", driverRate);
+        body.put("vehicleScore", vehicleRate);
+        body.put("comment", commentInput.getText().toString());
+        assert getArguments() != null;
+        UUID rideId = UUID.fromString(getArguments().getString("rideId", ""));
+        RideService service = RetrofitClient.rideService(requireContext());
+        service.rateRide(rideId, body).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<Map<String, String>> call,
+                                   @NonNull Response<Map<String, String>> response) {
+                if (response.isSuccessful()) {
+                    /*
+                    Toast.makeText(requireContext(),
+                            "Ride successfully rated", Toast.LENGTH_SHORT).show();
+
+                     */
+                } else {
+                    /*
+                    Toast.makeText(requireContext(),
+                            "Failed to rate ride", Toast.LENGTH_SHORT).show();
+
+                     */
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Map<String, String>> call, @NonNull Throwable t) {
+                /*
+                Toast.makeText(requireContext(),
+                        "Network error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        
+                 */
+            }
+        });
+
 
         dismiss(); // close modal
     }
