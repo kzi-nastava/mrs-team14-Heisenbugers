@@ -189,6 +189,11 @@ public class DuringRideFragment extends Fragment {
     }
 
     private void sendNotes(String title, String description) {
+        if (title == null || title.isEmpty()) {
+            Toast.makeText(requireContext(), "Title can't be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         Map<String, Object> body = new HashMap<>();
         body.put("title", title);
         body.put("desc", description);
