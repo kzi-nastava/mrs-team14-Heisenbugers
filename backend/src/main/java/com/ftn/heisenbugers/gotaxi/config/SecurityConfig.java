@@ -47,13 +47,13 @@ public class SecurityConfig {
                                 "/api/test/trigger",
                                 "/uploads/**",
                                 "/images/**").permitAll()
-                                
+
 
                         // ERROR
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/rides/*/panic").hasAnyRole("DRIVER","PASSENGER")
-
+                        // TODO: Accept panic from all users
+                        .requestMatchers(HttpMethod.POST, "/api/rides/*/panic").hasAnyRole("DRIVER", "PASSENGER")
 
 
                         .anyRequest().authenticated()
