@@ -1,4 +1,4 @@
-import { Component, HostListener, NgZone, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
 import { bootstrapBell, bootstrapHeart } from '@ng-icons/bootstrap-icons';
 import { provideIcons } from '@ng-icons/core';
@@ -31,7 +31,8 @@ export class LoggedInHeaderComponent implements OnInit {
     private router: Router,
     protected auth: AuthService,
     private http: HttpClient,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -52,6 +53,7 @@ export class LoggedInHeaderComponent implements OnInit {
           const newNot: Notification = JSON.parse(msg.body);
           this.notifications.unshift(newNot);
           this.unreadCount += 1;
+          this.cdr.markForCheck();
         });
       });
     });
