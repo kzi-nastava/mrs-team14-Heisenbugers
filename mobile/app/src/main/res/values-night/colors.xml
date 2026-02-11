@@ -15,4 +15,10 @@
     <color name="auth_on_surface">#F2F2F2</color>
     <color name="auth_muted">#B0B0B0</color>
     <color name="auth_outline">#6A6A6A</color>
+
+    <color name="primary_text">#E0E0E0</color>
+    <color name="secondary_text">#B0B0B0</color>
+    <color name="item_bg">#1E1E1E</color>
+
+
 </resources>

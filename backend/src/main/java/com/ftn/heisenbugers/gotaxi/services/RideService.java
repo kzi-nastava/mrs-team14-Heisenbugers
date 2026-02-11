@@ -6,7 +6,6 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
-import com.ftn.heisenbugers.gotaxi.models.services.AuthService;
 import com.ftn.heisenbugers.gotaxi.models.services.EmailService;
 import com.ftn.heisenbugers.gotaxi.repositories.*;
 import org.springframework.stereotype.Service;
@@ -48,7 +47,7 @@ public class RideService {
         List<Location> stops = new ArrayList<Location>();
         List<Location> points = new ArrayList<Location>();
         points.add(start);
-        for (int i = 0; i<request.getRoute().getStops().size(); i++){
+        for (int i = 0; i < request.getRoute().getStops().size(); i++) {
             Location stop = new Location(request.getRoute().getStops().get(i).getLatitude(), request.getRoute().getStops().get(i).getLongitude(), request.getRoute().getStops().get(i).getAddress());
             stops.add(stop);
         }
@@ -69,27 +68,27 @@ public class RideService {
         ride.setStart(start);
         ride.setEnd(end);
         ride.setPassengers(new ArrayList<>());
-        for (int i = 0; i<request.getPassengersEmails().size(); i++){
+        for (int i = 0; i < request.getPassengersEmails().size(); i++) {
             Optional<Passenger> p = passengerRepository.findByEmail(request.getPassengersEmails().get(i));
             ride.addPassenger(p.get());
         }
 
-        if(request.getScheduledAt() != null){
+        if (request.getScheduledAt() != null) {
             ZonedDateTime zdt = ZonedDateTime.parse(request.getScheduledAt());
             ride.setScheduledAt(zdt.withZoneSameInstant(ZoneId.systemDefault())
                     .toLocalDateTime());
             rideRepository.save(ride);
             return new CreatedRideDTO(ride.getId(), request.getRoute(), request.getVehicleType(), request.isBabyTransport(),
                     request.isPetTransport(), request.getPassengersEmails(), null, RideStatus.REQUESTED);
-        }else{
+        } else {
             ride.setScheduledAt(null);
         }
 
         Optional<Driver> driver = assignDriverToRide(ride, request.isPetTransport(), request.isBabyTransport(), request.getVehicleType());
 
-        if(driver.isEmpty()){
+        if (driver.isEmpty()) {
             throw new RuntimeException("There is no free driver available!");
-        }else{
+        } else {
             ride.setDriver(driver.get());
             ride.setStatus(RideStatus.ASSIGNED);
             ride.setVehicle(driver.get().getVehicle());
@@ -272,7 +271,7 @@ public class RideService {
         return true;
     }
 
-    public boolean start(UUID rideId){
+    public boolean start(UUID rideId) {
         Ride ride = rideRepository.findById(rideId).get();
 
         ride.setStatus(RideStatus.ONGOING);
@@ -370,6 +369,7 @@ public class RideService {
     }
 
     private boolean isInLastNDays(Ride r, long n) {
+        if (r.getEndedAt() == null) return true;
         return r.getEndedAt().isAfter(LocalDateTime.now().minusDays(n));
     }
 

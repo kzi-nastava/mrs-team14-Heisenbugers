@@ -17,14 +17,18 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.fragments.ride.RateRideDialogFragment;
 import com.example.gotaximobile.models.Constants;
 import com.example.gotaximobile.models.Ride;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.io.Serializable;
 
 public class DriverHistoryOneRideFragment extends Fragment {
+
+    private Ride ride;
 
     @Nullable
     @Override
@@ -35,39 +39,39 @@ public class DriverHistoryOneRideFragment extends Fragment {
 
         Bundle args = getArguments();
         if (args != null) {
-            Serializable ride = args.getSerializable("ride");
-            if (ride != null) {
-                Ride r = (Ride) ride;
+            Serializable rideSer = args.getSerializable("ride");
+            if (rideSer != null) {
+                ride = (Ride) rideSer;
 
                 // COMMON
                 //TextView driver = view.findViewById(R.id.driver_name_value);
                 //driver.setText(r.getDriver().getFullName());
 
                 TextView start = view.findViewById(R.id.start_value);
-                start.setText(r.getStartLocation());
+                start.setText(ride.getStartLocation());
 
                 TextView end = view.findViewById(R.id.end_value);
-                end.setText(r.getEndLocation());
+                end.setText(ride.getEndLocation());
 
                 TextView time = view.findViewById(R.id.time_value);
-                time.setText(r.getFormatedTime());
+                time.setText(ride.getFormatedTime());
 
                 TextView price = view.findViewById(R.id.price_value);
-                price.setText(r.getFormatedPrice());
+                price.setText(ride.getFormatedPrice());
 
                 TextView rating = view.findViewById(R.id.rating_value);
-                rating.setText(String.format(Constants.LOCALE, "%.1f", r.getRating()));
+                rating.setText(String.format(Constants.LOCALE, "%.1f", ride.getRating()));
 
                 TextView canceled = view.findViewById(R.id.cancelled_value);
-                canceled.setText(r.isCancelled() ? "Yes" : "No");
+                canceled.setText(ride.isCancelled() ? "Yes" : "No");
 
                 // PASSENGERS (add TextViews dynamically)
                 TableLayout passengersTable = view.findViewById(R.id.passengers_table);
                 passengersTable.removeAllViews();
                 passengersTable.setStretchAllColumns(true);
 
-                for (int i = 0; i < r.getPassengers().size(); i += 2) {
-                    TableRow row = makeTableRow(r, i);
+                for (int i = 0; i < ride.getPassengers().size(); i += 2) {
+                    TableRow row = makeTableRow(ride, i);
 
                     passengersTable.addView(row);
                 }
@@ -75,15 +79,15 @@ public class DriverHistoryOneRideFragment extends Fragment {
                 // VIOLATIONS
                 View violationsSection = view.findViewById(R.id.violations_section);
 
-                if (r.getTrafficViolations().isEmpty()) {
+                if (ride.getTrafficViolations().isEmpty()) {
                     violationsSection.setVisibility(View.GONE);
                 } else {
-                    MakeViolationChips(view, r);
+                    MakeViolationChips(view, ride);
                 }
 
                 // PANIC
                 Chip panicChip = view.findViewById(R.id.was_panic_chip);
-                if (!r.isWasPanic()) {
+                if (!ride.isWasPanic()) {
                     panicChip.setVisibility(View.GONE);
                 }
             }
@@ -92,6 +96,21 @@ public class DriverHistoryOneRideFragment extends Fragment {
 
         return view;
 
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        MaterialButton rateButton = view.findViewById(R.id.rate_ride_button);
+        rateButton.setOnClickListener(v -> {
+            RateRideDialogFragment dialog = RateRideDialogFragment.newInstance(
+                    ride.getStartLocation(),
+                    ride.getEndLocation(),
+                    ride.getFormatedTime(),
+                    ride.getFormatedPrice(),
+                    ride.getId().toString()
+            );
+            dialog.show(getParentFragmentManager(), "rateRideDialog");
+        });
     }
 
     private void MakeViolationChips(View view, Ride r) {

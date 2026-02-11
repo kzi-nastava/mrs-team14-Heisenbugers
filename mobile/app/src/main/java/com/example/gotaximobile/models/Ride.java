@@ -11,8 +11,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 
 public class Ride implements Serializable {
+    private UUID id;
     private Driver driver;
     private String startLocation;
     private String endLocation;
@@ -50,6 +52,7 @@ public class Ride implements Serializable {
     }
 
     public Ride(DriverRideHistoryDTO dto) {
+        this.id = dto.rideId;
         this.driver = null;
         this.startLocation = dto.startAddress;
         this.endLocation = dto.endAddress;
@@ -64,6 +67,10 @@ public class Ride implements Serializable {
                 ? dto.trafficViolations.stream().map(Object::toString).collect(java.util.stream.Collectors.toList())
                 : new java.util.ArrayList<>();
         this.wasPanic = dto.panicTriggered;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     public Driver getDriver() {

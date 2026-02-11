@@ -28,6 +28,11 @@ public interface RideService {
             @Body Map<String, Object> body
     );
 
+    @POST("api/rides/{id}/rate")
+    Call<Map<String, String>> rateRide(
+            @Path("id") UUID id,
+            @Body Map<String, Object> body
+    );
     @GET("api/public/vehicles")
     Call<List<VehicleInfoDTO>> getAllVehicles();
 
