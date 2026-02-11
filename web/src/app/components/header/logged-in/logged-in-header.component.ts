@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
 import { bootstrapBell, bootstrapHeart } from '@ng-icons/bootstrap-icons';
 import { provideIcons } from '@ng-icons/core';
@@ -7,6 +7,8 @@ import {AuthService} from '../../auth/auth.service';
 import { DriverStatusToggleComponent } from '../../driver-status-toggle/driver-status-toggle.component';
 import { HttpClient } from '@angular/common/http';
 import { Notification } from '../../../models/notification.model';
+import SockJS from 'sockjs-client';
+import { Client, Message, over } from 'stompjs';
 
 
 @Component({
@@ -16,26 +18,43 @@ import { Notification } from '../../../models/notification.model';
   imports: [NgIcon,DriverStatusToggleComponent],
   viewProviders: [provideIcons({bootstrapBell, bootstrapHeart})]
 })
-export class LoggedInHeaderComponent {
+export class LoggedInHeaderComponent implements OnInit {
   profileMenuOpen = false;
   notificationsOpen = false;
   notifications: Notification[] = [];
   unreadCount: number = 0;
   private baseUrl = 'http://localhost:8081/api';
+  stompClient?: Client;
 
   //constructor(private router: Router) {}
   constructor(
     private router: Router,
     protected auth: AuthService,
-    private http: HttpClient
+    private http: HttpClient,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
+    // Load unread notifications initially
     this.http.get<Notification[]>(`${this.baseUrl}/notifications/unread`)
       .subscribe(nots => {
         this.notifications = nots;
         this.unreadCount = nots.filter(n => !n.read).length;
       });
+
+    // Connect to WebSocket
+    const socket = new SockJS(`${this.baseUrl.replace('/api', '')}/ws`);
+    this.stompClient = over(socket);
+    this.stompClient.connect({Authorization: `Bearer ${localStorage.getItem('accessToken')}`}, () => {
+      // Subscribe to the user-specific notifications queue
+      this.stompClient?.subscribe(`/user/queue/notifications`, (msg: Message) => {
+        this.ngZone.run(() => {
+          const newNot: Notification = JSON.parse(msg.body);
+          this.notifications.unshift(newNot);
+          this.unreadCount += 1;
+        });
+      });
+    });
   }
 
   toggleProfileMenu() {

@@ -46,7 +46,8 @@ public class SecurityConfig {
                                 "/api/drivers/activate",
                                 "/api/test/trigger",
                                 "/uploads/**",
-                                "/images/**").permitAll()
+                                "/images/**",
+                                "/ws/**", "/ws/info**").permitAll()
 
 
                         // ERROR

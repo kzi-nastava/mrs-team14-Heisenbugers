@@ -35,6 +35,8 @@
     "leaflet": "^1.9.4",
     "leaflet-routing-machine": "^3.2.12",
     "rxjs": "~7.8.0",
+    "sockjs-client": "^1.5.2",
+    "stompjs": "^2.3.3",
     "tslib": "^2.3.0"
   },
   "devDependencies": {
@@ -43,8 +45,13 @@
     "@angular/compiler-cli": "^21.0.0",
     "@tailwindcss/postcss": "^4.1.12",
     "@types/leaflet": "^1.9.21",
+    "@types/sockjs-client": "^1.5.4",
+    "@types/stompjs": "^2.3.10",
+    "buffer": "^6.0.3",
     "jsdom": "^27.1.0",
     "postcss": "^8.5.3",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
     "tailwindcss": "^4.1.12",
     "typescript": "~5.9.2",
     "vitest": "^4.0.8"

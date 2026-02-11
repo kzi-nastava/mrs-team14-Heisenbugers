@@ -5,11 +5,15 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -59,5 +63,16 @@ public class JwtService {
 
     public String extractRole(String token) {
         return parseClaims(token).get("role", String.class);
+    }
+
+    public Authentication getAuthentication(String token) {
+        String email = extractEmail(token);
+        String role = extractRole(token);
+
+        return new UsernamePasswordAuthenticationToken(
+                email,
+                null,
+                role != null ? List.of(new SimpleGrantedAuthority(role)) : List.of()
+        );
     }
 }
