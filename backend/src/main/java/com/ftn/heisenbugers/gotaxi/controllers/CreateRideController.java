@@ -20,11 +20,9 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/rides")
 public class CreateRideController {
-    private final RideRepository rideRepository;
     private final RideService rideService;
 
-    public CreateRideController(RideRepository rideRepository, RideService rideService) {
-        this.rideRepository = rideRepository;
+    public CreateRideController(RideService rideService) {
         this.rideService = rideService;
     }
 
