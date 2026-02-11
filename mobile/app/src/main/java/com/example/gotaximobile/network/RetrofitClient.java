@@ -59,4 +59,8 @@ public class RetrofitClient {
         return get(context).create(RideService.class);
     }
 
+    public static UserService userService(Context context) {
+        return get(context).create(UserService.class);
+    }
+
 }

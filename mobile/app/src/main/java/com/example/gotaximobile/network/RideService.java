@@ -2,7 +2,9 @@ package com.example.gotaximobile.network;
 
 import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.models.dtos.RideTrackingDTO;
+import com.example.gotaximobile.models.dtos.VehicleInfoDTO;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -31,5 +33,7 @@ public interface RideService {
             @Path("id") UUID id,
             @Body Map<String, Object> body
     );
+    @GET("api/public/vehicles")
+    Call<List<VehicleInfoDTO>> getAllVehicles();
 
 }
