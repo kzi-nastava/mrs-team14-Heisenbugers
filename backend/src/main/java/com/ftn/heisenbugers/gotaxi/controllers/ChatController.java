@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 import java.nio.file.AccessDeniedException;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -56,6 +58,7 @@ public class ChatController {
         m.setLastModifiedBy(currentUser);
         messageRepository.save(m);
 
+        message.setFrom(currentUserEmail);
         // Send to user
         template.convertAndSendToUser(messageUserEmail, "/queue/messages", message);
 
@@ -73,6 +76,21 @@ public class ChatController {
             return newChat;
         });
         return chat.getId();
+    }
+
+    @GetMapping("api/me/chat/full")
+    public List<MessageDTO> getFullChat() throws InvalidUserType {
+        User user = AuthContextService.getCurrentUser();
+        Optional<Chat> chatOpt = chatRepository.findByRequester(user);
+        if (chatOpt.isPresent()) {
+            Chat chat = chatOpt.get();
+            return messageRepository.getAllByChat(chat).stream().map(msg -> new MessageDTO(
+                    msg.getChat().getId(), msg.getContent(),
+                    msg.getSender().getEmail(), msg.getSentAt()
+            )).toList();
+        } else {
+            return List.of();
+        }
     }
 
     private boolean isAdmin(Principal principal) {

@@ -3,6 +3,8 @@ import { ChatService } from '../../services/chat.service';
 import { NgClass, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
+import { Subject } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 export interface Message {
     content: string;
@@ -20,21 +22,30 @@ export class ChatComponent implements OnInit {
 
   messages: Message[] = [];
   @Input() chatId: string = "";
+  chatIdReady = new Subject<string>();
   
-  emptyMessage: Message = { content: '', from: 'me', sentAt: new Date() };
+  emptyMessage: Message = { content: '', from: "", sentAt: new Date() };
   newMessage: Message = {...this.emptyMessage};
   borderRadius: number = 100; // start fully rounded
   inputRows: number = 1;
+  authService: AuthService;
 
-  constructor(private chatService: ChatService, private cdr: ChangeDetectorRef) {}
+  constructor(private chatService: ChatService, private cdr: ChangeDetectorRef, authService: AuthService) {
+    this.authService = authService;
+    this.emptyMessage.from = this.authService.getSub() ?? "";
+  }
 
   ngOnInit(): void {
     this.chatService.connect();
-
+    this.loadChat(this.chatId);
     this.chatService.getMessages().subscribe(message => {
       this.messages.push(message);
       this.cdr.markForCheck();
     });
+  }
+
+  loadChat(chatId: string): void {
+    this.chatService.loadChat(chatId);
   }
 
   send(): void {

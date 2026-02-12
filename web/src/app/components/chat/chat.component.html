@@ -7,12 +7,12 @@
       <div
         class="flex items-end"
         [ngClass]="{
-          'justify-end': message.from === 'me',
-          'justify-start': message.from !== 'me',
+          'justify-end': message.from === authService.getSub(),
+          'justify-start': message.from !== authService.getSub(),
         }"
       >
         <!-- Message Bubble -->
-        @if (message.from === 'me') {
+        @if (message.from === authService.getSub()) {
           <div
             class="flex flex-col px-4 py-2 max-w-[70%] break-words bg-lime-600 text-white rounded-tl-2xl rounded-tr-2xl rounded-bl-2xl"
           >

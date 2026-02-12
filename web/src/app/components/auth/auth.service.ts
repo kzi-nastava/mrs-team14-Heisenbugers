@@ -75,6 +75,15 @@ export class AuthService {
     return null;
   }
 
+  getSub(): string | null {
+    if (this.isLoggedIn()) {
+      const accessToken: any = localStorage.getItem('accessToken');
+      const helper = new JwtHelperService();
+      return helper.decodeToken(accessToken).sub;
+    }
+    return null;
+  }
+
   logout(): Observable<MessageResponse> {
     return this.http.delete<MessageResponse>(`${this.baseUrl}/session`);
   }
