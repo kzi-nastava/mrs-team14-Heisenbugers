@@ -38,6 +38,10 @@ export class HomeContainer {
           } else if (data.state === 'RIDING') {
             this.rideId = data.rideId;
             component = DuringRide
+            const ref = this.host.createComponent(component)
+            ref.setInput('rideId', this.rideId);
+            ref.setInput('external', false);
+            return;
           } else if (data.state === 'DRIVING'){
             this.rideId = data.rideId;
             component = DriverDriving

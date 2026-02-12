@@ -47,7 +47,8 @@ public class SecurityConfig {
                                 "/api/test/trigger",
                                 "/uploads/**",
                                 "/images/**",
-                                "/ws/**", "/ws/info**").permitAll()
+                                "/ws/**", "/ws/info**",
+                                "/api/rides/link-tracking/**").permitAll()
 
 
                         // ERROR
