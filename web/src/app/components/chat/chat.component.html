@@ -16,7 +16,7 @@
           >
             <span>{{ message.content }}</span>
             <span class="self-end text-xs text-gray-200 mt-1">{{
-              message.timestamp | date: 'shortTime'
+              message.sentAt | date: 'shortTime'
             }}</span>
           </div>
         } @else {
@@ -25,7 +25,7 @@
           >
             <span>{{ message.content }}</span>
             <span class="self-end text-xs text-gray-600 mt-1">{{
-              message.timestamp | date: 'shortTime'
+              message.sentAt | date: 'shortTime'
             }}</span>
           </div>
         }

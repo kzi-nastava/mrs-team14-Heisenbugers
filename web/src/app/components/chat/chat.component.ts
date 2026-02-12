@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { NgClass, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -7,7 +7,7 @@ import { DatePipe } from '@angular/common';
 export interface Message {
     content: string;
     from: string;
-    timestamp: Date;
+    sentAt: Date;
 }
 
 @Component({
@@ -20,27 +20,28 @@ export class ChatComponent implements OnInit {
 
   messages: Message[] = [];
   
-  emptyMessage: Message = { content: '', from: 'me', timestamp: new Date() };
+  emptyMessage: Message = { content: '', from: 'me', sentAt: new Date() };
   newMessage: Message = this.emptyMessage;
   borderRadius: number = 100; // start fully rounded
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.chatService.connect();
 
     this.chatService.getMessages().subscribe(message => {
       this.messages.push(message);
+      this.cdr.markForCheck();
     });
   }
 
   send(): void {
     if (!this.newMessage.content.trim()) return;
 
-    const message: Message = { ...this.newMessage, timestamp: new Date() }
+    const message: Message = { ...this.newMessage, sentAt: new Date() }
 
-    this.chatService.sendMessage(message);
-    this.messages.push(message);
+    this.chatService.sendMessage(message, "2cae8869-f85e-4e84-9ef2-898196a71f11");
+    // this.messages.push(message);
     this.newMessage = this.emptyMessage;
   }
 
