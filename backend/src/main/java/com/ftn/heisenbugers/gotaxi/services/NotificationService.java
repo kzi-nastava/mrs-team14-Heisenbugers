@@ -43,7 +43,7 @@ public class NotificationService {
         logActiveWebSocketSessions();
 
         messagingTemplate.convertAndSendToUser(
-                user.getEmail(), // or username depending on your security
+                user.getEmail(),
                 "/queue/notifications",
                 Notification.toDto(notification)
         );

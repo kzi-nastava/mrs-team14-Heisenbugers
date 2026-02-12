@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.config;
 
+import com.ftn.heisenbugers.gotaxi.models.Administrator;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
@@ -15,7 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.List;
 
 @Component
@@ -40,16 +40,17 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                     String token = authHeader.substring(7);
                     String email = jwtService.extractEmail(token);
                     User user = userRepository.findByEmail(email).orElse(null);
+                    SimpleGrantedAuthority authority;
+                    if (user instanceof Administrator) {
+                        authority = new SimpleGrantedAuthority("ROLE_ADMIN");
+                    } else {
+                        authority = new SimpleGrantedAuthority("ROLE_USER");
+                    }
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
-                            user.getEmail(), null, List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                            user.getEmail(), null, List.of(authority)
                     );
 
-                    accessor.setUser(new Principal() {
-                        @Override
-                        public String getName() {
-                            return user.getEmail();
-                        }
-                    });
+                    accessor.setUser(authentication);
 
                     System.out.println("✅ WebSocket user authenticated: " + user.getEmail());
 
