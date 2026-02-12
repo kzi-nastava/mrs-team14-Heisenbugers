@@ -24,6 +24,7 @@ import { AdminGuard } from './components/admin/admin.guard';
 import {DriverProfileRequestComponent} from './components/driver-profile-request/driver-profile-request.component';
 import {ProfileRequestsComponent} from './components/profile-requests/profile-requests.component';
 import {FavoriteRoutesComponent} from './components/favorite-routes/favorite-routes.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 export const routes: Routes = [
   {
@@ -63,7 +64,10 @@ export const routes: Routes = [
           { path: 'panic', component: AdminPanicComponent },
           { path: '', redirectTo: 'panic', pathMatch: 'full' }
         ]
-      }
+      },
+
+      // test
+      { path: 'test', component: ChatComponent }
     ]
   }
 ];
