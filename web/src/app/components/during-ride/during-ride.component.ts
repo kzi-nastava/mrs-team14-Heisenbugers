@@ -16,6 +16,7 @@ import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { RideRateInfo } from '../../models/ride.model';
+import { ChatComponent } from "../chat/chat.component";
 
 interface Location {
   latitude: number,
@@ -50,7 +51,7 @@ export interface RideDTO {
 
 @Component({
   selector: 'app-during-ride',
-  imports: [MapComponent, NgIcon, FormsModule, RateModal],
+  imports: [MapComponent, NgIcon, FormsModule, RateModal, ChatComponent],
   templateUrl: './during-ride.component.html',
   viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
 
@@ -60,6 +61,7 @@ export interface RideDTO {
 export class DuringRide {
   @Input() rideId!: string;
   private stops?: L.LatLng[]
+  chatId: string = "";
   private baseUrl = 'http://localhost:8081/api';
 
   private mockStops: L.LatLng[] = [
@@ -83,28 +85,6 @@ export class DuringRide {
   @ViewChild(MapComponent) mapCmp!: MapComponent;
 
 
-  /*ride: RideInfo = {
-
-    rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
-    driverName: 'Vozac Vozacovic',
-    startAddress: 'ул.Атамана Головатого 2а',
-    endAddress: 'ул.Красная 113',
-    startedAt: new Date('2025-12-19T08:12:00'),
-    endedAt: new Date('2025-12-19T10:12:00'),
-    price: 350,
-    rating: 3.5,
-    maxRating: 5,
-    canceled: false,
-    passengers: [
-      {firstName: 'Alice', lastName: 'Alisic'},
-      {firstName: 'Bob', lastName: 'Bobic'},
-      {firstName: 'Carl', lastName: 'Carlic'},
-      {firstName: 'Denise', lastName: 'Denisic'}
-    ],
-    trafficViolations: [{type: 'Red light'}],
-    panicTriggered: false
-
-  };*/
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = false;
   driverRate = 0;
@@ -112,15 +92,9 @@ export class DuringRide {
   etimateMinutes?: number;
 
   location: MapPin = { lat: 45.249570, lng: 19.815809, popup: 'You are here', iconUrl: carSelectedIcon };
-  passengers = [
-    { name: 'Alice Alisic', avatar: 'https://i.pravatar.cc/150?img=1' },
-    { name: 'Bob Bobic', avatar: 'https://i.pravatar.cc/150?img=2' },
-    { name: 'Carl Carlic', avatar: 'https://i.pravatar.cc/150?img=3' },
-    { name: 'Denise Denisic', avatar: 'https://i.pravatar.cc/150?img=4' }
-  ];
-
   toastVisible = false;
   toastMessage = '';
+  chatOpen: boolean = false;
 
 
   constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
@@ -148,6 +122,13 @@ export class DuringRide {
       this.useMockData('Missing rideId');
       return;
     }
+
+    this.http.get<string>(`${this.baseUrl}/me/chat`).subscribe({
+      next: (data) => {this.chatId = data;
+        console.log('Fetched chat ID:', data);
+      },
+      error: (error) => { console.warn('Failed to fetch chat ID, chat will be unavailable:', error); }
+    });
 
     this.http.get<TrackingDTO>(`${this.baseUrl}/rides/${this.rideId}/tracking`).subscribe({
       next: (data) => {
@@ -370,6 +351,13 @@ export class DuringRide {
       next: () => alert('Panic sent to administrators.'),
       error: (e) => alert(e?.error?.message ?? 'Panic failed')
     });
+  }
+
+  toggleChat(){      
+    this.chatOpen = !this.chatOpen;
+  }
+  closeChat(){
+    this.chatOpen = false;
   }
 
 }

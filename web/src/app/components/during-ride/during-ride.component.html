@@ -47,7 +47,7 @@
         </div>
       </div>
     </div>
-<!--
+    <!--
     <button
       type="button"
       class="mt-4 w-full bg-lime-400 hover:bg-lime-500 text-black font-semibold py-2 rounded-lg cursor-pointer"
@@ -74,6 +74,7 @@
   <!-- Chat Button -->
   <button
     class="absolute right-6 bottom-52 bg-white shadow-lg rounded-full w-11 h-11 flex items-center justify-center cursor-pointer"
+    (click)="toggleChat()"
   >
     <ng-icon name="bootstrapChatDots" size="26"></ng-icon>
   </button>
@@ -86,8 +87,12 @@
   >
     <ng-icon name="bootstrapExclamationCircleFill" size="36" color="red"></ng-icon>
   </button>
+</div>
 
-
+<div class="absolute bottom-6 right-20 rounded-xl border overflow-hidden">
+  @if (chatOpen) {
+    <app-chat [chatId]="chatId" (onClose)="closeChat()"></app-chat>
+  }
 </div>
 
 <!--  Modal to enter notes  -->
@@ -146,7 +151,10 @@
 }
 
 @if (stopConfirmOpen) {
-  <div class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center" (click)="closeStopConfirm()">
+  <div
+    class="fixed inset-0 z-50 bg-black/40 flex items-center justify-center"
+    (click)="closeStopConfirm()"
+  >
     <div class="bg-white rounded-xl shadow-xl w-[520px] p-6" (click)="$event.stopPropagation()">
       <div class="flex items-center justify-between mb-3">
         <h2 class="text-xl font-bold">Stop ride</h2>
@@ -179,15 +187,16 @@
           (click)="stopRideNow()"
           [disabled]="stopSubmitting"
         >
-          @if (stopSubmitting) { Stopping... } @else { Stop }
+          @if (stopSubmitting) {
+            Stopping...
+          } @else {
+            Stop
+          }
         </button>
-
-
       </div>
     </div>
   </div>
 }
-
 
 <!--  Modal to rate  -->
 

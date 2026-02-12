@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { ChatService } from '../../services/chat.service';
 import { NgClass, NgStyle } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +19,7 @@ export interface Message {
 export class ChatComponent implements OnInit {
 
   messages: Message[] = [];
+  @Input() chatId: string = "";
   
   emptyMessage: Message = { content: '', from: 'me', sentAt: new Date() };
   newMessage: Message = {...this.emptyMessage};
@@ -41,7 +42,7 @@ export class ChatComponent implements OnInit {
 
     const message: Message = { ...this.newMessage, sentAt: new Date() }
 
-    this.chatService.sendMessage(message, "2cae8869-f85e-4e84-9ef2-898196a71f11");
+    this.chatService.sendMessage(message, this.chatId);
     // this.messages.push(message);
     this.newMessage = {...this.emptyMessage};
 
