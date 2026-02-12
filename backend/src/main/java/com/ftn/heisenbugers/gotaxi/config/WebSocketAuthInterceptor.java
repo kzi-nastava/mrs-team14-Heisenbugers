@@ -11,12 +11,14 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
@@ -61,6 +63,17 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                 System.err.println("❌ JWT validation failed: " + e.getMessage());
                 e.printStackTrace();
             }
+        }
+        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            String destination = accessor.getDestination(); // get the topic/path
+            if (destination != null && destination.startsWith("/topic/admin-only")) { // restrict path
+                Authentication auth = (Authentication) accessor.getUser();
+                if (auth == null || auth.getAuthorities().stream().noneMatch(
+                        a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN"))) {
+                    throw new AccessDeniedException("Only admins can subscribe to this path");
+                }
+            }
+
         }
         return message;
     }
