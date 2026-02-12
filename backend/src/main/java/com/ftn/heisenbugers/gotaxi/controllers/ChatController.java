@@ -2,10 +2,13 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Chat;
+import com.ftn.heisenbugers.gotaxi.models.Message;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.MessageDTO;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.ChatRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.MessageRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -27,6 +30,8 @@ public class ChatController {
 
     private final SimpMessagingTemplate template;
     private final ChatRepository chatRepository;
+    private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
 
     @MessageMapping("/sendMessage")
     public void handleMessage(MessageDTO message, Principal principal) throws AccessDeniedException {
@@ -40,6 +45,16 @@ public class ChatController {
         }
 
         message.setSentAt(LocalDateTime.now());
+
+        User currentUser = userRepository.findByEmail(currentUserEmail).get();
+        Message m = new Message();
+        m.setContent(message.getContent());
+        m.setChat(messageChat);
+        m.setSender(currentUser);
+        m.setActive(true);
+        m.setCreatedBy(currentUser);
+        m.setLastModifiedBy(currentUser);
+        messageRepository.save(m);
 
         // Send to user
         template.convertAndSendToUser(messageUserEmail, "/queue/messages", message);
