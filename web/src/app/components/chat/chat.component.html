@@ -37,7 +37,7 @@
   <div class="flex items-center gap-2 p-3 border-t bg-white">
     <textarea
       [(ngModel)]="newMessage.content"
-      (keyup.enter)="send()"
+      (keydown.enter)="send(); $event.preventDefault()"
       (input)="autoResize($event)"
       rows="1"
       [ngStyle]="{ 'border-radius.px': borderRadius }"

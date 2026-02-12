@@ -21,8 +21,9 @@ export class ChatComponent implements OnInit {
   messages: Message[] = [];
   
   emptyMessage: Message = { content: '', from: 'me', sentAt: new Date() };
-  newMessage: Message = this.emptyMessage;
+  newMessage: Message = {...this.emptyMessage};
   borderRadius: number = 100; // start fully rounded
+  inputRows: number = 1;
 
   constructor(private chatService: ChatService, private cdr: ChangeDetectorRef) {}
 
@@ -42,7 +43,10 @@ export class ChatComponent implements OnInit {
 
     this.chatService.sendMessage(message, "2cae8869-f85e-4e84-9ef2-898196a71f11");
     // this.messages.push(message);
-    this.newMessage = this.emptyMessage;
+    this.newMessage = {...this.emptyMessage};
+
+    this.borderRadius = 100;
++   this.cdr.markForCheck();
   }
 
   autoResize(event: Event) {
