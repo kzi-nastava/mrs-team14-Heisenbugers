@@ -307,6 +307,9 @@ public class RideService {
 
         for (User u : ride.getPassengers()) {
             sendFinishedRideEmail(u, ride);
+            if (Objects.equals(u.getFirstName(), "")){
+                passengerRepository.delete((Passenger) u);
+            }
         }
         return true;
     }
@@ -352,7 +355,7 @@ public class RideService {
                         
                         Best regards, \s
                         GoTaxi 
-                        """.formatted(recipient.getFirstName(), recipient.getLastName(),
+                        """.formatted(!Objects.equals(recipient.getFirstName(), "") ? recipient.getFirstName() : recipient.getEmail(), recipient.getLastName(),
                         ride.getStart().getAddress(), ride.getEnd().getAddress());
         emailService.sendMail(recipient.getEmail(), subject, body);
     }
