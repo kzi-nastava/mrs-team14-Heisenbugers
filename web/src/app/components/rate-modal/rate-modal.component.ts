@@ -14,7 +14,7 @@ export class RateModal {
 
     driverRate: number = 0;
     vehicleRate: number = 0;
-    @Input() ride!: RideRateInfo;
+    @Input() ride?: RideRateInfo;
     @Input() isOpen: boolean = false;
     
     @Output() onSubmit = new EventEmitter<any>();
@@ -37,8 +37,11 @@ export class RateModal {
                 "driverRate": this.driverRate,
                 "vehicleRate": this.vehicleRate
             })
-            this.ride.rated = true;
-            this.closeRateModal();
+            if (this.ride != null) {
+                this.ride.rated = true;
+                this.closeRateModal();
+            }
+            
         }
     }
 
@@ -60,6 +63,7 @@ export class RateModal {
     }
 
     getRideDurationMinutes(ride: any): string {
+        if(!ride?.startTime || !ride?.endTime) return '';
         const start = ride.startTime.getTime();
         const end = ride.endTime.getTime();
 

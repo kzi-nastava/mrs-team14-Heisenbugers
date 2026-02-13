@@ -16,9 +16,9 @@
     <div class="px-6 pb-6">
       <div class="border-b">
         <div class="w-full text-left px-4 py-3 text-sm flex items-center justify-center">
-          <span class="mr-4 font-semibold text-lg">{{ ride.startAddress }}</span>
+          <span class="mr-4 font-semibold text-lg">{{ ride?.startAddress }}</span>
           <ng-icon class="mr-4" name="bootstrapArrowRight" size="20"></ng-icon>
-          <span class="mr-4 font-semibold text-lg">{{ ride.endAddress }}</span>
+          <span class="mr-4 font-semibold text-lg">{{ ride?.endAddress }}</span>
         </div>
       </div>
       <div class="flex justify-center border-b py-5">
@@ -40,7 +40,7 @@
             type="text"
             name="title"
             class="border rounded-lg p-3 text-sm h-8 text-center font-semibold w-32 ml-6"
-            [value]="ride.price + ' RSD'"
+            [value]="ride?.price + ' RSD'"
             readonly
           />
         </div>
