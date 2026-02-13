@@ -14,8 +14,9 @@ import { ActivatedRoute } from '@angular/router';
 import { RideInfo } from '../../models/driver-info.model';
 import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { RideRateInfo } from '../../models/ride.model';
+import {AuthService} from '../auth/auth.service';
 
 interface Location {
   latitude: number,
@@ -59,6 +60,7 @@ export interface RideDTO {
 
 export class DuringRide {
   @Input() rideId!: string;
+  @Input() external!: boolean;
   private stops?: L.LatLng[]
   private baseUrl = 'http://localhost:8081/api';
 
@@ -82,29 +84,6 @@ export class DuringRide {
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   @ViewChild(MapComponent) mapCmp!: MapComponent;
 
-
-  /*ride: RideInfo = {
-
-    rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
-    driverName: 'Vozac Vozacovic',
-    startAddress: 'ул.Атамана Головатого 2а',
-    endAddress: 'ул.Красная 113',
-    startedAt: new Date('2025-12-19T08:12:00'),
-    endedAt: new Date('2025-12-19T10:12:00'),
-    price: 350,
-    rating: 3.5,
-    maxRating: 5,
-    canceled: false,
-    passengers: [
-      {firstName: 'Alice', lastName: 'Alisic'},
-      {firstName: 'Bob', lastName: 'Bobic'},
-      {firstName: 'Carl', lastName: 'Carlic'},
-      {firstName: 'Denise', lastName: 'Denisic'}
-    ],
-    trafficViolations: [{type: 'Red light'}],
-    panicTriggered: false
-
-  };*/
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = false;
   driverRate = 0;
@@ -123,7 +102,7 @@ export class DuringRide {
   toastMessage = '';
 
 
-  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
+  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute, private authService: AuthService) {
 
     if (!this.mockStops || this.mockStops.length < 2){
       return;
@@ -137,6 +116,18 @@ export class DuringRide {
   }
 
   ngOnInit(): void {
+    const token = this.route.snapshot.queryParamMap.get('token') ?? "";
+    var id = this.authService.getRideId(token);
+
+    if(id){
+      this.rideId = id;
+    }
+
+    if (this.external === undefined) {
+      this.route.data.subscribe(data => {
+      this.external = data['external'] ?? false;
+      });
+    }
 
     const fromRoute = this.route.snapshot.paramMap.get('rideId');
     if (!this.rideId && fromRoute) {
@@ -148,8 +139,22 @@ export class DuringRide {
       this.useMockData('Missing rideId');
       return;
     }
+    let urls = [`${this.baseUrl}/rides/${this.rideId}/tracking`, `${this.baseUrl}/rides/${this.rideId}` ]
+    if (this.external) {
+      console.log('External tracking mode');
+      urls = [`${this.baseUrl}/rides/link-tracking/tracking`, `${this.baseUrl}/rides/link-tracking/ride`]
+    }
 
-    this.http.get<TrackingDTO>(`${this.baseUrl}/rides/${this.rideId}/tracking`).subscribe({
+    this.subscribeForRide(urls);
+
+  }
+
+  subscribeForRide(urls: string[]): void {
+
+    const token = this.route.snapshot.queryParamMap.get('token');
+    const params = new HttpParams().set('token', token ?? '');
+
+    this.http.get<TrackingDTO>(urls[0], { params }).subscribe({
       next: (data) => {
         this.vehicleCoords = {
           vehicleLatitude: data.vehicleLatitude,
@@ -167,7 +172,7 @@ export class DuringRide {
       error: (error) => this.useMockData(error)
     });
 
-    this.http.get<RideDTO>(`${this.baseUrl}/rides/${this.rideId}`).subscribe({
+    this.http.get<RideDTO>(urls[1], { params }).subscribe({
       next: (data) => {
         this.stops = data.route.map((l: Location) => {
           return new LatLng(l.latitude, l.longitude);
@@ -198,7 +203,7 @@ export class DuringRide {
       this.addEstimateMinutes()
       },
       error: (error) => this.useMockData(error)
-    })
+    });
   }
 
   addEstimateMinutes(): void {
