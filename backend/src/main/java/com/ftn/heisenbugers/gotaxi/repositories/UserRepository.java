@@ -29,4 +29,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     Passenger findPassengerById(UUID uuid);
 
     User findUserById(UUID id);
+    @Query("SELECT p FROM Passenger p")
+    List<Passenger> findAllPassengers();
+
 }

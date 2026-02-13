@@ -11,4 +11,5 @@ public interface TrafficViolationRepository extends JpaRepository<TrafficViolati
     List<TrafficViolation> getAllById(UUID id);
 
     List<TrafficViolation> getAllByRide(Ride ride);
+    List<TrafficViolation> findByRideIdOrderByCreatedAtDesc(UUID rideId);
 }
