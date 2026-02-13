@@ -58,7 +58,7 @@ public class AdminRideController {
         rides = rides.stream()
                 .filter(r -> driverId == null || (r.getDriver() != null && driverId.equals(r.getDriver().getId())))
 
-                .filter(r -> passengerId == null || hasPassenger(r, passengerId))
+                .filter(r -> matchesPassenger(r, passengerId))
                 .filter(r -> status == null || status == r.getStatus())
                 .filter(r -> fromDt == null || (r.getCreatedAt() != null && !r.getCreatedAt().isBefore(fromDt)))
                 .filter(r -> toDt == null || (r.getCreatedAt() != null && !r.getCreatedAt().isAfter(toDt)))
@@ -241,5 +241,17 @@ public class AdminRideController {
 
         if ("desc".equals(dir)) c = c.reversed();
         return c;
+    }
+    private boolean matchesPassenger(Ride r, UUID passengerId) {
+        if (passengerId == null) return true;
+
+
+        if (r.getRoute() != null && r.getRoute().getUser() != null
+                && passengerId.equals(r.getRoute().getUser().getId())) {
+            return true;
+        }
+
+
+        return hasPassenger(r, passengerId);
     }
 }

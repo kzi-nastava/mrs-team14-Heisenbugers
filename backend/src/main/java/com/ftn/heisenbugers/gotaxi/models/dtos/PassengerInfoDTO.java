@@ -15,4 +15,8 @@ public class PassengerInfoDTO {
     private String lastName;
     private String email;
     private String profileImageUrl;
+
+    public UUID getPassengerId() {
+        return passengerId;
+    }
 }
