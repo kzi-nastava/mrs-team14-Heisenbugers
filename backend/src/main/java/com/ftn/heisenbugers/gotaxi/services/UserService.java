@@ -55,6 +55,7 @@ public class UserService {
     public List<RideHistoryDTO> getUserHistory(Passenger passenger, LocalDate startDate, LocalDate endDate,
                                                RideSort sortBy, String direction) {
         List<Ride> rides;
+        UUID userId = passenger.getId();
 
         Sort sort = direction.equalsIgnoreCase("desc")
                 ? Sort.by(sortBy.getProperty()).descending()
@@ -83,6 +84,34 @@ public class UserService {
         }
 
         return rideHistoryDTOS;
+        /*if (startDate != null && endDate == null) {
+            rides = rideRepository.findByRoute_User_IdAndStartedAtAfter(
+                    userId, startDate.atStartOfDay(), sort
+            );
+        } else if (startDate == null && endDate != null) {
+            rides = rideRepository.findByRoute_User_IdAndStartedAtBefore(
+                    userId, endDate.plusDays(1).atStartOfDay(), sort
+            );
+        } else if (startDate != null) {
+            rides = rideRepository.findByRoute_User_IdAndStartedAtBetween(
+                    userId,
+                    startDate.atStartOfDay(),
+                    endDate.plusDays(1).atStartOfDay(),
+                    sort
+            );
+        } else {
+            rides = rideRepository.findByRoute_User_Id(userId, sort);
+        }
+
+        List<RideHistoryDTO> result = new ArrayList<>();
+        for (Ride r : rides) {
+            RideHistoryDTO dto = new RideHistoryDTO();
+            PopulateDto(r, dto);
+            result.add(dto);
+        }
+        return result;*/
+
+
     }
 
     private static void PopulateDto(Ride r, RideHistoryDTO dto) {
