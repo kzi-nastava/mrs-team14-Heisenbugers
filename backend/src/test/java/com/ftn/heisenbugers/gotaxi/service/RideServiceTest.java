@@ -16,10 +16,12 @@ import com.ftn.heisenbugers.gotaxi.services.RideService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -32,12 +34,18 @@ public class RideServiceTest {
 
     @Mock
     private RideRepository rideRepository;
-    @Mock private UserRepository userRepository;
-    @Mock private PassengerRepository passengerRepository;
-    @Mock private TrafficViolationRepository violationRepository;
-    @Mock private RatingRepository ratingRepository;
-    @Mock private EmailService emailService;
-    @Mock private DriverService driverService;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private PassengerRepository passengerRepository;
+    @Mock
+    private TrafficViolationRepository violationRepository;
+    @Mock
+    private RatingRepository ratingRepository;
+    @Mock
+    private EmailService emailService;
+    @Mock
+    private DriverService driverService;
 
     @InjectMocks
     private RideService rideService;
@@ -45,7 +53,7 @@ public class RideServiceTest {
     private User user;
 
     @BeforeEach
-    public void setup(){
+    public void setup() {
         user = new Passenger();
         user.setFirstName("Marko");
         user.setLastName("Markovic");
@@ -243,6 +251,167 @@ public class RideServiceTest {
         } catch (InvalidUserType e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    public void testFinishReturnsFalseWhenRideNotOngoing() {
+        UUID rideId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+
+        Driver driver = new Driver();
+        driver.setId(driverId);
+
+        Driver rideDriver = new Driver();
+        rideDriver.setId(driverId); // even if same identity, status should fail
+        rideDriver.setAvailable(false);
+
+        Ride ride = new Ride();
+        ride.setId(rideId);
+        ride.setStatus(RideStatus.ASSIGNED); // not ONGOING
+        ride.setDriver(rideDriver);
+        ride.setPassengers(List.of(new Passenger(), new Passenger()));
+
+        when(userRepository.findById(driverId)).thenReturn(Optional.of(driver));
+        when(rideRepository.findById(rideId)).thenReturn(Optional.of(ride));
+
+        boolean ok = rideService.finish(rideId, driverId);
+
+        assertFalse(ok);
+        verify(rideRepository, never()).save(any(Ride.class));
+        verify(userRepository, never()).save(any(User.class));
+        verify(emailService, never()).sendMail(any(), any(), any());
+    }
+
+    @Test
+    public void testFinishReturnsFalseWhenDriverIsNotRideDriver() {
+        UUID rideId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+
+        Driver callerDriver = new Driver();
+        callerDriver.setId(driverId);
+
+        Driver rideDriver = new Driver();
+        rideDriver.setId(UUID.randomUUID()); // different instance & id
+        rideDriver.setAvailable(false);
+
+        Ride ride = new Ride();
+        ride.setId(rideId);
+        ride.setStatus(RideStatus.ONGOING);
+        ride.setDriver(rideDriver);
+        ride.setPassengers(List.of(new Passenger()));
+
+        when(userRepository.findById(driverId)).thenReturn(Optional.of(callerDriver));
+        when(rideRepository.findById(rideId)).thenReturn(Optional.of(ride));
+
+        boolean ok = rideService.finish(rideId, driverId);
+
+        assertFalse(ok);
+        verify(rideRepository, never()).save(any(Ride.class));
+        verify(userRepository, never()).save(any(User.class));
+        verify(emailService, never()).sendMail(any(), any(), any());
+    }
+
+    @Test
+    public void testFinishSuccessUpdatesRideDriverSendsEmails() {
+        UUID rideId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+
+        Driver driver = new Driver();
+        driver.setId(driverId);
+        driver.setAvailable(false);
+
+        Ride ride = new Ride();
+        ride.setId(rideId);
+        ride.setStatus(RideStatus.ONGOING);
+        ride.setDriver(driver);
+
+        Passenger p1 = new Passenger();
+        p1.setFirstName("Pera");
+        p1.setLastName("Peric");
+        p1.setEmail("p1@example.com");
+
+        Passenger p2 = new Passenger();
+        p2.setFirstName("Mika");
+        p2.setLastName("Mikic");
+        p2.setEmail("p2@example.com");
+
+        ride.setPassengers(List.of(p1, p2));
+        ride.setStart(new Location(0, 0, "A"));
+        ride.setEnd(new Location(1, 1, "B"));
+
+        when(userRepository.findById(driverId)).thenReturn(Optional.of(driver));
+        when(rideRepository.findById(rideId)).thenReturn(Optional.of(ride));
+        when(rideRepository.save(any(Ride.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        boolean ok = rideService.finish(rideId, driverId);
+
+        assertTrue(ok);
+
+        assertEquals(RideStatus.FINISHED, ride.getStatus());
+        assertNotNull(ride.getEndedAt());
+        assertEquals(driver, ride.getLastModifiedBy());
+        assertTrue(driver.isAvailable());
+
+        verify(rideRepository, times(1)).save(ride);
+        verify(userRepository, times(1)).save(driver);
+
+        ArgumentCaptor<String> recipientCaptor = ArgumentCaptor.forClass(String.class);
+        verify(emailService, times(2)).sendMail(recipientCaptor.capture(), any(), any());
+
+        List<String> recipients = recipientCaptor.getAllValues();
+        assertTrue(recipients.contains("p1@example.com"));
+        assertTrue(recipients.contains("p2@example.com"));
+    }
+
+    @Test
+    public void testFinishSuccessWithNoPassengersDoesNotSendEmails() {
+        UUID rideId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+
+        Driver driver = new Driver();
+        driver.setId(driverId);
+        driver.setAvailable(false);
+
+        Ride ride = new Ride();
+        ride.setId(rideId);
+        ride.setStatus(RideStatus.ONGOING);
+        ride.setDriver(driver);
+        ride.setPassengers(Collections.emptyList());
+        ride.setStart(new Location(0, 0, "A"));
+        ride.setEnd(new Location(1, 1, "B"));
+
+        when(userRepository.findById(driverId)).thenReturn(Optional.of(driver));
+        when(rideRepository.findById(rideId)).thenReturn(Optional.of(ride));
+        when(rideRepository.save(any(Ride.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        boolean ok = rideService.finish(rideId, driverId);
+
+        assertTrue(ok);
+        verify(emailService, never()).sendMail(any(), any(), any());
+    }
+
+    @Test
+    public void testFinishThrowsWhenRideNotFound() {
+        UUID rideId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+
+        when(userRepository.findById(driverId)).thenReturn(Optional.of(new Driver()));
+        when(rideRepository.findById(rideId)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> rideService.finish(rideId, driverId));
+    }
+
+    @Test
+    public void testFinishThrowsWhenDriverNotFound() {
+        UUID rideId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+
+        when(userRepository.findById(driverId)).thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class, () -> rideService.finish(rideId, driverId));
+        verify(rideRepository, never()).findById(any());
     }
 
     private CreateRideDTO basicRequest() {
