@@ -82,8 +82,9 @@ export class StartRideComponent {
     ).subscribe({
       next: () => {
         //after start
+        
         window.location.reload();
-        //this.router.navigate(['/base']);
+        // this.router.navigate(['/during-ride', rideId]);
       },
       error: err => {
         console.error('Failed to start ride', err);

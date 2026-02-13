@@ -17,6 +17,7 @@ import { HttpClient } from '@angular/common/http';
 import { OnInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { LatLng } from 'leaflet';
+import { RateService } from '../../services/rate.service';
 
 
 @Component({
@@ -89,7 +90,7 @@ export class RideHistoryComponent {
   toastVisible?: boolean;
 
 
-constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {
+constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private rateService: RateService) {
 
 }
 
@@ -149,7 +150,7 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
         "vehicleScore": data.vehicleRate,
         "comment": data.comment,
       }
-      this.http.post(`${this.baseUrl}/rides/${this.ratingRide?.rideId}/rate`, sendingData)
+      this.rateService.sendRate(this.ratingRide!.rideId, sendingData)
       .subscribe({
       next: () => this.showToast('Rating recorded successfully!'),
       error: (error) => {
