@@ -16,6 +16,7 @@ import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RideRateInfo } from '../../models/ride.model';
+import {AuthService} from '../auth/auth.service';
 
 interface Location {
   latitude: number,
@@ -101,7 +102,7 @@ export class DuringRide {
   toastMessage = '';
 
 
-  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
+  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute, private authService: AuthService) {
 
     if (!this.mockStops || this.mockStops.length < 2){
       return;
@@ -115,6 +116,13 @@ export class DuringRide {
   }
 
   ngOnInit(): void {
+    const token = this.route.snapshot.queryParamMap.get('token') ?? "";
+    var id = this.authService.getRideId(token);
+
+    if(id){
+      this.rideId = id;
+    }
+
     if (this.external === undefined) {
       this.route.data.subscribe(data => {
       this.external = data['external'] ?? false;
@@ -142,7 +150,7 @@ export class DuringRide {
   }
 
   subscribeForRide(urls: string[]): void {
-    
+
     const token = this.route.snapshot.queryParamMap.get('token');
     const params = new HttpParams().set('token', token ?? '');
 

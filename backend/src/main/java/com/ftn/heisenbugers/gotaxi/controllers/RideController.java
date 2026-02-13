@@ -173,7 +173,7 @@ public class RideController {
     @GetMapping("/link-tracking/tracking")
     public ResponseEntity<RideTrackingDTO> getLinkTracking(@RequestParam String token) {
         Claims claims = jwtService.parseClaims(token);
-        UUID rideId = claims.get("rideId", UUID.class);
+        UUID rideId = UUID.fromString(claims.get("rideId", String.class));
 
         RideTrackingDTO ride = rideService.getRideTrackingById(rideId);
         if (ride == null) {
@@ -186,7 +186,7 @@ public class RideController {
     @GetMapping("/link-tracking/ride")
     public ResponseEntity<RideDTO> getLinkTrackingRide(@RequestParam String token) {
         Claims claims = jwtService.parseClaims(token);
-        UUID rideId = claims.get("rideId", UUID.class);
+        UUID rideId = UUID.fromString(claims.get("rideId", String.class));
         
         RideDTO ride = rideService.getRide(rideId);
         if (ride == null) {
