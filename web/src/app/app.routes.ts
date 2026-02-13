@@ -28,6 +28,8 @@ import {DriverProfileRequestComponent} from './components/driver-profile-request
 import {ProfileRequestsComponent} from './components/profile-requests/profile-requests.component';
 import {FavoriteRoutesComponent} from './components/favorite-routes/favorite-routes.component';
 import {AuthService} from './components/auth/auth.service';
+import { PassengerRideHistoryComponent } from './components/passenger-ride-history/passenger-ride-history.component';
+import { PassengerRideDetailsComponent } from './components/passenger-ride-history/ride-details/passenger-ride-details.component';
 
 export const routes: Routes = [
   {
@@ -57,6 +59,8 @@ export const routes: Routes = [
       { path: 'profile-requests', component: ProfileRequestsComponent},
       { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
       { path: 'favorite-rides', component: FavoriteRoutesComponent },
+      { path: 'passenger-ride-history', component: PassengerRideHistoryComponent },
+      { path: 'passenger-ride-history/:rideId', component: PassengerRideDetailsComponent },
 
       // unregistered tracking
       {path: 'track', component: DuringRide, data: {external: true}},

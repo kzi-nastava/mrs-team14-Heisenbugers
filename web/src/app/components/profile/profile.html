@@ -231,6 +231,13 @@
         <app-admin-panic></app-admin-panic>
       </div>
     </div>
+  }@else if (selectedTab === 'Ride History' && userRole === 'PASSENGER') {
+    <div class="mt-6 w-full">
+      <h2 class="text-3xl font-bold">Ride History</h2>
+      <div class="mt-6">
+        <app-passenger-ride-history></app-passenger-ride-history>
+      </div>
+    </div>
   }
 
 

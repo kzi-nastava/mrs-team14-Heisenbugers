@@ -1,0 +1,49 @@
+<div class="w-full">
+  @if (loading) {
+    <div class="p-4 text-neutral-600">Loading…</div>
+  } @else {
+    @if (rides.length === 0) {
+      <div class="p-4 rounded-xl border border-neutral-200 bg-white text-neutral-600">
+        No rides found
+      </div>
+    } @else {
+      @for (r of rides; track r.rideId ) {
+        <div
+          class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
+          [class.border-2]="r.panicTriggered"
+          [class.border-red-500]="r.panicTriggered"
+        >
+          <button
+            class="w-full text-left px-4 py-3 text-sm flex justify-between items-center cursor-pointer"
+            (click)="goToRide(r)"
+          >
+            <span class="flex items-center">
+              <span class="mr-4">{{ r.startAddress }}</span>
+              <span class="mr-4 flex items-center">
+                <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
+                {{ r.startedAt | date:'HH:mm' }}
+              </span>
+
+              <ng-icon class="mr-4" name="bootstrapArrowRight"></ng-icon>
+
+              <span class="mr-4">{{ r.endAddress }}</span>
+              <span class="mr-4 flex items-center">
+                <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
+                {{ r.endedAt | date:'HH:mm' }}
+              </span>
+
+              <span class="ml-6 flex items-center">
+                <ng-icon name="bootstrapCash" class="mr-1"></ng-icon>
+                <span>{{ r.price | number:'1.2-2' }} RSD</span>
+              </span>
+            </span>
+
+            @if (r.panicTriggered) {
+              <ng-icon name="bootstrapExclamationCircleFill" color="red" size="24"></ng-icon>
+            }
+          </button>
+        </div>
+      }
+    }
+  }
+</div>
