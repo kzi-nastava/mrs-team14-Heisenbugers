@@ -88,8 +88,20 @@ export class LoggedInHeaderComponent implements OnInit {
     this.profileMenuOpen = false
   }
   goToHistory(){
-    this.router.navigate(['driver-ride-history'])
-    this.profileMenuOpen = false
+    const role = this.auth.getRole();
+
+
+    if (role === 'ADMIN') {
+      this.router.navigate(['/admin/rides']);
+    } else if (role === 'DRIVER') {
+      this.router.navigate(['/driver-ride-history']);
+    } else {
+      this.router.navigate(['/profile']);
+    }
+
+    this.profileMenuOpen = false;
+    //this.router.navigate(['driver-ride-history'])
+    //this.profileMenuOpen = false
   }/*
   logOut(){
     this.router.navigate(['/home'])

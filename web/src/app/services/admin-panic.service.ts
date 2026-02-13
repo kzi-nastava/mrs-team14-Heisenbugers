@@ -23,7 +23,6 @@ export class AdminPanicService {
     return this.http.post<void>(`${this.base}/notifications/${id}/read`, {});
   }
 
-  // если хочешь подсветку машины на карте — берём трекинг
   getRideTracking(rideId: string): Observable<any> {
     return this.http.get<any>(`http://localhost:8081/api/rides/${rideId}/tracking`);
   }

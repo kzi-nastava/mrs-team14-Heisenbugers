@@ -1,0 +1,136 @@
+<div class="max-w-6xl mx-auto">
+  <a
+    routerLink="/admin/rides"
+    class="inline-flex items-center gap-2 mb-4 text-sm text-neutral-600 hover:text-black"
+  >
+    ← Back to list
+  </a>
+
+  @if (loading) {
+    <div class="p-4 text-neutral-600">Loading…</div>
+  }
+
+  @if (error) {
+    <div class="p-4 rounded-xl border border-red-200 bg-red-50 text-red-700">
+      {{ error }}
+    </div>
+  }
+
+  @if (ride && !loading) {
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- Left: meta -->
+      <div class="rounded-2xl border bg-white p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-xl font-bold">Ride details</div>
+          <div class="text-xs text-neutral-500">ID: {{ ride.rideId }}</div>
+        </div>
+
+        <div class="flex gap-2 mb-3">
+          <span class="px-2 py-1 rounded-full text-xs bg-neutral-100">{{ ride.status }}</span>
+          @if (ride.panicTriggered) {
+            <span class="px-2 py-1 rounded-full text-xs bg-red-100 text-red-800">PANIC</span>
+          }
+          @if (ride.canceled) {
+            <span class="px-2 py-1 rounded-full text-xs bg-neutral-100">CANCELED</span>
+          }
+        </div>
+
+        <div class="text-sm space-y-2">
+          <div><b>Start:</b> {{ ride.start?.address || '—' }}</div>
+          <div><b>End:</b> {{ ride.destination?.address || '—' }}</div>
+
+          <div>
+            <b>Started:</b>
+            {{ ride.startedAt ? (ride.startedAt | date:'yyyy-MM-dd HH:mm') : '—' }}
+          </div>
+          <div>
+            <b>Ended:</b>
+            {{ ride.endedAt ? (ride.endedAt | date:'yyyy-MM-dd HH:mm') : '—' }}
+          </div>
+
+          <div><b>Price:</b> {{ ride.price | number:'1.2-2' }} RSD</div>
+
+          <hr class="my-3"/>
+
+          <div><b>Driver:</b> {{ ride.driverName || '—' }}</div>
+
+          @if (ride.canceled) {
+            <div class="rounded-xl border bg-neutral-50 p-3">
+              <div class="font-medium">Cancellation</div>
+              <div class="text-sm"><b>By:</b> {{ ride.canceledByName || 'UNKNOWN' }}</div>
+              <div class="text-sm"><b>Reason:</b> {{ ride.cancelReason || '—' }}</div>
+              <div class="text-sm">
+                <b>At:</b>
+                {{ ride.canceledAt ? (ride.canceledAt | date:'yyyy-MM-dd HH:mm') : '—' }}
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Right: map -->
+      <div class="rounded-2xl border bg-white overflow-hidden h-[420px]">
+        <app-map [pins]="pins"></app-map>
+      </div>
+
+      <!-- Passengers -->
+      <div class="rounded-2xl border bg-white p-4 lg:col-span-2">
+        <div class="text-lg font-semibold mb-2">Passengers</div>
+
+        @if (ride.passengers.length === 0) {
+          <div class="text-sm text-neutral-500">No passengers.</div>
+        } @else {
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            @for (p of ride.passengers; track p.id ?? p.email ?? (p.firstName + '-' + p.lastName)) {
+              <div class="p-3 rounded-xl border flex gap-3 items-center">
+                <img
+                  [src]="p.profileImageUrl"
+                  class="w-10 h-10 rounded-full object-cover border"
+                  alt="avatar"
+                  (error)="onImgError($event)"
+                />
+                <div>
+                  <div class="font-medium">{{ p.firstName }} {{ p.lastName }}</div>
+                  <div class="text-xs text-neutral-500">{{ p.email }}</div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Violations + rating -->
+      <div class="rounded-2xl border bg-white p-4">
+        <div class="text-lg font-semibold mb-2">Traffic violations</div>
+
+        @if (ride.trafficViolations.length === 0) {
+          <div class="text-sm text-neutral-500">None.</div>
+        } @else {
+          @for (v of ride.trafficViolations; track v.title + '|' + (v.description ?? '')) {
+            <div class="p-3 rounded-xl border mb-2">
+              <div class="font-medium">{{ v.title }}</div>
+              <div class="text-sm text-neutral-600">{{ v.description || '—' }}</div>
+            </div>
+          }
+        }
+      </div>
+
+      <div class="rounded-2xl border bg-white p-4">
+        <div class="text-lg font-semibold mb-2">Rating</div>
+
+        @if (!ride.rating) {
+          <div class="text-sm text-neutral-500">No rating.</div>
+        } @else {
+          <div class="text-sm space-y-2">
+            <div><b>Driver:</b> {{ ride.rating.driverScore }}/5</div>
+            <div><b>Vehicle:</b> {{ ride.rating.vehicleScore }}/5</div>
+            <div><b>Comment:</b> {{ ride.rating.comment }}</div>
+            <div class="text-xs text-neutral-500">
+              {{ ride.rating.createdAt | date:'yyyy-MM-dd HH:mm' }}
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

@@ -21,6 +21,9 @@ import { HomeContainer } from './home-container/home-container.component';
 import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
 import { AdminPanicComponent } from './components/admin/admin-panic/admin-panic.component';
 import { AdminGuard } from './components/admin/admin.guard';
+import { AdminRidesComponent } from './components/admin/admin-rides/admin-rides.component';
+import { AdminRideDetailsComponent } from './components/admin/admin-ride-details/admin-ride-details.component';
+
 import {DriverProfileRequestComponent} from './components/driver-profile-request/driver-profile-request.component';
 import {ProfileRequestsComponent} from './components/profile-requests/profile-requests.component';
 import {FavoriteRoutesComponent} from './components/favorite-routes/favorite-routes.component';
@@ -65,6 +68,8 @@ export const routes: Routes = [
         canActivate: [AdminGuard],
         children: [
           { path: 'panic', component: AdminPanicComponent },
+          { path: 'rides', component: AdminRidesComponent },
+          { path: 'rides/:rideId', component: AdminRideDetailsComponent },
           { path: '', redirectTo: 'panic', pathMatch: 'full' }
         ]
       }

@@ -1,0 +1,105 @@
+@if (open && user) {
+  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" (click)="onBackdrop()">
+    <div class="w-[920px] max-w-[95vw] bg-white rounded-2xl border border-gray-200 p-5" (click)="stop($event)">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="text-xl font-bold">
+            Ride History — {{ user.fullName }}
+          </div>
+          <div class="text-sm text-gray-600">{{ user.email }}</div>
+        </div>
+
+        <button class="px-3 py-1.5 rounded-xl border border-gray-200 hover:bg-gray-100" (click)="onBackdrop()">
+          ✕
+        </button>
+      </div>
+
+      <div class="mt-4 flex gap-3 items-end">
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600">From</label>
+          <input class="border border-gray-200 rounded-xl px-3 py-2 w-[220px]"
+                 placeholder="2025-12-28T10:15:30"
+                 [(ngModel)]="from" />
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600">To</label>
+          <input class="border border-gray-200 rounded-xl px-3 py-2 w-[220px]"
+                 placeholder="2025-12-28T10:15:30"
+                 [(ngModel)]="to" />
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600">Sort field</label>
+          <select class="border border-gray-200 rounded-xl px-3 py-2 w-[190px]" [(ngModel)]="sortField">
+            <option value="startedAt">Started</option>
+            <option value="endedAt">Ended</option>
+            <option value="createdAt">Created</option>
+            <option value="price">Price</option>
+            <option value="status">Status</option>
+            <option value="canceled">Canceled</option>
+            <option value="panicTriggered">Panic</option>
+          </select>
+        </div>
+
+        <div class="flex flex-col">
+          <label class="text-sm text-gray-600">Dir</label>
+          <select class="border border-gray-200 rounded-xl px-3 py-2 w-[110px]" [(ngModel)]="sortDir">
+            <option value="desc">desc</option>
+            <option value="asc">asc</option>
+          </select>
+        </div>
+
+        <button
+          class="ml-auto h-11 px-5 rounded-xl bg-[#C5E55D] font-semibold hover:bg-lime-200"
+          (click)="load()"
+        >
+          Search
+        </button>
+      </div>
+
+      <div class="mt-4">
+        @if (loading) {
+          <div class="border border-gray-200 rounded-xl p-4 text-gray-600">Loading...</div>
+        } @else if (error) {
+          <div class="border border-red-200 bg-red-50 rounded-xl p-4 text-red-700">{{ error }}</div>
+        } @else if (!rides.length) {
+          <div class="border border-gray-200 rounded-xl p-4 text-gray-600">No rides found</div>
+        } @else {
+          <div class="space-y-2 max-h-[420px] overflow-auto pr-1">
+            @for (r of rides; track r.rideId) {
+              <button
+                type="button"
+                class="w-full text-left border border-gray-200 rounded-xl p-3 hover:bg-gray-50"
+                (click)="openDetails(r.rideId)"
+              >
+                <div class="flex items-center justify-between">
+                  <div class="font-semibold">
+                    {{ r.startAddress ?? '-' }} → {{ r.destinationAddress ?? '-' }}
+                  </div>
+                  <div class="text-sm text-gray-600">
+                    {{ r.price }} RSD
+                  </div>
+                </div>
+
+                <div class="mt-1 text-sm text-gray-700 flex flex-wrap gap-x-4 gap-y-1">
+                  <span><b>Status:</b> {{ r.status }}</span>
+                  <span><b>Start:</b> {{ fmt(r.startedAt) }}</span>
+                  <span><b>End:</b> {{ fmt(r.endedAt) }}</span>
+                  <span><b>Canceled:</b> {{ r.canceled ? ('yes (' + (r.canceledBy ?? 'UNKNOWN') + ')') : 'no' }}</span>
+                  <span><b>PANIC:</b> {{ r.panicTriggered ? 'yes' : 'no' }}</span>
+                </div>
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <app-admin-ride-details-modal
+        [open]="detailsOpen"
+        [rideId]="selectedRideId"
+        (close)="closeDetails()"
+      ></app-admin-ride-details-modal>
+    </div>
+  </div>
+}
