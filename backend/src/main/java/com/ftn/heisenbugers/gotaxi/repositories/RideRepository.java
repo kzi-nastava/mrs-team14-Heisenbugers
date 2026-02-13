@@ -51,6 +51,14 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
     Optional<Ride> findByDriverIdAndStatus(UUID driver_id, RideStatus status);
 
     Optional<Ride> findByRoute_User_IdAndStatus(UUID userId, RideStatus status);
+    List<Ride> findByPassengersContainingAndCreatedAtBetween(
+            Passenger passenger, LocalDateTime start, LocalDateTime end, Sort sort);
+
+    List<Ride> findByPassengersContainingAndCreatedAtAfter(
+            Passenger passenger, LocalDateTime start, Sort sort);
+
+    List<Ride> findByPassengersContainingAndCreatedAtBefore(
+            Passenger passenger, LocalDateTime end, Sort sort);
 
     @Query("""
                 SELECT r FROM Ride r

@@ -32,6 +32,15 @@ public class AdminRideDetailsDTO {
 
     private UUID passengerId;
     private String passengerName;
+    private List<PassengerInfoDTO> passengers;
+
+    private List<TrafficViolationDTO> trafficViolations;
+    private RatingResponseDTO rating;
+    private List<LocationDTO> polyline;
 
     private boolean panicTriggered;
+    private boolean canceled;
+    private String canceledByName;
+    private String cancelReason;
+    private LocalDateTime canceledAt;
 }
