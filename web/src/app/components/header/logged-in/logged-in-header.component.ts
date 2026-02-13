@@ -87,16 +87,17 @@ export class LoggedInHeaderComponent implements OnInit {
     this.router.navigate(['profile'])
     this.profileMenuOpen = false
   }
+
   goToHistory(){
     const role = this.auth.getRole();
 
 
     if (role === 'ADMIN') {
-      this.router.navigate(['/admin/rides']);
+      this.router.navigate(['/profile/'],{ queryParams: { tab: 'Admin Ride History' } });
     } else if (role === 'DRIVER') {
       this.router.navigate(['/driver-ride-history']);
     } else {
-      this.router.navigate(['/profile']);
+      this.router.navigate(['/profile'],{ queryParams: { tab: 'Ride History' } });
     }
 
     this.profileMenuOpen = false;
@@ -126,5 +127,10 @@ export class LoggedInHeaderComponent implements OnInit {
   goToHome(){
     this.router.navigate(['base'])
     this.profileMenuOpen = false
+  }
+
+  get isDriver(): boolean {
+    const r = this.auth.getRole();
+    return r === 'DRIVER' || r === 'ROLE_DRIVER';
   }
 }
