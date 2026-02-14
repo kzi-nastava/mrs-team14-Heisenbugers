@@ -27,6 +27,7 @@ import { AdminRideDetailsComponent } from './components/admin/admin-ride-details
 import {DriverProfileRequestComponent} from './components/driver-profile-request/driver-profile-request.component';
 import {ProfileRequestsComponent} from './components/profile-requests/profile-requests.component';
 import {FavoriteRoutesComponent} from './components/favorite-routes/favorite-routes.component';
+import { ChatComponent } from './components/chat/chat.component';
 import {AuthService} from './components/auth/auth.service';
 import { PassengerRideHistoryComponent } from './components/passenger-ride-history/passenger-ride-history.component';
 import { PassengerRideDetailsComponent } from './components/passenger-ride-history/ride-details/passenger-ride-details.component';
@@ -79,7 +80,8 @@ export const routes: Routes = [
           { path: 'rides/:rideId', component: AdminRideDetailsComponent },
           { path: '', redirectTo: 'panic', pathMatch: 'full' }
         ]
-      }
+      },
+
     ]
   }
 ];

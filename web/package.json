@@ -36,6 +36,7 @@
     "leaflet-routing-machine": "^3.2.12",
     "rxjs": "~7.8.0",
     "sockjs-client": "^1.5.2",
+    "stomp": "^0.1.1",
     "stompjs": "^2.3.3",
     "tslib": "^2.3.0"
   },
