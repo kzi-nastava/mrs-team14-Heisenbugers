@@ -52,8 +52,12 @@ export class AdminChats {
     );
     }
 
-    chooseChat(i: number) {
-        this.selectedChat = this.filteredList[i];
+    chooseChat(i: number | null) {
+        if (i === null) {
+            this.selectedChat = undefined;
+        } else {
+            this.selectedChat = this.filteredList[i];
+        }
     }
 
 }
