@@ -26,6 +26,7 @@
           <button
             type="button"
             class="cursor-pointer border border-gray-200 rounded-xl p-3 hover:bg-gray-50 text-left flex items-center gap-4"
+            (click)="openRideModal(u)"
           >
             <div class="flex-1">
               <!-- Driver -->
@@ -62,3 +63,7 @@
     }
   </div>
 </div>
+
+@if (modalOpen) {
+  <admin-ride-info [dto]="selectedRide" (close)="modalOpen = false"></admin-ride-info>
+}

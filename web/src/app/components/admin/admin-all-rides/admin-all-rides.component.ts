@@ -1,14 +1,15 @@
-import { Component } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { AdminRide } from "../../../models/admin-ride.model";
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { DatePipe } from "@angular/common";
 import { bootstrapChevronRight, bootstrapClock, bootstrapFlag, bootstrapGeoAlt, bootstrapPerson } from "@ng-icons/bootstrap-icons";
 import { FormsModule } from "@angular/forms";
+import { AdminRideInfo } from "./ride-info/ride-info.component";
 
 @Component({
   selector: 'app-admin-all-rides',
   templateUrl: './admin-all-rides.component.html',
-  imports: [NgIcon, DatePipe, FormsModule],
+  imports: [NgIcon, DatePipe, FormsModule, AdminRideInfo],
   viewProviders: [provideIcons({bootstrapPerson, bootstrapGeoAlt, bootstrapClock, bootstrapFlag, bootstrapChevronRight})]
 })
 export class AdminAllRidesComponent {
@@ -30,7 +31,9 @@ export class AdminAllRidesComponent {
             driver: {
                 firstName: 'Vozac',
                 lastName: 'Vozacovic',
-            }
+            },
+            vehicleLatitude: 44.7886,
+            vehicleLongitude: 20.4689
         },
         {
             ride: {
@@ -48,11 +51,19 @@ export class AdminAllRidesComponent {
             driver: {
                 firstName: 'Marko',
                 lastName: 'Markovic',
-            }
+            },
+            vehicleLatitude: 44.7866,
+            vehicleLongitude: 20.4489
         }
     ];
 
     filteredList: AdminRide[] = [...this.list];
+    selectedRide!: AdminRide;
+    modalOpen = false;
+
+    constructor(private cdr: ChangeDetectorRef) {
+        
+    }
     
 
     applyFilter() {
@@ -68,4 +79,11 @@ export class AdminAllRidesComponent {
             .includes(term)
         );
    }
+
+   openRideModal(u: AdminRide) {
+    this.selectedRide = u;
+    this.modalOpen = true;
+    console.log('Selected ride:', this.selectedRide);
+   }
+
 }

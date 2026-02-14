@@ -15,4 +15,6 @@ export interface AdminRide {
     firstName: string;
     lastName: string;
   };
+  vehicleLatitude: number;
+  vehicleLongitude: number;
 }

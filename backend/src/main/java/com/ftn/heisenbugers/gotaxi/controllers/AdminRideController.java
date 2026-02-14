@@ -1,9 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
-import com.ftn.heisenbugers.gotaxi.models.Location;
-import com.ftn.heisenbugers.gotaxi.models.Ride;
-import com.ftn.heisenbugers.gotaxi.models.Route;
-import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.repositories.RatingRepository;
@@ -45,17 +42,19 @@ public class AdminRideController {
                 .map(dto -> {
                     Ride ride = rideRepository.findById(dto.getRideId()).orElse(null);
                     if (ride != null && ride.getDriver() != null) {
-                        User driver = ride.getDriver();
+                        Driver driver = ride.getDriver();
                         DriverDto driverDto = new DriverDto(
                                 driver.getFirstName(),
                                 driver.getLastName()
                         );
                         return new AdminRideWithDriverDTO(
                                 dto,
-                                driverDto
+                                driverDto,
+                                driver.getLocation().getLatitude(),
+                                driver.getLocation().getLongitude()
                         );
                     } else {
-                        return new AdminRideWithDriverDTO(dto, null);
+                        return new AdminRideWithDriverDTO(dto, null, 0, 0);
                     }
                 })
                 .toList();

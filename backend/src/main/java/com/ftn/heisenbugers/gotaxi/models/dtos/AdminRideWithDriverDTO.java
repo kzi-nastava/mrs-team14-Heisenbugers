@@ -6,4 +6,6 @@ import lombok.AllArgsConstructor;
 public class AdminRideWithDriverDTO {
     public AdminRideListItemDTO ride;
     public DriverDto driver;
+    public double vehicleLatitude;
+    public double vehicleLongitude;
 }
