@@ -34,6 +34,34 @@ public class AdminRideController {
     @Autowired
     private RatingRepository ratingRepository;
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllRides() {
+        List<Ride> rides = rideRepository.findAll();
+        List<AdminRideListItemDTO> dtos = rides.stream()
+                .map(this::toListItemDTO)
+                .toList();
+
+        List<AdminRideWithDriverDTO> detailedDto = dtos.stream()
+                .map(dto -> {
+                    Ride ride = rideRepository.findById(dto.getRideId()).orElse(null);
+                    if (ride != null && ride.getDriver() != null) {
+                        User driver = ride.getDriver();
+                        DriverDto driverDto = new DriverDto(
+                                driver.getFirstName(),
+                                driver.getLastName()
+                        );
+                        return new AdminRideWithDriverDTO(
+                                dto,
+                                driverDto
+                        );
+                    } else {
+                        return new AdminRideWithDriverDTO(dto, null);
+                    }
+                })
+                .toList();
+        return ResponseEntity.ok(detailedDto);
+    }
+
     // list + filters
     @GetMapping("")
     public ResponseEntity<?> search(
@@ -62,7 +90,7 @@ public class AdminRideController {
                 .filter(r -> status == null || status == r.getStatus())
                 .filter(r -> fromDt == null || (r.getCreatedAt() != null && !r.getCreatedAt().isBefore(fromDt)))
                 .filter(r -> toDt == null || (r.getCreatedAt() != null && !r.getCreatedAt().isAfter(toDt)))
-                 .sorted(comp)
+                .sorted(comp)
 
                 .collect(Collectors.toList());
 
@@ -229,9 +257,12 @@ public class AdminRideController {
         Comparator<Ride> c;
 
         switch (field) {
-            case "createdAt" -> c = Comparator.comparing(Ride::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "startedAt" -> c = Comparator.comparing(Ride::getStartedAt, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "endedAt" -> c = Comparator.comparing(Ride::getEndedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "createdAt" ->
+                    c = Comparator.comparing(Ride::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "startedAt" ->
+                    c = Comparator.comparing(Ride::getStartedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "endedAt" ->
+                    c = Comparator.comparing(Ride::getEndedAt, Comparator.nullsLast(Comparator.naturalOrder()));
             case "price" -> c = Comparator.comparing(Ride::getPrice, Comparator.nullsLast(Comparator.naturalOrder()));
             case "status" -> c = Comparator.comparing(Ride::getStatus, Comparator.nullsLast(Comparator.naturalOrder()));
             case "canceled" -> c = Comparator.comparing(Ride::isCanceled);
@@ -242,6 +273,7 @@ public class AdminRideController {
         if ("desc".equals(dir)) c = c.reversed();
         return c;
     }
+
     private boolean matchesPassenger(Ride r, UUID passengerId) {
         if (passengerId == null) return true;
 
