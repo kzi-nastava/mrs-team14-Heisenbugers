@@ -23,7 +23,7 @@ export class ChatComponent implements OnInit {
   messages: Message[] = [];
   @Input() chatId: string = "";
   chatIdReady = new Subject<string>();
-  isAdmin: boolean = false;
+  @Input() isAdmin: boolean = false;
   
   emptyMessage: Message = { content: '', from: "", sentAt: new Date() };
   newMessage: Message = {...this.emptyMessage};

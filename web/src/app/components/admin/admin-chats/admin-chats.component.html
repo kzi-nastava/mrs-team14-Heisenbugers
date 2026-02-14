@@ -45,8 +45,8 @@
 
   <!-- Right half -->
   <div class="w-1/2 h-full border border-gray-200 rounded-xl p-4">
-    @if (selectedChat != null) {
-      <app-chat [chatId]="selectedChat.chatId"></app-chat>
+    @if (selectedChat != undefined) {
+      <app-chat [chatId]="selectedChat.chatId" [isAdmin]="true"></app-chat>
     }
   </div>
 </div>

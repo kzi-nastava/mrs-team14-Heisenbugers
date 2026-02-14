@@ -1,10 +1,11 @@
-import { Component } from "@angular/core";
+import { ChangeDetectorRef, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { NgIcon, provideIcons } from "@ng-icons/core";
 import { Chat } from "../../../models/chat.model";
 import { bootstrapChevronRight, bootstrapPerson } from "@ng-icons/bootstrap-icons";
 import { NgClass } from "@angular/common";
 import { ChatComponent } from "../../chat/chat.component";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
     selector: 'app-admin-chats',
@@ -14,25 +15,32 @@ import { ChatComponent } from "../../chat/chat.component";
 })
 export class AdminChats {
 
-    list: Chat[] = [
-    {
-        chatId: '1',
-        driver: {
-            firstName: 'John',
-            lastName: 'Doe'
-        }
-    },
-    {
-        chatId: '2',
-        driver: {
-            firstName: 'Jane',
-            lastName: 'Smith'
-        }
-    }
-    ];
+    list: Chat[] = [];
     filteredList: Chat[] = [...this.list];
-    searchTerm: any;
-    selectedChat: Chat | null = this.filteredList[0];
+    searchTerm: string = '';
+    selectedChat?: Chat;
+
+    constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
+        
+    }
+
+    ngOnInit() {
+        this.loadChats();
+    }
+
+    loadChats() {
+        this.http.get<Chat[]>('http://localhost:8081/api/admin/chats').subscribe({
+            next: (data) => {
+                this.list = data;
+                this.applyFilter();
+                this.cdr.markForCheck();
+            },
+            error: (error) => {
+                console.warn('Failed to load chats:', error);
+            }
+        });
+    }
+
 
     applyFilter() {
     const term = this.searchTerm.toLowerCase();
