@@ -1,0 +1,51 @@
+<div class="flex w-full gap-4 h-full">
+  <div class="w-1/2 border border-gray-200 rounded-xl p-4">
+    <div class="flex items-center justify-between"><div></div></div>
+    <div class="mt-5 flex gap-3"><div class="flex-1"></div></div>
+    <div class="mt-4">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilter()"
+        placeholder="🔍 Search rides..."
+        class="w-full border border-gray-300 rounded-xl p-2"
+      />
+    </div>
+    <div class="mt-4">
+      @if (!filteredList.length) {
+        <div class="border border-gray-200 rounded-xl p-4 text-gray-600">No rides found</div>
+      } @else {
+        <div class="grid grid-cols-1 gap-2">
+          @for (u of filteredList; track $index) {
+            <button
+              type="button"
+              class="cursor-pointer border border-gray-200 rounded-xl p-3 hover:bg-gray-50 text-left flex items-center gap-4"
+              [ngClass]="{
+                'border-lime-500 bg-lime-50': selectedChat === u,
+                'border-gray-200 hover:bg-gray-50': selectedChat !== u,
+              }"
+              (click)="chooseChat($index)"
+            >
+              <div class="flex-1">
+                <!-- Driver -->
+                <div class="flex items-center gap-2 font-semibold">
+                  <ng-icon name="bootstrapPerson"></ng-icon> {{ u.driver.firstName }}
+                  {{ u.driver.lastName }}
+                </div>
+              </div>
+              <div class="text-gray-400 text-xl">
+                <ng-icon name="bootstrapChevronRight"></ng-icon>
+              </div>
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Right half -->
+  <div class="w-1/2 border border-gray-200 rounded-xl p-4">
+    <!-- Example content -->
+    <p class="text-gray-500">Right side content goes here</p>
+  </div>
+</div>
