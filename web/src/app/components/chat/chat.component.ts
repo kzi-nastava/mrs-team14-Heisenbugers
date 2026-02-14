@@ -23,6 +23,7 @@ export class ChatComponent implements OnInit {
   messages: Message[] = [];
   @Input() chatId: string = "";
   chatIdReady = new Subject<string>();
+  isAdmin: boolean = false;
   
   emptyMessage: Message = { content: '', from: "", sentAt: new Date() };
   newMessage: Message = {...this.emptyMessage};
@@ -36,7 +37,7 @@ export class ChatComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.chatService.connect();
+    this.chatService.connect(this.isAdmin, this.chatId);
     this.loadChat(this.chatId);
     this.chatService.getMessages().subscribe(message => {
       this.messages.push(message);
@@ -45,7 +46,7 @@ export class ChatComponent implements OnInit {
   }
 
   loadChat(chatId: string): void {
-    this.chatService.loadChat(chatId);
+    this.chatService.loadChat(chatId, this.isAdmin);
   }
 
   send(): void {

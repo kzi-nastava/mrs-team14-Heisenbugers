@@ -15,6 +15,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.file.AccessDeniedException;
@@ -63,7 +64,7 @@ public class ChatController {
         template.convertAndSendToUser(messageUserEmail, "/queue/messages", message);
 
         // Send to admins
-        template.convertAndSend("/topic/admin", message);
+        template.convertAndSend("/topic/admin/chat/" + messageChat.getId(), message);
     }
 
     @GetMapping("/api/me/chat")
@@ -75,6 +76,13 @@ public class ChatController {
             chatRepository.save(newChat);
             return newChat;
         });
+        return chat.getId();
+    }
+
+    @GetMapping("/api/me/chat/{chatId}")
+    public UUID getChatById(@PathVariable String chatId) throws InvalidUserType {
+        UUID chatUUID = UUID.fromString(chatId);
+        Chat chat = chatRepository.getChatById(chatUUID).get();
         return chat.getId();
     }
 

@@ -4,11 +4,12 @@ import { NgIcon, provideIcons } from "@ng-icons/core";
 import { Chat } from "../../../models/chat.model";
 import { bootstrapChevronRight, bootstrapPerson } from "@ng-icons/bootstrap-icons";
 import { NgClass } from "@angular/common";
+import { ChatComponent } from "../../chat/chat.component";
 
 @Component({
     selector: 'app-admin-chats',
     templateUrl: './admin-chats.component.html',
-    imports: [NgIcon, FormsModule, NgClass],
+    imports: [NgIcon, FormsModule, NgClass, ChatComponent],
     viewProviders: [provideIcons({bootstrapPerson, bootstrapChevronRight})]
 })
 export class AdminChats {

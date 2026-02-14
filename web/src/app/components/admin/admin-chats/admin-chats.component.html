@@ -44,8 +44,9 @@
   </div>
 
   <!-- Right half -->
-  <div class="w-1/2 border border-gray-200 rounded-xl p-4">
-    <!-- Example content -->
-    <p class="text-gray-500">Right side content goes here</p>
+  <div class="w-1/2 h-full border border-gray-200 rounded-xl p-4">
+    @if (selectedChat != null) {
+      <app-chat [chatId]="selectedChat.chatId"></app-chat>
+    }
   </div>
 </div>
