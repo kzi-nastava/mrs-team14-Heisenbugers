@@ -5,6 +5,7 @@ import { DatePipe } from "@angular/common";
 import { bootstrapChevronRight, bootstrapClock, bootstrapFlag, bootstrapGeoAlt, bootstrapPerson } from "@ng-icons/bootstrap-icons";
 import { FormsModule } from "@angular/forms";
 import { AdminRideInfo } from "./ride-info/ride-info.component";
+import { HttpClient } from "@angular/common/http";
 
 @Component({
   selector: 'app-admin-all-rides',
@@ -13,7 +14,8 @@ import { AdminRideInfo } from "./ride-info/ride-info.component";
   viewProviders: [provideIcons({bootstrapPerson, bootstrapGeoAlt, bootstrapClock, bootstrapFlag, bootstrapChevronRight})]
 })
 export class AdminAllRidesComponent {
-    searchTerm: any;
+    searchTerm: string = "";
+    private baseUrl = 'http://localhost:8081/api';
     list: AdminRide[] = [
         {
             ride: {
@@ -61,8 +63,24 @@ export class AdminAllRidesComponent {
     selectedRide!: AdminRide;
     modalOpen = false;
 
-    constructor(private cdr: ChangeDetectorRef) {
+    constructor(private cdr: ChangeDetectorRef, private http: HttpClient) {
         
+    }
+
+    ngOnInit(): void {
+        this.loadRides();
+    }
+    loadRides() {
+        this.http.get<AdminRide[]>(`${this.baseUrl}/admin/rides/all`).subscribe({
+            next: (data) => {
+                this.list = data ?? [];
+                this.applyFilter();
+                this.cdr.markForCheck();
+            },
+            error: (e) => {
+                console.error('Failed to load rides', e);
+            }
+        });
     }
     
 
