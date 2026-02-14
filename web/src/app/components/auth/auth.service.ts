@@ -82,6 +82,10 @@ export class AuthService {
       return helper.decodeToken(accessToken).sub;
     }
     return null;
+  getRideId(token: string): string | null {
+    const accessToken: any = token
+    const helper = new JwtHelperService();
+    return helper.decodeToken(accessToken).rideId;
   }
 
   logout(): Observable<MessageResponse> {

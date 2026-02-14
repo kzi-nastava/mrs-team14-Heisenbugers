@@ -21,10 +21,16 @@ import { HomeContainer } from './home-container/home-container.component';
 import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
 import { AdminPanicComponent } from './components/admin/admin-panic/admin-panic.component';
 import { AdminGuard } from './components/admin/admin.guard';
+import { AdminRidesComponent } from './components/admin/admin-rides/admin-rides.component';
+import { AdminRideDetailsComponent } from './components/admin/admin-ride-details/admin-ride-details.component';
+
 import {DriverProfileRequestComponent} from './components/driver-profile-request/driver-profile-request.component';
 import {ProfileRequestsComponent} from './components/profile-requests/profile-requests.component';
 import {FavoriteRoutesComponent} from './components/favorite-routes/favorite-routes.component';
 import { ChatComponent } from './components/chat/chat.component';
+import {AuthService} from './components/auth/auth.service';
+import { PassengerRideHistoryComponent } from './components/passenger-ride-history/passenger-ride-history.component';
+import { PassengerRideDetailsComponent } from './components/passenger-ride-history/ride-details/passenger-ride-details.component';
 
 export const routes: Routes = [
   {
@@ -50,10 +56,15 @@ export const routes: Routes = [
       { path: 'driver-ride-history/ride', component: RideCardComponent },
       { path: 'driver-registration', component: DriverRegistrationComponent },
       { path: 'start-ride', component: StartRideComponent },
-      { path: 'during-ride/:rideId', component: DuringRide },
+      { path: 'during-ride/:rideId', component: DuringRide, data: {external: false} },
       { path: 'profile-requests', component: ProfileRequestsComponent},
       { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
       { path: 'favorite-rides', component: FavoriteRoutesComponent },
+      { path: 'passenger-ride-history', component: PassengerRideHistoryComponent },
+      { path: 'passenger-ride-history/:rideId', component: PassengerRideDetailsComponent },
+
+      // unregistered tracking
+      {path: 'track', component: DuringRide, data: {external: true}},
 
       // admin
       {
@@ -62,12 +73,12 @@ export const routes: Routes = [
         canActivate: [AdminGuard],
         children: [
           { path: 'panic', component: AdminPanicComponent },
+          { path: 'rides', component: AdminRidesComponent },
+          { path: 'rides/:rideId', component: AdminRideDetailsComponent },
           { path: '', redirectTo: 'panic', pathMatch: 'full' }
         ]
       },
 
-      // test
-      { path: 'test', component: ChatComponent }
     ]
   }
 ];

@@ -47,11 +47,45 @@
       <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Favorite Routes')" [class]="{'border-lime-300': selectedTab === 'Favorite Routes', 'border-gray-200': selectedTab !== 'Favorite Routes', 'text-gray-700': selectedTab !== 'Favorite Routes', 'bg-[#C5E55D]': selectedTab === 'Favorite Routes'}">
         Favorite Routes
       </button>
+      <!--
       <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Ride History')" [class]="{'border-lime-300': selectedTab === 'Ride History', 'border-gray-200': selectedTab !== 'Ride History', 'text-gray-700': selectedTab !== 'Ride History', 'bg-[#C5E55D]': selectedTab === 'Ride History'}">
         Ride History
       </button>
+      -->
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab(userRole === 'ADMIN' ? 'Admin Ride History' : 'Ride History')"
+        [class]="{
+    'border-lime-300': selectedTab === 'Ride History' || selectedTab === 'Admin Ride History',
+    'border-gray-200': selectedTab !== 'Ride History' && selectedTab !== 'Admin Ride History',
+    'text-gray-700': selectedTab !== 'Ride History' && selectedTab !== 'Admin Ride History',
+    'bg-[#C5E55D]': selectedTab === 'Ride History' || selectedTab === 'Admin Ride History'
+  }"
+      >
+        Ride History
+      </button>
+
+      @if (userRole === 'ADMIN') {
+        <button
+          class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+          (click)="setProfileTab('Admin Panic')"
+          [class]="{'border-lime-300': selectedTab === 'Admin Panic', 'border-gray-200': selectedTab !== 'Admin Panic', 'text-gray-700': selectedTab !== 'Admin Panic', 'bg-[#C5E55D]': selectedTab === 'Admin Panic'}"
+        >
+          Panic dashboard
+        </button>
+
+        <button
+          class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+          (click)="setProfileTab('Admin Notifications')"
+          [class]="{'border-lime-300': selectedTab === 'Admin Notifications', 'border-gray-200': selectedTab !== 'Admin Notifications', 'text-gray-700': selectedTab !== 'Admin Notifications', 'bg-[#C5E55D]': selectedTab === 'Admin Notifications'}"
+        >
+          Notifications
+        </button>
+      }
     </div>
   </div>
+
+
 
   @if (selectedTab == 'Personal Information' && !isEditing) {
     <div class="mt-6">
@@ -179,7 +213,35 @@
     ></app-edit-vehicle>
   } @else if (selectedTab == 'Favorite Routes') {
     <app-favorite-routes class="w-full"></app-favorite-routes>
+  }@else if (selectedTab === 'Admin Ride History' && userRole === 'ADMIN') {
+    <div class="mt-6 w-full">
+      <h2 class="text-3xl font-bold">Ride History</h2>
+
+
+      <div class="mt-6">
+        <app-admin-rides></app-admin-rides>
+      </div>
+    </div>
+  }@else if (selectedTab === 'Admin Panic' && userRole === 'ADMIN') {
+    <div class="mt-6 w-full">
+      <h2 class="text-3xl font-bold">Panic dashboard</h2>
+
+
+      <div class="mt-6">
+        <app-admin-panic></app-admin-panic>
+      </div>
+    </div>
+  }@else if (selectedTab === 'Ride History' && userRole === 'PASSENGER') {
+    <div class="mt-6 w-full">
+      <h2 class="text-3xl font-bold">Ride History</h2>
+      <div class="mt-6">
+        <app-passenger-ride-history></app-passenger-ride-history>
+      </div>
+    </div>
   }
+
+
+
 
 </div>
 

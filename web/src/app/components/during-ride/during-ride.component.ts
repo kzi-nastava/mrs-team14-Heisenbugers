@@ -14,9 +14,10 @@ import { ActivatedRoute } from '@angular/router';
 import { RideInfo } from '../../models/driver-info.model';
 import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { RideRateInfo } from '../../models/ride.model';
 import { ChatComponent } from "../chat/chat.component";
+import {AuthService} from '../auth/auth.service';
 
 interface Location {
   latitude: number,
@@ -60,6 +61,7 @@ export interface RideDTO {
 
 export class DuringRide {
   @Input() rideId!: string;
+  @Input() external!: boolean;
   private stops?: L.LatLng[]
   chatId: string = "";
   private baseUrl = 'http://localhost:8081/api';
@@ -84,7 +86,6 @@ export class DuringRide {
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   @ViewChild(MapComponent) mapCmp!: MapComponent;
 
-
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = false;
   driverRate = 0;
@@ -97,7 +98,7 @@ export class DuringRide {
   chatOpen: boolean = false;
 
 
-  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
+  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute, private authService: AuthService) {
 
     if (!this.mockStops || this.mockStops.length < 2){
       return;
@@ -111,6 +112,18 @@ export class DuringRide {
   }
 
   ngOnInit(): void {
+    const token = this.route.snapshot.queryParamMap.get('token') ?? "";
+    var id = this.authService.getRideId(token);
+
+    if(id){
+      this.rideId = id;
+    }
+
+    if (this.external === undefined) {
+      this.route.data.subscribe(data => {
+      this.external = data['external'] ?? false;
+      });
+    }
 
     const fromRoute = this.route.snapshot.paramMap.get('rideId');
     if (!this.rideId && fromRoute) {
@@ -122,15 +135,22 @@ export class DuringRide {
       this.useMockData('Missing rideId');
       return;
     }
+    let urls = [`${this.baseUrl}/rides/${this.rideId}/tracking`, `${this.baseUrl}/rides/${this.rideId}` ]
+    if (this.external) {
+      console.log('External tracking mode');
+      urls = [`${this.baseUrl}/rides/link-tracking/tracking`, `${this.baseUrl}/rides/link-tracking/ride`]
+    }
 
-    this.http.get<string>(`${this.baseUrl}/me/chat`).subscribe({
-      next: (data) => {this.chatId = data;
-        console.log('Fetched chat ID:', data);
-      },
-      error: (error) => { console.warn('Failed to fetch chat ID, chat will be unavailable:', error); }
-    });
+    this.subscribeForRide(urls);
 
-    this.http.get<TrackingDTO>(`${this.baseUrl}/rides/${this.rideId}/tracking`).subscribe({
+  }
+
+  subscribeForRide(urls: string[]): void {
+
+    const token = this.route.snapshot.queryParamMap.get('token');
+    const params = new HttpParams().set('token', token ?? '');
+
+    this.http.get<TrackingDTO>(urls[0], { params }).subscribe({
       next: (data) => {
         this.vehicleCoords = {
           vehicleLatitude: data.vehicleLatitude,
@@ -148,7 +168,7 @@ export class DuringRide {
       error: (error) => this.useMockData(error)
     });
 
-    this.http.get<RideDTO>(`${this.baseUrl}/rides/${this.rideId}`).subscribe({
+    this.http.get<RideDTO>(urls[1], { params }).subscribe({
       next: (data) => {
         this.stops = data.route.map((l: Location) => {
           return new LatLng(l.latitude, l.longitude);
@@ -179,7 +199,7 @@ export class DuringRide {
       this.addEstimateMinutes()
       },
       error: (error) => this.useMockData(error)
-    })
+    });
   }
 
   addEstimateMinutes(): void {

@@ -9,7 +9,9 @@
 
     <!-- Right actions -->
     <div class="flex items-center gap-6 text-white">
-      <app-driver-status-toggle></app-driver-status-toggle>
+      @if (isDriver) {
+        <app-driver-status-toggle></app-driver-status-toggle>
+      }
       <!-- Notifications -->
       <div class="relative">
         <button

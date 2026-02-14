@@ -17,6 +17,10 @@ import {GetProfileDTO, UpdateProfileDTO} from '../../models/profile.model';
 import {AuthService} from '../auth/auth.service';
 import {CreateVehicleDTO} from '../../models/driver-registration.model';
 import {FavoriteRoutesComponent} from '../favorite-routes/favorite-routes.component';
+import {AdminPanicComponent} from '../admin/admin-panic/admin-panic.component';
+import {AdminRidesComponent} from '../admin/admin-rides/admin-rides.component';
+import {PassengerRideHistoryComponent} from '../passenger-ride-history/passenger-ride-history.component';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-profile',
@@ -28,7 +32,10 @@ import {FavoriteRoutesComponent} from '../favorite-routes/favorite-routes.compon
     ManagePassword,
     EditProfile,
     EditVehicle,
-    FavoriteRoutesComponent
+    FavoriteRoutesComponent,
+    AdminPanicComponent,
+    AdminRidesComponent,
+    PassengerRideHistoryComponent,
   ],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
@@ -42,12 +49,20 @@ export class ProfileComponent {
   userRole = "";
   driverActiveHours = "0 H 0 MIN";
 
-  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private authService: AuthService) {
+  constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private authService: AuthService,private ar: ActivatedRoute) {
 
+  }
+
+  isAdmin(): boolean {
+    return this.userRole === 'ADMIN';
   }
 
   ngOnInit() {
     this.userRole = this.authService.getRole();
+    this.ar.queryParams.subscribe(params => {
+      const tab = params['tab'];
+      if (tab) this.selectedTab = tab;
+    });
     this.http.get<GetProfileDTO>(`http://localhost:8081/api/profile/me`).subscribe({
       next: (data) => {
         this.user.set({

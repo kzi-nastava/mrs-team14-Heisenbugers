@@ -56,7 +56,7 @@ export class DriverStatusToggleComponent implements OnInit {
     });
   }
 
-  
+
   get disabled(): boolean {
     if (!this.userState) return true;
     return (

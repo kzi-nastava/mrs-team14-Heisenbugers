@@ -4,12 +4,11 @@ import com.ftn.heisenbugers.gotaxi.models.Location;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.Route;
 import com.ftn.heisenbugers.gotaxi.models.User;
-import com.ftn.heisenbugers.gotaxi.models.dtos.AdminRideDetailsDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.AdminRideListItemDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.MessageResponse;
+import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import com.ftn.heisenbugers.gotaxi.repositories.RatingRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.TrafficViolationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +28,11 @@ public class AdminRideController {
 
     @Autowired
     private RideRepository rideRepository;
+    @Autowired
+    private TrafficViolationRepository violationRepository;
+
+    @Autowired
+    private RatingRepository ratingRepository;
 
     // list + filters
     @GetMapping("")
@@ -50,15 +54,16 @@ public class AdminRideController {
 
 
         List<Ride> rides = rideRepository.findAll();
-
+        Comparator<Ride> comp = buildRideComparator(sort);
         rides = rides.stream()
                 .filter(r -> driverId == null || (r.getDriver() != null && driverId.equals(r.getDriver().getId())))
 
-                .filter(r -> passengerId == null || hasPassenger(r, passengerId))
+                .filter(r -> matchesPassenger(r, passengerId))
                 .filter(r -> status == null || status == r.getStatus())
-                .filter(r -> fromDt == null || (r.getStartedAt() != null && !r.getStartedAt().isBefore(fromDt)))
-                .filter(r -> toDt == null || (r.getStartedAt() != null && !r.getStartedAt().isAfter(toDt)))
-                .sorted(Comparator.comparing(Ride::getStartedAt, Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+                .filter(r -> fromDt == null || (r.getCreatedAt() != null && !r.getCreatedAt().isBefore(fromDt)))
+                .filter(r -> toDt == null || (r.getCreatedAt() != null && !r.getCreatedAt().isAfter(toDt)))
+                 .sorted(comp)
+
                 .collect(Collectors.toList());
 
         List<AdminRideListItemDTO> dto = rides.stream()
@@ -124,39 +129,81 @@ public class AdminRideController {
                 ? route.getStops().stream().map(this::toLocationDTO).collect(Collectors.toList())
                 : List.of();
 
+        List<LocationDTO> polyline = (route != null)
+                ? route.getStops().stream().map(this::toLocationDTO).toList()
+                : List.of();
+
         UUID driverId = (ride.getDriver() != null) ? ride.getDriver().getId() : null;
         String driverName = (ride.getDriver() != null)
                 ? ride.getDriver().getFirstName() + " " + ride.getDriver().getLastName()
                 : null;
 
-        UUID passengerId = null;
-        String passengerName = null;
-        if (ride.getPassengers() != null && !ride.getPassengers().isEmpty()) {
-            User p = ride.getPassengers().get(0);
-            if (p != null) {
-                passengerId = p.getId();
-                passengerName = p.getFirstName() + " " + p.getLastName();
-            }
-        }
+        List<PassengerInfoDTO> passengers = (ride.getPassengers() != null)
+                ? ride.getPassengers().stream()
+                .filter(p -> p != null)
+                .map(p -> new PassengerInfoDTO(
+                        p.getId(),
+                        p.getFirstName(),
+                        p.getLastName(),
+                        p.getEmail(),
+                        "http://localhost:8081" + p.getProfileImageUrl()
+                ))
+                .toList()
+                : List.of();
 
         boolean panicTriggered = (ride.getPanicEvent() != null);
+        boolean canceled = ride.isCanceled() || ride.getStatus() == RideStatus.CANCELED;
+        String canceledByName = null;
+        if (canceled) {
+            User cb = ride.getCanceledBy();
+            canceledByName = (cb == null) ? "UNKNOWN" : (cb.getFirstName() + " " + cb.getLastName());
+        }
 
-        return new AdminRideDetailsDTO(
-                ride.getId(),
-                ride.getStatus(),
-                ride.getScheduledAt(),
-                ride.getStartedAt(),
-                ride.getEndedAt(),
-                BigDecimal.valueOf(ride.getPrice()),
-                start,
-                dest,
-                stops,
-                driverId,
-                driverName,
-                passengerId,
-                passengerName,
-                panicTriggered
-        );
+        List<TrafficViolationDTO> trafficViolations =
+                violationRepository.findByRideIdOrderByCreatedAtDesc(ride.getId())
+                        .stream()
+                        .map(v -> new TrafficViolationDTO(v.getTitle(), v.getDescription()))
+                        .toList();
+
+        RatingResponseDTO rating = ratingRepository.findByRideId(ride.getId())
+                .map(r -> new RatingResponseDTO(
+                        r.getId(),
+                        ride.getId(),
+                        r.getDriverScore(),
+                        r.getVehicleScore(),
+                        r.getComment(),
+                        r.getCreatedAt()
+                ))
+                .orElse(null);
+
+
+        AdminRideDetailsDTO dto = new AdminRideDetailsDTO();
+        dto.setRideId(ride.getId());
+        dto.setStatus(ride.getStatus());
+        dto.setScheduledAt(ride.getScheduledAt());
+        dto.setStartedAt(ride.getStartedAt());
+        dto.setEndedAt(ride.getEndedAt());
+        dto.setPrice(BigDecimal.valueOf(ride.getPrice()));
+        dto.setStart(start);
+        dto.setDestination(dest);
+        dto.setStops(stops);
+
+        dto.setDriverId(driverId);
+        dto.setDriverName(driverName);
+
+        dto.setPassengers(passengers);
+        dto.setTrafficViolations(trafficViolations);
+        dto.setPolyline(polyline);
+
+        dto.setPanicTriggered(panicTriggered);
+        dto.setCanceled(canceled);
+        dto.setCanceledByName(canceledByName);
+        dto.setCancelReason(ride.getCancelReason());
+        dto.setCanceledAt(ride.getCanceledAt());
+
+        dto.setRating(rating);
+
+        return dto;
     }
 
     private LocationDTO toLocationDTO(Location loc) {
@@ -171,5 +218,40 @@ public class AdminRideController {
         } catch (DateTimeParseException ex) {
             return null;
         }
+    }
+
+    private Comparator<Ride> buildRideComparator(String sort) {
+        String s = (sort == null || sort.isBlank()) ? "startedAt,desc" : sort;
+        String[] parts = s.split(",");
+        String field = parts[0].trim();
+        String dir = (parts.length > 1) ? parts[1].trim().toLowerCase() : "desc";
+
+        Comparator<Ride> c;
+
+        switch (field) {
+            case "createdAt" -> c = Comparator.comparing(Ride::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "startedAt" -> c = Comparator.comparing(Ride::getStartedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "endedAt" -> c = Comparator.comparing(Ride::getEndedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "price" -> c = Comparator.comparing(Ride::getPrice, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "status" -> c = Comparator.comparing(Ride::getStatus, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "canceled" -> c = Comparator.comparing(Ride::isCanceled);
+            case "panicTriggered" -> c = Comparator.comparing(r -> r.getPanicEvent() != null);
+            default -> c = Comparator.comparing(Ride::getStartedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+        }
+
+        if ("desc".equals(dir)) c = c.reversed();
+        return c;
+    }
+    private boolean matchesPassenger(Ride r, UUID passengerId) {
+        if (passengerId == null) return true;
+
+
+        if (r.getRoute() != null && r.getRoute().getUser() != null
+                && passengerId.equals(r.getRoute().getUser().getId())) {
+            return true;
+        }
+
+
+        return hasPassenger(r, passengerId);
     }
 }
