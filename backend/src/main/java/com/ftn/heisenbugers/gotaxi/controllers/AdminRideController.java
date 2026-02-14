@@ -33,7 +33,7 @@ public class AdminRideController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllRides() {
-        List<Ride> rides = rideRepository.findAll();
+        List<Ride> rides = rideRepository.findByStatus(RideStatus.ONGOING);
         List<AdminRideListItemDTO> dtos = rides.stream()
                 .map(this::toListItemDTO)
                 .toList();
