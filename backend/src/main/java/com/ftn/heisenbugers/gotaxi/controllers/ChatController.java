@@ -1,16 +1,104 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
+import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
+import com.ftn.heisenbugers.gotaxi.models.Chat;
+import com.ftn.heisenbugers.gotaxi.models.Message;
+import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.MessageDTO;
+import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
+import com.ftn.heisenbugers.gotaxi.repositories.ChatRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.MessageRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.nio.file.AccessDeniedException;
+import java.security.Principal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 
 @Controller
+@RestController
+@RequiredArgsConstructor
 public class ChatController {
 
-    @MessageMapping("/chat")
-    @SendTo("/topic/messages")
-    public String handleMessage(String message) {
-        return message;
+    private final SimpMessagingTemplate template;
+    private final ChatRepository chatRepository;
+    private final UserRepository userRepository;
+    private final MessageRepository messageRepository;
+
+    @MessageMapping("/sendMessage")
+    public void handleMessage(MessageDTO message, Principal principal) throws AccessDeniedException {
+        String currentUserEmail = principal.getName();
+        Chat currentUserChat = chatRepository.findByRequesterEmail(currentUserEmail);
+        Chat messageChat = chatRepository.findById(message.getChatId()).get();
+        String messageUserEmail = messageChat.getRequester().getEmail();
+
+        if (!messageChat.getId().equals(currentUserChat.getId()) && !isAdmin(principal)) {
+            throw new AccessDeniedException("Cannot send to this chat");
+        }
+
+        message.setSentAt(LocalDateTime.now());
+
+        User currentUser = userRepository.findByEmail(currentUserEmail).get();
+        Message m = new Message();
+        m.setContent(message.getContent());
+        m.setChat(messageChat);
+        m.setSender(currentUser);
+        m.setActive(true);
+        m.setCreatedBy(currentUser);
+        m.setLastModifiedBy(currentUser);
+        messageRepository.save(m);
+
+        message.setFrom(currentUserEmail);
+        // Send to user
+        template.convertAndSendToUser(messageUserEmail, "/queue/messages", message);
+
+        // Send to admins
+        template.convertAndSend("/topic/admin", message);
+    }
+
+    @GetMapping("/api/me/chat")
+    public UUID getChat() throws InvalidUserType {
+        User user = AuthContextService.getCurrentUser();
+        Chat chat = chatRepository.findByRequester(user).orElseGet(() -> {
+            Chat newChat = new Chat();
+            newChat.setRequester(user);
+            chatRepository.save(newChat);
+            return newChat;
+        });
+        return chat.getId();
+    }
+
+    @GetMapping("api/me/chat/full")
+    public List<MessageDTO> getFullChat() throws InvalidUserType {
+        User user = AuthContextService.getCurrentUser();
+        Optional<Chat> chatOpt = chatRepository.findByRequester(user);
+        if (chatOpt.isPresent()) {
+            Chat chat = chatOpt.get();
+            return messageRepository.getAllByChat(chat).stream().map(msg -> new MessageDTO(
+                    msg.getChat().getId(), msg.getContent(),
+                    msg.getSender().getEmail(), msg.getSentAt()
+            )).toList();
+        } else {
+            return List.of();
+        }
+    }
+
+    private boolean isAdmin(Principal principal) {
+        if (principal instanceof Authentication auth) {
+            return auth.getAuthorities().stream()
+                    .anyMatch(a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN"));
+        }
+        return false;
     }
 }
 
