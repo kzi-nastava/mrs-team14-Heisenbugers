@@ -33,8 +33,24 @@ export class AdminPrice {
         });
     }
 
-     ngOnInit(): void {
+    ngOnInit(): void {
         this.loadPrices();
-     }
+    }
+
+    onSave() {
+        const prices = [
+            {vehicleType: 'STANDARD', startingPrice: this.standardPrice},
+            {vehicleType: 'LUXURY', startingPrice: this.luxuryPrice},
+            {vehicleType: 'VAN', startingPrice: this.vanPrice},
+        ];
+        this.http.post('http://localhost:8081/api/admin/prices', prices ).subscribe({
+            next: () => {
+                console.log('Prices saved successfully');
+            },
+            error: (e) => {
+                console.error('Failed to save prices', e);
+            }
+        });
+    }
     
 }

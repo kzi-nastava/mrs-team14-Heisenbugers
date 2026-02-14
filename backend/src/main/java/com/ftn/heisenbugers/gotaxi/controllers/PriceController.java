@@ -3,10 +3,9 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 import com.ftn.heisenbugers.gotaxi.models.Price;
 import com.ftn.heisenbugers.gotaxi.models.dtos.PriceDTO;
 import com.ftn.heisenbugers.gotaxi.repositories.PriceRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,5 +24,13 @@ public class PriceController {
         return prices.stream()
                 .map(p -> new PriceDTO(p.getVehicleType(), p.getStartingPrice()))
                 .toList();
+    }
+
+    @PostMapping("")
+    public void updatePrices(@RequestBody ArrayList<PriceDTO> priceDTOs) {
+        List<Price> prices = priceDTOs.stream()
+                .map(dto -> new Price(dto.vehicleType, dto.startingPrice))
+                .toList();
+        priceRepository.saveAll(prices);
     }
 }
