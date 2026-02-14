@@ -30,6 +30,7 @@ import {FavoriteRoutesComponent} from './components/favorite-routes/favorite-rou
 import {AuthService} from './components/auth/auth.service';
 import { PassengerRideHistoryComponent } from './components/passenger-ride-history/passenger-ride-history.component';
 import { PassengerRideDetailsComponent } from './components/passenger-ride-history/ride-details/passenger-ride-details.component';
+import { AdminPrice } from './components/admin/admin-price/admin-price';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,8 @@ export const routes: Routes = [
 
       // unregistered tracking
       {path: 'track', component: DuringRide, data: {external: true}},
+
+      { path: 'test', component: AdminPrice },
 
       // admin
       {
