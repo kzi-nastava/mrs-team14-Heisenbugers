@@ -16,12 +16,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.models.dtos.AdminJustRideDTO;
 import com.example.gotaximobile.models.dtos.AdminRideDTO;
-import com.example.gotaximobile.models.dtos.DriverDto;
+import com.example.gotaximobile.network.RetrofitClient;
+import com.example.gotaximobile.network.RideService;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class AdminAllRidesFragment extends Fragment {
 
@@ -32,15 +36,20 @@ public class AdminAllRidesFragment extends Fragment {
     private List<AdminRideDTO> rideList = new ArrayList<>();
     private List<AdminRideDTO> filteredList = new ArrayList<>();
 
+    private RideService rideService;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_all_rides, container, false);
+
+        rideService = RetrofitClient.rideService(requireContext());
+
         searchEditText = view.findViewById(R.id.searchEditText);
         ridesRecyclerView = view.findViewById(R.id.ridesRecyclerView);
         noRidesTextView = view.findViewById(R.id.noRidesTextView);
 
-        adapter = new AdminRideAdapter(filteredList, ride -> openRideDialog(ride));
+        adapter = new AdminRideAdapter(filteredList, ride -> openRideDetails(ride));
         ridesRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         ridesRecyclerView.setAdapter(adapter);
 
@@ -77,56 +86,33 @@ public class AdminAllRidesFragment extends Fragment {
         adapter.notifyDataSetChanged();
     }
 
-    private void openRideDialog(AdminRideDTO ride) {
-        RideDetailDialog dialog = new RideDetailDialog(ride);
-        dialog.show(getParentFragmentManager(), "rideDetail");
+    private void openRideDetails(AdminRideDTO ride) {
+        RideDetailFragment fragment = RideDetailFragment.newInstance(ride);
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment) // make sure you have a container in your activity layout
+                .addToBackStack(null)
+                .commit();
+
     }
 
     private void loadRides() {
         rideList.clear();
 
-        rideList.add(new AdminRideDTO() {{
-            ride = new AdminJustRideDTO() {{
-                rideId = "ride-123";
-                status = "COMPLETED";
-                startedAt = "2025-12-19T08:12:00";
-                endedAt = "2025-12-19T10:12:00";
-                startAddress = "ул.Атамана Головатого 2а";
-                destinationAddress = "ул.Красная 113";
-                canceled = false;
-                canceledBy = null;
-                price = 350;
-                panicTriggered = false;
-            }};
-            driver = new DriverDto() {{
-                firstName = "Vozac";
-                lastName = "Vozacovic";
-            }};
-            vehicleLatitude = 44.7886;
-            vehicleLongitude = 20.4689;
-        }});
+        rideService.getAllRides().enqueue(new Callback<>() {
+            @Override
+            public void onResponse(@NonNull Call<List<AdminRideDTO>> call,
+                                   @NonNull Response<List<AdminRideDTO>> response) {
+                rideList = response.body();
+                applyFilter(searchEditText.getText().toString());
 
-        rideList.add(new AdminRideDTO() {{
-            ride = new AdminJustRideDTO() {{
-                rideId = "ride-456";
-                status = "CANCELED";
-                startedAt = "2025-12-20T14:00:00";
-                endedAt = null;
-                startAddress = "ул.Ленина 50";
-                destinationAddress = "ул.Пушкина 20";
-                canceled = true;
-                canceledBy = "PASSENGER";
-                price = 0;
-                panicTriggered = false;
-            }};
-            driver = new DriverDto() {{
-                firstName = "Marko";
-                lastName = "Markovic";
-            }};
-            vehicleLatitude = 44.7866;
-            vehicleLongitude = 20.4489;
-        }});
+            }
 
-        applyFilter(searchEditText.getText().toString());
+            @Override
+            public void onFailure(@NonNull Call<List<AdminRideDTO>> call, @NonNull Throwable t) {
+
+            }
+        });
+
     }
 }
