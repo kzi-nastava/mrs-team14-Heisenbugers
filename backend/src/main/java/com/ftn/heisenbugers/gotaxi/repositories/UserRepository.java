@@ -32,4 +32,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query("SELECT p FROM Passenger p")
     List<Passenger> findAllPassengers();
 
+    @Query("SELECT u FROM User u WHERE TYPE(u) IN (Passenger, Driver) AND u.activated = true")
+    List<User> findAllActivatedPassengersAndDrivers();
+
 }

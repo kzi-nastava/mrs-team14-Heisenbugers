@@ -4,6 +4,7 @@ import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.BlockableUserDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideHistoryDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.UserStateDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
@@ -112,6 +113,16 @@ public class UserService {
         return result;*/
 
 
+    }
+
+    public List<BlockableUserDTO> getBlockableUsers(){
+        List<User> blockableUsers = userRepository.findAllActivatedPassengersAndDrivers();
+        List<BlockableUserDTO> blockableUserDTOS = new ArrayList<>();
+        for(User u : blockableUsers){
+            blockableUserDTOS.add(new BlockableUserDTO(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(), u.getProfileImageUrl(), u.isBlocked()));
+        }
+
+        return blockableUserDTOS;
     }
 
     private static void PopulateDto(Ride r, RideHistoryDTO dto) {

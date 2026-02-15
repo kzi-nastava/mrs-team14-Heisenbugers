@@ -3,6 +3,7 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.BlockableUserDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideHistoryDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.UserStateDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
@@ -53,5 +54,10 @@ public class UserController {
     public ResponseEntity<UserStateDTO> getState() throws InvalidUserType {
         UserStateDTO state = userService.getState(AuthContextService.getCurrentUser().getId());
         return ResponseEntity.ok(state);
+    }
+
+    @GetMapping("/blockable")
+    public ResponseEntity<List<BlockableUserDTO>> getBlockableUsers(){
+        return ResponseEntity.ok(userService.getBlockableUsers());
     }
 }
