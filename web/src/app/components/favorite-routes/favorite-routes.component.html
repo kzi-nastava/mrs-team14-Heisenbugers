@@ -23,7 +23,7 @@
 
   @if (favorites.length > 0) {
     <div class="grid grid-cols-1 gap-4">
-      @for (route of favorites; track route) {
+      @for (route of favorites; track $index) {
         <div class="p-4 bg-white rounded-lg shadow flex justify-between items-start">
           <div>
             <div class="text-lg font-semibold">{{ route.name || (route.startAddress?.address + ' → ' + route.endAddress?.address) }}</div>
@@ -31,7 +31,7 @@
           </div>
 
           <div class="flex flex-row items-end gap-2 align-middle mt-2">
-            <button class="px-8 py-1.5 bg-lime-300 text-black rounded-lg" (click)="useRoute(route)">Use</button>
+            <button [id]="'route-use-button-' + $index" class="px-8 py-1.5 bg-lime-300 text-black rounded-lg" (click)="useRoute(route)">Use</button>
             <button class="px-3 py-1 bg-red-100 text-red-600 rounded-lg items-center" (click)="removeFavorite(route)">
               <ng-icon name="bootstrapTrash3Fill" class="mt-1"></ng-icon>
             </button>

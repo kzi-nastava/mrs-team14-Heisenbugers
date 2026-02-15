@@ -27,7 +27,7 @@ export class AuthService {
 
 
   constructor(private http: HttpClient) {
-   // this.user$.next(this.getRole());
+    // this.user$.next(this.getRole());
     this.restoreFromStorage();
   }
 
@@ -75,6 +75,15 @@ export class AuthService {
     return null;
   }
 
+  getSub(): string | null {
+    if (this.isLoggedIn()) {
+      const accessToken: any = localStorage.getItem('accessToken');
+      const helper = new JwtHelperService();
+      return helper.decodeToken(accessToken).sub;
+    }
+    return null;
+  }
+  
   getRideId(token: string): string | null {
     const accessToken: any = token
     const helper = new JwtHelperService();
@@ -137,4 +146,4 @@ export class AuthService {
   }
 
 
-}
+  }

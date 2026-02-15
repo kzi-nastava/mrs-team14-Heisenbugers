@@ -44,9 +44,11 @@
         }
       </div>
 
-      <!-- Settings -->
+      <!-- Favorites -->
       <button
+        id="favorites-button"
         class="flex h-10 w-10 items-center justify-center rounded-full border border-white/70 cursor-pointer"
+        (click)="openFavorites()"
       >
         <ng-icon name="bootstrapHeart" size="20"></ng-icon>
       </button>
@@ -73,6 +75,7 @@
           </button>
 
           <button
+            id="history-button"
             class="flex w-full items-center gap-2 px-6 py-4 text-sm hover:bg-zinc-800 rounded-lg cursor-pointer"
             (click)="goToHistory()"
           >
