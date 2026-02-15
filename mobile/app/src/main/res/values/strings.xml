@@ -142,4 +142,6 @@
     <string name="leave_a_comment">Leave a comment</string>
     <string name="enter_your_comment_here">Enter your comment here...</string>
     <string name="submit">Submit</string>
+    <string name="search_rides">Search rides</string>
+    <string name="no_rides_found">No rides found</string>
 </resources>
