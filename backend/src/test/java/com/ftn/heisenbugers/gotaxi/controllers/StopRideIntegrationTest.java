@@ -11,6 +11,7 @@ import com.ftn.heisenbugers.gotaxi.repositories.LocationRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +22,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
-import org.junit.jupiter.api.DisplayName;
 
 import java.util.List;
 import java.util.UUID;
@@ -63,12 +63,13 @@ class StopRideIntegrationTest {
         baseDriver = persistDriverWithVehicle("driver-stop-base-" + UUID.randomUUID() + "@example.test");
     }
 
-
     @Test
     @DisplayName("200 OK: driver stops ongoing ride -> ride becomes FINISHED, end & endedAt updated, price recalculated")
-    void stopRide_success_returns200_and_updates_ride() throws Exception {
+    void testStopRide_Success_Returns200_AndUpdatesRide() throws Exception {
+        // Given
         Ride ride = persistRide(baseDriver, RideStatus.ONGOING, true, true, 100.0);
 
+        // When & Then
         mockMvc.perform(post("/api/rides/{rideId}/stop", ride.getId())
                         .with(authAsDriver(baseDriver))
                         .contentType("application/json")
@@ -79,6 +80,7 @@ class StopRideIntegrationTest {
                 .andExpect(jsonPath("$.newDestination.address").value(NEW_STOP_ADDR))
                 .andExpect(jsonPath("$.price").isNumber());
 
+        // Then
         Ride updated = rideRepository.findById(ride.getId()).orElseThrow();
         assertThat(updated.getStatus()).isEqualTo(RideStatus.FINISHED);
         assertThat(updated.getEndedAt()).isNotNull();
@@ -89,8 +91,12 @@ class StopRideIntegrationTest {
 
     @Test
     @DisplayName("404 NOT FOUND: stop ride for unknown rideId")
-    void stopRide_when_ride_not_found_returns404() throws Exception {
-        mockMvc.perform(post("/api/rides/{rideId}/stop", UUID.randomUUID())
+    void testStopRide_WhenRideNotFound_Returns404() throws Exception {
+        // Given
+        UUID missingRideId = UUID.randomUUID();
+
+        // When & Then: request stop for missing ride -> 404 + message
+        mockMvc.perform(post("/api/rides/{rideId}/stop", missingRideId)
                         .with(authAsDriver(baseDriver))
                         .contentType("application/json")
                         .content(stopBody(LAT, LON, "new address")))
@@ -100,9 +106,11 @@ class StopRideIntegrationTest {
 
     @Test
     @DisplayName("409 CONFLICT: stop ride when status is not ONGOING")
-    void stopRide_when_not_ongoing_returns409() throws Exception {
+    void testStopRide_WhenNotOngoing_Returns409() throws Exception {
+        // Given
         Ride ride = persistRide(baseDriver, RideStatus.ASSIGNED, true, true, 100.0);
 
+        // When & Then
         mockMvc.perform(post("/api/rides/{rideId}/stop", ride.getId())
                         .with(authAsDriver(baseDriver))
                         .contentType("application/json")
@@ -113,11 +121,13 @@ class StopRideIntegrationTest {
 
     @Test
     @DisplayName("403 FORBIDDEN: stop ride by a driver who is not assigned to this ride")
-    void stopRide_when_wrong_driver_returns403() throws Exception {
-        Driver realDriver = persistDriverWithVehicle("driver-stop-real@example.test");
-        Driver otherDriver = persistDriverWithVehicle("driver-stop-other@example.test");
+    void testStopRide_WhenWrongDriver_Returns403() throws Exception {
+        // Given
+        Driver realDriver = persistDriverWithVehicle("driver-stop-real-" + UUID.randomUUID() + "@example.test");
+        Driver otherDriver = persistDriverWithVehicle("driver-stop-other-" + UUID.randomUUID() + "@example.test");
         Ride ride = persistRide(realDriver, RideStatus.ONGOING, true, true, 100.0);
 
+        // When & Then
         mockMvc.perform(post("/api/rides/{rideId}/stop", ride.getId())
                         .with(authAsDriver(otherDriver))
                         .contentType("application/json")
@@ -128,9 +138,11 @@ class StopRideIntegrationTest {
 
     @Test
     @DisplayName("400 BAD REQUEST: stop ride without latitude/longitude in request body")
-    void stopRide_when_missing_coords_returns400() throws Exception {
+    void testStopRide_WhenMissingCoords_Returns400() throws Exception {
+        // Given
         Ride ride = persistRide(baseDriver, RideStatus.ONGOING, true, true, 100.0);
 
+        // When & Then
         mockMvc.perform(post("/api/rides/{rideId}/stop", ride.getId())
                         .with(authAsDriver(baseDriver))
                         .contentType("application/json")
@@ -141,9 +153,11 @@ class StopRideIntegrationTest {
 
     @Test
     @DisplayName("409 CONFLICT: stop ride when ride has no start location")
-    void stopRide_when_no_start_returns409() throws Exception {
+    void testStopRide_WhenNoStart_Returns409() throws Exception {
+        // Given
         Ride ride = persistRide(baseDriver, RideStatus.ONGOING, false, true, 100.0);
 
+        // When & Then
         mockMvc.perform(post("/api/rides/{rideId}/stop", ride.getId())
                         .with(authAsDriver(baseDriver))
                         .contentType("application/json")
@@ -154,9 +168,11 @@ class StopRideIntegrationTest {
 
     @Test
     @DisplayName("403 FORBIDDEN: stop ride without authentication")
-    void stopRide_without_auth_returns403() throws Exception {
+    void testStopRide_WithoutAuth_Returns403() throws Exception {
+        // Given
         Ride ride = persistRide(baseDriver, RideStatus.ONGOING, true, true, 100.0);
 
+        // When & Then
         mockMvc.perform(post("/api/rides/{rideId}/stop", ride.getId())
                         .contentType("application/json")
                         .content(stopBody(LAT, LON, "new address")))
@@ -165,7 +181,14 @@ class StopRideIntegrationTest {
 
 
 
+
+
+
+
+
+
     private RequestPostProcessor authAsDriver(Driver driver) {
+        // Creates Spring Security Authentication with ROLE_DRIVER
         var auth = new UsernamePasswordAuthenticationToken(
                 driver,
                 null,
@@ -175,6 +198,7 @@ class StopRideIntegrationTest {
     }
 
     private String stopBody(double lat, double lon, String address) {
+        // JSON body used by stop endpoint
         return """
             {
               "note": "stop now",
@@ -186,12 +210,14 @@ class StopRideIntegrationTest {
     }
 
     private String bodyWithoutCoords(String address) {
+        // Negative case body
         return """
             { "address": "%s" }
             """.formatted(address);
     }
 
     private Ride persistRide(Driver driver, RideStatus status, boolean withStart, boolean withEnd, double price) {
+        // Persists start/end locations optionally and creates a Ride entity
         Location start = null;
         Location end = null;
 
@@ -219,6 +245,7 @@ class StopRideIntegrationTest {
     }
 
     private Driver persistDriverWithVehicle(String email) {
+        // Persists a driver + vehicle with minimum required fields
         Driver d = new Driver();
         d.setEmail(email);
         d.setPasswordHash("test");
