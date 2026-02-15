@@ -41,7 +41,7 @@
     </div>
 
     <!-- Ride list -->
-    @for (r of rides; track r) {
+    @for (r of rides; track $index) {
       <div
         [class.border-2]="r.panicTriggered"
         [class.border-red-500]="r.panicTriggered"
@@ -78,7 +78,11 @@
               ></ng-icon>
             }
             @if (!r.rated) {
-              <button class="cursor-pointer" (click)="$event.stopPropagation(); openRateModal(r)">
+              <button
+                [id]="'rate-btn-' + $index"
+                class="cursor-pointer"
+                (click)="$event.stopPropagation(); openRateModal(r)"
+              >
                 <ng-icon name="bootstrapFeather" size="24" class="mx-3"></ng-icon>
               </button>
             }
@@ -91,6 +95,7 @@
 
 @if (this.ratingRide != null) {
   <app-rate-modal
+    id="rate-modal"
     [ride]="this.ratingRide"
     (onClose)="closeRateModal()"
     (onSubmit)="submitRateForm($event)"
@@ -99,6 +104,7 @@
 
 @if (toastVisible) {
   <div
+    id="toast"
     class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg"
   >
     {{ toastMessage }}
