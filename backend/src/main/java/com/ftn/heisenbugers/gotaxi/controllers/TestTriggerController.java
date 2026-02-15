@@ -26,7 +26,7 @@ public class TestTriggerController {
     @GetMapping(value = "trigger")
     public ResponseEntity<String> run() {
 
-        User u = userRepository.findById(UUID.fromString("32e8c49a-8a81-456b-ade6-5da9cd87f559")).get();
+        User u = userRepository.findById(UUID.fromString("62833df4-17f9-4695-a576-dd0e883dc8d7")).get();
 
         notificationService.notifyUser(u, "Live Notification");
         return ResponseEntity.ok("Success");
