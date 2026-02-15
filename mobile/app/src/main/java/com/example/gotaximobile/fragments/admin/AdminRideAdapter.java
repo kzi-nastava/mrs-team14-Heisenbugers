@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.models.dtos.AdminRideDTO;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class AdminRideAdapter extends RecyclerView.Adapter<AdminRideAdapter.ViewHolder> {
@@ -22,6 +24,10 @@ public class AdminRideAdapter extends RecyclerView.Adapter<AdminRideAdapter.View
 
     private List<AdminRideDTO> rides;
     private OnRideClick listener;
+
+    private final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+    private final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
 
     public AdminRideAdapter(List<AdminRideDTO> rides, OnRideClick listener) {
         this.rides = rides;
@@ -38,12 +44,18 @@ public class AdminRideAdapter extends RecyclerView.Adapter<AdminRideAdapter.View
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+
         AdminRideDTO ride = rides.get(position);
         holder.driverName.setText(ride.driver.firstName + " " + ride.driver.lastName);
         holder.startAddress.setText(ride.ride.startAddress);
         holder.endAddress.setText(ride.ride.destinationAddress);
-        holder.startedAt.setText(ride.ride.startedAt);
-        holder.endedAt.setText(ride.ride.endedAt != null ? ride.ride.endedAt : "Ongoing");
+        holder.startedAt.setText(
+                LocalDateTime
+                        .parse(ride.ride.startedAt, inputFormatter)
+                        .format(outputFormatter));
+        holder.endedAt.setText(ride.ride.endedAt != null ? LocalDateTime
+                .parse(ride.ride.endedAt, inputFormatter)
+                .format(outputFormatter) : "Ongoing");
         holder.itemView.setOnClickListener(v -> listener.onClick(ride));
     }
 
