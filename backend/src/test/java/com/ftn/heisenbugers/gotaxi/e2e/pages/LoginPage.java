@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.e2e.pages;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -38,9 +39,14 @@ public class LoginPage{
     }
 
     public void submit() {
-        (new WebDriverWait(driver, Duration.ofSeconds(10)).until(
-                ExpectedConditions.elementToBeClickable(loginButton)
-        )).click();
+        passwordInput.sendKeys(Keys.TAB);
+        passwordInput.sendKeys(Keys.TAB);
+        passwordInput.sendKeys(Keys.TAB);
+        passwordInput.sendKeys(Keys.ENTER);
+
+//       (new WebDriverWait(driver, Duration.ofSeconds(10)).until(
+//               ExpectedConditions.elementToBeClickable(loginButton)
+//       )).click();
     }
 
 }
