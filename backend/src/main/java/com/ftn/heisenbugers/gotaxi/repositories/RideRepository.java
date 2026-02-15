@@ -70,5 +70,7 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
             UUID userId, LocalDateTime start, LocalDateTime end, Sort sort
     );
 
+    List<Ride> findByStatus(RideStatus status);
+
 
 }

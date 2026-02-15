@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.config;
 
+import com.ftn.heisenbugers.gotaxi.models.Administrator;
 import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
@@ -10,13 +11,14 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.security.Principal;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class WebSocketAuthInterceptor implements ChannelInterceptor {
@@ -40,16 +42,17 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                     String token = authHeader.substring(7);
                     String email = jwtService.extractEmail(token);
                     User user = userRepository.findByEmail(email).orElse(null);
+                    SimpleGrantedAuthority authority;
+                    if (user instanceof Administrator) {
+                        authority = new SimpleGrantedAuthority("ROLE_ADMIN");
+                    } else {
+                        authority = new SimpleGrantedAuthority("ROLE_USER");
+                    }
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
-                            user.getEmail(), null, List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                            user.getEmail(), null, List.of(authority)
                     );
 
-                    accessor.setUser(new Principal() {
-                        @Override
-                        public String getName() {
-                            return user.getEmail();
-                        }
-                    });
+                    accessor.setUser(authentication);
 
                     System.out.println("✅ WebSocket user authenticated: " + user.getEmail());
 
@@ -60,6 +63,17 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
                 System.err.println("❌ JWT validation failed: " + e.getMessage());
                 e.printStackTrace();
             }
+        }
+        if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            String destination = accessor.getDestination(); // get the topic/path
+            if (destination != null && destination.startsWith("/topic/admin-only")) { // restrict path
+                Authentication auth = (Authentication) accessor.getUser();
+                if (auth == null || auth.getAuthorities().stream().noneMatch(
+                        a -> Objects.equals(a.getAuthority(), "ROLE_ADMIN"))) {
+                    throw new AccessDeniedException("Only admins can subscribe to this path");
+                }
+            }
+
         }
         return message;
     }

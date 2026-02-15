@@ -12,6 +12,7 @@ import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.LocationRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.services.RideActionsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,8 @@ public class RideActionsController {
     private RideRepository rideRepository;
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private RideActionsService rideActionsService;
 
     private final RestTemplate rest = new RestTemplate();
     private final ObjectMapper mapper = new ObjectMapper();
@@ -132,7 +135,8 @@ public class RideActionsController {
 
     }
 
-    // Stop ride
+    // Stop ride - update ->>  all logics in RideActionsService
+/*
     @PostMapping("/{rideId}/stop")
     public ResponseEntity<?> stopRide(@PathVariable UUID rideId,
                                       @RequestBody(required = false) StopRideRequestDTO request) throws InvalidUserType {
@@ -182,6 +186,7 @@ public class RideActionsController {
                 addr = "Stopped location";
             }
         }*/
+/*
         if (ride.getStart() == null) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(new MessageResponse("Ride has no start location."));
@@ -231,7 +236,16 @@ public class RideActionsController {
         ));
 
         //return ResponseEntity.ok(new MessageResponse("Ride stopped and finished."));
+    }*/
+
+
+
+    @PostMapping("/{rideId}/stop")
+    public ResponseEntity<?> stopRide(@PathVariable UUID rideId,
+                                      @RequestBody(required = false) StopRideRequestDTO request) throws InvalidUserType {
+        return rideActionsService.stopRide(rideId, request);
     }
+
 
     private static class OsrmResult {
         final double distanceKm;

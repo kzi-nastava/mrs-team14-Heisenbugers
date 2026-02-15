@@ -16,6 +16,7 @@ import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { RideRateInfo } from '../../models/ride.model';
+import { ChatComponent } from "../chat/chat.component";
 import {AuthService} from '../auth/auth.service';
 
 interface Location {
@@ -51,7 +52,7 @@ export interface RideDTO {
 
 @Component({
   selector: 'app-during-ride',
-  imports: [MapComponent, NgIcon, FormsModule, RateModal],
+  imports: [MapComponent, NgIcon, FormsModule, RateModal, ChatComponent],
   templateUrl: './during-ride.component.html',
   viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
 
@@ -62,6 +63,7 @@ export class DuringRide {
   @Input() rideId!: string;
   @Input() external!: boolean;
   private stops?: L.LatLng[]
+  chatId: string = "";
   private baseUrl = 'http://localhost:8081/api';
 
   private mockStops: L.LatLng[] = [
@@ -91,15 +93,9 @@ export class DuringRide {
   etimateMinutes?: number;
 
   location: MapPin = { lat: 45.249570, lng: 19.815809, popup: 'You are here', iconUrl: carSelectedIcon };
-  passengers = [
-    { name: 'Alice Alisic', avatar: 'https://i.pravatar.cc/150?img=1' },
-    { name: 'Bob Bobic', avatar: 'https://i.pravatar.cc/150?img=2' },
-    { name: 'Carl Carlic', avatar: 'https://i.pravatar.cc/150?img=3' },
-    { name: 'Denise Denisic', avatar: 'https://i.pravatar.cc/150?img=4' }
-  ];
-
   toastVisible = false;
   toastMessage = '';
+  chatOpen: boolean = false;
 
 
   constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute, private authService: AuthService) {
@@ -378,6 +374,13 @@ export class DuringRide {
       next: () => alert('Panic sent to administrators.'),
       error: (e) => alert(e?.error?.message ?? 'Panic failed')
     });
+  }
+
+  toggleChat(){      
+    this.chatOpen = !this.chatOpen;
+  }
+  closeChat(){
+    this.chatOpen = false;
   }
 
 }

@@ -1,9 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
-import com.ftn.heisenbugers.gotaxi.models.Location;
-import com.ftn.heisenbugers.gotaxi.models.Ride;
-import com.ftn.heisenbugers.gotaxi.models.Route;
-import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.repositories.RatingRepository;
@@ -34,6 +31,36 @@ public class AdminRideController {
     @Autowired
     private RatingRepository ratingRepository;
 
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllRides() {
+        List<Ride> rides = rideRepository.findByStatus(RideStatus.ONGOING);
+        List<AdminRideListItemDTO> dtos = rides.stream()
+                .map(this::toListItemDTO)
+                .toList();
+
+        List<AdminRideWithDriverDTO> detailedDto = dtos.stream()
+                .map(dto -> {
+                    Ride ride = rideRepository.findById(dto.getRideId()).orElse(null);
+                    if (ride != null && ride.getDriver() != null) {
+                        Driver driver = ride.getDriver();
+                        DriverDto driverDto = new DriverDto(
+                                driver.getFirstName(),
+                                driver.getLastName()
+                        );
+                        return new AdminRideWithDriverDTO(
+                                dto,
+                                driverDto,
+                                driver.getLocation().getLatitude(),
+                                driver.getLocation().getLongitude()
+                        );
+                    } else {
+                        return new AdminRideWithDriverDTO(dto, null, 0, 0);
+                    }
+                })
+                .toList();
+        return ResponseEntity.ok(detailedDto);
+    }
+
     // list + filters
     @GetMapping("")
     public ResponseEntity<?> search(
@@ -62,7 +89,7 @@ public class AdminRideController {
                 .filter(r -> status == null || status == r.getStatus())
                 .filter(r -> fromDt == null || (r.getCreatedAt() != null && !r.getCreatedAt().isBefore(fromDt)))
                 .filter(r -> toDt == null || (r.getCreatedAt() != null && !r.getCreatedAt().isAfter(toDt)))
-                 .sorted(comp)
+                .sorted(comp)
 
                 .collect(Collectors.toList());
 
@@ -229,9 +256,12 @@ public class AdminRideController {
         Comparator<Ride> c;
 
         switch (field) {
-            case "createdAt" -> c = Comparator.comparing(Ride::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "startedAt" -> c = Comparator.comparing(Ride::getStartedAt, Comparator.nullsLast(Comparator.naturalOrder()));
-            case "endedAt" -> c = Comparator.comparing(Ride::getEndedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "createdAt" ->
+                    c = Comparator.comparing(Ride::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "startedAt" ->
+                    c = Comparator.comparing(Ride::getStartedAt, Comparator.nullsLast(Comparator.naturalOrder()));
+            case "endedAt" ->
+                    c = Comparator.comparing(Ride::getEndedAt, Comparator.nullsLast(Comparator.naturalOrder()));
             case "price" -> c = Comparator.comparing(Ride::getPrice, Comparator.nullsLast(Comparator.naturalOrder()));
             case "status" -> c = Comparator.comparing(Ride::getStatus, Comparator.nullsLast(Comparator.naturalOrder()));
             case "canceled" -> c = Comparator.comparing(Ride::isCanceled);
@@ -242,6 +272,7 @@ public class AdminRideController {
         if ("desc".equals(dir)) c = c.reversed();
         return c;
     }
+
     private boolean matchesPassenger(Ride r, UUID passengerId) {
         if (passengerId == null) return true;
 

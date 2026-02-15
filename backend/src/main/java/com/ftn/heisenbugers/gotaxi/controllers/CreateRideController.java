@@ -29,11 +29,17 @@ public class CreateRideController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CreatedRideDTO> createRide(@RequestBody CreateRideDTO request) throws InvalidUserType {
+    public ResponseEntity<?> createRide(@RequestBody CreateRideDTO request) throws InvalidUserType {
 
-        CreatedRideDTO ride = rideService.addRide(request);
-
-        return new ResponseEntity<>(ride, HttpStatus.CREATED);
+        try {
+            CreatedRideDTO ride = rideService.addRide(request);
+            return new ResponseEntity<>(ride, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("There is no free driver available!")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
+            throw e;
+        }
     }
 
     @PutMapping(value = "/{id}/start",

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,8 +15,6 @@ import java.util.List;
 @Builder
 public class Chat extends BaseEntity {
 
-    private LocalDateTime createdAt;
-
     @OneToOne
     @JoinColumn(name = "requester_id")
     @NotNull
@@ -26,8 +23,4 @@ public class Chat extends BaseEntity {
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Message> messages;
 
-    @PrePersist
-    public void prePersist() {
-        createdAt = LocalDateTime.now();
-    }
 }
