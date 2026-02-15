@@ -8,7 +8,7 @@ import { DriverStatusToggleComponent } from '../../driver-status-toggle/driver-s
 import { HttpClient } from '@angular/common/http';
 import { Notification } from '../../../models/notification.model';
 import SockJS from 'sockjs-client';
-import { Client, Message, over } from 'stompjs';
+import { Client, IMessage } from '@stomp/stompjs';
 
 
 @Component({
@@ -44,19 +44,30 @@ export class LoggedInHeaderComponent implements OnInit {
       });
 
     // Connect to WebSocket
-    const socket = new SockJS(`${this.baseUrl.replace('/api', '')}/ws`);
-    this.stompClient = over(socket);
-    this.stompClient.connect({Authorization: `Bearer ${localStorage.getItem('accessToken')}`}, () => {
-      // Subscribe to the user-specific notifications queue
-      this.stompClient?.subscribe(`/user/queue/notifications`, (msg: Message) => {
-        this.ngZone.run(() => {
-          const newNot: Notification = JSON.parse(msg.body);
-          this.notifications.unshift(newNot);
-          this.unreadCount += 1;
-          this.cdr.markForCheck();
-        });
-      });
+    this.stompClient = new Client({
+      webSocketFactory: () =>
+        new SockJS(`${this.baseUrl.replace('/api', '')}/ws`),
+      connectHeaders: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+      },
+      reconnectDelay: 5000
     });
+
+    this.stompClient.onConnect = () => {
+      this.stompClient?.subscribe(
+        '/user/queue/notifications',
+        (msg: IMessage) => {
+          this.ngZone.run(() => {
+            const newNot: Notification = JSON.parse(msg.body);
+            this.notifications.unshift(newNot);
+            this.unreadCount += 1;
+            this.cdr.markForCheck();
+          });
+        }
+      );
+    };
+
+    this.stompClient.activate();
   }
 
   toggleProfileMenu() {
@@ -69,6 +80,11 @@ export class LoggedInHeaderComponent implements OnInit {
     this.profileMenuOpen = false;
     this.notificationsOpen = !this.notificationsOpen;
     console.log("toggling notifications")
+  }
+
+  openFavorites(){
+    this.router.navigate(['favorite-rides'])
+    this.profileMenuOpen = false
   }
 
   isProfileClick(target: HTMLElement){
