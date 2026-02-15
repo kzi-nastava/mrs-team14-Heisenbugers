@@ -53,9 +53,16 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-web")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
+    testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // Selenium
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.18.1")
+
+    // WebDriverManager
+    testImplementation("io.github.bonigarcia:webdrivermanager:6.1.0")
 }
 
 tasks.withType<Test> {
