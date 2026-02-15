@@ -1,0 +1,45 @@
+<div class="p-6 w-full">
+  <div class="flex flex-row justify-between mb-6">
+    <div>
+      <h2 class="text-3xl font-bold">
+        Block Users
+      </h2>
+      <p class="mt-3 text-gray-600">
+        View and search user to block.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="px-3 py-1 bg-gray-100 rounded-lg cursor-pointer" (click)="loadUsers()">Refresh</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="p-4 bg-white rounded shadow text-center">Loading users...</div>
+  }
+
+  @if (error) {
+    <div class="p-4 bg-red-50 rounded shadow text-red-600">{{ error }}</div>
+  }
+
+  @if (users.length > 0) {
+    <div class="grid grid-cols-1 gap-4">
+      @for (user of users; track $index) {
+        <div class="p-4 bg-white rounded-lg shadow flex justify-between items-start">
+          <div>
+            <div class="text-lg font-semibold">{{ user.firstName + " " + user.lastName }}</div>
+            <div class="text-sm text-neutral-400 mt-2">Email: {{ user.email }} • Status: {{ user.blocked ? "Blocked" : "Active" }}</div>
+          </div>
+
+          <div class="flex flex-row items-end gap-2 align-middle mt-2">
+            <button [id]="'route-use-button-' + $index" class="px-8 py-1.5 bg-lime-300 text-black rounded-lg cursor-pointer" >Block</button>
+            <button class="px-3 py-1 bg-red-100 text-red-600 rounded-lg items-center" >
+              <ng-icon name="bootstrapTrash3Fill" class="mt-1"></ng-icon>
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="p-6 text-center text-neutral-500">There are no users yet.</div>
+  }
+</div>

@@ -32,6 +32,7 @@ import {AuthService} from './components/auth/auth.service';
 import { PassengerRideHistoryComponent } from './components/passenger-ride-history/passenger-ride-history.component';
 import { PassengerRideDetailsComponent } from './components/passenger-ride-history/ride-details/passenger-ride-details.component';
 import { AdminChats } from './components/admin/admin-chats/admin-chats.component';
+import {BlockUsersComponent} from './components/block-users/block-users.component';
 
 export const routes: Routes = [
   {
@@ -63,6 +64,7 @@ export const routes: Routes = [
       { path: 'favorite-rides', component: FavoriteRoutesComponent },
       { path: 'passenger-ride-history', component: PassengerRideHistoryComponent },
       { path: 'passenger-ride-history/:rideId', component: PassengerRideDetailsComponent },
+      { path: 'manage/users', component: BlockUsersComponent},
 
       // unregistered tracking
       {path: 'track', component: DuringRide, data: {external: true}},

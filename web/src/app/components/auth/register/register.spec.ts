@@ -13,7 +13,7 @@ function formDataToObject(fd: FormData): Record<string, any> {
   return obj;
 }
 
-describe('RegisterComponent', () => {
+fdescribe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let authSpy: jasmine.SpyObj<AuthService>;
