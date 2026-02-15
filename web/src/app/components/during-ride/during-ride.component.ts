@@ -113,7 +113,10 @@ export class DuringRide {
 
   ngOnInit(): void {
     const token = this.route.snapshot.queryParamMap.get('token') ?? "";
-    var id = this.authService.getRideId(token);
+    var id;
+    if (this.external) {
+      id = this.authService.getRideId(token);
+    }
 
     if(id){
       this.rideId = id;

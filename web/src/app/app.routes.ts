@@ -31,6 +31,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import {AuthService} from './components/auth/auth.service';
 import { PassengerRideHistoryComponent } from './components/passenger-ride-history/passenger-ride-history.component';
 import { PassengerRideDetailsComponent } from './components/passenger-ride-history/ride-details/passenger-ride-details.component';
+import { AdminPrice } from './components/admin/admin-price/admin-price';
 import { AdminAllRidesComponent } from './components/admin/admin-all-rides/admin-all-rides.component';
 import { AdminChats } from './components/admin/admin-chats/admin-chats.component';
 
