@@ -31,6 +31,7 @@ import { ChatComponent } from './components/chat/chat.component';
 import {AuthService} from './components/auth/auth.service';
 import { PassengerRideHistoryComponent } from './components/passenger-ride-history/passenger-ride-history.component';
 import { PassengerRideDetailsComponent } from './components/passenger-ride-history/ride-details/passenger-ride-details.component';
+import { AdminChats } from './components/admin/admin-chats/admin-chats.component';
 
 export const routes: Routes = [
   {
@@ -65,6 +66,8 @@ export const routes: Routes = [
 
       // unregistered tracking
       {path: 'track', component: DuringRide, data: {external: true}},
+
+      { path: 'test', component: AdminChats },
 
       // admin
       {

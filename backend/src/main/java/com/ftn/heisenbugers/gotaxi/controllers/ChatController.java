@@ -4,6 +4,8 @@ import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Chat;
 import com.ftn.heisenbugers.gotaxi.models.Message;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.ChatDescDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.DriverDto;
 import com.ftn.heisenbugers.gotaxi.models.dtos.MessageDTO;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.ChatRepository;
@@ -12,9 +14,11 @@ import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.nio.file.AccessDeniedException;
@@ -35,6 +39,8 @@ public class ChatController {
     private final UserRepository userRepository;
     private final MessageRepository messageRepository;
 
+    private final SimpUserRegistry userRegistry;
+
     @MessageMapping("/sendMessage")
     public void handleMessage(MessageDTO message, Principal principal) throws AccessDeniedException {
         String currentUserEmail = principal.getName();
@@ -42,7 +48,7 @@ public class ChatController {
         Chat messageChat = chatRepository.findById(message.getChatId()).get();
         String messageUserEmail = messageChat.getRequester().getEmail();
 
-        if (!messageChat.getId().equals(currentUserChat.getId()) && !isAdmin(principal)) {
+        if (!isAdmin(principal) && !messageChat.getId().equals(currentUserChat.getId())) {
             throw new AccessDeniedException("Cannot send to this chat");
         }
 
@@ -59,11 +65,19 @@ public class ChatController {
         messageRepository.save(m);
 
         message.setFrom(currentUserEmail);
+
+        userRegistry.getUsers().forEach(user -> {
+            user.getSessions().forEach(session -> {
+                session.getSubscriptions().forEach(sub -> {
+                    System.out.println("User: " + user.getName() + ", SessionId: " + session.getId() + ", Subscribed to: " + sub.getDestination());
+                });
+            });
+        });
         // Send to user
         template.convertAndSendToUser(messageUserEmail, "/queue/messages", message);
 
         // Send to admins
-        template.convertAndSend("/topic/admin", message);
+        template.convertAndSend("/topic/admin/chat/" + messageChat.getId(), message);
     }
 
     @GetMapping("/api/me/chat")
@@ -75,6 +89,13 @@ public class ChatController {
             chatRepository.save(newChat);
             return newChat;
         });
+        return chat.getId();
+    }
+
+    @GetMapping("/api/me/chat/{chatId}")
+    public UUID getChatById(@PathVariable String chatId) throws InvalidUserType {
+        UUID chatUUID = UUID.fromString(chatId);
+        Chat chat = chatRepository.getChatById(chatUUID).get();
         return chat.getId();
     }
 
@@ -91,6 +112,28 @@ public class ChatController {
         } else {
             return List.of();
         }
+    }
+
+    @GetMapping("api/me/chat/{chatId}/full")
+    public List<MessageDTO> getFullChatById(@PathVariable String chatId) throws InvalidUserType {
+        UUID chatUUID = UUID.fromString(chatId);
+        Chat chat = chatRepository.getChatById(chatUUID).get();
+        return messageRepository.getAllByChat(chat).stream().map(msg -> new MessageDTO(
+                msg.getChat().getId(), msg.getContent(),
+                msg.getSender().getEmail(), msg.getSentAt()
+        )).toList();
+    }
+
+    @GetMapping("api/admin/chats")
+    public List<ChatDescDTO> getAllChats(Principal principal) throws AccessDeniedException {
+        if (!isAdmin(principal)) {
+            throw new AccessDeniedException("Only admins can access this endpoint");
+        }
+        List<Chat> chats = chatRepository.findAll();
+        return chats.stream().map(c -> new ChatDescDTO(
+                c.getId(),
+                new DriverDto(c.getRequester().getFirstName(), c.getRequester().getLastName())
+        )).toList();
     }
 
     private boolean isAdmin(Principal principal) {

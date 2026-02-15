@@ -83,7 +83,7 @@ export class AuthService {
     }
     return null;
   }
-
+  
   getRideId(token: string): string | null {
     const accessToken: any = token
     const helper = new JwtHelperService();
