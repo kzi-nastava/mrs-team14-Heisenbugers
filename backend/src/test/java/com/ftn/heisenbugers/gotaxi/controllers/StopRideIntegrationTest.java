@@ -69,7 +69,7 @@ class StopRideIntegrationTest {
         // Given
         Ride ride = persistRide(baseDriver, RideStatus.ONGOING, true, true, 100.0);
 
-        // When & Then: call stop endpoint as the assigned driver and verify HTTP response JSON
+        // When & Then
         mockMvc.perform(post("/api/rides/{rideId}/stop", ride.getId())
                         .with(authAsDriver(baseDriver))
                         .contentType("application/json")
@@ -80,7 +80,7 @@ class StopRideIntegrationTest {
                 .andExpect(jsonPath("$.newDestination.address").value(NEW_STOP_ADDR))
                 .andExpect(jsonPath("$.price").isNumber());
 
-        // Then: verify state in DB
+        // Then
         Ride updated = rideRepository.findById(ride.getId()).orElseThrow();
         assertThat(updated.getStatus()).isEqualTo(RideStatus.FINISHED);
         assertThat(updated.getEndedAt()).isNotNull();
@@ -178,6 +178,13 @@ class StopRideIntegrationTest {
                         .content(stopBody(LAT, LON, "new address")))
                 .andExpect(status().isForbidden());
     }
+
+
+
+
+
+
+
 
 
     private RequestPostProcessor authAsDriver(Driver driver) {
