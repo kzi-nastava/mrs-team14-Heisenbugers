@@ -58,4 +58,10 @@ dependencies {
     implementation libs.okhttp
     implementation libs.logging.interceptor
     implementation libs.glide
+    implementation libs.stompprotocolandroid
+    implementation libs.java.websocket
+    implementation libs.gson
+    implementation libs.core
+    implementation libs.rxjava
+    implementation libs.rxandroid
 }

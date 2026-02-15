@@ -1,7 +1,9 @@
 package com.example.gotaximobile.activities;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -10,20 +12,23 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.AdminPanelFragment;
+import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
-import com.example.gotaximobile.fragments.ride.RateRideDialogFragment;
 import com.example.gotaximobile.fragments.ride.DuringRideFragment;
 import com.example.gotaximobile.models.dtos.UserStateDTO;
 import com.example.gotaximobile.models.enums.UserState;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.UserService;
+import com.example.gotaximobile.services.NotificationService;
+import com.example.gotaximobile.utils.NotificationUtils;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -45,13 +50,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.POST_NOTIFICATIONS}, 1);
+        }
+
+        tokenStorage = new TokenStorage(getApplicationContext());
+
+        NotificationUtils.createChannel(this);
+
+        String headerValue = tokenStorage.getAuthHeaderValue();
+
+        NotificationService service = new NotificationService(this, headerValue);
+        service.connect();
 
         userService = RetrofitClient.userService(this);
 
         setContentView(R.layout.activity_main);
 
         topAppBar = findViewById(R.id.top_app_bar);
-        tokenStorage = new TokenStorage(getApplicationContext());
 
         if (topAppBar != null) {
             topAppBar.getMenu().clear();
