@@ -1,35 +1,35 @@
 <div class="min-h-screen bg-white">
-
   <!-- content: left panel + right map -->
   <div class="grid grid-cols-1 lg:grid-cols-[520px_1fr] min-h-[calc(100vh-85px)]">
     <!-- LEFT PANEL -->
-    <section class="bg-white px-17.5 py-13.75  border-r border-neutral-200">
+    <section class="bg-white px-17.5 py-13.75 border-r border-neutral-200">
       <h1 class="text-[42px] font-extrabold text-black text-center mb-8.75">Login</h1>
 
-
       @if (serverError) {
-        <div class="mb-5 rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div
+          class="mb-5 rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
           {{ serverError }}
         </div>
       }
 
       @if (activatedMsg) {
-        <div class="mb-5 rounded-[10px] border border-lime-200 bg-lime-50 px-4 py-3 text-sm text-neutral-700">
+        <div
+          class="mb-5 rounded-[10px] border border-lime-200 bg-lime-50 px-4 py-3 text-sm text-neutral-700"
+        >
           Your account is not activated yet. Please check your email and click the activation link.
         </div>
       }
-
 
       <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-5.5 mt-30">
         <div>
           <label class="block text-[12px] text-neutral-300 mb-1.5">Email Address</label>
           <input
-            type="email"
             id="email-field"
+            type="email"
             autocomplete="email"
             formControlName="email"
-            class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm
-                   focus:outline-none focus:ring-4 focus:ring-lime-200"
+            class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
             [class.border-neutral-200]="!isInvalid('email')"
             [class.focus:ring-lime-200]="!isInvalid('email')"
             [class.border-red-400]="isInvalid('email')"
@@ -37,18 +37,12 @@
           />
 
           @if (f.email.touched && f.email.hasError('required')) {
-            <p class="mt-1 text-xs text-red-500">
-              Required
-            </p>
+            <p class="mt-1 text-xs text-red-500">Required</p>
           }
 
           @if (f.email.touched && f.email.hasError('email')) {
-            <p  class="mt-1 text-xs text-red-500">
-              Invalid email
-            </p>
+            <p class="mt-1 text-xs text-red-500">Invalid email</p>
           }
-
-
         </div>
 
         <div>
@@ -56,12 +50,12 @@
 
           <div class="relative">
             <input
+              id="password-field"
               [type]="showPassword ? 'text' : 'password'"
               id="password-field"
               formControlName="password"
               autocomplete="current-password"
-              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 pr-14 shadow-sm
-             focus:outline-none focus:ring-4 focus:ring-lime-200"
+              class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 pr-14 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
               [class.border-neutral-200]="!isInvalid('password')"
               [class.focus:ring-lime-200]="!isInvalid('password')"
               [class.border-red-400]="isInvalid('password')"
@@ -75,24 +69,19 @@
               [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'"
             >
               @if (showPassword) {
-                <ng-icon name = "bootstrapEye" size="20" > </ng-icon>
+                <ng-icon name="bootstrapEye" size="20"> </ng-icon>
               } @else {
-                <ng-icon name = "bootstrapEyeSlash" size="20"> </ng-icon>
+                <ng-icon name="bootstrapEyeSlash" size="20"> </ng-icon>
               }
             </button>
           </div>
 
           @if (isInvalid('password') && f.password.hasError('required')) {
-            <p  class="mt-1 text-xs text-red-500">
-              Required
-            </p>
+            <p class="mt-1 text-xs text-red-500">Required</p>
           }
           @if (isInvalid('password') && f.password.hasError('minlength')) {
-            <p class="mt-1 text-xs text-red-500">
-              Min 6 chars
-            </p>
+            <p class="mt-1 text-xs text-red-500">Min 6 chars</p>
           }
-
         </div>
 
         <a
@@ -111,7 +100,7 @@
           @if (loading) {
             Logging in...
           } @else {
-          Login
+            Login
           }
         </button>
 
