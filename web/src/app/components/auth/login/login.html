@@ -52,6 +52,7 @@
             <input
               id="password-field"
               [type]="showPassword ? 'text' : 'password'"
+              id="password-field"
               formControlName="password"
               autocomplete="current-password"
               class="w-full h-10 rounded-[10px] border border-neutral-200 bg-white px-4 pr-14 shadow-sm focus:outline-none focus:ring-4 focus:ring-lime-200"
@@ -93,7 +94,8 @@
         <button
           id="login-button"
           type="submit"
-          class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99]"
+          class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-lime-300 text-black font-semibold shadow
+                 hover:bg-lime-200 active:scale-[0.99] cursor-pointer"
         >
           @if (loading) {
             Logging in...

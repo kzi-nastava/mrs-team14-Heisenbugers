@@ -63,6 +63,9 @@ dependencies {
 
     // WebDriverManager
     testImplementation("io.github.bonigarcia:webdrivermanager:6.1.0")
+
+    // TestNG
+    testImplementation("org.testng:testng:7.12.0")
 }
 
 tasks.withType<Test> {
