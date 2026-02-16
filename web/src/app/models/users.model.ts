@@ -3,6 +3,12 @@ export interface BlockableUserDTO {
   firstName: string;
   lastName: string;
   email: string;
-  profilePictureUrl: string;
+  profileImageUrl: string;
   blocked: boolean;
+  role: string;
+}
+
+export interface IsBlockedDTO {
+  blocked: boolean;
+  blockNote?: string;
 }

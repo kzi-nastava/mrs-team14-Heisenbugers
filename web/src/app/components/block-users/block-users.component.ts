@@ -1,28 +1,35 @@
-import {ChangeDetectorRef, Component, EventEmitter, Output} from '@angular/core';
-import {DecimalPipe} from "@angular/common";
-import {NgIcon} from "@ng-icons/core";
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {HttpClient} from '@angular/common/http';
-import {Router} from '@angular/router';
-import {LocationDTO} from '../../models/ride.model';
 import {BlockableUserDTO} from '../../models/users.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-block-users',
     imports: [
-        NgIcon
+        CommonModule,
+        FormsModule
     ],
   templateUrl: './block-users.component.html',
   styleUrl: './block-users.component.css',
 })
-export class BlockUsersComponent {
+export class BlockUsersComponent implements OnInit {
 
   users: BlockableUserDTO[] = [];
   loading = false;
   error: string | null = null;
 
+  searchTerm: string = '';
+  roleFilter: string = 'ALL';
+  roleOptions: string[] = ['ALL'];
+  selectedUser: BlockableUserDTO | null = null;
+  infoMessage: string | null = null;
+  blocking = false;
+  modalNote: string = '';
+
   private baseUrl = 'http://localhost:8081/api';
 
-  constructor(private http: HttpClient, private cd: ChangeDetectorRef, private router: Router) { }
+  constructor(private http: HttpClient, private cd: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadUsers();
@@ -34,6 +41,8 @@ export class BlockUsersComponent {
     this.http.get<BlockableUserDTO[]>(`${this.baseUrl}/users/blockable`).subscribe({
       next: (data) => {
         this.users = Array.isArray(data) ? data : [];
+        const roles = Array.from(new Set(this.users.map(u => u.role || 'UNKNOWN'))).filter(r => r != null);
+        this.roleOptions = ['ALL', ...roles];
         this.loading = false;
         this.cd.detectChanges();
       },
@@ -46,36 +55,53 @@ export class BlockUsersComponent {
     });
   }
 
-  // useRoute(route: FavoriteRoute) {
-  //   this.routeSelected.emit(route);
-  //   this.router.navigate(['/base'], {
-  //     state: { favoriteRoute: route }
-  //   });
-  //   console.log('Use favorite route', route);
-  // }
-  //
-  // removeFavorite(route: FavoriteRoute) {
-  //   if (!confirm('Remove this route from favorites?')) return;
-  //   this.loading = true;
-  //   this.http.delete(`${this.baseUrl}/favorite-routes/${route.Id}`).subscribe({
-  //     next: () => {
-  //       this.favorites = this.favorites.filter(r => r.Id !== route.Id);
-  //       this.loading = false;
-  //       this.cd.detectChanges();
-  //     },
-  //     error: (err) => {
-  //       console.error('Failed to remove favorite', err);
-  //       this.error = 'Failed to remove favorite route';
-  //       this.loading = false;
-  //     }
-  //   });
-  // }
+  get filteredUsers(): BlockableUserDTO[] {
+    const q = (this.searchTerm || '').trim().toLowerCase();
+    return this.users.filter(u => {
+      const matchesSearch = !q || (u.firstName || '').toLowerCase().includes(q) || (u.lastName || '').toLowerCase().includes(q) || (u.email || '').toLowerCase().includes(q);
+      const matchesRole = this.roleFilter === 'ALL' || (u.role || '').toLowerCase() === (this.roleFilter || '').toLowerCase();
+      return matchesSearch && matchesRole;
+    });
+  }
 
-  formatMinutes(minutes?: number | null): string {
-    if (minutes == null || isNaN(minutes as any)) return '-';
-    const m = Math.round(minutes);
-    const h = Math.floor(m / 60);
-    const rem = m % 60;
-    return h > 0 ? `${h} H ${rem} min` : `${rem} min`;
+  openBlockModal(user: BlockableUserDTO) {
+    this.selectedUser = user;
+    this.infoMessage = null;
+    this.modalNote = '';
+  }
+
+  closeModal() {
+    this.selectedUser = null;
+    this.blocking = false;
+    this.modalNote = '';
+  }
+
+  confirmBlock() {
+    if (!this.selectedUser) return;
+    this.blocking = true;
+    this.error = null;
+
+    const isCurrentlyBlocked = this.selectedUser.blocked;
+    const action = isCurrentlyBlocked ? 'unblock' : 'block';
+
+    const body = action === 'block' ? this.modalNote : null;
+    this.http.post(`${this.baseUrl}/users/${this.selectedUser.id}/${action}`, body).subscribe({
+      next: () => {
+        this.selectedUser!.blocked = !isCurrentlyBlocked;
+        this.infoMessage = `User ${this.selectedUser!.email} has been ${isCurrentlyBlocked ? 'unblocked' : 'blocked'}.`;
+        const idx = this.users.findIndex(u => u.id === this.selectedUser!.id);
+        if (idx !== -1) this.users[idx].blocked = this.selectedUser!.blocked;
+        this.blocking = false;
+        this.closeModal();
+        setTimeout(() => this.infoMessage = "", 900);
+        this.cd.detectChanges();
+      },
+      error: (err) => {
+        console.error(`Failed to ${action} user`, err);
+        this.error = `Failed to ${action} user`;
+        this.blocking = false;
+        this.cd.detectChanges();
+      }
+    });
   }
 }
