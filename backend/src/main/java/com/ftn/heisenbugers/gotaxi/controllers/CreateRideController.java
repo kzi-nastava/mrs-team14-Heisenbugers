@@ -1,7 +1,9 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
 
+import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
+import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreateRideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedRideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DriverDto;
@@ -30,7 +32,10 @@ public class CreateRideController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createRide(@RequestBody CreateRideDTO request) throws InvalidUserType {
-
+        User user = AuthContextService.getCurrentUser();
+        if (user.isBlocked()){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Your account is blocked! Reason: " + user.getBlockNote());
+        }
         try {
             CreatedRideDTO ride = rideService.addRide(request);
             return new ResponseEntity<>(ride, HttpStatus.CREATED);

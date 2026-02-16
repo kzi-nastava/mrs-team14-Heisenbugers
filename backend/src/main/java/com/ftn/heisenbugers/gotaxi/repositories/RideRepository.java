@@ -99,4 +99,7 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
                                        LocalDateTime start,
                                        LocalDateTime end);
 
+
+    List<Ride> findByStatusAndScheduledAtAfter(RideStatus status, LocalDateTime scheduledAt);
+
 }
