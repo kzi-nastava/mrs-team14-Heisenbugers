@@ -16,4 +16,5 @@ public class BlockableUserDTO {
     private String email;
     private String profileImageUrl;
     private boolean blocked;
+    private String role;
 }
