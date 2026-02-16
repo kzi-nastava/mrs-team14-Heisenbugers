@@ -26,6 +26,6 @@ public class Passenger extends User {
                      String lastName,
                      String phone,
                      String address) {
-        super(false, email, passwordHash, firstName, lastName, phone, address, "/images/default-avatar.png", false, null, null);
+        super(false, email, passwordHash, firstName, lastName, phone, address, "/images/default-avatar.png", false, null, null, null);
     }
 }

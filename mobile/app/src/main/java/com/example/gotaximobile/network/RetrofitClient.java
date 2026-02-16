@@ -65,6 +65,9 @@ public class RetrofitClient {
 
     public static ChatApi chatApi(Context context) {
         return get(context).create(ChatApi.class);
+      
+    public static AdminApi adminApi(Context context) {
+        return get(context).create(AdminApi.class);
     }
 
 }

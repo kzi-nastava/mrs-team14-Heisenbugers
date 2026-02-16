@@ -72,5 +72,31 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
 
     List<Ride> findByStatus(RideStatus status);
 
+    @Query("""
+        SELECT r FROM Ride r
+        WHERE r.endedAt BETWEEN :start AND :end
+        AND r.status = 'FINISHED'
+    """)
+    List<Ride> findAllCompletedBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("""
+        SELECT r FROM Ride r
+        WHERE r.driver.id = :driverId
+        AND r.endedAt BETWEEN :start AND :end
+        AND r.status = 'FINISHED'
+    """)
+    List<Ride> findDriverRidesBetween(UUID driverId,
+                                      LocalDateTime start,
+                                      LocalDateTime end);
+
+    @Query("""
+    SELECT r FROM Ride r
+    WHERE r.route.user.id = :userId
+    AND r.endedAt BETWEEN :start AND :end
+    AND r.status = 'FINISHED'
+""")
+    List<Ride> findOrderedRidesBetween(UUID userId,
+                                       LocalDateTime start,
+                                       LocalDateTime end);
 
 }

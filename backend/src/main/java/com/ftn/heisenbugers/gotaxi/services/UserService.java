@@ -4,6 +4,8 @@ import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.User;
+import com.ftn.heisenbugers.gotaxi.models.dtos.BlockableUserDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.IsBlockedDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideHistoryDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.UserStateDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
@@ -112,6 +114,38 @@ public class UserService {
         return result;*/
 
 
+    }
+
+    public List<BlockableUserDTO> getBlockableUsers(){
+        List<User> blockableUsers = userRepository.findAllActivatedPassengersAndDrivers();
+        List<BlockableUserDTO> blockableUserDTOS = new ArrayList<>();
+        for(User u : blockableUsers){
+            blockableUserDTOS.add(new BlockableUserDTO(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(), u.getProfileImageUrl(), u.isBlocked(), u instanceof Driver ? "Driver" : "Passenger"));
+        }
+
+        return blockableUserDTOS;
+    }
+
+    public void block(UUID id, String note){
+        User user = userRepository.findById(id).get();
+
+        user.setBlocked(true);
+        user.setBlockNote(note);
+        userRepository.save(user);
+    }
+
+    public void unblock(UUID id){
+        User user = userRepository.findById(id).get();
+
+        user.setBlocked(false);
+        user.setBlockNote(null);
+        userRepository.save(user);
+    }
+
+    public IsBlockedDTO isBlocked(String email){
+        User user = userRepository.findByEmail(email).get();
+
+        return new IsBlockedDTO(user.isBlocked(), user.getBlockNote());
     }
 
     private static void PopulateDto(Ride r, RideHistoryDTO dto) {

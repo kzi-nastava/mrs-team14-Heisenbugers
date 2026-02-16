@@ -1,0 +1,84 @@
+<div class="p-6 w-full h-full overflow-auto"> <!-- make page scrollable -->
+  <div class="flex flex-row justify-between mb-6 items-center">
+    <div>
+      <h2 class="text-3xl font-bold">
+        Manage Users
+      </h2>
+      <p class="mt-3 text-gray-600">
+        View and search users.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <input type="text" placeholder="Search by first name, last name or email" class="px-5 py-2 rounded border w-88" [(ngModel)]="searchTerm" />
+      <select [(ngModel)]="roleFilter" class="px-3 py-2 rounded border bg-white cursor-pointer">
+        @for (opt of roleOptions; track $index) {
+          <option [value]="opt">{{ opt }}</option>
+        }
+      </select>
+      <button class="px-3 py-2 bg-gray-100 rounded-lg cursor-pointer" (click)="loadUsers()">Refresh</button>
+    </div>
+  </div>
+
+  @if (loading) {
+    <div class="p-4 bg-white rounded shadow text-center">Loading users...</div>
+  }
+
+  @if (error) {
+    <div class="p-4 bg-red-50 rounded shadow text-red-600">{{ error }}</div>
+  }
+
+  @if (infoMessage) {
+    <div class="p-4 mb-4 bg-green-50 rounded shadow text-green-600">{{ infoMessage }}</div>
+  }
+
+  @if (filteredUsers.length > 0) {
+    <div class="grid grid-cols-1 gap-4">
+      @for (user of filteredUsers; track $index) {
+        <div class="p-4 bg-white rounded-lg shadow flex justify-between items-start">
+          <div class="flex items-center gap-4">
+
+            <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+              @if (user.profileImageUrl) {
+                <img [src]="'http://localhost:8081' + user.profileImageUrl" alt="avatar" class="w-full h-full object-cover" />
+              } @else {
+                <div class="text-sm text-neutral-600">{{ (user.firstName || '').charAt(0) + (user.lastName || '').charAt(0) }}</div>
+              }
+            </div>
+
+            <div>
+              <div class="text-lg font-semibold">{{ user.firstName + " " + user.lastName }}</div>
+              <div class="text-sm text-neutral-400 mt-2">Email: {{ user.email }} • Role: {{ user.role }} • Status: <span [class.text-red-600]="user.blocked" [class.text-green-600]="!user.blocked">{{ user.blocked ? 'Blocked' : 'Active' }}</span></div>
+            </div>
+          </div>
+
+          <div class="flex flex-row items-end gap-2 align-middle mt-2">
+            <button [id]="'route-use-button-' + $index" class="px-6 py-1.5 rounded-lg cursor-pointer" [class.bg-yellow-400]="user.blocked" [class.bg-red-300]="!user.blocked" [class.text-black]="true" (click)="openBlockModal(user)">{{ user.blocked ? 'Unblock' : 'Block' }}</button>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="p-6 text-center text-neutral-500">There are no users yet.</div>
+  }
+
+  @if (selectedUser) {
+    <div class="absolute left-0 right-0 top-16 flex items-start justify-center z-50 pointer-events-none">
+      <div class="pointer-events-auto bg-white rounded-lg w-11/12 md:w-1/3 p-6 shadow-lg">
+        <h3 class="text-xl font-semibold mb-2">{{ selectedUser.blocked ? 'Confirm Unblock' : 'Confirm Block' }}</h3>
+        <p class="text-sm text-neutral-500 mb-4">Are you sure you want to {{ selectedUser.blocked ? 'unblock' : 'block' }} <strong>{{ selectedUser.email }}</strong>?</p>
+        @if (!selectedUser.blocked) {
+          <textarea [(ngModel)]="modalNote" rows="3" placeholder="Add a note (optional)" class="w-full border rounded p-2 mb-4"></textarea>
+        }
+        <div class="flex justify-end gap-3">
+          <button class="px-4 py-2 bg-gray-100 rounded-md cursor-pointer" (click)="closeModal()">Cancel</button>
+          <button class="px-4 py-2 rounded-md cursor-pointer" [class.bg-yellow-400]="selectedUser.blocked" [class.bg-red-400]="!selectedUser.blocked" [class.text-black]="selectedUser.blocked" [class.text-white]="!selectedUser.blocked" [disabled]="blocking" (click)="confirmBlock()">
+            {{ blocking ? (selectedUser.blocked ? 'Unblocking...' : 'Blocking...') : (selectedUser.blocked ? 'Unblock' : 'Block') }}
+          </button>
+        </div>
+        @if (error) {
+          <div class="mt-3 text-red-600">{{ error }}</div>
+        }
+      </div>
+    </div>
+  }
+</div>

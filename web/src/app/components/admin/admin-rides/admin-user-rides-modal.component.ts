@@ -93,6 +93,13 @@ export class AdminUserRidesModalComponent {
     this.selectedRideId = null;
   }
 
+  ngOnChanges() {
+    if (this.open && this.user) {
+      this.load();
+    }
+  }
+
+
 
   fmt(dt: string | null | undefined) {
     if (!dt) return '-';

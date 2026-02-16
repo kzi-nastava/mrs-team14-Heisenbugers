@@ -54,6 +54,8 @@ public abstract class User extends BaseEntity {
     @NotNull
     private boolean blocked = false;
 
+    private String blockNote;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Notification> notifications;
 
