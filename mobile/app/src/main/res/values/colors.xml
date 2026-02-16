@@ -25,5 +25,6 @@
 
     <color name="messageMe">#71A600</color>
     <color name="gray">#9E9E9E</color>
+    <color name="chatBackground">#F5F5F5</color>
 
 </resources>
