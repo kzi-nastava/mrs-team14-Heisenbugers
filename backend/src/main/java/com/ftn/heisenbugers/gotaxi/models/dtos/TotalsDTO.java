@@ -1,0 +1,12 @@
+package com.ftn.heisenbugers.gotaxi.models.dtos;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class TotalsDTO {
+    private long rides;
+    private double kilometers;
+    private double money;
+}
