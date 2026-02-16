@@ -145,7 +145,7 @@
   </div>
 
   @if (selectedTab == 'Personal Information' && !isEditing) {
-    <div class="mt-6">
+    <div class="mt-6 w-full">
       <div class="flex flex-row justify-between">
         <div class="flex flex-col">
           <h2 class="text-3xl font-bold">
@@ -189,9 +189,11 @@
       </div>
     </div>
   } @else if (selectedTab == 'Manage Password') {
-    <app-manage-password></app-manage-password>
+    <div class="w-full">
+      <app-manage-password></app-manage-password>
+    </div>
   } @else if (selectedTab == 'Driver Information') {
-    <div class="mt-6">
+    <div class="mt-6 w-full">
       <h2 class="text-3xl font-bold">
         {{ selectedTab }}
       </h2>
@@ -205,7 +207,7 @@
       </div>
     </div>
   } @else if (selectedTab == 'Vehicle Information' && !isVehicleEditing) {
-    <div class="mt-6">
+    <div class="mt-6 w-full">
       <div class="flex flex-row justify-between">
         <div class="flex flex-col">
           <h2 class="text-3xl font-bold">
@@ -302,7 +304,7 @@
       </div>
     </div>
   } @else if (selectedTab === 'Ride History' && userRole === 'DRIVER') {
-    <div class="mt-6">
+    <div class="mt-6 w-full">
       <app-ride-history></app-ride-history>
     </div>
   }
