@@ -473,7 +473,11 @@ export class RideBookingComponent implements OnDestroy {
       },
       error: (err) => {
         console.error('Ride creation failed', err);
-        this.showMessage(err?.error?.message ?? 'Failed to create ride.', 'error');
+        const errorMessage = typeof err.error === 'string'
+          ? err.error
+          : (err.error?.message || 'Failed to create ride.');
+
+        this.showMessage(errorMessage, 'error');
       }
     });
   }

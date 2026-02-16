@@ -76,6 +76,9 @@ public class RideService {
             ZonedDateTime zdt = ZonedDateTime.parse(request.getScheduledAt());
             ride.setScheduledAt(zdt.withZoneSameInstant(ZoneId.systemDefault())
                     .toLocalDateTime());
+            ride.setBabyTransport(request.isBabyTransport());
+            ride.setPetTransport(request.isPetTransport());
+            ride.setVehicleType(request.getVehicleType());
             rideRepository.save(ride);
             return new CreatedRideDTO(ride.getId(), request.getRoute(), request.getVehicleType(), request.isBabyTransport(),
                     request.isPetTransport(), request.getPassengersEmails(), null, RideStatus.REQUESTED);
@@ -360,7 +363,7 @@ public class RideService {
         emailService.sendMail(recipient.getEmail(), subject, body);
     }
 
-    private void sendAcceptedRideEmail(User recipient, Ride ride, String token) {
+    public void sendAcceptedRideEmail(User recipient, Ride ride, String token) {
         String subject = "Subject: Your Ride Is Confirmed!";
         String body =
                 """

@@ -1,6 +1,7 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -81,6 +82,11 @@ public class Ride extends BaseEntity {
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL)
     private PanicEvent panicEvent;
 
+    boolean petTransport;
+
+    boolean babyTransport;
+
+    VehicleType vehicleType;
 
     public void addPassenger(Passenger p) {
         this.passengers.add(p);
