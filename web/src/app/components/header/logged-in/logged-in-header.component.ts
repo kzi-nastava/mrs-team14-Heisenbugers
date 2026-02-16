@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { Notification } from '../../../models/notification.model';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
+import { GetProfileDTO } from '../../../models/profile.model';
 
 
 @Component({
@@ -25,6 +26,7 @@ export class LoggedInHeaderComponent implements OnInit {
   unreadCount: number = 0;
   private baseUrl = 'http://localhost:8081/api';
   stompClient?: Client;
+  profilePhotoUrl: string = '';
 
   //constructor(private router: Router) {}
   constructor(
@@ -68,6 +70,19 @@ export class LoggedInHeaderComponent implements OnInit {
     };
 
     this.stompClient.activate();
+    this.getProfilePhoto();
+  }
+
+  getProfilePhoto() {
+    this.http.get<GetProfileDTO>(`http://localhost:8081/api/profile/me`).subscribe({
+          next: (data) => {
+            this.profilePhotoUrl = data.profileImageUrl || '';
+            this.cdr.markForCheck();
+          },
+          error: (error) => {
+            console.warn('Error:', error);
+          }
+        });
   }
 
   toggleProfileMenu() {
