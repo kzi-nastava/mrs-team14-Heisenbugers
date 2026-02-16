@@ -1,5 +1,6 @@
 package com.example.gotaximobile.network;
 
+import com.example.gotaximobile.models.dtos.AdminRideDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.models.dtos.RideTrackingDTO;
 import com.example.gotaximobile.models.dtos.VehicleInfoDTO;
@@ -33,7 +34,11 @@ public interface RideService {
             @Path("id") UUID id,
             @Body Map<String, Object> body
     );
+
     @GET("api/public/vehicles")
     Call<List<VehicleInfoDTO>> getAllVehicles();
+
+    @GET("api/admin/rides/all")
+    Call<List<AdminRideDTO>> getAllRides();
 
 }

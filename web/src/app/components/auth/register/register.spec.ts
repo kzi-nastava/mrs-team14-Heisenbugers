@@ -6,14 +6,14 @@ import { AuthService } from '../auth.service';
 import { of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
-// Вытаскиваем значения из FormData в объект, чтобы удобно сравнивать
+
 function formDataToObject(fd: FormData): Record<string, any> {
   const obj: Record<string, any> = {};
   fd.forEach((v, k) => (obj[k] = v));
   return obj;
 }
 
-describe('RegisterComponent', () => {
+fdescribe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let authSpy: jasmine.SpyObj<AuthService>;
@@ -52,24 +52,22 @@ describe('RegisterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('Form invalid when empty  (негатив)', () => {
+  it('Form invalid when empty  (neg)', () => {
     expect(component.form.invalid).toBeTrue();
   });
 
-  // --------------------
-  // VALIDATION
-  // --------------------
+//validation
 
-  it('firstName: required + maxLength(10) boundary (poz+neg+граничащий)', () => {
+  it('firstName: required + maxLength(10) boundary (poz+neg+gran)', () => {
     const c = component.form.controls.firstName;
 
     c.setValue('');
     expect(c.hasError('required')).toBeTrue();
 
-    c.setValue('1234567890'); // 10 ok
+    c.setValue('1234567890');
     expect(c.valid).toBeTrue();
 
-    c.setValue('12345678901'); // 11 invalid
+    c.setValue('12345678901'); // invalid
     expect(c.hasError('maxlength')).toBeTrue();
   });
 
@@ -93,7 +91,7 @@ describe('RegisterComponent', () => {
     expect(c.hasError('pattern')).toBeFalse();
   });
 
-  it('password: minLength(6) boundary  (границчащий)', () => {
+  it('password: minLength(6) boundary  (gran)', () => {
     const c = component.form.controls.password;
 
     c.setValue('12345');
@@ -110,10 +108,8 @@ describe('RegisterComponent', () => {
     expect(component.form.errors?.['passwordMismatch']).toBeTrue();
   });
 
-  // --------------------
-  // SUBMIT BEHAVIOR
-  // --------------------
 
+  //behavior
   it('submit(): invalid form -> no service call  (poz+neg)', () => {
     authSpy.register.and.returnValue(of({} as any));
 
@@ -169,9 +165,7 @@ describe('RegisterComponent', () => {
 
 
 
-  // ============================================================
-  // 3) UI
-  // ============================================================
+//ui
 
 
   it('Shows success message when submitted=true  (poz)', () => {
@@ -199,9 +193,7 @@ describe('RegisterComponent', () => {
   });
 
 
-  // --------------------
-  // SERVER ERRORS
-  // --------------------
+ //server error
 
   it('error 409 -> serverError set, submitted=false  (neg+exept)', () => {
     fillValidForm();
@@ -239,7 +231,7 @@ describe('RegisterComponent', () => {
 
     const err = new HttpErrorResponse({
       status: 500,
-      error: {}, // no message
+      error: {},
     });
 
     authSpy.register.and.returnValue(throwError(() => err));
@@ -249,9 +241,9 @@ describe('RegisterComponent', () => {
     expect(component.serverError).toBe('Registration failed.');
   });
 
-  // --------------------
+
   // onPickImage
-  // --------------------
+
   it('onPickImage(): sets selectedImageFile and imagePreview  (poz)', (done) => {
     const blob = new Blob([''], { type: 'image/png' });
     const file = new File([blob], 'test.png', { type: 'image/png' });
