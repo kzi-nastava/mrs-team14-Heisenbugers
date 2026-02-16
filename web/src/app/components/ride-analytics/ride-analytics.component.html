@@ -16,7 +16,10 @@
           </select>
         </label>
         <label>
-          <input class="border rounded px-2 py-1" placeholder="User id (optional)" [(ngModel)]="selectedUserId" />
+          <select class="border rounded px-2 py-1" [(ngModel)]="selectedUserId" (change)="applyRange()">
+            <option [ngValue]="null">All users (optional)</option>
+            <option *ngFor="let u of users" [value]="u.id">{{ u.firstName }} {{ u.lastName }} - {{ u.email }}</option>
+          </select>
         </label>
       </div>
     }

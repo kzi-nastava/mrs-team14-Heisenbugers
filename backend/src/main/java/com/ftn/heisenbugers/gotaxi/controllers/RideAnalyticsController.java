@@ -46,7 +46,7 @@ public class RideAnalyticsController {
                 start,
                 end,
                 role,
-                UUID.fromString(userId),
+                userId != null ? UUID.fromString(userId) : null,
                 aggregate
         ));
     }

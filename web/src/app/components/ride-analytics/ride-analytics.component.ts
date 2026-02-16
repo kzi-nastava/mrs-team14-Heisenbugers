@@ -6,6 +6,7 @@ import { ChartConfiguration, ChartOptions } from 'chart.js';
 import { RideAnalyticsService } from '../../services/ride-analytics.service';
 import { AuthService } from '../auth/auth.service';
 import { RideAnalyticsResponse, DailyItem } from '../../models/ride-analytics.model';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-ride-analytics',
@@ -16,10 +17,13 @@ import { RideAnalyticsResponse, DailyItem } from '../../models/ride-analytics.mo
 export class RideAnalyticsComponent implements OnInit {
   private analyticsService = inject(RideAnalyticsService);
   private authService = inject(AuthService);
+  private http = inject(HttpClient);
 
   userRole: string | null = null;
   selectedRoleFilter: 'DRIVER' | 'PASSENGER' | 'ALL_DRIVERS' | 'ALL_PASSENGERS' | null = null;
   selectedUserId: string | null = null;
+
+  users: { id: string; firstName: string; lastName: string; email?: string }[] = [];
 
   startDate = this.formatDate(new Date(new Date().setDate(new Date().getDate() - 6)));
   endDate = this.formatDate(new Date());
@@ -52,6 +56,9 @@ export class RideAnalyticsComponent implements OnInit {
 
   ngOnInit(): void {
     this.userRole = this.authService.getRole();
+    if (this.userRole === 'ADMIN') {
+      this.loadUsers();
+    }
     this.loadData();
   }
 
@@ -61,6 +68,18 @@ export class RideAnalyticsComponent implements OnInit {
 
   applyRange(): void {
     this.loadData();
+  }
+
+  private loadUsers(): void {
+    this.http.get<any[]>(`http://localhost:8081/api/users/blockable`).subscribe({
+      next: (res) => {
+        this.users = res.map(u => ({ id: u.id, firstName: u.firstName || '', lastName: u.lastName || '', email: u.email }));
+        this.cdf.detectChanges();
+      },
+      error: (err) => {
+        console.warn('Failed to load users for admin dropdown', err);
+      }
+    });
   }
 
   private loadData(): void {

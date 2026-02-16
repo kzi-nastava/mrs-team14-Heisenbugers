@@ -1,10 +1,13 @@
 package com.ftn.heisenbugers.gotaxi.services;
 
+import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
+import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DailyItemDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RideAnalyticsResponseDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.TotalsDTO;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 public class RideAnalyticsService {
 
     private final RideRepository rideRepository;
+    private final UserRepository userRepository;
 
     public RideAnalyticsResponseDTO getAnalytics(
             LocalDate startDate,
@@ -37,6 +41,13 @@ public class RideAnalyticsService {
 
         if (aggregate) {
             rides = rideRepository.findAllCompletedBetween(start, end);
+        } else if ("ADMIN".equals(role) && userId != null){
+            User user = userRepository.findUserById(userId);
+            if (user instanceof Driver){
+                rides = rideRepository.findDriverRidesBetween(userId, start, end);
+            }else{
+                rides = rideRepository.findOrderedRidesBetween(userId, start, end);
+            }
         } else if ("DRIVER".equals(role) && userId != null) {
             rides = rideRepository.findDriverRidesBetween(userId, start, end);
         } else if ("PASSENGER".equals(role) && userId != null) {
