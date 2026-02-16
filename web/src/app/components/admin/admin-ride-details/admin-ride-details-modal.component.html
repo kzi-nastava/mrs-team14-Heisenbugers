@@ -1,12 +1,12 @@
 @if (open && rideId) {
-  <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]" (click)="onBackdrop()">
+  <div data-testid="ride-details-modal" class="fixed inset-0 bg-black/40 flex items-center justify-center z-[60]" (click)="onBackdrop()">
     <div class="w-[980px] max-w-[95vw] bg-white rounded-2xl border border-gray-200 p-5" (click)="stop($event)">
       <div class="flex items-start justify-between">
         <div>
           <div class="text-xl font-bold">Ride Details</div>
           <div class="text-sm text-gray-600">Ride ID: {{ rideId }}</div>
         </div>
-        <button class="px-3 py-1.5 rounded-xl border border-gray-200 hover:bg-gray-100" (click)="onBackdrop()">✕</button>
+        <button data-testid="ride-details-close" class="px-3 py-1.5 rounded-xl border border-gray-200 hover:bg-gray-100" (click)="onBackdrop()">✕</button>
       </div>
 
       <div class="mt-4">
