@@ -34,7 +34,8 @@ import { PassengerRideDetailsComponent } from './components/passenger-ride-histo
 import { AdminPrice } from './components/admin/admin-price/admin-price';
 import { AdminAllRidesComponent } from './components/admin/admin-all-rides/admin-all-rides.component';
 import { AdminChats } from './components/admin/admin-chats/admin-chats.component';
-import {BlockUsersComponent} from './components/block-users/block-users.component';
+import { BlockUsersComponent } from './components/block-users/block-users.component';
+import { RideAnalyticsComponent } from './components/ride-analytics/ride-analytics.component';
 
 export const routes: Routes = [
   {
@@ -64,6 +65,7 @@ export const routes: Routes = [
       { path: 'profile-requests', component: ProfileRequestsComponent},
       { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
       { path: 'favorite-rides', component: FavoriteRoutesComponent },
+      { path: 'analytics', component: RideAnalyticsComponent },
       { path: 'passenger-ride-history', component: PassengerRideHistoryComponent },
       { path: 'passenger-ride-history/:rideId', component: PassengerRideDetailsComponent },
       { path: 'manage/users', component: BlockUsersComponent},
