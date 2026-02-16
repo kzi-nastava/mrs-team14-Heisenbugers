@@ -26,7 +26,6 @@ import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -45,7 +44,12 @@ public class ChatController {
     public void handleMessage(MessageDTO message, Principal principal) throws AccessDeniedException {
         String currentUserEmail = principal.getName();
         Chat currentUserChat = chatRepository.findByRequesterEmail(currentUserEmail);
-        Chat messageChat = chatRepository.findById(message.getChatId()).get();
+        Chat messageChat;
+        if (message.getChatId() == null) {
+            messageChat = currentUserChat;
+        } else {
+            messageChat = chatRepository.findById(message.getChatId()).get();
+        }
         String messageUserEmail = messageChat.getRequester().getEmail();
 
         if (!isAdmin(principal) && !messageChat.getId().equals(currentUserChat.getId())) {
@@ -101,17 +105,11 @@ public class ChatController {
 
     @GetMapping("api/me/chat/full")
     public List<MessageDTO> getFullChat() throws InvalidUserType {
-        User user = AuthContextService.getCurrentUser();
-        Optional<Chat> chatOpt = chatRepository.findByRequester(user);
-        if (chatOpt.isPresent()) {
-            Chat chat = chatOpt.get();
-            return messageRepository.getAllByChat(chat).stream().map(msg -> new MessageDTO(
-                    msg.getChat().getId(), msg.getContent(),
-                    msg.getSender().getEmail(), msg.getSentAt()
-            )).toList();
-        } else {
-            return List.of();
-        }
+        Chat chat = chatRepository.findById(getChat()).get();
+        return messageRepository.getAllByChat(chat).stream().map(msg -> new MessageDTO(
+                msg.getChat().getId(), msg.getContent(),
+                msg.getSender().getEmail(), msg.getSentAt()
+        )).toList();
     }
 
     @GetMapping("api/me/chat/{chatId}/full")

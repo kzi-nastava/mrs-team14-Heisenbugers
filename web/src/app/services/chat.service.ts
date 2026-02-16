@@ -34,8 +34,16 @@ export class ChatService {
 
   // Connect to WebSocket
   connect(isAdmin: boolean = false, chatId: string = ""): void {
-    const socket = new SockJS('http://localhost:8081/ws');
-    this.stompClient = Stomp.over(socket);
+    this.stompClient = new Client({
+      webSocketFactory: () => new SockJS('http://localhost:8081/ws'),
+      connectHeaders: {
+        Authorization: `Bearer ${localStorage.getItem('accessToken')}`
+      },
+      reconnectDelay: 5000,
+      debug: (str) => {
+        console.log(str);
+      }
+    });
 
     this.stompClient.onConnect = () => {
       if (isAdmin) {
