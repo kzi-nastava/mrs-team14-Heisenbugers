@@ -22,6 +22,7 @@ import {AdminRidesComponent} from '../admin/admin-rides/admin-rides.component';
 import {PassengerRideHistoryComponent} from '../passenger-ride-history/passenger-ride-history.component';
 import {ActivatedRoute} from '@angular/router';
 import {IsBlockedDTO} from '../../models/users.model';
+import { RideHistoryComponent } from "../driver-ride-history/driver-ride-history";
 
 @Component({
   selector: 'app-profile',
@@ -37,7 +38,8 @@ import {IsBlockedDTO} from '../../models/users.model';
     AdminPanicComponent,
     AdminRidesComponent,
     PassengerRideHistoryComponent,
-  ],
+    RideHistoryComponent
+],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
   viewProviders: [provideIcons({ bootstrapPersonCircle,bootstrapPencilFill, bootstrapClockFill, bootstrapEye, bootstrapEyeSlash, bootstrapCameraFill, bootstrapCarFrontFill })]
