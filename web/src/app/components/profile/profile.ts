@@ -21,6 +21,7 @@ import {AdminPanicComponent} from '../admin/admin-panic/admin-panic.component';
 import {AdminRidesComponent} from '../admin/admin-rides/admin-rides.component';
 import {PassengerRideHistoryComponent} from '../passenger-ride-history/passenger-ride-history.component';
 import {ActivatedRoute} from '@angular/router';
+import {IsBlockedDTO} from '../../models/users.model';
 
 @Component({
   selector: 'app-profile',
@@ -48,6 +49,8 @@ export class ProfileComponent {
   isVehicleEditing = false;
   userRole = "";
   driverActiveHours = "0 H 0 MIN";
+  isDriverBlocked = false;
+  blockNote = "";
 
   constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private authService: AuthService,private ar: ActivatedRoute) {
 
@@ -83,6 +86,15 @@ export class ProfileComponent {
         next: (data) => {
           const minutes = Number(data) || 0;
           this.driverActiveHours = this.formatMinutesToHours(minutes);
+        },
+        error: (error) => {
+          console.warn('Error:', error);
+        }
+      });
+      this.http.get<IsBlockedDTO>(`http://localhost:8081/api/users/is-blocked`).subscribe({
+        next: (data) => {
+          this.isDriverBlocked = data.blocked;
+          this.blockNote = data.blockNote || '';
         },
         error: (error) => {
           console.warn('Error:', error);
