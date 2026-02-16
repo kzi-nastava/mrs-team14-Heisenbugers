@@ -19,6 +19,7 @@
     <color name="primary_text">#E0E0E0</color>
     <color name="secondary_text">#B0B0B0</color>
     <color name="item_bg">#1E1E1E</color>
+    <color name="chatBackground">#121212</color>
 
 
 </resources>
