@@ -19,8 +19,8 @@ import androidx.fragment.app.Fragment;
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.AdminPanelFragment;
+import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
-import com.example.gotaximobile.fragments.admin.chat.AdminChatsFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
 import com.example.gotaximobile.fragments.ride.DuringRideFragment;
 import com.example.gotaximobile.models.dtos.UserStateDTO;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else {
                 if (id == R.id.nav_favorite) {
-                    selectedFragment = new AdminChatsFragment();
+                    selectedFragment = new FavoriteRoutesFragment();
                 } else if (id == R.id.nav_admin_panel) {
                     selectedFragment = new AdminPanelFragment();
                 } else if (id == R.id.nav_profile) {
