@@ -180,8 +180,13 @@ public class DriverService {
 
     private static void populateDto(User p, PassengerInfoDTO passengerDTO) {
         passengerDTO.setPassengerId(p.getId());
-        passengerDTO.setFirstName(p.getFirstName());
-        passengerDTO.setLastName(p.getLastName());
+
+        if (p.getFirstName() == null || p.getFirstName().isEmpty()) {
+            passengerDTO.setFirstName(p.getEmail());
+        } else {
+            passengerDTO.setFirstName(p.getFirstName());
+            passengerDTO.setLastName(p.getLastName());
+        }
         //passengerDTO.setProfileImageUrl(p.getProfileImageUrl());
         //new image upload
 
