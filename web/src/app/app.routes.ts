@@ -36,6 +36,7 @@ import { AdminAllRidesComponent } from './components/admin/admin-all-rides/admin
 import { AdminChats } from './components/admin/admin-chats/admin-chats.component';
 import { BlockUsersComponent } from './components/block-users/block-users.component';
 import { RideAnalyticsComponent } from './components/ride-analytics/ride-analytics.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -72,6 +73,8 @@ export const routes: Routes = [
 
       // unregistered tracking
       {path: 'track', component: DuringRide, data: {external: true}},
+
+      {path: 'test', component: AdminDashboardComponent},
 
 
       // admin

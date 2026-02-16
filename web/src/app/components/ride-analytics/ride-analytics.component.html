@@ -1,10 +1,19 @@
 <div class="p-4">
-  <h2 class="text-2xl font-semibold mb-4">Ride Analytics</h2>
+  <h2 class="text-3xl font-semibold mb-4">Ride Analytics</h2>
 
   <div class="flex gap-2 items-center mb-3">
-    <label class="flex items-center gap-2">From <input class="border rounded px-2 py-1" type="date" [(ngModel)]="startDate" /></label>
-    <label class="flex items-center gap-2">To <input class="border rounded px-2 py-1" type="date" [(ngModel)]="endDate" /></label>
-    <button class="bg-[#C5E55D] text-white px-3 py-1 border border-[#C5E55D] rounded-md cursor-pointer" (click)="applyRange()">Apply</button>
+    <label class="flex items-center gap-2"
+      >From <input class="border rounded px-2 py-1" type="date" [(ngModel)]="startDate"
+    /></label>
+    <label class="flex items-center gap-2"
+      >To <input class="border rounded px-2 py-1" type="date" [(ngModel)]="endDate"
+    /></label>
+    <button
+      class="bg-[#C5E55D] text-white px-3 py-1 border border-[#C5E55D] rounded-md cursor-pointer"
+      (click)="applyRange()"
+    >
+      Apply
+    </button>
 
     @if (userRole === 'ADMIN') {
       <div class="ml-4 flex gap-2 items-center">
@@ -16,14 +25,19 @@
           </select>
         </label>
         <label>
-          <select class="border rounded px-2 py-1" [(ngModel)]="selectedUserId" (change)="applyRange()">
+          <select
+            class="border rounded px-2 py-1"
+            [(ngModel)]="selectedUserId"
+            (change)="applyRange()"
+          >
             <option [ngValue]="null">All users (optional)</option>
-            <option *ngFor="let u of users" [value]="u.id">{{ u.firstName }} {{ u.lastName }} - {{ u.email }}</option>
+            <option *ngFor="let u of users" [value]="u.id">
+              {{ u.firstName }} {{ u.lastName }} - {{ u.email }}
+            </option>
           </select>
         </label>
       </div>
     }
-
   </div>
 
   <div class="flex gap-3 mt-3">
@@ -34,13 +48,13 @@
     </div>
     <div class="bg-white border rounded-md p-3 min-w-37.5 shadow-sm">
       <div class="text-sm text-gray-500">Total kilometers</div>
-      <div class="text-xl font-bold">{{ totals.kilometers | number:'1.0-2' }}</div>
-      <div class="text-sm text-gray-600">Avg / day: {{ avgKm | number:'1.0-2' }}</div>
+      <div class="text-xl font-bold">{{ totals.kilometers | number: '1.0-2' }}</div>
+      <div class="text-sm text-gray-600">Avg / day: {{ avgKm | number: '1.0-2' }}</div>
     </div>
     <div class="bg-white border rounded-md p-3 min-w-37.5 shadow-sm">
       <div class="text-sm text-gray-500">Total money</div>
-      <div class="text-xl font-bold">{{ totals.money | number:'1.0-2' }}</div>
-      <div class="text-sm text-gray-600">Avg / day: {{ avgMoney | number:'1.0-2' }}</div>
+      <div class="text-xl font-bold">{{ totals.money | number: '1.0-2' }}</div>
+      <div class="text-sm text-gray-600">Avg / day: {{ avgMoney | number: '1.0-2' }}</div>
     </div>
   </div>
 
@@ -50,10 +64,7 @@
       @if (labels.length) {
         <ng-container>
           <div class="h-80">
-            <canvas baseChart
-                    [data]="ridesChartData"
-                    [options]="lineChartOptions"
-                    [type]="'line'">
+            <canvas baseChart [data]="ridesChartData" [options]="lineChartOptions" [type]="'line'">
             </canvas>
           </div>
         </ng-container>
@@ -65,10 +76,7 @@
       @if (labels.length) {
         <ng-container>
           <div class="h-80">
-            <canvas baseChart
-                    [data]="kmChartData"
-                    [options]="lineChartOptions"
-                    [type]="'line'">
+            <canvas baseChart [data]="kmChartData" [options]="lineChartOptions" [type]="'line'">
             </canvas>
           </div>
         </ng-container>
@@ -80,10 +88,7 @@
       @if (labels.length) {
         <ng-container>
           <div class="h-80">
-            <canvas baseChart
-              [data]="moneyChartData"
-              [options]="lineChartOptions"
-              [type]="'line'">
+            <canvas baseChart [data]="moneyChartData" [options]="lineChartOptions" [type]="'line'">
             </canvas>
           </div>
         </ng-container>
@@ -97,6 +102,4 @@
   @if (error) {
     <div class="mt-3 text-red-600">{{ error }}</div>
   }
-
 </div>
-
