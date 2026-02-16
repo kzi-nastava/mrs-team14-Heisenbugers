@@ -1,5 +1,6 @@
 package com.example.gotaximobile.network;
 
+import com.example.gotaximobile.models.Chat;
 import com.example.gotaximobile.models.Message;
 
 import java.util.List;
@@ -16,4 +17,7 @@ public interface ChatApi {
             @Header("Authorization") String token,
             @Path("chatId") String chatId
     );
+
+    @GET("/api/admin/chats")
+    Call<List<Chat>> getAllChats();
 }

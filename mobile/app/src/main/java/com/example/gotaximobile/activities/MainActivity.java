@@ -20,7 +20,7 @@ import com.example.gotaximobile.R;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.AdminPanelFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
-import com.example.gotaximobile.fragments.chat.ChatFragment;
+import com.example.gotaximobile.fragments.admin.chat.AdminChatsFragment;
 import com.example.gotaximobile.fragments.profile.ProfileFragment;
 import com.example.gotaximobile.fragments.ride.DuringRideFragment;
 import com.example.gotaximobile.models.dtos.UserStateDTO;
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else {
                 if (id == R.id.nav_favorite) {
-                    selectedFragment = ChatFragment.newInstance("6dfeab8d-a48f-436d-bffa-d69bc333ae0e");
+                    selectedFragment = new AdminChatsFragment();
                 } else if (id == R.id.nav_admin_panel) {
                     selectedFragment = new AdminPanelFragment();
                 } else if (id == R.id.nav_profile) {
