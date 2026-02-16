@@ -157,6 +157,11 @@ public class DriverService {
         } catch (NullPointerException e) {
             dto.setRoute(new ArrayList<>());
         }
+        User mainPassenger = r.getRoute().getUser();
+        PassengerInfoDTO mainPassengerDTO = new PassengerInfoDTO();
+        populateDto(mainPassenger, mainPassengerDTO);
+        dto.addPassenger(mainPassengerDTO);
+
         List<User> passengers = r.getPassengers();
         for (User p : passengers) {
             PassengerInfoDTO passengerDTO = new PassengerInfoDTO();
