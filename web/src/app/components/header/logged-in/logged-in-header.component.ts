@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
-import { bootstrapBell, bootstrapHeart } from '@ng-icons/bootstrap-icons';
+import { bootstrapBell, bootstrapHeart, bootstrapSliders2Vertical } from '@ng-icons/bootstrap-icons';
 import { provideIcons } from '@ng-icons/core';
 import { Router } from "@angular/router";
 import {AuthService} from '../../auth/auth.service';
@@ -17,7 +17,7 @@ import { GetProfileDTO } from '../../../models/profile.model';
   standalone: true,
   templateUrl: './logged-in-header.component.html',
   imports: [NgIcon,DriverStatusToggleComponent],
-  viewProviders: [provideIcons({bootstrapBell, bootstrapHeart})]
+  viewProviders: [provideIcons({bootstrapBell, bootstrapHeart, bootstrapSliders2Vertical})]
 })
 export class LoggedInHeaderComponent implements OnInit {
   profileMenuOpen = false;
@@ -27,6 +27,7 @@ export class LoggedInHeaderComponent implements OnInit {
   private baseUrl = 'http://localhost:8081/api';
   stompClient?: Client;
   profilePhotoUrl: string = '';
+  isAdmin: boolean = false;
 
   //constructor(private router: Router) {}
   constructor(
@@ -38,6 +39,7 @@ export class LoggedInHeaderComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isAdmin = this.auth.getRole() === 'ADMIN'
     // Load unread notifications initially
     this.http.get<Notification[]>(`${this.baseUrl}/notifications/unread`)
       .subscribe(nots => {
@@ -112,6 +114,11 @@ export class LoggedInHeaderComponent implements OnInit {
     if (this.profileMenuOpen && !this.isProfileClick(target)) {
     this.profileMenuOpen = false;
     }
+  }
+
+  goToAdminDashboard(){
+    this.router.navigate(['admin-dashboard'])
+    this.profileMenuOpen = false
   }
 
   goToProfile(){

@@ -76,6 +76,8 @@ export const routes: Routes = [
 
       {path: 'test', component: AdminDashboardComponent},
 
+      {path: 'admin-dashboard', component: AdminDashboardComponent},
+
 
       // admin
       {
