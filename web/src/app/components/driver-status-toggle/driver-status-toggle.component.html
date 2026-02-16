@@ -9,6 +9,14 @@
       <span class="text-sm text-gray-700">
         {{ hint }}
       </span>
+
+      @if (isBlocked) {
+        <span class="text-xs text-red-600 mt-1">
+          Blocked — you cannot change your status.
+          @if (blockNote) { <span class="text-red-600">({{ blockNote }})</span> }
+        </span>
+      }
+
     } @else {
       <span class="text-sm text-gray-400">
         Loading status…
@@ -33,6 +41,7 @@
     [class.border-gray-300]="!isActive || disabled"
     [class.text-gray-600]="!isActive || disabled"
     [class.opacity-60]="disabled"
+    [class.bg-green-500]="isActive"
     (click)="toggle()"
     [disabled]="disabled || loading"
   >

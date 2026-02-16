@@ -4,6 +4,7 @@ import com.ftn.heisenbugers.gotaxi.models.Driver;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
+import com.ftn.heisenbugers.gotaxi.repositories.DriverRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,8 @@ public class ScheduledRideProcessorService {
     private final NotificationService notificationService;
     private final RideService rideService;
     private final JwtService jwtService;
+
+    private final DriverRepository driverRepository;
 
     @Transactional
     @Scheduled(fixedRate = 60000)
@@ -81,5 +84,11 @@ public class ScheduledRideProcessorService {
                 }
             }
         }
+    }
+
+    @Transactional
+    @Scheduled(fixedRate = 60000)
+    public void tickWorkingDriversActiveTime() {
+        driverRepository.incrementActiveMinutesCapped();
     }
 }

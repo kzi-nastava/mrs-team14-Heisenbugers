@@ -1,7 +1,9 @@
 package com.ftn.heisenbugers.gotaxi.repositories;
 
 import com.ftn.heisenbugers.gotaxi.models.Driver;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -11,6 +13,20 @@ import java.util.UUID;
 
 @Repository
 public interface DriverRepository extends JpaRepository<Driver, UUID> {
+
+
+
+
+    @Modifying
+    @Transactional
+    @Query("""
+update Driver d
+set d.activeHoursLast24h =
+  case when d.activeHoursLast24h < 1440 then d.activeHoursLast24h + 1 else 1440 end
+where d.working = true
+""")
+    int incrementActiveMinutesCapped();
+
     @Query("""
         select d from Driver d
         join fetch d.vehicle
