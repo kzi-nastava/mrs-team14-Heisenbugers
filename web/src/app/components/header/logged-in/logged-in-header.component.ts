@@ -154,7 +154,7 @@ export class LoggedInHeaderComponent implements OnInit {
   goTo(url?: string) {
     if (url != null) {
     this.notificationsOpen = false
-    this.router.navigate([url])
+    this.router.navigateByUrl(url)
     }
   }
 

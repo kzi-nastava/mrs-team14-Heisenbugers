@@ -10,11 +10,13 @@ import com.ftn.heisenbugers.gotaxi.repositories.NotificationRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.PanicEventRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
-import org.springframework.http.*;
+import com.ftn.heisenbugers.gotaxi.services.NotificationService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/rides")
@@ -24,16 +26,18 @@ public class PanicController {
     private final PanicEventRepository panicRepository;
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
+    private final NotificationService notificationService;
 
 
     public PanicController(RideRepository rideRepository,
                            PanicEventRepository panicRepository,
                            UserRepository userRepository,
-                           NotificationRepository notificationRepository) {
+                           NotificationRepository notificationRepository, NotificationService notificationService) {
         this.rideRepository = rideRepository;
         this.panicRepository = panicRepository;
         this.userRepository = userRepository;
         this.notificationRepository = notificationRepository;
+        this.notificationService = notificationService;
     }
 
     @PostMapping("/{rideId}/panic")
@@ -105,21 +109,22 @@ public class PanicController {
         panicRepository.save(pe);
 
 
-
-
         List<User> admins = userRepository.findAll().stream()
                 .filter(u -> u instanceof Administrator)
                 .toList();
 
+        String startAddr = (ride.getStart() != null && ride.getStart().getAddress() != null)
+                ? ride.getStart().getAddress()
+                : "Unknown start";
+
+        String endAddr = (ride.getEnd() != null && ride.getEnd().getAddress() != null)
+                ? ride.getEnd().getAddress()
+                : "Unknown destination";
+
+        String panicText = "PANIC: " + startAddr + " → " + endAddr + " " + msg;
+
         for (User a : admins) {
-            Notification n = Notification.builder()
-                    .message("PANIC for ride " + rideId + ": " + msg)
-                    .read(false)
-                    .readAt(null)
-                    .user(a)
-                    .ride(ride)
-                    .build();
-            notificationRepository.save(n);
+            notificationService.notifyUser(a, panicText, ride, "/admin-dashboard?tab=Panic Dashboard");
         }
 
         return ResponseEntity.ok(new MessageResponse("Panic created."));
