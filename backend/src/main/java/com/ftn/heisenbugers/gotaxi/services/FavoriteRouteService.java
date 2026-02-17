@@ -36,12 +36,12 @@ public class FavoriteRouteService {
                 route.getId(),
                 new LocationDTO(route.getStart()) ,
                 new LocationDTO(route.getDestination()),
-                route.getStops() == null
+                route.getStopsWithAddresses() == null
                         ? List.of()
-                        : route.getStops().stream()
+                        : route.getStopsWithAddresses().stream()
                         .map(l -> new LocationDTO(
-                                l.getLongitude(),
                                 l.getLatitude(),
+                                l.getLongitude(),
                                 l.getAddress()
                         ))
                         .toList(),

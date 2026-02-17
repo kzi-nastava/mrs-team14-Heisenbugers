@@ -13,6 +13,7 @@ interface FavoriteRoute {
   name?: string;
   startAddress?: LocationDTO;
   endAddress?: LocationDTO;
+  stops?: LocationDTO[];
   distanceKm?: number;
   timeMin?: number;
 }

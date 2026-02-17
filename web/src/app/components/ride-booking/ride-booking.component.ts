@@ -508,22 +508,49 @@ export class RideBookingComponent implements OnDestroy {
       timeMin: route.timeMin
     };
 
-    const newPins = [
-      {
+    this.waypoints = [];
+
+    const newPins: { id?: string; lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[] = [];
+
+    if (route.startAddress && (route.startAddress.latitude != null && route.startAddress.longitude != null)) {
+      newPins.push({
         lat: route.startAddress.latitude,
         lng: route.startAddress.longitude,
         snapToRoad: true,
         popup: 'Start',
         iconUrl: 'icons/pin.svg'
-      },
-      {
+      });
+    }
+
+    if (Array.isArray(route.stops) && route.stops.length > 0) {
+      route.stops.forEach((s: any, idx: number) => {
+        const addr = s.address || s.display_name || s.name || '';
+        const wpObj = { value: addr };
+        const pinId = 'wp-' + Math.random().toString(36).slice(2, 9) + '-' + Date.now();
+        (wpObj as any)._pinId = pinId;
+        (wpObj as any)._lat = (s.latitude != null ? s.latitude : (s.lat != null ? parseFloat(s.lat) : undefined));
+        (wpObj as any)._lng = (s.longitude != null ? s.longitude : (s.lon != null ? parseFloat(s.lon) : undefined));
+
+        this.waypoints.push(wpObj);
+
+        const lat = (s.latitude != null ? s.latitude : (s.lat != null ? parseFloat(s.lat) : undefined));
+        const lng = (s.longitude != null ? s.longitude : (s.lon != null ? parseFloat(s.lon) : undefined));
+
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          newPins.push({ id: pinId, lat, lng, snapToRoad: true, popup: `Waypoint ${idx + 1}`, iconUrl: 'icons/pin.svg' });
+        }
+      });
+    }
+
+    if (route.endAddress && (route.endAddress.latitude != null && route.endAddress.longitude != null)) {
+      newPins.push({
         lat: route.endAddress.latitude,
         lng: route.endAddress.longitude,
         snapToRoad: true,
         popup: 'End',
         iconUrl: 'icons/pin.svg'
-      }
-    ];
+      });
+    }
 
     Promise.resolve().then(() => {
       this.pins = newPins;
