@@ -82,9 +82,11 @@ public class Ride extends BaseEntity {
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL)
     private PanicEvent panicEvent;
 
-    boolean petTransport;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    boolean petTransport = false;
 
-    boolean babyTransport;
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    boolean babyTransport = false;
 
     @Enumerated(EnumType.STRING)
     VehicleType vehicleType;

@@ -22,5 +22,6 @@ public class RideHistoryDTO {
     private double price;
     private boolean panicTriggered;
     private boolean favorite;
+    private boolean rated;
 
 }

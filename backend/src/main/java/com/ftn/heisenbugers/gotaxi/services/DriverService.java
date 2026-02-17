@@ -157,6 +157,11 @@ public class DriverService {
         } catch (NullPointerException e) {
             dto.setRoute(new ArrayList<>());
         }
+        User mainPassenger = r.getRoute().getUser();
+        PassengerInfoDTO mainPassengerDTO = new PassengerInfoDTO();
+        populateDto(mainPassenger, mainPassengerDTO);
+        dto.addPassenger(mainPassengerDTO);
+
         List<User> passengers = r.getPassengers();
         for (User p : passengers) {
             PassengerInfoDTO passengerDTO = new PassengerInfoDTO();
@@ -175,8 +180,13 @@ public class DriverService {
 
     private static void populateDto(User p, PassengerInfoDTO passengerDTO) {
         passengerDTO.setPassengerId(p.getId());
-        passengerDTO.setFirstName(p.getFirstName());
-        passengerDTO.setLastName(p.getLastName());
+
+        if (p.getFirstName() == null || p.getFirstName().isEmpty()) {
+            passengerDTO.setFirstName(p.getEmail());
+        } else {
+            passengerDTO.setFirstName(p.getFirstName());
+            passengerDTO.setLastName(p.getLastName());
+        }
         //passengerDTO.setProfileImageUrl(p.getProfileImageUrl());
         //new image upload
 

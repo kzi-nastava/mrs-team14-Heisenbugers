@@ -11,8 +11,10 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.UserStateDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.enums.UserState;
+import com.ftn.heisenbugers.gotaxi.repositories.RatingRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +25,11 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final RideRepository rideRepository;
     private final UserRepository userRepository;
-
-    public UserService(RideRepository rideRepository, UserRepository userRepository) {
-        this.rideRepository = rideRepository;
-        this.userRepository = userRepository;
-    }
+    private final RatingRepository ratingRepository;
 
     public UserStateDTO getState(UUID userId) {
         User u = userRepository.findUserById(userId);
@@ -55,7 +54,7 @@ public class UserService {
     }
 
     public List<RideHistoryDTO> getUserHistory(Passenger passenger, LocalDate startDate, LocalDate endDate,
-                                               RideSort sortBy, String direction) {
+            RideSort sortBy, String direction) {
         List<Ride> rides;
         UUID userId = passenger.getId();
 
@@ -63,70 +62,45 @@ public class UserService {
                 ? Sort.by(sortBy.getProperty()).descending()
                 : Sort.by(sortBy.getProperty()).ascending();
 
-/*
         if (startDate != null && endDate == null) {
-            rides = rideRepository.findByPassengersContainingAndStartedAtAfter(passenger, startDate.atStartOfDay(), sort);
-        } else if (startDate == null && endDate != null) {
-            rides = rideRepository.findByPassengersContainingAndStartedAtBefore(passenger,
-                    endDate.plusDays(1).atStartOfDay(),
-                    sort);
-        } else if (startDate != null) {
-            rides = rideRepository.findByPassengersContainingAndStartedAtBetween(passenger,
-                    startDate.atStartOfDay(),
-                    endDate.plusDays(1).atStartOfDay(),
-                    sort);
-        } else {
-            rides = rideRepository.findByPassengersContaining(passenger, sort);
-        }
-        List<RideHistoryDTO> rideHistoryDTOS = new ArrayList<>();
-        for (Ride r : rides) {
-            RideHistoryDTO dto = new RideHistoryDTO();
-            PopulateDto(r, dto);
-            rideHistoryDTOS.add(dto);
-        }
-
-        return rideHistoryDTOS;
-        */if (startDate != null && endDate == null) {
             rides = rideRepository.findByRoute_User_IdAndStartedAtAfter(
-                    userId, startDate.atStartOfDay(), sort
-            );
+                    userId, startDate.atStartOfDay(), sort);
         } else if (startDate == null && endDate != null) {
             rides = rideRepository.findByRoute_User_IdAndStartedAtBefore(
-                    userId, endDate.plusDays(1).atStartOfDay(), sort
-            );
+                    userId, endDate.plusDays(1).atStartOfDay(), sort);
         } else if (startDate != null) {
             rides = rideRepository.findByRoute_User_IdAndStartedAtBetween(
                     userId,
                     startDate.atStartOfDay(),
                     endDate.plusDays(1).atStartOfDay(),
-                    sort
-            );
+                    sort);
         } else {
             rides = rideRepository.findByRoute_User_Id(userId, sort);
         }
 
         List<RideHistoryDTO> result = new ArrayList<>();
         for (Ride r : rides) {
+            boolean rated = ratingRepository.findByRaterAndRide(passenger, r).isPresent();
             RideHistoryDTO dto = new RideHistoryDTO();
-            PopulateDto(r, dto);
+            PopulateDto(r, dto, rated);
             result.add(dto);
         }
         return result;
 
-
     }
 
-    public List<BlockableUserDTO> getBlockableUsers(){
+    public List<BlockableUserDTO> getBlockableUsers() {
         List<User> blockableUsers = userRepository.findAllActivatedPassengersAndDrivers();
         List<BlockableUserDTO> blockableUserDTOS = new ArrayList<>();
-        for(User u : blockableUsers){
-            blockableUserDTOS.add(new BlockableUserDTO(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(), u.getProfileImageUrl(), u.isBlocked(), u instanceof Driver ? "Driver" : "Passenger"));
+        for (User u : blockableUsers) {
+            blockableUserDTOS.add(new BlockableUserDTO(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(),
+                    u.getProfileImageUrl(), u.isBlocked(), u instanceof Driver ? "Driver" : "Passenger"));
         }
 
         return blockableUserDTOS;
     }
 
-    public void block(UUID id, String note){
+    public void block(UUID id, String note) {
         User user = userRepository.findById(id).get();
 
         user.setBlocked(true);
@@ -141,7 +115,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void unblock(UUID id){
+    public void unblock(UUID id) {
         User user = userRepository.findById(id).get();
 
         user.setBlocked(false);
@@ -149,13 +123,13 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public IsBlockedDTO isBlocked(String email){
+    public IsBlockedDTO isBlocked(String email) {
         User user = userRepository.findByEmail(email).get();
 
         return new IsBlockedDTO(user.isBlocked(), user.getBlockNote());
     }
 
-    private static void PopulateDto(Ride r, RideHistoryDTO dto) {
+    private static void PopulateDto(Ride r, RideHistoryDTO dto, boolean rated) {
         dto.setRideId(r.getId());
         dto.setCanceled(r.isCanceled());
         dto.setPrice(r.getPrice());
@@ -173,6 +147,9 @@ public class UserService {
         dto.setPanicTriggered(r.getPanicEvent() != null);
         dto.setCanceledBy(r.getCanceledBy());
         dto.setStartedAt(r.getStartedAt());
+
+        dto.setRated(rated);
+
         dto.setFavorite(r.getRoute().isFavorite());
     }
 

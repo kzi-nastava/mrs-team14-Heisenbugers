@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, NgZone, OnInit } from '@angular/core';
 import { NgIcon } from "@ng-icons/core";
-import { bootstrapBell, bootstrapHeart } from '@ng-icons/bootstrap-icons';
+import { bootstrapBell, bootstrapHeart, bootstrapSliders2Vertical } from '@ng-icons/bootstrap-icons';
 import { provideIcons } from '@ng-icons/core';
 import { Router } from "@angular/router";
 import {AuthService} from '../../auth/auth.service';
@@ -9,6 +9,7 @@ import { HttpClient } from '@angular/common/http';
 import { Notification } from '../../../models/notification.model';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
+import { GetProfileDTO } from '../../../models/profile.model';
 
 
 @Component({
@@ -16,7 +17,7 @@ import { Client, IMessage } from '@stomp/stompjs';
   standalone: true,
   templateUrl: './logged-in-header.component.html',
   imports: [NgIcon,DriverStatusToggleComponent],
-  viewProviders: [provideIcons({bootstrapBell, bootstrapHeart})]
+  viewProviders: [provideIcons({bootstrapBell, bootstrapHeart, bootstrapSliders2Vertical})]
 })
 export class LoggedInHeaderComponent implements OnInit {
   profileMenuOpen = false;
@@ -25,6 +26,8 @@ export class LoggedInHeaderComponent implements OnInit {
   unreadCount: number = 0;
   private baseUrl = 'http://localhost:8081/api';
   stompClient?: Client;
+  profilePhotoUrl: string = '';
+  isAdmin: boolean = false;
 
   //constructor(private router: Router) {}
   constructor(
@@ -35,7 +38,12 @@ export class LoggedInHeaderComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+
+  alert(text: string) {
+    alert(text)
+  }
   ngOnInit(): void {
+    this.isAdmin = this.auth.getRole() === 'ADMIN'
     // Load unread notifications initially
     this.http.get<Notification[]>(`${this.baseUrl}/notifications/unread`)
       .subscribe(nots => {
@@ -68,6 +76,19 @@ export class LoggedInHeaderComponent implements OnInit {
     };
 
     this.stompClient.activate();
+    this.getProfilePhoto();
+  }
+
+  getProfilePhoto() {
+    this.http.get<GetProfileDTO>(`http://localhost:8081/api/profile/me`).subscribe({
+          next: (data) => {
+            this.profilePhotoUrl = data.profileImageUrl || '';
+            this.cdr.markForCheck();
+          },
+          error: (error) => {
+            console.warn('Error:', error);
+          }
+        });
   }
 
   toggleProfileMenu() {
@@ -99,6 +120,11 @@ export class LoggedInHeaderComponent implements OnInit {
     }
   }
 
+  goToAdminDashboard(){
+    this.router.navigate(['admin-dashboard'])
+    this.profileMenuOpen = false
+  }
+
   goToProfile(){
     this.router.navigate(['profile'])
     this.profileMenuOpen = false
@@ -124,20 +150,18 @@ export class LoggedInHeaderComponent implements OnInit {
     this.router.navigate(['/home'])
     this.menuOpen = false
   }*/
+
+  goTo(url?: string) {
+    if (url != null) {
+    this.notificationsOpen = false
+    this.router.navigateByUrl(url)
+    }
+  }
+
   logOut() {
     this.auth.logoutLocal();
     this.router.navigate(['/home']);
     this.profileMenuOpen = false;
-  }
-
-  goToRegisterDriver(){
-    this.router.navigate(['driver-registration'])
-    this.profileMenuOpen = false
-  }
-
-  goToProfileChanges(){
-    this.router.navigate(['profile-requests'])
-    this.profileMenuOpen = false
   }
 
   goToHome(){

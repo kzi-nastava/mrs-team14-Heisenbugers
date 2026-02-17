@@ -58,6 +58,7 @@ export class AdminChats {
         } else {
             this.selectedChat = this.filteredList[i];
         }
+        
     }
 
 }

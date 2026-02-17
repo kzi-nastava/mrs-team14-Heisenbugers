@@ -19,16 +19,25 @@ public class NotificationService {
     private final SimpUserRegistry simpUserRegistry;
 
     public void notifyUser(User user, String message) {
-        notifyUser(user, message, null);
+        notifyUser(user, message, null, null);
     }
 
     public void notifyUser(User user, String message, Ride ride) {
+        notifyUser(user, message, ride, null);
+    }
+
+    public void notifyUser(User user, String message, String redirectUrl) {
+        notifyUser(user, message, null, redirectUrl);
+    }
+
+    public void notifyUser(User user, String message, Ride ride, String redirectUrl) {
 
         Notification notification = Notification.builder()
                 .message(message)
                 .read(false)
                 .user(user)
                 .ride(ride)
+                .redirectUrl(redirectUrl)
                 .build();
 
         repository.save(notification);

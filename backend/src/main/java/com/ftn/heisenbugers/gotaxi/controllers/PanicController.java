@@ -10,11 +10,13 @@ import com.ftn.heisenbugers.gotaxi.repositories.NotificationRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.PanicEventRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
-import org.springframework.http.*;
+import com.ftn.heisenbugers.gotaxi.services.NotificationService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/rides")
@@ -24,22 +26,22 @@ public class PanicController {
     private final PanicEventRepository panicRepository;
     private final UserRepository userRepository;
     private final NotificationRepository notificationRepository;
-
+    private final NotificationService notificationService;
 
     public PanicController(RideRepository rideRepository,
-                           PanicEventRepository panicRepository,
-                           UserRepository userRepository,
-                           NotificationRepository notificationRepository) {
+            PanicEventRepository panicRepository,
+            UserRepository userRepository,
+            NotificationRepository notificationRepository, NotificationService notificationService) {
         this.rideRepository = rideRepository;
         this.panicRepository = panicRepository;
         this.userRepository = userRepository;
         this.notificationRepository = notificationRepository;
+        this.notificationService = notificationService;
     }
-
 
     @PostMapping("/{rideId}/panic")
     public ResponseEntity<?> panic(@PathVariable UUID rideId,
-                                   @RequestBody(required = false) PanicRequestDTO req) throws InvalidUserType {
+            @RequestBody(required = false) PanicRequestDTO req) throws InvalidUserType {
 
         Ride ride = rideRepository.findById(rideId).orElse(null);
         if (ride == null) {
@@ -62,15 +64,14 @@ public class PanicController {
                 && ride.getPassengers().stream().anyMatch(p -> p.getId().equals(current.getId()));
 
         if (!isDriver && !isPassenger) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageResponse("You are not a participant of this ride."));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new MessageResponse("You are not a participant of this ride."));
         }
-
 
         var existing = panicRepository.findFirstByRideIdAndResolvedFalseOrderByCreatedAtDesc(rideId);
         if (existing.isPresent()) {
             return ResponseEntity.ok(new MessageResponse("Panic already active."));
         }
-
 
         String msg = (req != null && req.getMessage() != null && !req.getMessage().trim().isEmpty())
                 ? req.getMessage().trim()
@@ -105,9 +106,6 @@ public class PanicController {
 
         panicRepository.save(pe);
 
-
-
-
         List<User> admins = userRepository.findAll().stream()
                 .filter(u -> u instanceof Administrator)
                 .toList();
@@ -123,16 +121,8 @@ public class PanicController {
         String panicText = "PANIC: " + startAddr + " → " + endAddr + " " + msg;
 
         for (User a : admins) {
-            Notification n = Notification.builder()
-                    .message(panicText)
-                    .read(false)
-                    .readAt(null)
-                    .user(a)
-                    .ride(ride)
-                    .build();
-            notificationRepository.save(n);
+            notificationService.notifyUser(a, panicText, ride, "/admin-dashboard?tab=Panic Dashboard");
         }
-
 
         return ResponseEntity.ok(new MessageResponse("Panic created."));
     }

@@ -1,7 +1,5 @@
 <div class="flex flex-row justify-between m-7">
-  <label class="text-xl">
-    Manage Account
-  </label>
+  <label class="text-xl"> Manage Account </label>
   <label class="text-base mt-1">
     Hi, {{ user().name }} | <a class="text-[#C5E55D] cursor-pointer" (click)="logOut()">Sign out</a>
   </label>
@@ -36,76 +34,110 @@
       {{ user().email }}
     </p>
     <div class="gap-1.5 flex flex-col">
-      <button class="mt-10 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100 " (click)="setProfileTab('Personal Information')" [class]="{'border-lime-300': selectedTab === 'Personal Information', 'border-gray-200': selectedTab !== 'Personal Information', 'bg-[#C5E55D]': selectedTab === 'Personal Information', 'text-gray-700': selectedTab !== 'Personal Information'}">
+      <button
+        class="mt-10 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Personal Information')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Personal Information',
+          'border-gray-200': selectedTab !== 'Personal Information',
+          'bg-[#C5E55D]': selectedTab === 'Personal Information',
+          'text-gray-700': selectedTab !== 'Personal Information',
+        }"
+      >
         Personal Information
       </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Manage Password')" [class]="{'border-lime-300': selectedTab === 'Manage Password', 'border-gray-200': selectedTab !== 'Manage Password', 'text-gray-700': selectedTab !== 'Manage Password', 'bg-[#C5E55D]': selectedTab === 'Manage Password'}">
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Manage Password')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Manage Password',
+          'border-gray-200': selectedTab !== 'Manage Password',
+          'text-gray-700': selectedTab !== 'Manage Password',
+          'bg-[#C5E55D]': selectedTab === 'Manage Password',
+        }"
+      >
         Manage Password
       </button>
       @if (userRole == 'DRIVER') {
-        <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Driver Information')" [class]="{'border-lime-300': selectedTab === 'Driver Information', 'border-gray-200': selectedTab !== 'Driver Information', 'text-gray-700': selectedTab !== 'Driver Information', 'bg-[#C5E55D]': selectedTab === 'Driver Information'}">
+        <button
+          class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+          (click)="setProfileTab('Driver Information')"
+          [class]="{
+            'border-lime-300': selectedTab === 'Driver Information',
+            'border-gray-200': selectedTab !== 'Driver Information',
+            'text-gray-700': selectedTab !== 'Driver Information',
+            'bg-[#C5E55D]': selectedTab === 'Driver Information',
+          }"
+        >
           Driver Information
         </button>
-        <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Vehicle Information')" [class]="{'border-lime-300': selectedTab === 'Vehicle Information', 'border-gray-200': selectedTab !== 'Vehicle Information', 'text-gray-700': selectedTab !== 'Vehicle Information', 'bg-[#C5E55D]': selectedTab === 'Vehicle Information'}">
+        <button
+          class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+          (click)="setProfileTab('Vehicle Information')"
+          [class]="{
+            'border-lime-300': selectedTab === 'Vehicle Information',
+            'border-gray-200': selectedTab !== 'Vehicle Information',
+            'text-gray-700': selectedTab !== 'Vehicle Information',
+            'bg-[#C5E55D]': selectedTab === 'Vehicle Information',
+          }"
+        >
           Vehicle Information
         </button>
       }
-      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Favorite Routes')" [class]="{'border-lime-300': selectedTab === 'Favorite Routes', 'border-gray-200': selectedTab !== 'Favorite Routes', 'text-gray-700': selectedTab !== 'Favorite Routes', 'bg-[#C5E55D]': selectedTab === 'Favorite Routes'}">
-        Favorite Routes
-      </button>
-      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Analytics')" [class]="{'border-lime-300': selectedTab === 'Analytics', 'border-gray-200': selectedTab !== 'Analytics', 'text-gray-700': selectedTab !== 'Analytics', 'bg-[#C5E55D]': selectedTab === 'Analytics'}">
-        Analytics
-      </button>
-      <!--
-      <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Ride History')" [class]="{'border-lime-300': selectedTab === 'Ride History', 'border-gray-200': selectedTab !== 'Ride History', 'text-gray-700': selectedTab !== 'Ride History', 'bg-[#C5E55D]': selectedTab === 'Ride History'}">
-        Ride History
-      </button>
-      -->
       <button
         class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
-        (click)="setProfileTab(userRole === 'ADMIN' ? 'Admin Ride History' : 'Ride History')"
+        (click)="setProfileTab('Favorite Routes')"
         [class]="{
-    'border-lime-300': selectedTab === 'Ride History' || selectedTab === 'Admin Ride History',
-    'border-gray-200': selectedTab !== 'Ride History' && selectedTab !== 'Admin Ride History',
-    'text-gray-700': selectedTab !== 'Ride History' && selectedTab !== 'Admin Ride History',
-    'bg-[#C5E55D]': selectedTab === 'Ride History' || selectedTab === 'Admin Ride History'
-  }"
+          'border-lime-300': selectedTab === 'Favorite Routes',
+          'border-gray-200': selectedTab !== 'Favorite Routes',
+          'text-gray-700': selectedTab !== 'Favorite Routes',
+          'bg-[#C5E55D]': selectedTab === 'Favorite Routes',
+        }"
+      >
+        Favorite Routes
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Analytics')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Analytics',
+          'border-gray-200': selectedTab !== 'Analytics',
+          'text-gray-700': selectedTab !== 'Analytics',
+          'bg-[#C5E55D]': selectedTab === 'Analytics',
+        }"
+      >
+        Analytics
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Ride History')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Ride History' || selectedTab === 'Admin Ride History',
+          'border-gray-200': selectedTab !== 'Ride History' && selectedTab !== 'Admin Ride History',
+          'text-gray-700': selectedTab !== 'Ride History' && selectedTab !== 'Admin Ride History',
+          'bg-[#C5E55D]': selectedTab === 'Ride History' || selectedTab === 'Admin Ride History',
+        }"
       >
         Ride History
       </button>
-
-      @if (userRole === 'ADMIN') {
-        <button
-          class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
-          (click)="setProfileTab('Admin Panic')"
-          [class]="{'border-lime-300': selectedTab === 'Admin Panic', 'border-gray-200': selectedTab !== 'Admin Panic', 'text-gray-700': selectedTab !== 'Admin Panic', 'bg-[#C5E55D]': selectedTab === 'Admin Panic'}"
-        >
-          Panic dashboard
-        </button>
-
-        <button
-          class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
-          (click)="setProfileTab('Admin Notifications')"
-          [class]="{'border-lime-300': selectedTab === 'Admin Notifications', 'border-gray-200': selectedTab !== 'Admin Notifications', 'text-gray-700': selectedTab !== 'Admin Notifications', 'bg-[#C5E55D]': selectedTab === 'Admin Notifications'}"
-        >
-          Notifications
-        </button>
-      }
     </div>
   </div>
 
   @if (selectedTab == 'Personal Information' && !isEditing) {
-    <div class="mt-6">
+    <div class="mt-6 w-5/6">
       <div class="flex flex-row justify-between">
         <div class="flex flex-col">
           <h2 class="text-3xl font-bold">
-            {{selectedTab}}
+            {{ selectedTab }}
           </h2>
           <p class="mt-3 text-gray-600">
             Manage your personal information such as name, email, address and phone number.
           </p>
         </div>
-        <div (click)="setIsEditing(true)" class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50 h-10">
+        <div
+          (click)="setIsEditing(true)"
+          class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50 h-10"
+        >
           <ng-icon name="bootstrapPencilFill" size="20" color="#a1bf3f"></ng-icon>
           <p class="text-base">Edit Profile</p>
         </div>
@@ -113,58 +145,61 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Name"
-          value={{user().name}}
+          value="{{ user().name }}"
           iconName="bootstrapPersonFill"
         ></app-profile-card>
         <app-profile-card
           title="Email"
-          value={{user().email}}
+          value="{{ user().email }}"
           iconName="bootstrapEnvelopeFill"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Address"
-          value={{user().address}}
+          value="{{ user().address }}"
           iconName="bootstrapPinMapFill"
         ></app-profile-card>
         <app-profile-card
           title="Phone number"
-          value={{user().phoneNumber}}
+          value="{{ user().phoneNumber }}"
           iconName="bootstrapTelephoneFill"
         ></app-profile-card>
       </div>
     </div>
   } @else if (selectedTab == 'Manage Password') {
-    <app-manage-password></app-manage-password>
+    <div class="w-5/6">
+      <app-manage-password></app-manage-password>
+    </div>
   } @else if (selectedTab == 'Driver Information') {
-    <div class="mt-6">
+    <div class="mt-6 w-5/6">
       <h2 class="text-3xl font-bold">
-        {{selectedTab}}
+        {{ selectedTab }}
       </h2>
-      <p class="mt-3 text-gray-600">
-        View your number of active hours.
-      </p>
+      <p class="mt-3 text-gray-600">View your number of active hours.</p>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Active In Last 24H"
-          value={{driverActiveHours}}
+          value="{{ driverActiveHours }}"
           iconName="bootstrapClockFill"
         ></app-profile-card>
       </div>
     </div>
   } @else if (selectedTab == 'Vehicle Information' && !isVehicleEditing) {
-    <div class="mt-6">
+    <div class="mt-6 w-5/6">
       <div class="flex flex-row justify-between">
         <div class="flex flex-col">
           <h2 class="text-3xl font-bold">
-            {{selectedTab}}
+            {{ selectedTab }}
           </h2>
           <p class="mt-3 text-gray-600">
             Manage your vehicle information such as model, type, plate number and seating capacity.
           </p>
         </div>
-        <div (click)="setIsEditingVehicle(true)" class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50 h-10">
+        <div
+          (click)="setIsEditingVehicle(true)"
+          class="cursor-pointer flex flex-row content-center justify-center items-center border border-[#BEBEBE] bg-[#F0F0F0] rounded-xl p-2 gap-2 hover:bg-gray-50 h-10"
+        >
           <ng-icon name="bootstrapPencilFill" size="20" color="#a1bf3f"></ng-icon>
           <p class="text-base">Edit Vehicle</p>
         </div>
@@ -172,24 +207,24 @@
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Model"
-          value={{vehicle().model}}
+          value="{{ vehicle().model }}"
           iconName="bootstrapCarFrontFill"
         ></app-profile-card>
         <app-profile-card
           title="Type"
-          value={{vehicle().type}}
+          value="{{ vehicle().type }}"
           iconImage="icons/diamond.svg"
         ></app-profile-card>
       </div>
       <div class="flex flex-row gap-15">
         <app-profile-card
           title="Plate No."
-          value={{vehicle().plateNumber}}
+          value="{{ vehicle().plateNumber }}"
           iconImage="icons/license-plate.svg"
         ></app-profile-card>
         <app-profile-card
           title="Seats"
-          value={{vehicle().seats}}
+          value="{{ vehicle().seats }}"
           iconImage="icons/car-seat.svg"
         ></app-profile-card>
       </div>
@@ -210,49 +245,44 @@
     <app-edit-profile
       [user]="user()"
       (saveProfile)="updateUser($event)"
-      (closeEdit)="setIsEditing($event)">
-    ></app-edit-profile>
+      (closeEdit)="setIsEditing($event)"
+    >
+      ></app-edit-profile
+    >
   } @else if (selectedTab == 'Vehicle Information' && isVehicleEditing) {
     <app-edit-vehicle
       [vehicle]="vehicle()"
       (saveVehicle)="updateVehicle($event)"
-      (closeEdit)="setIsEditingVehicle($event)">
-    ></app-edit-vehicle>
+      (closeEdit)="setIsEditingVehicle($event)"
+    >
+      ></app-edit-vehicle
+    >
   } @else if (selectedTab == 'Favorite Routes') {
     <app-favorite-routes class="w-5/6"></app-favorite-routes>
-  }@else if (selectedTab === 'Admin Ride History' && userRole === 'ADMIN') {
-    <div class="mt-6 w-full">
+  } @else if (selectedTab === 'Admin Ride History' && userRole === 'ADMIN') {
+    <app-favorite-routes class="w-5/6"></app-favorite-routes>
+  } @else if (selectedTab === 'Admin Ride History' && userRole === 'ADMIN') {
+    <div class="mt-6 w-5/6">
       <h2 class="text-3xl font-bold">Ride History</h2>
-
 
       <div class="mt-6">
         <app-admin-rides></app-admin-rides>
       </div>
     </div>
-  }@else if (selectedTab === 'Admin Panic' && userRole === 'ADMIN') {
-    <div class="mt-6 w-full">
-      <h2 class="text-3xl font-bold">Panic dashboard</h2>
-
-
-      <div class="mt-6">
-        <app-admin-panic></app-admin-panic>
-      </div>
-    </div>
-  }@else if (selectedTab === 'Ride History' && userRole === 'PASSENGER') {
-    <div class="mt-6 w-full">
+  } @else if (selectedTab === 'Ride History') {
+    <div class="mt-6 w-5/6">
       <h2 class="text-3xl font-bold">Ride History</h2>
       <div class="mt-6">
         <app-passenger-ride-history></app-passenger-ride-history>
       </div>
     </div>
-  } @else if (selectedTab === 'Analytics'){
+  } @else if (selectedTab === 'Analytics') {
     <div class="w-5/6">
       <app-ride-analytics></app-ride-analytics>
     </div>
+  } @else if (selectedTab === 'Ride History' && userRole === 'DRIVER') {
+    <div class="mt-6 w-5/6">
+      <app-ride-history></app-ride-history>
+    </div>
   }
-
-
-
-
 </div>
-
