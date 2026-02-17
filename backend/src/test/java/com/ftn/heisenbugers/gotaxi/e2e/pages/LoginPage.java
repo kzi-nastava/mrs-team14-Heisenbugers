@@ -39,9 +39,6 @@ public class LoginPage{
     }
 
     public void submit() {
-        passwordInput.sendKeys(Keys.TAB);
-        passwordInput.sendKeys(Keys.TAB);
-        passwordInput.sendKeys(Keys.TAB);
         passwordInput.sendKeys(Keys.ENTER);
 
 //       (new WebDriverWait(driver, Duration.ofSeconds(10)).until(

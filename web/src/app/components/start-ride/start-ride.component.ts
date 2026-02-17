@@ -54,7 +54,7 @@ export class StartRideComponent {
         this.pins.push({ lat: this.ride.start.latitude, lng: this.ride.start.longitude, snapToRoad: true, popup: 'Start', iconUrl: 'icons/pin.svg' });
         this.pins.push({ lat: this.ride.end.latitude, lng: this.ride.end.longitude, snapToRoad: true, popup: 'End', iconUrl: 'icons/pin.svg' });
         for (let i = 0; i < this.ride.stops.length; i++){
-          if (i == 0 || i == this.ride.stops.length - 1) continue;
+          //if (i == 0 || i == this.ride.stops.length - 1) continue;
           this.pins.push({ lat: this.ride.stops[i].latitude, lng: this.ride.stops[i].longitude, snapToRoad: true, popup: `Stop ${i+1}`, iconUrl: 'icons/pin.svg' });
         }
         this.emitPins();

@@ -47,7 +47,7 @@ public class Ride extends BaseEntity {
     @JoinColumn(name = "end_id")
     private Location end;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "canceled_by_id")
     private User canceledBy;
 
@@ -86,6 +86,7 @@ public class Ride extends BaseEntity {
 
     boolean babyTransport;
 
+    @Enumerated(EnumType.STRING)
     VehicleType vehicleType;
 
     public void addPassenger(Passenger p) {
