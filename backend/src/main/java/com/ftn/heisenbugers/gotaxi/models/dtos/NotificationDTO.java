@@ -10,7 +10,8 @@ public record NotificationDTO(
         boolean read,
         LocalDateTime createdAt,
         LocalDateTime readAt,
-        UUID rideId
+        UUID rideId,
+        String redirectUrl
 ) {
 
 }

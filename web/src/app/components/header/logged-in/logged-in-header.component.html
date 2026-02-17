@@ -33,8 +33,13 @@
             class="absolute right-0 top-12 w-100 max-h-80 overflow-y-auto rounded-lg bg-zinc-900 shadow-lg ring-1 ring-white/10 z-50"
           >
             @for (n of notifications; track n) {
-              <div class="px-4 py-3 hover:bg-zinc-800 cursor-pointer border-b border-white/10">
-                {{ n.message }}
+              <div class="">
+                <button
+                  class="w-full h-full cursor-pointer px-4 py-3 hover:bg-zinc-800 border-b border-white/10 text-left"
+                  (click)="goTo(n.redirectUrl)"
+                >
+                  {{ n.message }}
+                </button>
               </div>
             }
             @if (notifications.length === 0) {

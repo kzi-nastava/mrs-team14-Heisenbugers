@@ -38,6 +38,10 @@ export class LoggedInHeaderComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+
+  alert(text: string) {
+    alert(text)
+  }
   ngOnInit(): void {
     this.isAdmin = this.auth.getRole() === 'ADMIN'
     // Load unread notifications initially
@@ -146,6 +150,14 @@ export class LoggedInHeaderComponent implements OnInit {
     this.router.navigate(['/home'])
     this.menuOpen = false
   }*/
+
+  goTo(url?: string) {
+    if (url != null) {
+    this.notificationsOpen = false
+    this.router.navigate([url])
+    }
+  }
+
   logOut() {
     this.auth.logoutLocal();
     this.router.navigate(['/home']);

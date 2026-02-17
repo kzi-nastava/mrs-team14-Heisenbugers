@@ -63,9 +63,9 @@ public class RideService {
         ride.setPassengers(new ArrayList<>());
         for (int i = 0; i < request.getPassengersEmails().size(); i++) {
             Optional<Passenger> p = passengerRepository.findByEmail(request.getPassengersEmails().get(i));
-            if(p.isPresent()){
+            if (p.isPresent()) {
                 ride.addPassenger(p.get());
-            }else{
+            } else {
                 Passenger pass = new Passenger(request.getPassengersEmails().get(i), "", "", "", "", "");
                 ride.addPassenger(pass);
                 passengerRepository.save(pass);
@@ -103,7 +103,8 @@ public class RideService {
             for (int i = 0; i < ride.getPassengers().size(); i++) {
                 sendAcceptedRideEmail(ride.getPassengers().get(i), ride, jwtService.generateToken(ride.getPassengers().get(i).getEmail(), claims));
             }
-            notificationService.notifyUser(ride.getRoute().getUser(), "Your ride has been confirmed!", ride);
+            notificationService.notifyUser(ride.getRoute().getUser(), "Your ride has been confirmed!",
+                    ride, "/base");
         }
 
         return new CreatedRideDTO(ride.getId(), request.getRoute(), ride.getVehicle().getType(), ride.getVehicle().isBabyTransport(),
@@ -310,7 +311,7 @@ public class RideService {
 
         for (User u : ride.getPassengers()) {
             sendFinishedRideEmail(u, ride);
-            if (Objects.equals(u.getFirstName(), "")){
+            if (Objects.equals(u.getFirstName(), "")) {
                 passengerRepository.delete((Passenger) u);
             }
         }

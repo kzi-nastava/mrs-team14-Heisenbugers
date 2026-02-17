@@ -33,6 +33,8 @@ public class Notification extends BaseEntity {
     @JoinColumn(name = "ride_id")
     private Ride ride;
 
+    private String redirectUrl;
+
     public static NotificationDTO toDto(Notification notification) {
         return new NotificationDTO(
                 notification.getId(),
@@ -42,7 +44,8 @@ public class Notification extends BaseEntity {
                 notification.getReadAt(),
                 notification.getRide() != null
                         ? notification.getRide().getId()
-                        : null
+                        : null,
+                notification.redirectUrl
         );
     }
 }
