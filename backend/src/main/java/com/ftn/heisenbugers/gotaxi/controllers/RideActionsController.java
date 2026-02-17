@@ -10,6 +10,7 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.StopRideRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
+import com.ftn.heisenbugers.gotaxi.repositories.DriverRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.LocationRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.services.RideActionsService;
@@ -33,6 +34,7 @@ public class RideActionsController {
     private RideRepository rideRepository;
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired private DriverRepository driverRepository;
     @Autowired
     private RideActionsService rideActionsService;
 
@@ -129,7 +131,13 @@ public class RideActionsController {
         ride.setCancelReason(reason != null ? reason.trim() : null);
         ride.setCanceledAt(LocalDateTime.now());
 
-        rideRepository.save(ride);
+        Driver d = ride.getDriver();
+        //d.setAvailable(true);
+
+        if (d != null) {
+            d.setAvailable(true);
+            driverRepository.save(d);
+        }
 
         return ResponseEntity.ok(new MessageResponse("Ride canceled."));
 

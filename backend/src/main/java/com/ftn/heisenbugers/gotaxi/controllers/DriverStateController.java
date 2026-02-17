@@ -46,6 +46,11 @@ public class DriverStateController {
         Driver driver = AuthContextService.getCurrentDriver();
         boolean targetWorking = request.isWorking();
 
+        if (targetWorking && driver.isBlocked()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new MessageResponse("Blocked driver cannot become active."));
+        }
+
         if (driver.isWorking() == targetWorking) {
             return ResponseEntity.ok(new DriverWorkingDTO(driver.isWorking()));
         }

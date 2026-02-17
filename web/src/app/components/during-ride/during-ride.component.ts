@@ -369,14 +369,19 @@ export class DuringRide {
     //const rideId = this.ride?.rideId;
     if (!this.rideId) return;
 
-    const msg = prompt('Describe the problem (optional):') ?? '';
+    const res = prompt('Describe the problem (optional):');
+
+    if (res === null) return;
+
+    const msg = res.trim();
+
     this.panicApi.panic(String(this.rideId), msg).subscribe({
       next: () => alert('Panic sent to administrators.'),
       error: (e) => alert(e?.error?.message ?? 'Panic failed')
     });
   }
 
-  toggleChat(){      
+  toggleChat(){
     this.chatOpen = !this.chatOpen;
   }
   closeChat(){
