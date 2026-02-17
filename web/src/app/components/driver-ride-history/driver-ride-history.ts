@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -18,11 +18,12 @@ import { OnInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { LatLng } from 'leaflet';
 import { RateService } from '../../services/rate.service';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
 standalone: true,
-  imports: [CommonModule, NgIcon, RateModal],
+  imports: [CommonModule, NgIcon, RateModal, FormsModule],
   selector: 'app-ride-history',
   templateUrl: './driver-ride-history.html',
   styleUrls: ['./driver-ride-history.css'],
@@ -89,6 +90,8 @@ export class RideHistoryComponent {
   }];
   toastMessage?: string;
   toastVisible?: boolean;
+  startDate: string | null = null;
+  endDate: string | null = null;
 
 
 constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private rateService: RateService) {
@@ -100,9 +103,16 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
   }
 
   fetchRides() {
-    const params = new HttpParams()
-    .set('sortBy', this.sort)         // RideSort enum value
-    .set('direction', this.direction);      // asc | desc
+    let params = new HttpParams()
+    .set('sortBy', this.sort)
+    .set('direction', this.direction);
+
+    if (this.startDate) {
+      params = params.set('startDate', this.startDate)
+    }
+    if (this.endDate) {
+      params = params.set('endDate', this.endDate)
+    }
 
     this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`, { params }).subscribe({
       next: (data) => {
@@ -182,4 +192,37 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
     this.closeRateModal();
     console.log(sendingData)
   }
+
+  applyDateFilter(): void {
+  let params = new HttpParams()
+    .set('sortBy', this.sort)
+    .set('direction', this.direction);
+
+  if (this.startDate) {
+    params = params.set('startDate', this.startDate);
+  }
+
+  if (this.endDate) {
+    params = params.set('endDate', this.endDate);
+  }
+
+  this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`, { params })
+    .subscribe(data => {
+      this.rides = data.map(r => ({
+        ...r,
+        startedAt: new Date(r.startedAt),
+        startTime: new Date(r.startedAt),
+        endTime: new Date(r.endedAt),
+        endedAt: new Date(r.endedAt),
+      }));
+      this.cdr.markForCheck();
+    });
+  }
+
+  clearDateFilter(): void {
+    this.startDate = null;
+    this.endDate = null;
+    this.applyDateFilter();
+  }
+
 }
