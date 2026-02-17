@@ -14,6 +14,8 @@ public class HeaderComponent {
     private final By profileBtn = By.id("profile-button");
     private final By historyBtn = By.id("history-button");
     private final By profileMenu = By.id("profile-menu-container");
+    private final By adminDashboardBtn = By.cssSelector("[data-testid='admin-dashboard-button']");
+
 
     public HeaderComponent(WebDriver driver) {
         this.driver = driver;
@@ -28,6 +30,9 @@ public class HeaderComponent {
     public void goToHistory() {
         openProfileMenu();
         wait.until(ExpectedConditions.elementToBeClickable(historyBtn)).click();
+    }
+    public void goToAdminDashboard() {
+        wait.until(ExpectedConditions.elementToBeClickable(adminDashboardBtn)).click();
     }
 
 }

@@ -49,7 +49,6 @@ public class AdminUserRidesModal {
 
     public void apply() {
         wait.until(ExpectedConditions.elementToBeClickable(applyBtn)).click();
-        // ждём один из результатов: список / empty / error
         wait.until(d ->
                 !d.findElements(ridesList).isEmpty() ||
                         !d.findElements(ridesEmpty).isEmpty() ||
