@@ -173,7 +173,10 @@ public class AdminRideHistoryTest extends TestBase {
         }
 
         HeaderComponent header = new HeaderComponent(driver);
-        header.goToHistory();
+        //header.goToHistory();
+        header.goToAdminDashboard();
+        AdminDashboardPage dash = new AdminDashboardPage(driver);
+        dash.goToRideHistory();
 
 
         waitVisible(By.cssSelector("[data-testid='admin-rides-root']"), 12);
