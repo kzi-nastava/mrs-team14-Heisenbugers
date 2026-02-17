@@ -164,16 +164,6 @@ export class LoggedInHeaderComponent implements OnInit {
     this.profileMenuOpen = false;
   }
 
-  goToRegisterDriver(){
-    this.router.navigate(['driver-registration'])
-    this.profileMenuOpen = false
-  }
-
-  goToProfileChanges(){
-    this.router.navigate(['profile-requests'])
-    this.profileMenuOpen = false
-  }
-
   goToHome(){
     this.router.navigate(['base'])
     this.profileMenuOpen = false
