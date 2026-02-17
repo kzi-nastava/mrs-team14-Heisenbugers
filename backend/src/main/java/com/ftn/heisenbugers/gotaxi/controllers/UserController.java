@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @PostMapping("/{id}/block")
-    public ResponseEntity<Void> block(@PathVariable String id, @RequestBody String note) {
+    public ResponseEntity<Void> block(@PathVariable String id, @RequestBody(required = false) String note) {
         userService.block(UUID.fromString(id), note);
         return ResponseEntity.ok().build();
     }
