@@ -18,4 +18,7 @@ public class PanicEventDTO {
 
     private Double vehicleLat;
     private Double vehicleLng;
+
+    private String startAddress;
+    private String endAddress;
 }

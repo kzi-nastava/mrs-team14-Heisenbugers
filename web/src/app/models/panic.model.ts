@@ -1,5 +1,5 @@
 export interface PanicRequestDTO {
-  rideId: string;
+  //rideId: string;
   message?: string;
 }
 

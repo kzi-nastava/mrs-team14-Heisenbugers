@@ -138,7 +138,7 @@ export class PassengerRideDetailsComponent {
   }
 
   goBack() {
-    this.router.navigate(['/passenger-ride-history']);
+    this.router.navigate(['/profile']);
   }
 
   // -------- mapping ----------

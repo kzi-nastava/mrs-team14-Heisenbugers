@@ -36,6 +36,7 @@ public class PanicController {
         this.notificationRepository = notificationRepository;
     }
 
+
     @PostMapping("/{rideId}/panic")
     public ResponseEntity<?> panic(@PathVariable UUID rideId,
                                    @RequestBody(required = false) PanicRequestDTO req) throws InvalidUserType {
@@ -111,9 +112,19 @@ public class PanicController {
                 .filter(u -> u instanceof Administrator)
                 .toList();
 
+        String startAddr = (ride.getStart() != null && ride.getStart().getAddress() != null)
+                ? ride.getStart().getAddress()
+                : "Unknown start";
+
+        String endAddr = (ride.getEnd() != null && ride.getEnd().getAddress() != null)
+                ? ride.getEnd().getAddress()
+                : "Unknown destination";
+
+        String panicText = "PANIC: " + startAddr + " → " + endAddr + " " + msg;
+
         for (User a : admins) {
             Notification n = Notification.builder()
-                    .message("PANIC for ride " + rideId + ": " + msg)
+                    .message(panicText)
                     .read(false)
                     .readAt(null)
                     .user(a)
@@ -122,6 +133,8 @@ public class PanicController {
             notificationRepository.save(n);
         }
 
+
         return ResponseEntity.ok(new MessageResponse("Panic created."));
     }
+
 }
