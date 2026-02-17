@@ -32,4 +32,5 @@ export interface RideInfo {
   panicTriggered: boolean;
   rated?: boolean;
   route?: LocationDTO[]
+  favorite?: boolean;
 }

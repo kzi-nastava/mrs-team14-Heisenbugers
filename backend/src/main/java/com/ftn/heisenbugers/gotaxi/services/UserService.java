@@ -31,7 +31,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final RatingRepository ratingRepository;
 
-
     public UserStateDTO getState(UUID userId) {
         User u = userRepository.findUserById(userId);
         if (u instanceof Passenger p) {
@@ -55,7 +54,7 @@ public class UserService {
     }
 
     public List<RideHistoryDTO> getUserHistory(Passenger passenger, LocalDate startDate, LocalDate endDate,
-                                               RideSort sortBy, String direction) {
+            RideSort sortBy, String direction) {
         List<Ride> rides;
         UUID userId = passenger.getId();
 
@@ -63,45 +62,18 @@ public class UserService {
                 ? Sort.by(sortBy.getProperty()).descending()
                 : Sort.by(sortBy.getProperty()).ascending();
 
-/*
-        if (startDate != null && endDate == null) {
-            rides = rideRepository.findByPassengersContainingAndStartedAtAfter(passenger, startDate.atStartOfDay(), sort);
-        } else if (startDate == null && endDate != null) {
-            rides = rideRepository.findByPassengersContainingAndStartedAtBefore(passenger,
-                    endDate.plusDays(1).atStartOfDay(),
-                    sort);
-        } else if (startDate != null) {
-            rides = rideRepository.findByPassengersContainingAndStartedAtBetween(passenger,
-                    startDate.atStartOfDay(),
-                    endDate.plusDays(1).atStartOfDay(),
-                    sort);
-        } else {
-            rides = rideRepository.findByPassengersContaining(passenger, sort);
-        }
-        List<RideHistoryDTO> rideHistoryDTOS = new ArrayList<>();
-        for (Ride r : rides) {
-            RideHistoryDTO dto = new RideHistoryDTO();
-            PopulateDto(r, dto);
-            rideHistoryDTOS.add(dto);
-        }
-
-        return rideHistoryDTOS;
-        */
         if (startDate != null && endDate == null) {
             rides = rideRepository.findByRoute_User_IdAndStartedAtAfter(
-                    userId, startDate.atStartOfDay(), sort
-            );
+                    userId, startDate.atStartOfDay(), sort);
         } else if (startDate == null && endDate != null) {
             rides = rideRepository.findByRoute_User_IdAndStartedAtBefore(
-                    userId, endDate.plusDays(1).atStartOfDay(), sort
-            );
+                    userId, endDate.plusDays(1).atStartOfDay(), sort);
         } else if (startDate != null) {
             rides = rideRepository.findByRoute_User_IdAndStartedAtBetween(
                     userId,
                     startDate.atStartOfDay(),
                     endDate.plusDays(1).atStartOfDay(),
-                    sort
-            );
+                    sort);
         } else {
             rides = rideRepository.findByRoute_User_Id(userId, sort);
         }
@@ -115,14 +87,14 @@ public class UserService {
         }
         return result;
 
-
     }
 
     public List<BlockableUserDTO> getBlockableUsers() {
         List<User> blockableUsers = userRepository.findAllActivatedPassengersAndDrivers();
         List<BlockableUserDTO> blockableUserDTOS = new ArrayList<>();
         for (User u : blockableUsers) {
-            blockableUserDTOS.add(new BlockableUserDTO(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(), u.getProfileImageUrl(), u.isBlocked(), u instanceof Driver ? "Driver" : "Passenger"));
+            blockableUserDTOS.add(new BlockableUserDTO(u.getId(), u.getFirstName(), u.getLastName(), u.getEmail(),
+                    u.getProfileImageUrl(), u.isBlocked(), u instanceof Driver ? "Driver" : "Passenger"));
         }
 
         return blockableUserDTOS;
@@ -176,9 +148,9 @@ public class UserService {
         dto.setCanceledBy(r.getCanceledBy());
         dto.setStartedAt(r.getStartedAt());
 
-
         dto.setRated(rated);
 
+        dto.setFavorite(r.getRoute().isFavorite());
     }
 
 }

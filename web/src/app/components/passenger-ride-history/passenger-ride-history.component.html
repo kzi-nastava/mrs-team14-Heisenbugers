@@ -1,4 +1,37 @@
 <div class="w-full">
+  <!-- Filters -->
+  <div class="flex items-center justify-between mb-6">
+    <!-- left: filters -->
+    <div class="flex gap-2">
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'date' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('date')"
+      >
+        by date
+      </button>
+
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'price' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('price')"
+      >
+        by price
+      </button>
+
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'route' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('route')"
+      >
+        by route
+      </button>
+    </div>
+
+    <!-- right: arrows -->
+    <span class="text-lg cursor-pointer select-none">⇅</span>
+  </div>
+
   @if (loading) {
     <div class="p-4 text-neutral-600">Loading…</div>
   } @else {
@@ -7,9 +40,9 @@
         No rides found
       </div>
     } @else {
-      @for (r of rides; track r.rideId) {
+      @for (r of sortedRides; track r.rideId) {
         <div
-          class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
+          class="flex flex-row mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50 items-center"
           [class.border-2]="r.panicTriggered"
           [class.border-red-500]="r.panicTriggered"
         >
@@ -49,6 +82,16 @@
               >
                 <ng-icon name="bootstrapFeather" size="24" class="mx-3"></ng-icon>
               </button>
+            }
+          </button>
+          <button
+            class="pr-3 mt-2 cursor-pointer"
+            (click)="$event.stopPropagation(); toggleFavorite(r)"
+          >
+            @if (r.favorite) {
+              <ng-icon name="bootstrapHeartFill" size="24" color="#e11d48"></ng-icon>
+            } @else {
+              <ng-icon name="bootstrapHeart" size="24"></ng-icon>
             }
           </button>
         </div>

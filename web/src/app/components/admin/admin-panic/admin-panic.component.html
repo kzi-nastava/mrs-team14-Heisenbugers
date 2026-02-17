@@ -30,10 +30,10 @@
           >
             <div class="flex items-center justify-between">
               <div class="font-semibold">
-                Ride: {{ p?.ride?.id ?? p?.rideId }}
+                {{ p?.startAddress ?? 'Unknown start' }} → {{ p?.endAddress ?? 'Unknown destination' }}
               </div>
               <div class="text-xs text-neutral-500">
-                #{{ p?.id }}
+                Ride: {{ p?.rideId }}
               </div>
             </div>
             <div class="text-sm text-neutral-600 mt-1">

@@ -8,13 +8,16 @@ export class PanicService {
   private http = inject(HttpClient);
   private base = 'http://localhost:8081/api';
 
-  //POST /api/rides/{rideId}/panic
+  // POST /api/rides/{rideId}/panic
   panic(rideId: string, message?: string): Observable<any> {
-    const body: PanicRequestDTO = { rideId, message };
-    return this.http.post(`${this.base}/rides/${rideId}/panic`, body);
-  }
+    const body: PanicRequestDTO = {};
 
-  triggerPanic(rideId: string, message: string): Observable<any> {
-    return this.panic(rideId, message);
+    const trimmed = (message ?? '').trim();
+    if (trimmed.length > 0) {
+      body.message = trimmed;
+    }
+
+    // можно отправлять {} — бэк принимает required=false
+    return this.http.post(`${this.base}/rides/${rideId}/panic`, body);
   }
 }

@@ -28,11 +28,10 @@ public class PanicController {
     private final NotificationRepository notificationRepository;
     private final NotificationService notificationService;
 
-
     public PanicController(RideRepository rideRepository,
-                           PanicEventRepository panicRepository,
-                           UserRepository userRepository,
-                           NotificationRepository notificationRepository, NotificationService notificationService) {
+            PanicEventRepository panicRepository,
+            UserRepository userRepository,
+            NotificationRepository notificationRepository, NotificationService notificationService) {
         this.rideRepository = rideRepository;
         this.panicRepository = panicRepository;
         this.userRepository = userRepository;
@@ -42,7 +41,7 @@ public class PanicController {
 
     @PostMapping("/{rideId}/panic")
     public ResponseEntity<?> panic(@PathVariable UUID rideId,
-                                   @RequestBody(required = false) PanicRequestDTO req) throws InvalidUserType {
+            @RequestBody(required = false) PanicRequestDTO req) throws InvalidUserType {
 
         Ride ride = rideRepository.findById(rideId).orElse(null);
         if (ride == null) {
@@ -65,15 +64,14 @@ public class PanicController {
                 && ride.getPassengers().stream().anyMatch(p -> p.getId().equals(current.getId()));
 
         if (!isDriver && !isPassenger) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new MessageResponse("You are not a participant of this ride."));
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new MessageResponse("You are not a participant of this ride."));
         }
-
 
         var existing = panicRepository.findFirstByRideIdAndResolvedFalseOrderByCreatedAtDesc(rideId);
         if (existing.isPresent()) {
             return ResponseEntity.ok(new MessageResponse("Panic already active."));
         }
-
 
         String msg = (req != null && req.getMessage() != null && !req.getMessage().trim().isEmpty())
                 ? req.getMessage().trim()
@@ -108,7 +106,6 @@ public class PanicController {
 
         panicRepository.save(pe);
 
-
         List<User> admins = userRepository.findAll().stream()
                 .filter(u -> u instanceof Administrator)
                 .toList();
@@ -129,4 +126,5 @@ public class PanicController {
 
         return ResponseEntity.ok(new MessageResponse("Panic created."));
     }
+
 }

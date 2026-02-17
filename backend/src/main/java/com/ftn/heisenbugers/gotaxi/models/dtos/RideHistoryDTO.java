@@ -21,6 +21,7 @@ public class RideHistoryDTO {
     private User canceledBy;
     private double price;
     private boolean panicTriggered;
+    private boolean favorite;
     private boolean rated;
 
 }
