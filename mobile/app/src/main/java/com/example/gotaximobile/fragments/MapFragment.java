@@ -221,4 +221,28 @@ public class MapFragment extends Fragment {
         super.onPause();
         map.onPause();
     }
+
+    public void drawRouteFromPoints(List<GeoPoint> points) {
+        if (map == null || points == null || points.size() < 2) return;
+
+        requireActivity().runOnUiThread(() -> {
+            if (routeOverlay != null) {
+                map.getOverlays().remove(routeOverlay);
+            }
+
+            Polyline polyline = new Polyline();
+            polyline.setPoints(points);
+
+            routeOverlay = polyline;
+            map.getOverlays().add(routeOverlay);
+            map.invalidate();
+
+            map.getController().setZoom(14);
+            map.getController().setCenter(points.get(points.size()/2));
+        });
+    }
+
+
+
+
 }
