@@ -131,6 +131,13 @@ public class UserService {
 
         user.setBlocked(true);
         user.setBlockNote(note);
+
+        if (user.isBlocked() && user instanceof Driver d) {
+            if (d.isWorking() || d.isAvailable()) {
+                d.setWorking(false);
+                d.setAvailable(false);
+            }
+        }
         userRepository.save(user);
     }
 
@@ -144,15 +151,6 @@ public class UserService {
 
     public IsBlockedDTO isBlocked(String email){
         User user = userRepository.findByEmail(email).get();
-
-        if (user.isBlocked() && user instanceof Driver d) {
-            if (d.isWorking() || d.isAvailable()) {
-                d.setWorking(false);
-                d.setAvailable(false);
-                userRepository.save(d); // или driverRepository.save(d)
-            }
-        }
-
 
         return new IsBlockedDTO(user.isBlocked(), user.getBlockNote());
     }

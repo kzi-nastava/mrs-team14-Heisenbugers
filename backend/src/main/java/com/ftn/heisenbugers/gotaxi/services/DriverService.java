@@ -72,9 +72,8 @@ public class DriverService {
         return driverRepository.findByWorkingTrue();
     }
 
-    public boolean canAcceptRide(Driver driver, int estimatedTimeMin) {
-        int activeMinutes = driver.getActiveHoursLast24h();
-        return (activeMinutes + estimatedTimeMin) < 8 * 60;
+    public boolean canAcceptRide(Driver driver, int estimatedTime) {
+        return driver.getActiveHoursLast24h() + (estimatedTime / 60) < 8;
     }
 
     public boolean endsRideWithin(Driver driver, int minutes) {
