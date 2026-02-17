@@ -34,16 +34,31 @@ public class AdminPanicController {
         //return ResponseEntity.ok(panicRepository.findByResolvedFalseOrderByCreatedAtDesc());
         var events = panicRepository.findByResolvedFalseOrderByCreatedAtDesc();
         var dtos = events.stream()
-                .map(pe -> new PanicEventDTO(
-                        pe.getId(),
-                        pe.isResolved(),
-                        pe.getRide() != null ? pe.getRide().getId() : null,
-                        pe.getMessage(),
-                        pe.getCreatedAt(),
-                        pe.getVehicleLat(),
-                        pe.getVehicleLng()
-                ))
+                .map(pe -> {
+                    Ride r = pe.getRide();
+
+                    String startAddr = (r != null && r.getStart() != null)
+                            ? r.getStart().getAddress()
+                            : null;
+
+                    String endAddr = (r != null && r.getEnd() != null)
+                            ? r.getEnd().getAddress()
+                            : null;
+
+                    return new PanicEventDTO(
+                            pe.getId(),
+                            pe.isResolved(),
+                            r != null ? r.getId() : null,
+                            pe.getMessage(),
+                            pe.getCreatedAt(),
+                            pe.getVehicleLat(),
+                            pe.getVehicleLng(),
+                            startAddr,
+                            endAddr
+                    );
+                })
                 .toList();
+
 
         return ResponseEntity.ok(dtos);
     }
