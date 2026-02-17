@@ -78,8 +78,8 @@ public class RideController {
                 ));
             }
 
-            if (ride.getRoute().getStops() != null) {
-                List<LocationDTO> stops = ride.getRoute().getStops().stream()
+            if (ride.getRoute().getStopsWithAddresses() != null) {
+                List<LocationDTO> stops = ride.getRoute().getStopsWithAddresses().stream()
                         .map(l -> new LocationDTO(
                                 l.getLongitude(),
                                 l.getLatitude(),

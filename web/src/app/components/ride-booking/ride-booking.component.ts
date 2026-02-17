@@ -6,6 +6,8 @@ import {Observable, Subject, Subscription, of} from 'rxjs';
 import {debounceTime, distinctUntilChanged, switchMap, catchError} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {ScheduleComponent} from '../schedule/schedule.component';
+import {IsBlockedDTO} from '../../models/users.model';
+import {PriceDTO} from '../../models/ride.model';
 
 @Component({
   selector: 'app-ride-booking',
@@ -42,6 +44,8 @@ export class RideBookingComponent implements OnDestroy {
   waypointSuggestionsVisible = new Map<any, boolean>();
 
   pins: { id?: string; lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[] = [];
+
+  prices: PriceDTO[] = [];
 
   @Output() pinsChange = new EventEmitter<
     { lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[]
@@ -134,6 +138,7 @@ export class RideBookingComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
+    this.loadPrices();
     if (this.route) {
       setTimeout(() => {
         this.applyFavoriteRoute(this.route);
@@ -395,15 +400,27 @@ export class RideBookingComponent implements OnDestroy {
     });
   }
 
+  loadPrices(): void {
+    this.http.get<PriceDTO>(`http://localhost:8081/api/prices`).subscribe({
+      next: (data) => {
+        this.prices = Array.isArray(data) ? data : [];
+        console.log(this.prices);
+      },
+      error: (error) => {
+        console.warn('Error:', error);
+      }
+    });
+  }
+
   calculatePrice(): string {
     if (!this.routeSummary || !this.routeSummary.distanceKm) return "";
     const distance = Number(this.routeSummary.distanceKm);
     if(this.selectedVehicle == "STANDARD"){
-      this.price = (distance * 120 + 100).toFixed(2);
+      this.price = (distance * 120 + Number(this.prices.find(v => v.vehicleType === "STANDARD")?.startingPrice)).toFixed(2);
     } else if(this.selectedVehicle == "LUXURY"){
-      this.price = (distance * 120 + 450).toFixed(2);
+      this.price = (distance * 120 + Number(this.prices.find(v => v.vehicleType === "LUXURY")?.startingPrice)).toFixed(2);
     } else if(this.selectedVehicle == "VAN"){
-      this.price = (distance * 120 + 200).toFixed(2);
+      this.price = (distance * 120 + Number(this.prices.find(v => v.vehicleType === "VAN")?.startingPrice)).toFixed(2);
     } else {
       this.price = "";
     }

@@ -65,4 +65,8 @@ public class Route extends BaseEntity {
                 .toList();
     }
 
+    public List<Location> getStopsWithAddresses(){
+        return stops;
+    }
+
 }
