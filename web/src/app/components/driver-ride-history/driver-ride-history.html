@@ -104,15 +104,6 @@
                 class="mx-3"
               ></ng-icon>
             }
-            @if (!r.rated) {
-              <button
-                [id]="'rate-btn-' + $index"
-                class="cursor-pointer"
-                (click)="$event.stopPropagation(); openRateModal(r)"
-              >
-                <ng-icon name="bootstrapFeather" size="24" class="mx-3"></ng-icon>
-              </button>
-            }
           </div>
         </button>
       </div>
