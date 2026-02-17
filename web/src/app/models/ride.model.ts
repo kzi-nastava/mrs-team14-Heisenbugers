@@ -12,3 +12,8 @@ export interface LocationDTO {
   longitude: number;
   address: string;
 }
+
+export interface PriceDTO {
+  startingPrice: number;
+  vehicleType: string;
+}

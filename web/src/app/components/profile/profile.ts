@@ -22,6 +22,7 @@ import {AdminRidesComponent} from '../admin/admin-rides/admin-rides.component';
 import {PassengerRideHistoryComponent} from '../passenger-ride-history/passenger-ride-history.component';
 import {ActivatedRoute} from '@angular/router';
 import {IsBlockedDTO} from '../../models/users.model';
+import {RideAnalyticsComponent} from '../ride-analytics/ride-analytics.component';
 import { RideHistoryComponent } from "../driver-ride-history/driver-ride-history";
 
 @Component({
@@ -38,6 +39,7 @@ import { RideHistoryComponent } from "../driver-ride-history/driver-ride-history
     AdminPanicComponent,
     AdminRidesComponent,
     PassengerRideHistoryComponent,
+    RideAnalyticsComponent,
     RideHistoryComponent
 ],
   templateUrl: './profile.html',
@@ -97,6 +99,7 @@ export class ProfileComponent {
         next: (data) => {
           this.isDriverBlocked = data.blocked;
           this.blockNote = data.blockNote || '';
+          this.cdr.detectChanges()
         },
         error: (error) => {
           console.warn('Error:', error);

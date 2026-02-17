@@ -96,6 +96,18 @@
       >
         Favorite Routes
       </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Analytics')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Analytics',
+          'border-gray-200': selectedTab !== 'Analytics',
+          'text-gray-700': selectedTab !== 'Analytics',
+          'bg-[#C5E55D]': selectedTab === 'Analytics',
+        }"
+      >
+        Analytics
+      </button>
       <!--
       <button class="mt-1 cursor-pointer border rounded-xl p-4 pt-2 pb-2 hover:bg-gray-100" (click)="setProfileTab('Ride History')" [class]="{'border-lime-300': selectedTab === 'Ride History', 'border-gray-200': selectedTab !== 'Ride History', 'text-gray-700': selectedTab !== 'Ride History', 'bg-[#C5E55D]': selectedTab === 'Ride History'}">
         Ride History
@@ -279,6 +291,8 @@
       ></app-edit-vehicle
     >
   } @else if (selectedTab == 'Favorite Routes') {
+    <app-favorite-routes class="w-5/6"></app-favorite-routes>
+  } @else if (selectedTab === 'Admin Ride History' && userRole === 'ADMIN') {
     <app-favorite-routes class="w-full"></app-favorite-routes>
   } @else if (selectedTab === 'Admin Ride History' && userRole === 'ADMIN') {
     <div class="mt-6 w-full">
@@ -302,6 +316,10 @@
       <div class="mt-6">
         <app-passenger-ride-history></app-passenger-ride-history>
       </div>
+    </div>
+  } @else if (selectedTab === 'Analytics') {
+    <div class="w-5/6">
+      <app-ride-analytics></app-ride-analytics>
     </div>
   } @else if (selectedTab === 'Ride History' && userRole === 'DRIVER') {
     <div class="mt-6 w-full">

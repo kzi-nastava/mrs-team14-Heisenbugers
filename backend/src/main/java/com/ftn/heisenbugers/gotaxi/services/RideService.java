@@ -29,6 +29,7 @@ public class RideService {
     private final DriverService driverService;
     private final JwtService jwtService;
     private final NotificationService notificationService;
+    private final PriceRepository priceRepository;
 
     public CreatedRideDTO addRide(CreateRideDTO request) throws InvalidUserType {
 
@@ -60,6 +61,7 @@ public class RideService {
         ride.setCanceled(false);
         ride.setStart(start);
         ride.setEnd(end);
+        ride.setPrice(request.getRoute().getDistanceKm() * 120 + priceRepository.getStartingPriceByVehicleType(request.getVehicleType()));
         ride.setPassengers(new ArrayList<>());
         for (int i = 0; i < request.getPassengersEmails().size(); i++) {
             Optional<Passenger> p = passengerRepository.findByEmail(request.getPassengersEmails().get(i));
