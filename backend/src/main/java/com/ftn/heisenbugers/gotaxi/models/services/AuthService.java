@@ -255,6 +255,11 @@ public class AuthService {
                 userRepository.save(driver);
             }
 
+            if(driver.isBlocked()){
+                driver.setWorking(false);
+                userRepository.save(driver);
+            }
+
         }
 
         String role = resolveRole(user);

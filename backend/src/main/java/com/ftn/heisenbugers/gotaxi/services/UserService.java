@@ -63,7 +63,7 @@ public class UserService {
                 ? Sort.by(sortBy.getProperty()).descending()
                 : Sort.by(sortBy.getProperty()).ascending();
 
-
+/*
         if (startDate != null && endDate == null) {
             rides = rideRepository.findByPassengersContainingAndStartedAtAfter(passenger, startDate.atStartOfDay(), sort);
         } else if (startDate == null && endDate != null) {
@@ -86,7 +86,7 @@ public class UserService {
         }
 
         return rideHistoryDTOS;
-        /*if (startDate != null && endDate == null) {
+        */if (startDate != null && endDate == null) {
             rides = rideRepository.findByRoute_User_IdAndStartedAtAfter(
                     userId, startDate.atStartOfDay(), sort
             );
@@ -111,7 +111,7 @@ public class UserService {
             PopulateDto(r, dto);
             result.add(dto);
         }
-        return result;*/
+        return result;
 
 
     }
@@ -131,6 +131,13 @@ public class UserService {
 
         user.setBlocked(true);
         user.setBlockNote(note);
+
+        if (user.isBlocked() && user instanceof Driver d) {
+            if (d.isWorking() || d.isAvailable()) {
+                d.setWorking(false);
+                d.setAvailable(false);
+            }
+        }
         userRepository.save(user);
     }
 
