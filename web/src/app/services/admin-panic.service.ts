@@ -2,6 +2,19 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface RideDTO {
+  rideId: string;
+  route: RideLocation[];
+  startLocation: RideLocation;
+  endLocation: RideLocation;
+}
+
+export interface RideLocation {
+  latitude: number;
+  longitude: number;
+  address?: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AdminPanicService {
   private http = inject(HttpClient);
@@ -26,4 +39,13 @@ export class AdminPanicService {
   getRideTracking(rideId: string): Observable<any> {
     return this.http.get<any>(`http://localhost:8081/api/rides/${rideId}/tracking`);
   }
+
+  getRide(rideId: string): Observable<RideDTO> {
+    return this.http.get<RideDTO>(`${this.base}/rides/${rideId}`);
+  }
+
+  getAdminRide(rideId: string) {
+    return this.http.get<any>(`${this.base}/rides/${rideId}`);
+  }
+
 }
