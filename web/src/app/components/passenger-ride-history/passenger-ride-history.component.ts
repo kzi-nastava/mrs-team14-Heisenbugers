@@ -7,7 +7,7 @@ import {
   bootstrapArrowRight,
   bootstrapClock,
   bootstrapCash,
-  bootstrapExclamationCircleFill
+  bootstrapExclamationCircleFill, bootstrapHeart, bootstrapHeartFill
 } from '@ng-icons/bootstrap-icons';
 
 import { RideInfo } from '../../models/driver-info.model';
@@ -21,7 +21,9 @@ import { RideInfo } from '../../models/driver-info.model';
     bootstrapArrowRight,
     bootstrapClock,
     bootstrapCash,
-    bootstrapExclamationCircleFill
+    bootstrapExclamationCircleFill,
+    bootstrapHeart,
+    bootstrapHeartFill
   })]
 })
 export class PassengerRideHistoryComponent {
@@ -52,17 +54,53 @@ export class PassengerRideHistoryComponent {
           endTime: new Date((r as any).endedAt),
         }));
         this.loading = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       },
       error: (e) => {
         console.warn('Passenger history error:', e);
         this.rides = [];
         this.loading = false;
-        this.cdr.markForCheck();
+        this.cdr.detectChanges();
       }
     });
   }
 
+  toggleFavorite(ride: RideInfo) {
+    const currently = ride.favorite;
+    this.cdr.markForCheck();
+
+    if (!currently) {
+      if (!confirm('Add this route to favorites?')) return;
+      this.loading = true;
+      this.http.post(`${this.baseUrl}/favorite-routes/${ride.rideId}`, {}).subscribe({
+        next: () => {
+          this.loading = false;
+          ride.favorite = !currently;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Failed to add favorite', err);
+          //this.error = 'Failed to add favorite route';
+          this.loading = false;
+        }
+      });
+    } else {
+      if (!confirm('Remove this route from favorites?')) return;
+      this.loading = true;
+      this.http.delete(`${this.baseUrl}/favorite-routes/${ride.rideId}/ride`).subscribe({
+        next: () => {
+          this.loading = false;
+          ride.favorite = !currently;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('Failed to remove favorite', err);
+          //this.error = 'Failed to remove favorite route';
+          this.loading = false;
+        }
+      });
+    }
+    
   setSort(type: 'date' | 'price' | 'route') {
     this.sort = type;
   }
@@ -72,7 +110,6 @@ export class PassengerRideHistoryComponent {
 
     switch (this.sort) {
       case 'date':
-        // последние сверху
         return list.sort((a: any, b: any) =>
           new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
         );

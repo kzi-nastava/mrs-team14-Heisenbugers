@@ -44,7 +44,7 @@
     } @else {
       @for (r of sortedRides; track r.rideId) {
         <div
-          class="mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50"
+          class="flex flex-row mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50 items-center"
           [class.border-2]="r.panicTriggered"
           [class.border-red-500]="r.panicTriggered"
         >
@@ -75,6 +75,13 @@
 
             @if (r.panicTriggered) {
               <ng-icon name="bootstrapExclamationCircleFill" color="red" size="24"></ng-icon>
+            }
+          </button>
+          <button class="pr-3 mt-2 cursor-pointer" (click)="$event.stopPropagation(); toggleFavorite(r)">
+            @if (r.favorite) {
+              <ng-icon name="bootstrapHeartFill" size="24" color="#e11d48"></ng-icon>
+            } @else {
+              <ng-icon name="bootstrapHeart" size="24"></ng-icon>
             }
           </button>
         </div>
