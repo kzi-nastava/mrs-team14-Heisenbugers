@@ -344,6 +344,11 @@ public class RideService {
 
         rating.setLastModifiedBy(rater);
         ratingRepository.save(rating);
+        /*
+        ride.setRating(rating);
+        rideRepository.save(ride);
+
+         */
         return true;
     }
 
