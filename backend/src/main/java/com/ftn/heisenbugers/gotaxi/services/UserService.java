@@ -173,7 +173,7 @@ public class UserService {
         dto.setPanicTriggered(r.getPanicEvent() != null);
         dto.setCanceledBy(r.getCanceledBy());
         dto.setStartedAt(r.getStartedAt());
-
+        dto.setFavorite(r.getRoute().isFavorite());
     }
 
 }
