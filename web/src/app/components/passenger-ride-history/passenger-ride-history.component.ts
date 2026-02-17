@@ -15,7 +15,7 @@ import { RideInfo } from '../../models/driver-info.model';
 @Component({
   standalone: true,
   selector: 'app-passenger-ride-history',
-  imports: [CommonModule,NgIcon],
+  imports: [CommonModule, NgIcon],
   templateUrl: './passenger-ride-history.component.html',
   viewProviders: [provideIcons({
     bootstrapArrowRight,
@@ -26,11 +26,12 @@ import { RideInfo } from '../../models/driver-info.model';
 })
 export class PassengerRideHistoryComponent {
   private baseUrl = 'http://localhost:8081/api';
+  private endpoint = `${this.baseUrl}/users/history`;
 
   rides: RideInfo[] = [];
   loading = false;
 
-  private endpoint = `${this.baseUrl}/users/history`;
+  sort: 'date' | 'price' | 'route' = 'date';
 
   constructor(
     private http: HttpClient,
@@ -62,7 +63,36 @@ export class PassengerRideHistoryComponent {
     });
   }
 
+  setSort(type: 'date' | 'price' | 'route') {
+    this.sort = type;
+  }
+
+  get sortedRides(): RideInfo[] {
+    const list = [...this.rides];
+
+    switch (this.sort) {
+      case 'date':
+        // последние сверху
+        return list.sort((a: any, b: any) =>
+          new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime()
+        );
+
+      case 'price':
+        return list.sort((a: any, b: any) => (b.price ?? 0) - (a.price ?? 0));
+
+      case 'route':
+        return list.sort((a: any, b: any) => {
+          const ra = `${a.startAddress ?? ''}→${a.endAddress ?? ''}`.toLowerCase();
+          const rb = `${b.startAddress ?? ''}→${b.endAddress ?? ''}`.toLowerCase();
+          return ra.localeCompare(rb);
+        });
+
+      default:
+        return list;
+    }
+  }
+
   goToRide(ride: RideInfo) {
-    this.router.navigate(['/passenger-ride-history', ride.rideId], { state: { ride:ride } });
+    this.router.navigate(['/passenger-ride-history', ride.rideId], { state: { ride } });
   }
 }
