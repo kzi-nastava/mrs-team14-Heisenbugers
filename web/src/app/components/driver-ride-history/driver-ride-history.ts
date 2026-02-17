@@ -13,7 +13,7 @@ import {
 import { RideInfo } from '../../models/driver-info.model';
 import { Router } from '@angular/router';
 import { RateModal } from "../rate-modal/rate-modal.component";
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { OnInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { LatLng } from 'leaflet';
@@ -37,7 +37,8 @@ standalone: true,
 })
 export class RideHistoryComponent {
   private baseUrl = 'http://localhost:8081/api';
-  sort: 'date' | 'price' | 'route' = 'date';
+  sort: 'DATE' | 'PRICE' | 'DESTINATION' = 'DATE';
+  direction: 'asc' | 'desc' = 'asc'
   ratingRide: RideInfo | null = null;
 
   rides: RideInfo[] = [];
@@ -95,7 +96,15 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
 }
 
   ngOnInit(): void {
-    this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`).subscribe({
+    this.fetchRides()
+  }
+
+  fetchRides() {
+    const params = new HttpParams()
+    .set('sortBy', this.sort)         // RideSort enum value
+    .set('direction', this.direction);      // asc | desc
+
+    this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`, { params }).subscribe({
       next: (data) => {
         console.log('Fetched ride history:', data);
         this.rides = data.map(r => ({
@@ -115,12 +124,21 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
         this.cdr.markForCheck();
       }
     });
-    
   }
 
 
-  setSort(type: 'date' | 'price' | 'route') {
-    this.sort = type;
+  setSort(type: 'DATE' | 'PRICE' | 'DESTINATION') {
+    if (type === this.sort){
+      this.toggleDirection()
+    } else {
+      this.sort = type;
+      this.direction = 'asc'
+    }
+    this.fetchRides()
+  }
+
+  toggleDirection() {
+    this.direction = this.direction === 'asc' ? 'desc' : 'asc'
   }
 
   goToRide(ride: RideInfo){

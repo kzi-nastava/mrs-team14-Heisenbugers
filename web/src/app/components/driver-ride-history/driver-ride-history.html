@@ -9,24 +9,24 @@
     <div class="flex gap-2 mb-6">
       <button
         class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
-        [ngClass]="sort === 'date' ? 'border-black' : 'border-gray-400'"
-        (click)="setSort('date')"
+        [ngClass]="sort === 'DATE' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('DATE')"
       >
         by date
       </button>
 
       <button
         class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
-        [ngClass]="sort === 'price' ? 'border-black' : 'border-gray-400'"
-        (click)="setSort('price')"
+        [ngClass]="sort === 'PRICE' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('PRICE')"
       >
         by price
       </button>
 
       <button
         class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
-        [ngClass]="sort === 'route' ? 'border-black' : 'border-gray-400'"
-        (click)="setSort('route')"
+        [ngClass]="sort === 'DESTINATION' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('DESTINATION')"
       >
         by route
       </button>
