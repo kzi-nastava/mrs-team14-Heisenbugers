@@ -574,8 +574,8 @@ public class RideServiceTest {
         ride.setEnd(new Location(1, 1, "B"));
 
         Passenger placeholder = new Passenger();
-        placeholder.setFirstName(""); // triggers delete
-        placeholder.setLastName("");
+        placeholder.setFirstName("/"); // triggers delete
+        placeholder.setLastName("/");
         placeholder.setEmail("placeholder@example.com");
 
         Passenger normal = new Passenger();
