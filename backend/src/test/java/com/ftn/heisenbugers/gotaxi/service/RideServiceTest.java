@@ -11,7 +11,10 @@ import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.models.services.EmailService;
-import com.ftn.heisenbugers.gotaxi.repositories.*;
+import com.ftn.heisenbugers.gotaxi.repositories.PassengerRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.PriceRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import com.ftn.heisenbugers.gotaxi.services.DriverService;
 import com.ftn.heisenbugers.gotaxi.services.NotificationService;
 import com.ftn.heisenbugers.gotaxi.services.RideService;
@@ -273,10 +276,10 @@ public class RideServiceTest {
     void shouldSelectNearestFreeDriver() {
         Ride ride = rideWithStart(0, 0);
 
-        Driver far  = mockDriver(true);
+        Driver far = mockDriver(true);
         far.setLocation(new Location(10, 10, "far"));
         Driver near = mockDriver(true);
-        near.setLocation(new Location(1,  1,  "near"));
+        near.setLocation(new Location(1, 1, "near"));
 
         when(driverService.findActiveDrivers()).thenReturn(List.of(far, near));
         when(driverService.vehicleMatchesRequest(any(), anyBoolean(), anyBoolean(), any())).thenReturn(true);
@@ -355,7 +358,7 @@ public class RideServiceTest {
 
     private CreateRideDTO basicRequest() {
         LocationDTO start = new LocationDTO(0, 0, "start");
-        LocationDTO end   = new LocationDTO(5, 5, "end");
+        LocationDTO end = new LocationDTO(5, 5, "end");
 
         RouteDTO route = new RouteDTO();
         route.setStart(start);
@@ -551,6 +554,49 @@ public class RideServiceTest {
 
         assertTrue(ok);
         verify(emailService, never()).sendMail(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("finish: deletes passenger records that were created as placeholders (firstName == \"\")")
+    void finishDeletesPlaceholderPassengers() {
+        UUID rideId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+
+        Driver driver = new Driver();
+        driver.setId(driverId);
+        driver.setAvailable(false);
+
+        Ride ride = new Ride();
+        ride.setId(rideId);
+        ride.setStatus(RideStatus.ONGOING);
+        ride.setDriver(driver);
+        ride.setStart(new Location(0, 0, "A"));
+        ride.setEnd(new Location(1, 1, "B"));
+
+        Passenger placeholder = new Passenger();
+        placeholder.setFirstName(""); // triggers delete
+        placeholder.setLastName("");
+        placeholder.setEmail("placeholder@example.com");
+
+        Passenger normal = new Passenger();
+        normal.setFirstName("Real");
+        normal.setLastName("User");
+        normal.setEmail("real@example.com");
+
+        ride.setPassengers(List.of(placeholder, normal));
+
+        when(userRepository.findById(driverId)).thenReturn(Optional.of(driver));
+        when(rideRepository.findById(rideId)).thenReturn(Optional.of(ride));
+        when(rideRepository.save(any(Ride.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        boolean ok = rideService.finish(rideId, driverId);
+
+        assertTrue(ok);
+
+        verify(emailService, times(2)).sendMail(any(), any(), any());
+        verify(passengerRepository, times(1)).delete(placeholder);
+        verify(passengerRepository, never()).delete(normal);
     }
 
     @Test
