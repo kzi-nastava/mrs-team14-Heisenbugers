@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Top row with back arrow -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:srcCompat="@drawable/ic_arrow_back"
+                app:tint="@color/black"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Ride details"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@color/black"/>
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:visibility="gone" />
+
+        <!-- Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="@android:color/darker_gray">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Route (main) -->
+                <TextView
+                    android:id="@+id/tvRoute"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Start → Destination"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"/>
+
+                <!-- Chips row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="STATUS"
+                        app:chipCornerRadius="12dp"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipCanceled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="CANCELED"
+                        android:visibility="gone"
+                        app:chipCornerRadius="12dp"/>
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/chipPanic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="PANIC"
+                        android:visibility="gone"
+                        app:chipCornerRadius="12dp"/>
+                </LinearLayout>
+
+                <!-- key info row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvPrice"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Price"
+                        android:textStyle="bold"
+                        android:textColor="@color/black"/>
+
+                    <TextView
+                        android:id="@+id/tvTimes"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="Time"
+                        android:textColor="@color/black"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDriver"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:text="Driver"
+                    android:textColor="@color/black"/>
+
+                <!-- Map -->
+                <FrameLayout
+                    android:id="@+id/map_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    android:layout_marginTop="12dp"
+                    android:background="@android:color/darker_gray" />
+
+
+                <!-- Sections -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="Passengers"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/tvPassengers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Traffic violations"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/tvViolations"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="Rating"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+
+                <TextView
+                    android:id="@+id/tvRating"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textColor="@color/black"/>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
