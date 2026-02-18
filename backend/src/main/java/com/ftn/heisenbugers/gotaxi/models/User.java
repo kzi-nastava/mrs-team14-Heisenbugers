@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
+import com.ftn.heisenbugers.gotaxi.utils.ValidPhoneNumber;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +45,7 @@ public abstract class User extends BaseEntity {
     private String lastName;
 
     @NotBlank
+    @ValidPhoneNumber
     private String phone;
 
     @NotBlank
