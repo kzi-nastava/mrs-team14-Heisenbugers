@@ -66,6 +66,8 @@ dependencies {
 
     // TestNG
     testImplementation("org.testng:testng:7.12.0")
+
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.1")
 }
 
 tasks.withType<Test> {
