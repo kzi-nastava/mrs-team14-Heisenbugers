@@ -89,7 +89,7 @@ public class RideActionsService {
 
         for (User u : ride.getPassengers()) {
             sendFinishedRideEmail(u, ride);
-            if (Objects.equals(u.getFirstName(), "")) {
+            if (Objects.equals(u.getFirstName(), "/")) {
                 passengerRepository.delete((Passenger) u);
             }
         }
