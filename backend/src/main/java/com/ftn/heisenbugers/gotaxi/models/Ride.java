@@ -53,7 +53,6 @@ public class Ride extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
-    @NotNull
     private Driver driver;
 
     @ManyToOne(fetch = FetchType.LAZY)
