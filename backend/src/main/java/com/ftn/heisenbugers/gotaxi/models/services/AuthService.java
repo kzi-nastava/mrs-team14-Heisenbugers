@@ -5,10 +5,7 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.security.ActivationToken;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
-import com.ftn.heisenbugers.gotaxi.repositories.ActivationTokenRepository;
-import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
-import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
-import com.ftn.heisenbugers.gotaxi.repositories.VehicleRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.*;
 import com.ftn.heisenbugers.gotaxi.services.ImageStorageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +38,7 @@ public class AuthService {
     private final VehicleRepository vehicleRepository;
     private final ImageStorageService imageStorageService;
     private final RideRepository rideRepository;
+    private final LocationRepository locationRepository;
 
     @Value("${app.default.avatar-path:/images/default-avatar.png}")
     private String defaultAvatarPath;
@@ -138,6 +136,9 @@ public class AuthService {
         d.setPasswordHash(passwordEncoder.encode(request.getEmail()+request.getLastName()));
         d.setPhone(request.getPhone());
         d.setAddress(request.getAddress());
+        Location location = new Location(45.244490, 19.794949, "Bulevar Kneza Milosa");
+        locationRepository.save(location);
+        d.setLocation(location);
 
         String profilePath;
         if (image != null && !image.isEmpty()) {

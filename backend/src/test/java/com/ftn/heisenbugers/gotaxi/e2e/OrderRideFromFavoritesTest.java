@@ -45,6 +45,7 @@ public class OrderRideFromFavoritesTest extends TestBase{
         login.submit();
 
         BasePage base = new BasePage(driver);
+        Assert.assertTrue(base.isLoggedIn());
         base.clickOnFavorites();
 
         FavoritesPage favorites = new FavoritesPage(driver);

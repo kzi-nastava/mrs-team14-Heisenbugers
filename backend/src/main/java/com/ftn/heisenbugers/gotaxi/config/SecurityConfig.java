@@ -48,6 +48,8 @@ public class SecurityConfig {
                                 "/uploads/**",
                                 "/images/**",
                                 "/ws/**", "/ws/info**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
                                 "/api/rides/link-tracking/**").permitAll()
 
 

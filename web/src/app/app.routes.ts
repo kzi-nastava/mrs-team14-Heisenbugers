@@ -60,16 +60,12 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'driver-ride-history', component: RideHistoryComponent },
       { path: 'driver-ride-history/ride', component: RideCardComponent },
-      { path: 'driver-registration', component: DriverRegistrationComponent },
       { path: 'start-ride', component: StartRideComponent },
       { path: 'during-ride/:rideId', component: DuringRide, data: {external: false} },
-      { path: 'profile-requests', component: ProfileRequestsComponent},
-      { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
       { path: 'favorite-rides', component: FavoriteRoutesComponent },
       { path: 'analytics', component: RideAnalyticsComponent },
       { path: 'passenger-ride-history', component: PassengerRideHistoryComponent },
       { path: 'passenger-ride-history/:rideId', component: PassengerRideDetailsComponent },
-      { path: 'manage/users', component: BlockUsersComponent},
 
       // unregistered tracking
       {path: 'track', component: DuringRide, data: {external: true}},
@@ -85,12 +81,18 @@ export const routes: Routes = [
         component: AdminLayoutComponent,
         canActivate: [AdminGuard],
         children: [
+          { path: 'manage/users', component: BlockUsersComponent},
+          { path: 'profile-requests', component: ProfileRequestsComponent},
+          { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
+          { path: 'driver-registration', component: DriverRegistrationComponent },
           { path: 'panic', component: AdminPanicComponent },
           { path: 'rides', component: AdminRidesComponent },
           { path: 'rides/:rideId', component: AdminRideDetailsComponent },
           { path: '', redirectTo: 'panic', pathMatch: 'full' }
         ]
       },
+
+      { path: '**', redirectTo: 'home' },
 
     ]
   }
