@@ -68,7 +68,7 @@ public class RideService {
             if (p.isPresent()) {
                 ride.addPassenger(p.get());
             } else {
-                Passenger pass = new Passenger(request.getPassengersEmails().get(i), "", "", "", "", "");
+                Passenger pass = new Passenger(request.getPassengersEmails().get(i), "hashPassword", "/", "/", "0000000000", "Address");
                 ride.addPassenger(pass);
                 passengerRepository.save(pass);
             }
@@ -313,7 +313,7 @@ public class RideService {
 
         for (User u : ride.getPassengers()) {
             sendFinishedRideEmail(u, ride);
-            if (Objects.equals(u.getFirstName(), "")) {
+            if (Objects.equals(u.getFirstName(), "/")) {
                 passengerRepository.delete((Passenger) u);
             }
         }
@@ -366,7 +366,7 @@ public class RideService {
                         
                         Best regards, \s
                         GoTaxi 
-                        """.formatted(!Objects.equals(recipient.getFirstName(), "") ? recipient.getFirstName() : recipient.getEmail(), recipient.getLastName(),
+                        """.formatted(!Objects.equals(recipient.getFirstName(), "/") ? recipient.getFirstName() : recipient.getEmail(), recipient.getLastName(),
                         ride.getStart().getAddress(), ride.getEnd().getAddress());
         emailService.sendMail(recipient.getEmail(), subject, body);
     }
@@ -385,7 +385,7 @@ public class RideService {
                         
                         Best regards, \s
                         GoTaxi 
-                        """.formatted(!Objects.equals(recipient.getFirstName(), "") ? recipient.getFirstName() : recipient.getEmail(), recipient.getLastName(),
+                        """.formatted(!Objects.equals(recipient.getFirstName(), "/") ? recipient.getFirstName() : recipient.getEmail(), recipient.getLastName(),
                         ride.getRoute().getStart().getAddress(), ride.getRoute().getDestination().getAddress(), "http://localhost:4200/track?token=" + token);
         emailService.sendMail(recipient.getEmail(), subject, body);
     }
