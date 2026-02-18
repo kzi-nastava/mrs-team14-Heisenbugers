@@ -60,14 +60,12 @@ export class DriverRegistrationComponent {
     return !!c && c.invalid && (c.touched || this.submitAttempted);
   }
 
-
   submit() {
     this.submitAttempted = true;
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-
 
     this.registrationService.registerDriver(this.form.value, this.imagePreview).subscribe({
       next: () => {
@@ -79,7 +77,6 @@ export class DriverRegistrationComponent {
       }
     });
   }
-
 
   onPickImage(ev: Event) {
     const input = ev.target as HTMLInputElement;
