@@ -245,13 +245,16 @@ class StopRideIntegrationTest {
     }
 
     private Driver persistDriverWithVehicle(String email) {
-        // Persists a driver + vehicle with minimum required fields
         Driver d = new Driver();
         d.setEmail(email);
-        d.setPasswordHash("test");
+
+        d.setPasswordHash("123456789");
+
         d.setFirstName("Test");
         d.setLastName("Driver");
-        d.setPhone("000");
+
+        d.setPhone("+88005553555");
+
         d.setAddress("Addr");
         d.setActivated(true);
         d.setBlocked(false);
@@ -273,4 +276,7 @@ class StopRideIntegrationTest {
 
         return (Driver) userRepository.save(d);
     }
+
+
+
 }
