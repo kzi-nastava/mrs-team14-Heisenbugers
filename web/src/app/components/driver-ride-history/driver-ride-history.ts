@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import {
@@ -13,15 +13,17 @@ import {
 import { RideInfo } from '../../models/driver-info.model';
 import { Router } from '@angular/router';
 import { RateModal } from "../rate-modal/rate-modal.component";
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { OnInit } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { LatLng } from 'leaflet';
+import { RateService } from '../../services/rate.service';
+import { FormsModule } from '@angular/forms';
 
 
 @Component({
 standalone: true,
-  imports: [CommonModule, NgIcon, RateModal],
+  imports: [CommonModule, NgIcon, RateModal, FormsModule],
   selector: 'app-ride-history',
   templateUrl: './driver-ride-history.html',
   styleUrls: ['./driver-ride-history.css'],
@@ -36,7 +38,8 @@ standalone: true,
 })
 export class RideHistoryComponent {
   private baseUrl = 'http://localhost:8081/api';
-  sort: 'date' | 'price' | 'route' = 'date';
+  sort: 'DATE' | 'PRICE' | 'DESTINATION' = 'DATE';
+  direction: 'asc' | 'desc' = 'asc'
   ratingRide: RideInfo | null = null;
 
   rides: RideInfo[] = [];
@@ -87,14 +90,31 @@ export class RideHistoryComponent {
   }];
   toastMessage?: string;
   toastVisible?: boolean;
+  startDate: string | null = null;
+  endDate: string | null = null;
 
 
-constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef) {
+constructor(private router: Router, private http: HttpClient, private cdr: ChangeDetectorRef, private rateService: RateService) {
 
 }
 
   ngOnInit(): void {
-    this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`).subscribe({
+    this.fetchRides()
+  }
+
+  fetchRides() {
+    let params = new HttpParams()
+    .set('sortBy', this.sort)
+    .set('direction', this.direction);
+
+    if (this.startDate) {
+      params = params.set('startDate', this.startDate)
+    }
+    if (this.endDate) {
+      params = params.set('endDate', this.endDate)
+    }
+
+    this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`, { params }).subscribe({
       next: (data) => {
         console.log('Fetched ride history:', data);
         this.rides = data.map(r => ({
@@ -114,12 +134,21 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
         this.cdr.markForCheck();
       }
     });
-    
   }
 
 
-  setSort(type: 'date' | 'price' | 'route') {
-    this.sort = type;
+  setSort(type: 'DATE' | 'PRICE' | 'DESTINATION') {
+    if (type === this.sort){
+      this.toggleDirection()
+    } else {
+      this.sort = type;
+      this.direction = 'asc'
+    }
+    this.fetchRides()
+  }
+
+  toggleDirection() {
+    this.direction = this.direction === 'asc' ? 'desc' : 'asc'
   }
 
   goToRide(ride: RideInfo){
@@ -149,7 +178,7 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
         "vehicleScore": data.vehicleRate,
         "comment": data.comment,
       }
-      this.http.post(`${this.baseUrl}/rides/${this.ratingRide?.rideId}/rate`, sendingData)
+      this.rateService.sendRate(this.ratingRide!.rideId, sendingData)
       .subscribe({
       next: () => this.showToast('Rating recorded successfully!'),
       error: (error) => {
@@ -163,4 +192,37 @@ constructor(private router: Router, private http: HttpClient, private cdr: Chang
     this.closeRateModal();
     console.log(sendingData)
   }
+
+  applyDateFilter(): void {
+  let params = new HttpParams()
+    .set('sortBy', this.sort)
+    .set('direction', this.direction);
+
+  if (this.startDate) {
+    params = params.set('startDate', this.startDate);
+  }
+
+  if (this.endDate) {
+    params = params.set('endDate', this.endDate);
+  }
+
+  this.http.get<RideInfo[]>(`${this.baseUrl}/drivers/history`, { params })
+    .subscribe(data => {
+      this.rides = data.map(r => ({
+        ...r,
+        startedAt: new Date(r.startedAt),
+        startTime: new Date(r.startedAt),
+        endTime: new Date(r.endedAt),
+        endedAt: new Date(r.endedAt),
+      }));
+      this.cdr.markForCheck();
+    });
+  }
+
+  clearDateFilter(): void {
+    this.startDate = null;
+    this.endDate = null;
+    this.applyDateFilter();
+  }
+
 }

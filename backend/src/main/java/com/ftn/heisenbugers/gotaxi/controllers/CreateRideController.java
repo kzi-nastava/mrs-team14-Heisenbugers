@@ -1,7 +1,9 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
 
+import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Ride;
+import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreateRideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreatedRideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.DriverDto;
@@ -20,22 +22,29 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/rides")
 public class CreateRideController {
-    private final RideRepository rideRepository;
     private final RideService rideService;
 
-    public CreateRideController(RideRepository rideRepository, RideService rideService) {
-        this.rideRepository = rideRepository;
+    public CreateRideController(RideService rideService) {
         this.rideService = rideService;
     }
 
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CreatedRideDTO> createRide(@RequestBody CreateRideDTO request) throws InvalidUserType {
-
-        CreatedRideDTO ride = rideService.addRide(request);
-
-        return new ResponseEntity<>(ride, HttpStatus.CREATED);
+    public ResponseEntity<?> createRide(@RequestBody CreateRideDTO request) throws InvalidUserType {
+        User user = AuthContextService.getCurrentUser();
+        if (user.isBlocked()){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Your account is blocked! Reason: " + user.getBlockNote());
+        }
+        try {
+            CreatedRideDTO ride = rideService.addRide(request);
+            return new ResponseEntity<>(ride, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("There is no free driver available!")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            }
+            throw e;
+        }
     }
 
     @PutMapping(value = "/{id}/start",

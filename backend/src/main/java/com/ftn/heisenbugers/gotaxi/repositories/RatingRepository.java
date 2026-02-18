@@ -10,4 +10,5 @@ import java.util.UUID;
 
 public interface RatingRepository extends JpaRepository<Rating, UUID> {
     Optional<Rating> findByRaterAndRide(User rater, Ride ride);
+    Optional<Rating> findByRideId(UUID rideId);
 }

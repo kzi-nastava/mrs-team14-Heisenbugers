@@ -6,9 +6,11 @@ import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
-import com.ftn.heisenbugers.gotaxi.models.services.AuthService;
+import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.models.services.EmailService;
 import com.ftn.heisenbugers.gotaxi.repositories.*;
+import com.ftn.heisenbugers.gotaxi.utils.DrivingSimulator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class RideService {
     private final RideRepository rideRepository;
     private final UserRepository userRepository;
@@ -25,18 +28,10 @@ public class RideService {
     private final RatingRepository ratingRepository;
     private final EmailService emailService;
     private final DriverService driverService;
-
-    public RideService(RideRepository rideRepository, UserRepository userRepository,
-                       TrafficViolationRepository violationRepository, RatingRepository ratingRepository, EmailService emailService,
-                       PassengerRepository passengerRepository, DriverService driverService) {
-        this.rideRepository = rideRepository;
-        this.userRepository = userRepository;
-        this.passengerRepository = passengerRepository;
-        this.violationRepository = violationRepository;
-        this.ratingRepository = ratingRepository;
-        this.emailService = emailService;
-        this.driverService = driverService;
-    }
+    private final JwtService jwtService;
+    private final NotificationService notificationService;
+    private final PriceRepository priceRepository;
+    private final DrivingSimulator drivingSimulator;
 
     public CreatedRideDTO addRide(CreateRideDTO request) throws InvalidUserType {
 
@@ -48,7 +43,7 @@ public class RideService {
         List<Location> stops = new ArrayList<Location>();
         List<Location> points = new ArrayList<Location>();
         points.add(start);
-        for (int i = 0; i<request.getRoute().getStops().size(); i++){
+        for (int i = 0; i < request.getRoute().getStops().size(); i++) {
             Location stop = new Location(request.getRoute().getStops().get(i).getLatitude(), request.getRoute().getStops().get(i).getLongitude(), request.getRoute().getStops().get(i).getAddress());
             stops.add(stop);
         }
@@ -68,34 +63,52 @@ public class RideService {
         ride.setCanceled(false);
         ride.setStart(start);
         ride.setEnd(end);
+        ride.setPrice(request.getRoute().getDistanceKm() * 120 + priceRepository.getStartingPriceByVehicleType(request.getVehicleType()));
         ride.setPassengers(new ArrayList<>());
-        for (int i = 0; i<request.getPassengersEmails().size(); i++){
+        for (int i = 0; i < request.getPassengersEmails().size(); i++) {
             Optional<Passenger> p = passengerRepository.findByEmail(request.getPassengersEmails().get(i));
-            ride.addPassenger(p.get());
+            if (p.isPresent()) {
+                ride.addPassenger(p.get());
+            } else {
+                Passenger pass = new Passenger(request.getPassengersEmails().get(i), "hashPassword", "/", "/", "0000000000", "Address");
+                ride.addPassenger(pass);
+                passengerRepository.save(pass);
+            }
         }
 
-        if(request.getScheduledAt() != null){
+        if (request.getScheduledAt() != null) {
             ZonedDateTime zdt = ZonedDateTime.parse(request.getScheduledAt());
             ride.setScheduledAt(zdt.withZoneSameInstant(ZoneId.systemDefault())
                     .toLocalDateTime());
+            ride.setBabyTransport(request.isBabyTransport());
+            ride.setPetTransport(request.isPetTransport());
+            ride.setVehicleType(request.getVehicleType());
             rideRepository.save(ride);
             return new CreatedRideDTO(ride.getId(), request.getRoute(), request.getVehicleType(), request.isBabyTransport(),
                     request.isPetTransport(), request.getPassengersEmails(), null, RideStatus.REQUESTED);
-        }else{
+        } else {
             ride.setScheduledAt(null);
         }
 
         Optional<Driver> driver = assignDriverToRide(ride, request.isPetTransport(), request.isBabyTransport(), request.getVehicleType());
 
-        if(driver.isEmpty()){
+        if (driver.isEmpty()) {
             throw new RuntimeException("There is no free driver available!");
-        }else{
+        } else {
             ride.setDriver(driver.get());
             ride.setStatus(RideStatus.ASSIGNED);
             ride.setVehicle(driver.get().getVehicle());
             driver.get().setAvailable(false);
             rideRepository.save(ride);
-            sendAcceptedRideEmail(ride.getRoute().getUser(), ride);
+            Map<String, Object> claims = Map.of(
+                    "rideId", ride.getId().toString()
+            );
+            sendAcceptedRideEmail(ride.getRoute().getUser(), ride, jwtService.generateToken(ride.getRoute().getUser().getEmail(), claims));
+            for (int i = 0; i < ride.getPassengers().size(); i++) {
+                sendAcceptedRideEmail(ride.getPassengers().get(i), ride, jwtService.generateToken(ride.getPassengers().get(i).getEmail(), claims));
+            }
+            notificationService.notifyUser(ride.getRoute().getUser(), "Your ride has been confirmed!",
+                    ride, "/base");
         }
 
         return new CreatedRideDTO(ride.getId(), request.getRoute(), ride.getVehicle().getType(), ride.getVehicle().isBabyTransport(),
@@ -272,13 +285,16 @@ public class RideService {
         return true;
     }
 
-    public boolean start(UUID rideId){
+    public boolean start(UUID rideId) {
         Ride ride = rideRepository.findById(rideId).get();
 
         ride.setStatus(RideStatus.ONGOING);
         ride.setStartedAt(LocalDateTime.now());
         ride.setLastModifiedBy(ride.getDriver());
-        ride.getDriver().setAvailable(true);
+        try {
+            drivingSimulator.driveRoute(ride.getRoute(), ride.getDriver().getId());
+        } catch (Exception ignored) {
+        }
         rideRepository.save(ride);
 
         return true;
@@ -302,6 +318,9 @@ public class RideService {
 
         for (User u : ride.getPassengers()) {
             sendFinishedRideEmail(u, ride);
+            if (Objects.equals(u.getFirstName(), "/")) {
+                passengerRepository.delete((Passenger) u);
+            }
         }
         return true;
     }
@@ -330,6 +349,11 @@ public class RideService {
 
         rating.setLastModifiedBy(rater);
         ratingRepository.save(rating);
+        /*
+        ride.setRating(rating);
+        rideRepository.save(ride);
+
+         */
         return true;
     }
 
@@ -347,12 +371,12 @@ public class RideService {
                         
                         Best regards, \s
                         GoTaxi 
-                        """.formatted(recipient.getFirstName(), recipient.getLastName(),
+                        """.formatted(!Objects.equals(recipient.getFirstName(), "/") ? recipient.getFirstName() : recipient.getEmail(), recipient.getLastName(),
                         ride.getStart().getAddress(), ride.getEnd().getAddress());
         emailService.sendMail(recipient.getEmail(), subject, body);
     }
 
-    private void sendAcceptedRideEmail(User recipient, Ride ride) {
+    public void sendAcceptedRideEmail(User recipient, Ride ride, String token) {
         String subject = "Subject: Your Ride Is Confirmed!";
         String body =
                 """
@@ -360,16 +384,19 @@ public class RideService {
                         
                         Your ride from %s to %s with us is confirmed. Our Driver will soon be at your location.
                         
+                        You can track your ride on this link: %s
+                        
                         Thank you for choosing our service.
                         
                         Best regards, \s
                         GoTaxi 
-                        """.formatted(recipient.getFirstName(), recipient.getLastName(),
-                        ride.getRoute().getStart().getAddress(), ride.getRoute().getDestination().getAddress());
+                        """.formatted(!Objects.equals(recipient.getFirstName(), "/") ? recipient.getFirstName() : recipient.getEmail(), recipient.getLastName(),
+                        ride.getRoute().getStart().getAddress(), ride.getRoute().getDestination().getAddress(), "http://localhost:4200/track?token=" + token);
         emailService.sendMail(recipient.getEmail(), subject, body);
     }
 
     private boolean isInLastNDays(Ride r, long n) {
+        if (r.getEndedAt() == null) return true;
         return r.getEndedAt().isAfter(LocalDateTime.now().minusDays(n));
     }
 

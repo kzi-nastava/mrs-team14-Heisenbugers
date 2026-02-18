@@ -1,0 +1,88 @@
+<div class="w-full" data-testid="admin-rides-root">
+  <div class="flex items-center justify-between">
+    <div>
+      <p class="mt-2 text-gray-600" data-testid="admin-rides-hint">
+        Select a passenger or driver to view ride history. Use filters and sorting inside the modal.
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-5 flex gap-3" data-testid="admin-rides-toolbar">
+    <button
+      data-testid="tab-passengers"
+      class="cursor-pointer border rounded-xl px-4 py-2 hover:bg-gray-100"
+      (click)="setTab('PASSENGERS')"
+      [class]="{'bg-[#C5E55D] border-lime-300': tab==='PASSENGERS', 'border-gray-200 text-gray-700': tab!=='PASSENGERS'}"
+    >
+      Passengers
+    </button>
+
+    <button
+      data-testid="tab-drivers"
+      class="cursor-pointer border rounded-xl px-4 py-2 hover:bg-gray-100"
+      (click)="setTab('DRIVERS')"
+      [class]="{'bg-[#C5E55D] border-lime-300': tab==='DRIVERS', 'border-gray-200 text-gray-700': tab!=='DRIVERS'}"
+    >
+      Drivers
+    </button>
+
+    <div class="flex-1"></div>
+
+    <input
+      data-testid="user-search"
+      class="border border-gray-200 rounded-xl px-3 py-2 w-[320px]"
+      placeholder="Search name or email..."
+      [(ngModel)]="searchText"
+    />
+  </div>
+
+  <div class="mt-4" data-testid="users-section">
+    @if (error) {
+      <div data-testid="users-error" class="border border-red-200 bg-red-50 rounded-xl p-4 text-red-700">{{ error }}</div>
+    } @else if (!list.length) {
+      <div data-testid="users-empty" class="border border-gray-200 rounded-xl p-4 text-gray-600">No users found</div>
+    } @else {
+      <div data-testid="users-list" class="grid grid-cols-1 gap-2">
+        @for (u of list; track u.id) {
+          <button
+            data-testid="user-item"
+            [attr.data-user-id]="u.id"
+            [attr.data-user-role]="tab"
+            type="button"
+            class="cursor-pointer border border-gray-200 rounded-xl p-3 hover:bg-gray-50 text-left flex items-center gap-3"
+            (click)="openUser(u)"
+          >
+            <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center">
+              @if (u.profileImageUrl) {
+                <img
+                  data-testid="user-avatar"
+                  [src]="avatarUrl(u.profileImageUrl)"
+                  (error)="onAvatarError($event)"
+                  class="w-10 h-10 rounded-full object-cover border"
+                  alt="avatar"
+                />
+              } @else {
+                <div class="text-sm text-gray-500">👤</div>
+              }
+            </div>
+
+            <div class="flex-1">
+              <div data-testid="user-fullname" class="font-semibold">{{ u.fullName }}</div>
+              <div data-testid="user-email" class="text-sm text-gray-600">{{ u.email }}</div>
+            </div>
+
+            <div class="text-gray-400">›</div>
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <app-admin-user-rides-modal
+    data-testid="user-rides-modal-host"
+    [open]="modalOpen"
+    [tab]="tab"
+    [user]="selectedUser"
+    (close)="closeModal()"
+  ></app-admin-user-rides-modal>
+</div>

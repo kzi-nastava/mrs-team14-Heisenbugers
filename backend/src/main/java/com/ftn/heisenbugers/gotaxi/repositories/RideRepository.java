@@ -52,11 +52,50 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
 
     Optional<Ride> findByRoute_User_IdAndStatus(UUID userId, RideStatus status);
 
+
     @Query("""
                 SELECT r FROM Ride r
                 WHERE r.driver.id = :driverId
                 AND r.status IN ('ASSIGNED', 'ONGOING')
             """)
     List<Ride> findActiveRidesByDriver(@Param("driverId") UUID driverId);
+
+    List<Ride> findByRoute_User_Id(UUID userId, Sort sort);
+
+    List<Ride> findByRoute_User_IdAndStartedAtAfter(UUID userId, LocalDateTime start, Sort sort);
+
+    List<Ride> findByRoute_User_IdAndStartedAtBefore(UUID userId, LocalDateTime end, Sort sort);
+
+    List<Ride> findByRoute_User_IdAndStartedAtBetween(
+            UUID userId, LocalDateTime start, LocalDateTime end, Sort sort
+    );
+
+    List<Ride> findByStatus(RideStatus status);
+
+    @Query("""
+        SELECT r FROM Ride r
+        WHERE r.endedAt BETWEEN :start AND :end
+        AND r.status = 'FINISHED'
+    """)
+    List<Ride> findAllCompletedBetween(LocalDateTime start, LocalDateTime end);
+
+    @Query("""
+        SELECT r FROM Ride r
+        WHERE r.driver.id = :driverId
+        AND r.endedAt BETWEEN :start AND :end
+        AND r.status = 'FINISHED'
+    """)
+    List<Ride> findDriverRidesBetween(UUID driverId, LocalDateTime start, LocalDateTime end);
+
+    @Query("""
+    SELECT r FROM Ride r
+    WHERE r.route.user.id = :userId
+    AND r.endedAt BETWEEN :start AND :end
+    AND r.status = 'FINISHED'
+""")
+    List<Ride> findOrderedRidesBetween(UUID userId, LocalDateTime start, LocalDateTime end);
+
+
+    List<Ride> findByStatusAndScheduledAtAfter(RideStatus status, LocalDateTime scheduledAt);
 
 }

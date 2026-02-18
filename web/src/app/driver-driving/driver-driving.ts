@@ -13,6 +13,7 @@ import {
   bootstrapStar, bootstrapStarFill, bootstrapX
 } from '@ng-icons/bootstrap-icons';
 import {DatePipe, DecimalPipe} from '@angular/common';
+import { ChatComponent } from "../components/chat/chat.component";
 
 
 interface StopRideResponse {
@@ -33,8 +34,9 @@ interface StopRideResponse {
     MapComponent,
     NgIcon,
     DecimalPipe,
-    DatePipe
-  ],
+    DatePipe,
+    ChatComponent
+],
   templateUrl: './driver-driving.html',
   styleUrl: './driver-driving.css',
   viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
@@ -58,6 +60,8 @@ class DriverDriving {
   stopResult?: StopRideResponse;
 
   private panicApi = inject(PanicService);
+  chatOpen: boolean = false;
+  chatId: string = '';
 
   constructor(
     private http: HttpClient,
@@ -170,14 +174,24 @@ class DriverDriving {
     //const rideId = this.ride?.rideId;
     if (!this.rideId) return;
 
-    const msg = prompt('Describe the problem (optional):') ?? '';
+    const res = prompt('Describe the problem (optional):');
+
+    if (res === null) return;
+
+    const msg = res.trim();
     this.panicApi.panic(String(this.rideId), msg).subscribe({
       next: () => alert('Panic sent to administrators.'),
       error: (e) => alert(e?.error?.message ?? 'Panic failed')
     });
   }
 
-  chatClick(): void {}
+  toggleChat(){
+    this.chatOpen = !this.chatOpen;
+  }
+
+  closeChat() {
+    this.chatOpen = false
+  }
 
 
 }

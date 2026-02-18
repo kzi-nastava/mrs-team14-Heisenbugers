@@ -1,6 +1,6 @@
 <div class="absolute bg-white top-0 bottom-0 left-60 -translate-x-1/2 z-50 p-10 overflow-y-auto max-h-auto">
   @if (messageText) {
-    <div [class]="(messageType === 'error' ? 'bg-red-600 text-white' : (messageType === 'success' ? 'bg-lime-400 text-black' : 'bg-gray-800 text-white')) + ' fixed top-6 right-6 z-70 p-3 rounded shadow'">
+    <div id="message" [class]="(messageType === 'error' ? 'bg-red-600 text-white' : (messageType === 'success' ? 'bg-lime-400 text-black' : 'bg-gray-800 text-white')) + ' fixed top-6 right-6 z-70 p-3 rounded shadow'">
       {{ messageText }}
     </div>
   }
@@ -106,7 +106,7 @@
     }
   </div>
   <div class="flex flex-row gap-2 mb-8">
-    <div (click)="selectVehicle('STANDARD')" role="button" tabindex="0" (keydown.enter)="selectVehicle('STANDARD')" (keydown.space)="selectVehicle('STANDARD')" [attr.aria-pressed]="selectedVehicle === 'STANDARD'" class="cursor-pointer">
+    <div id="standard-vehicle-button" (click)="selectVehicle('STANDARD')" role="button" tabindex="0" (keydown.enter)="selectVehicle('STANDARD')" (keydown.space)="selectVehicle('STANDARD')" [attr.aria-pressed]="selectedVehicle === 'STANDARD'" class="cursor-pointer">
       <img alt="Standard vehicle" src="icons/standard.svg" [class]="'border-2 rounded-2xl ' + (selectedVehicle === 'STANDARD' ? 'border-lime-400' : 'border-gray-400')" />
     </div>
     <div (click)="selectVehicle('LUXURY')" role="button" tabindex="0" (keydown.enter)="selectVehicle('LUXURY')" (keydown.space)="selectVehicle('LUXURY')" [attr.aria-pressed]="selectedVehicle === 'LUXURY'" class="cursor-pointer">
@@ -136,6 +136,7 @@
 
   <div class="flex flex-col gap-4 mt-auto pt-6">
     <button
+      id="order-ride-button"
       type="button"
       class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#C5E55D] text-black font-semibold shadow hover:bg-lime-200 active:scale-[0.99] cursor-pointer"
       (click)="orderRide()"
@@ -143,6 +144,7 @@
       Order
     </button>
     <button
+      id="schedule-ride-button"
       type="button"
       class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#F0F0F0] text-[#000000B3] font-semibold shadow hover:bg-gray-200 active:scale-[0.99] cursor-pointer"
       (click)="showScheduler = true">
@@ -152,7 +154,7 @@
 </div>
 <div class="absolute bottom-4 right-4 z-50 p-10">
   <div class="bg-[#F5F5F5D9] w-40 px-2 py-2 rounded-2xl mb-3">
-    <p>Time: {{ formatMinutesToHours(routeSummary?.timeMin) }}</p>
+    <p id="time-calculation">Time: {{ formatMinutesToHours(routeSummary?.timeMin) }}</p>
   </div>
   <div class="bg-[#F5F5F5D9] w-40 px-2 py-2 rounded-2xl mb-3">
     <p>Distance: {{routeSummary?.distanceKm}} KM</p>

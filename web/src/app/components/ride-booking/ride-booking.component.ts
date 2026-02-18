@@ -6,6 +6,8 @@ import {Observable, Subject, Subscription, of} from 'rxjs';
 import {debounceTime, distinctUntilChanged, switchMap, catchError} from 'rxjs/operators';
 import {HttpClient} from '@angular/common/http';
 import {ScheduleComponent} from '../schedule/schedule.component';
+import {IsBlockedDTO} from '../../models/users.model';
+import {PriceDTO} from '../../models/ride.model';
 
 @Component({
   selector: 'app-ride-booking',
@@ -42,6 +44,8 @@ export class RideBookingComponent implements OnDestroy {
   waypointSuggestionsVisible = new Map<any, boolean>();
 
   pins: { id?: string; lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[] = [];
+
+  prices: PriceDTO[] = [];
 
   @Output() pinsChange = new EventEmitter<
     { lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[]
@@ -134,6 +138,7 @@ export class RideBookingComponent implements OnDestroy {
   }
 
   ngOnInit(): void {
+    this.loadPrices();
     if (this.route) {
       setTimeout(() => {
         this.applyFavoriteRoute(this.route);
@@ -395,15 +400,27 @@ export class RideBookingComponent implements OnDestroy {
     });
   }
 
+  loadPrices(): void {
+    this.http.get<PriceDTO>(`http://localhost:8081/api/prices`).subscribe({
+      next: (data) => {
+        this.prices = Array.isArray(data) ? data : [];
+        console.log(this.prices);
+      },
+      error: (error) => {
+        console.warn('Error:', error);
+      }
+    });
+  }
+
   calculatePrice(): string {
     if (!this.routeSummary || !this.routeSummary.distanceKm) return "";
     const distance = Number(this.routeSummary.distanceKm);
     if(this.selectedVehicle == "STANDARD"){
-      this.price = (distance * 120 + 100).toFixed(2);
+      this.price = (distance * 120 + Number(this.prices.find(v => v.vehicleType === "STANDARD")?.startingPrice)).toFixed(2);
     } else if(this.selectedVehicle == "LUXURY"){
-      this.price = (distance * 120 + 450).toFixed(2);
+      this.price = (distance * 120 + Number(this.prices.find(v => v.vehicleType === "LUXURY")?.startingPrice)).toFixed(2);
     } else if(this.selectedVehicle == "VAN"){
-      this.price = (distance * 120 + 200).toFixed(2);
+      this.price = (distance * 120 + Number(this.prices.find(v => v.vehicleType === "VAN")?.startingPrice)).toFixed(2);
     } else {
       this.price = "";
     }
@@ -473,7 +490,11 @@ export class RideBookingComponent implements OnDestroy {
       },
       error: (err) => {
         console.error('Ride creation failed', err);
-        this.showMessage(err?.error?.message ?? 'Failed to create ride.', 'error');
+        const errorMessage = typeof err.error === 'string'
+          ? err.error
+          : (err.error?.message || 'Failed to create ride.');
+
+        this.showMessage(errorMessage, 'error');
       }
     });
   }
@@ -487,22 +508,49 @@ export class RideBookingComponent implements OnDestroy {
       timeMin: route.timeMin
     };
 
-    const newPins = [
-      {
+    this.waypoints = [];
+
+    const newPins: { id?: string; lat: number; lng: number; snapToRoad: boolean; popup: string; iconUrl: string }[] = [];
+
+    if (route.startAddress && (route.startAddress.latitude != null && route.startAddress.longitude != null)) {
+      newPins.push({
         lat: route.startAddress.latitude,
         lng: route.startAddress.longitude,
         snapToRoad: true,
         popup: 'Start',
         iconUrl: 'icons/pin.svg'
-      },
-      {
+      });
+    }
+
+    if (Array.isArray(route.stops) && route.stops.length > 0) {
+      route.stops.forEach((s: any, idx: number) => {
+        const addr = s.address || s.display_name || s.name || '';
+        const wpObj = { value: addr };
+        const pinId = 'wp-' + Math.random().toString(36).slice(2, 9) + '-' + Date.now();
+        (wpObj as any)._pinId = pinId;
+        (wpObj as any)._lat = (s.latitude != null ? s.latitude : (s.lat != null ? parseFloat(s.lat) : undefined));
+        (wpObj as any)._lng = (s.longitude != null ? s.longitude : (s.lon != null ? parseFloat(s.lon) : undefined));
+
+        this.waypoints.push(wpObj);
+
+        const lat = (s.latitude != null ? s.latitude : (s.lat != null ? parseFloat(s.lat) : undefined));
+        const lng = (s.longitude != null ? s.longitude : (s.lon != null ? parseFloat(s.lon) : undefined));
+
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          newPins.push({ id: pinId, lat, lng, snapToRoad: true, popup: `Waypoint ${idx + 1}`, iconUrl: 'icons/pin.svg' });
+        }
+      });
+    }
+
+    if (route.endAddress && (route.endAddress.latitude != null && route.endAddress.longitude != null)) {
+      newPins.push({
         lat: route.endAddress.latitude,
         lng: route.endAddress.longitude,
         snapToRoad: true,
         popup: 'End',
         iconUrl: 'icons/pin.svg'
-      }
-    ];
+      });
+    }
 
     Promise.resolve().then(() => {
       this.pins = newPins;

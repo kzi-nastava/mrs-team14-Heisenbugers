@@ -3,21 +3,18 @@ package com.ftn.heisenbugers.gotaxi.controllers;
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
 import com.ftn.heisenbugers.gotaxi.models.Passenger;
 import com.ftn.heisenbugers.gotaxi.models.User;
-import com.ftn.heisenbugers.gotaxi.models.dtos.RideHistoryDTO;
-import com.ftn.heisenbugers.gotaxi.models.dtos.UserStateDTO;
+import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideSort;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import com.ftn.heisenbugers.gotaxi.services.UserService;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -53,5 +50,29 @@ public class UserController {
     public ResponseEntity<UserStateDTO> getState() throws InvalidUserType {
         UserStateDTO state = userService.getState(AuthContextService.getCurrentUser().getId());
         return ResponseEntity.ok(state);
+    }
+
+    @GetMapping("/blockable")
+    public ResponseEntity<List<BlockableUserDTO>> getBlockableUsers(){
+        return ResponseEntity.ok(userService.getBlockableUsers());
+    }
+
+    @PostMapping("/{id}/block")
+    public ResponseEntity<Void> block(@PathVariable String id, @RequestBody(required = false) String note) {
+        userService.block(UUID.fromString(id), note);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/unblock")
+    public ResponseEntity<Void> unblock(@PathVariable String id) {
+        userService.unblock(UUID.fromString(id));
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/is-blocked")
+    public ResponseEntity<IsBlockedDTO> isBlocked() throws InvalidUserType {
+        User user = AuthContextService.getCurrentUser();
+
+        return ResponseEntity.ok(userService.isBlocked(user.getEmail()));
     }
 }

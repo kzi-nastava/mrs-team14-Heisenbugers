@@ -1,0 +1,55 @@
+<div class="flex w-full gap-4 h-full">
+  <div
+    class="border border-gray-200 rounded-xl p-4"
+    [class.w-full]="!selectedChat"
+    [class.w-1/2]="selectedChat"
+  >
+    <div class="flex items-center justify-between"><div></div></div>
+    <div class="mt-5 flex gap-3"><div class="flex-1"></div></div>
+    <div class="mt-4">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilter()"
+        placeholder="🔍 Search chats..."
+        class="w-full border border-gray-300 rounded-xl p-2"
+      />
+    </div>
+    <div class="mt-4 h-full" (click)="chooseChat(null)">
+      @if (!filteredList.length) {
+        <div class="border border-gray-200 rounded-xl p-4 text-gray-600">No rides found</div>
+      } @else {
+        <div class="grid grid-cols-1 gap-2">
+          @for (u of filteredList; track $index) {
+            <button
+              type="button"
+              class="cursor-pointer border border-gray-200 rounded-xl p-3 hover:bg-gray-50 text-left flex items-center gap-4"
+              [ngClass]="{
+                'border-lime-500 bg-lime-50': selectedChat === u,
+                'border-gray-200 hover:bg-gray-50': selectedChat !== u,
+              }"
+              (click)="chooseChat($index); $event.stopPropagation()"
+            >
+              <div class="flex-1">
+                <div class="flex items-center gap-2 font-semibold">
+                  <ng-icon name="bootstrapPerson"></ng-icon> {{ u.driver.firstName }}
+                  {{ u.driver.lastName }}
+                </div>
+              </div>
+              <div class="text-gray-400 text-xl">
+                <ng-icon name="bootstrapChevronRight"></ng-icon>
+              </div>
+            </button>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Right half -->
+  @if (selectedChat != undefined) {
+    <div class="w-1/2 h-180 border border-gray-200 rounded-xl p-4">
+      <app-chat [chatId]="selectedChat.chatId" [isAdmin]="true"></app-chat>
+    </div>
+  }
+</div>

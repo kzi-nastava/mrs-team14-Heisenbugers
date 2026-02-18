@@ -9,89 +9,104 @@
 
     <!-- Right actions -->
     <div class="flex items-center gap-6 text-white">
-      <app-driver-status-toggle></app-driver-status-toggle>
+      @if (isDriver) {
+        <app-driver-status-toggle></app-driver-status-toggle>
+      }
       <!-- Notifications -->
       <div class="relative">
         <button
           class="flex h-10 w-10 items-center justify-center rounded-full border border-white/70 cursor-pointer"
+          (click)="toggleNotifications()"
         >
           <ng-icon name="bootstrapBell" size="20"></ng-icon>
         </button>
-        <span
-          class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-semibold"
-        >
-          1
-        </span>
+        @if (unreadCount > 0) {
+          <span
+            class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-600 text-[10px] font-semibold"
+          >
+            {{ unreadCount }}
+          </span>
+        }
+        @if (notificationsOpen) {
+          <!-- Notification menu -->
+          <div
+            class="absolute right-0 top-12 w-100 max-h-80 overflow-y-auto rounded-lg bg-zinc-900 shadow-lg ring-1 ring-white/10 z-50"
+          >
+            @for (n of notifications; track n) {
+              <div class="">
+                <button
+                  class="w-full h-full cursor-pointer px-4 py-3 hover:bg-zinc-800 border-b border-white/10 text-left"
+                  (click)="goTo(n.redirectUrl)"
+                >
+                  {{ n.message }}
+                </button>
+              </div>
+            }
+            @if (notifications.length === 0) {
+              <div class="px-4 py-3 text-sm text-white/50">No notifications</div>
+            }
+          </div>
+        }
       </div>
 
-      <!-- Settings -->
+      <!-- Admin -->
+      @if (isAdmin) {
+        <button
+          data-testid="admin-dashboard-button"
+          class="flex h-10 w-10 items-center justify-center rounded-full border border-white/70 cursor-pointer"
+          (click)="goToAdminDashboard()"
+        >
+          <ng-icon name="bootstrapSliders2Vertical" size="20"></ng-icon>
+        </button>
+      }
+
+      <!-- Favorites -->
       <button
+        id="favorites-button"
         class="flex h-10 w-10 items-center justify-center rounded-full border border-white/70 cursor-pointer"
+        (click)="openFavorites()"
       >
         <ng-icon name="bootstrapHeart" size="20"></ng-icon>
       </button>
 
       <!-- Avatar -->
-      <button (click)="toggleMenu()" id="profile-button" class="cursor-pointer">
+      <button (click)="toggleProfileMenu()" id="profile-button" class="cursor-pointer">
         <img
-          src="https://i.pravatar.cc/40"
+          [src]="profilePhotoUrl"
           alt="User"
           class="h-10 w-10 rounded-full border border-white/70 object-cover"
         />
       </button>
-      @if(menuOpen){
-      <!-- Profile menu -->
-      <div
-        class="absolute right-0 top-14 w-44 rounded-lg bg-zinc-900 shadow-lg ring-1 ring-white/10 m-4 z-500"
-        id="profile-menu-container"
-      >
-        <button
-          class="flex w-full items-center gap-2 px-6 py-4 text-sm hover:bg-zinc-800 rounded-lg cursor-pointer"
-          (click)="goToProfile()"
+      @if (profileMenuOpen) {
+        <!-- Profile menu -->
+        <div
+          class="absolute right-0 top-14 w-44 rounded-lg bg-zinc-900 shadow-lg ring-1 ring-white/10 m-4 z-500"
+          id="profile-menu-container"
         >
-          Profile
-        </button>
-
-        <button
-          class="flex w-full items-center gap-2 px-6 py-4 text-sm hover:bg-zinc-800 rounded-lg cursor-pointer"
-          (click)="goToHistory()"
-        >
-          History
-        </button>
-
-        <button
-          class="flex w-full items-center gap-2 px-6 py-4 text-sm hover:bg-zinc-800 rounded-lg cursor-pointer"
-        >
-          Settings
-        </button>
-
-        @if (auth.getRole() == "ADMIN") {
           <button
             class="flex w-full items-center gap-2 px-6 py-4 text-sm hover:bg-zinc-800 rounded-lg cursor-pointer"
-            (click)="goToRegisterDriver()"
+            (click)="goToProfile()"
           >
-            Register driver
+            Profile
           </button>
 
           <button
+            id="history-button"
             class="flex w-full items-center gap-2 px-6 py-4 text-sm hover:bg-zinc-800 rounded-lg cursor-pointer"
-            (click)="goToProfileChanges()"
+            (click)="goToHistory()"
           >
-            Profile changes
+            History
           </button>
-        }
 
-        <div class="my-1 h-px bg-white/10"></div>
+          <div class="my-1 h-px bg-white/10"></div>
 
-
-
-        <button
-          class="flex w-full items-center gap-2 px-6 py-4 text-sm text-red-400 hover:bg-zinc-800 rounded-lg cursor-pointer"
-          (click)="logOut()"
-        >
-          Log out
-        </button>
-      </div>
+          <button
+            class="flex w-full items-center gap-2 px-6 py-4 text-sm text-red-400 hover:bg-zinc-800 rounded-lg cursor-pointer"
+            (click)="logOut()"
+          >
+            Log out
+          </button>
+        </div>
       }
     </div>
   </div>

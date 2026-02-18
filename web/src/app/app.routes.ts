@@ -21,9 +21,22 @@ import { HomeContainer } from './home-container/home-container.component';
 import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
 import { AdminPanicComponent } from './components/admin/admin-panic/admin-panic.component';
 import { AdminGuard } from './components/admin/admin.guard';
+import { AdminRidesComponent } from './components/admin/admin-rides/admin-rides.component';
+import { AdminRideDetailsComponent } from './components/admin/admin-ride-details/admin-ride-details.component';
+
 import {DriverProfileRequestComponent} from './components/driver-profile-request/driver-profile-request.component';
 import {ProfileRequestsComponent} from './components/profile-requests/profile-requests.component';
 import {FavoriteRoutesComponent} from './components/favorite-routes/favorite-routes.component';
+import { ChatComponent } from './components/chat/chat.component';
+import {AuthService} from './components/auth/auth.service';
+import { PassengerRideHistoryComponent } from './components/passenger-ride-history/passenger-ride-history.component';
+import { PassengerRideDetailsComponent } from './components/passenger-ride-history/ride-details/passenger-ride-details.component';
+import { AdminPrice } from './components/admin/admin-price/admin-price';
+import { AdminAllRidesComponent } from './components/admin/admin-all-rides/admin-all-rides.component';
+import { AdminChats } from './components/admin/admin-chats/admin-chats.component';
+import { BlockUsersComponent } from './components/block-users/block-users.component';
+import { RideAnalyticsComponent } from './components/ride-analytics/ride-analytics.component';
+import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -47,12 +60,20 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'driver-ride-history', component: RideHistoryComponent },
       { path: 'driver-ride-history/ride', component: RideCardComponent },
-      { path: 'driver-registration', component: DriverRegistrationComponent },
       { path: 'start-ride', component: StartRideComponent },
-      { path: 'during-ride/:rideId', component: DuringRide },
-      { path: 'profile-requests', component: ProfileRequestsComponent},
-      { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
+      { path: 'during-ride/:rideId', component: DuringRide, data: {external: false} },
       { path: 'favorite-rides', component: FavoriteRoutesComponent },
+      { path: 'analytics', component: RideAnalyticsComponent },
+      { path: 'passenger-ride-history', component: PassengerRideHistoryComponent },
+      { path: 'passenger-ride-history/:rideId', component: PassengerRideDetailsComponent },
+
+      // unregistered tracking
+      {path: 'track', component: DuringRide, data: {external: true}},
+
+      {path: 'test', component: AdminDashboardComponent},
+
+      {path: 'admin-dashboard', component: AdminDashboardComponent},
+
 
       // admin
       {
@@ -60,10 +81,19 @@ export const routes: Routes = [
         component: AdminLayoutComponent,
         canActivate: [AdminGuard],
         children: [
+          { path: 'manage/users', component: BlockUsersComponent},
+          { path: 'profile-requests', component: ProfileRequestsComponent},
+          { path: 'driver-profile-requests', component: DriverProfileRequestComponent},
+          { path: 'driver-registration', component: DriverRegistrationComponent },
           { path: 'panic', component: AdminPanicComponent },
+          { path: 'rides', component: AdminRidesComponent },
+          { path: 'rides/:rideId', component: AdminRideDetailsComponent },
           { path: '', redirectTo: 'panic', pathMatch: 'full' }
         ]
-      }
+      },
+
+      { path: '**', redirectTo: 'home' },
+
     ]
   }
 ];

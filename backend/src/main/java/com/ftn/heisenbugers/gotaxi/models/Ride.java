@@ -1,6 +1,7 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
+import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -46,13 +47,12 @@ public class Ride extends BaseEntity {
     @JoinColumn(name = "end_id")
     private Location end;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "canceled_by_id")
     private User canceledBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id")
-    @NotNull
     private Driver driver;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -81,6 +81,14 @@ public class Ride extends BaseEntity {
     @OneToOne(mappedBy = "ride", cascade = CascadeType.ALL)
     private PanicEvent panicEvent;
 
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    boolean petTransport = false;
+
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    boolean babyTransport = false;
+
+    @Enumerated(EnumType.STRING)
+    VehicleType vehicleType;
 
     public void addPassenger(Passenger p) {
         this.passengers.add(p);

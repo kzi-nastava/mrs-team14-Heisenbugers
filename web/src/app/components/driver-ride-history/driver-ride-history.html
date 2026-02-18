@@ -1,15 +1,7 @@
 <div class="flex font-sans h-full">
-  <!-- Sidebar -->
-  <aside class="w-[260px] border-r border-gray-300 p-6">
-    <div class="w-16 h-16 rounded-full bg-gray-200 mb-3"></div>
-    <div class="font-semibold">John Doe</div>
-    <div class="text-sm text-gray-500">johndoe@gmail.com</div>
-  </aside>
-
-  <!-- Content -->
   <main class="flex-1 p-8 justify-center w-full">
     <div class="flex items-center justify-between mb-4">
-      <h2 class="text-xl font-semibold">Ride History</h2>
+      <h2 class="text-3xl font-semibold">Ride History</h2>
       <span class="text-lg cursor-pointer">⇅</span>
     </div>
 
@@ -17,31 +9,66 @@
     <div class="flex gap-2 mb-6">
       <button
         class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
-        [ngClass]="sort === 'date' ? 'border-black' : 'border-gray-400'"
-        (click)="setSort('date')"
+        [ngClass]="sort === 'DATE' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('DATE')"
       >
         by date
       </button>
 
       <button
         class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
-        [ngClass]="sort === 'price' ? 'border-black' : 'border-gray-400'"
-        (click)="setSort('price')"
+        [ngClass]="sort === 'PRICE' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('PRICE')"
       >
         by price
       </button>
 
       <button
         class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
-        [ngClass]="sort === 'route' ? 'border-black' : 'border-gray-400'"
-        (click)="setSort('route')"
+        [ngClass]="sort === 'DESTINATION' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('DESTINATION')"
       >
         by route
       </button>
     </div>
 
+    <!-- Date range filter -->
+    <div class="flex items-end gap-4 mb-6">
+      <div class="flex flex-col">
+        <label class="text-sm mb-1">From</label>
+        <input
+          type="date"
+          [(ngModel)]="startDate"
+          class="px-3 py-1 border border-gray-300 rounded-md text-sm"
+        />
+      </div>
+
+      <div class="flex flex-col">
+        <label class="text-sm mb-1">To</label>
+        <input
+          type="date"
+          [(ngModel)]="endDate"
+          class="px-3 py-1 border border-gray-300 rounded-md text-sm"
+        />
+      </div>
+
+      <button
+        class="px-4 py-2 rounded-md bg-black text-white text-sm hover:opacity-80 cursor-pointer"
+        (click)="fetchRides()"
+      >
+        Apply
+      </button>
+
+      <button
+        class="px-4 py-2 rounded-md border border-gray-400 text-sm hover:opacity-80 cursor-pointer"
+        (click)="clearDateFilter()"
+      >
+        Clear
+      </button>
+    </div>
+
     <!-- Ride list -->
-    @for (r of rides; track r) {
+    @for (r of rides; track $index) {
       <div
         [class.border-2]="r.panicTriggered"
         [class.border-red-500]="r.panicTriggered"
@@ -77,11 +104,6 @@
                 class="mx-3"
               ></ng-icon>
             }
-            @if (!r.rated) {
-              <button class="cursor-pointer" (click)="$event.stopPropagation(); openRateModal(r)">
-                <ng-icon name="bootstrapFeather" size="24" class="mx-3"></ng-icon>
-              </button>
-            }
           </div>
         </button>
       </div>
@@ -91,6 +113,7 @@
 
 @if (this.ratingRide != null) {
   <app-rate-modal
+    id="rate-modal"
     [ride]="this.ratingRide"
     (onClose)="closeRateModal()"
     (onSubmit)="submitRateForm($event)"
@@ -99,6 +122,7 @@
 
 @if (toastVisible) {
   <div
+    id="toast"
     class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg"
   >
     {{ toastMessage }}

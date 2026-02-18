@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
+import com.ftn.heisenbugers.gotaxi.models.dtos.NotificationDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -31,4 +32,20 @@ public class Notification extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ride_id")
     private Ride ride;
+
+    private String redirectUrl;
+
+    public static NotificationDTO toDto(Notification notification) {
+        return new NotificationDTO(
+                notification.getId(),
+                notification.getMessage(),
+                notification.isRead(),
+                notification.getCreatedAt(),
+                notification.getReadAt(),
+                notification.getRide() != null
+                        ? notification.getRide().getId()
+                        : null,
+                notification.redirectUrl
+        );
+    }
 }

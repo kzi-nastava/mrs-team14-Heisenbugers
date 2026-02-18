@@ -46,14 +46,18 @@ public class SecurityConfig {
                                 "/api/drivers/activate",
                                 "/api/test/trigger",
                                 "/uploads/**",
-                                "/images/**").permitAll()
-                                
+                                "/images/**",
+                                "/ws/**", "/ws/info**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/api/rides/link-tracking/**").permitAll()
+
 
                         // ERROR
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/rides/*/panic").hasAnyRole("DRIVER","PASSENGER")
-
+                        // TODO: Accept panic from all users
+                        .requestMatchers(HttpMethod.POST, "/api/rides/*/panic").hasAnyRole("DRIVER", "PASSENGER")
 
 
                         .anyRequest().authenticated()

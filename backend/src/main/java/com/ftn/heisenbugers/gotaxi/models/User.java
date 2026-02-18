@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.models;
 
+import com.ftn.heisenbugers.gotaxi.utils.ValidPhoneNumber;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +45,7 @@ public abstract class User extends BaseEntity {
     private String lastName;
 
     @NotBlank
+    @ValidPhoneNumber
     private String phone;
 
     @NotBlank
@@ -53,6 +55,8 @@ public abstract class User extends BaseEntity {
 
     @NotNull
     private boolean blocked = false;
+
+    private String blockNote;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Notification> notifications;

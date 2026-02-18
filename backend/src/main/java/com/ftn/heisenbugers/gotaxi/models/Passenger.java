@@ -19,4 +19,13 @@ public class Passenger extends User {
 
     @ManyToMany(mappedBy = "passengers", fetch = FetchType.EAGER)
     private List<Ride> rides;
+
+    public Passenger(String email,
+                     String passwordHash,
+                     String firstName,
+                     String lastName,
+                     String phone,
+                     String address) {
+        super(false, email, passwordHash, firstName, lastName, phone, address, "/images/default-avatar.png", false, null, null, null);
+    }
 }

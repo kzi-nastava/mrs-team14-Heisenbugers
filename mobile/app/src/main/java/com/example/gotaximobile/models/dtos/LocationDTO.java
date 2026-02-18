@@ -1,7 +1,7 @@
 package com.example.gotaximobile.models.dtos;
 
 public class LocationDTO {
-    private double latitude;
-    private double longitude;
-    private String address;
+    public double latitude;
+    public double longitude;
+    public String address;
 }

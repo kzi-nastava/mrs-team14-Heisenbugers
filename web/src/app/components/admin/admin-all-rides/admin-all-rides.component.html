@@ -1,0 +1,69 @@
+<div class="w-full">
+  <div class="flex items-center justify-between">
+    <div></div>
+  </div>
+
+  <div class="mt-5 flex gap-3">
+    <div class="flex-1"></div>
+  </div>
+
+  <div class="mt-4">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (input)="applyFilter()"
+      placeholder="🔍 Search rides..."
+      class="w-full border border-gray-300 rounded-xl p-2"
+    />
+  </div>
+
+  <div class="mt-4">
+    @if (!filteredList.length) {
+      <div class="border border-gray-200 rounded-xl p-4 text-gray-600">No rides found</div>
+    } @else {
+      <div class="grid grid-cols-1 gap-2">
+        @for (u of filteredList; track u) {
+          <button
+            type="button"
+            class="cursor-pointer border border-gray-200 rounded-xl p-3 hover:bg-gray-50 text-left flex items-center gap-4"
+            (click)="openRideModal(u)"
+          >
+            <div class="flex-1">
+              <!-- Driver -->
+              <div class="flex items-center gap-2 font-semibold">
+                <ng-icon name="bootstrapPerson"></ng-icon>
+                {{ u.driver.firstName }} {{ u.driver.lastName }}
+              </div>
+
+              <!-- Start -->
+              <div class="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                <ng-icon name="bootstrapGeoAlt"></ng-icon>
+                <span>{{ u.ride.startAddress }}</span>
+                <ng-icon name="bootstrapClock" class="ml-3"></ng-icon>
+                <span>{{ u.ride.startedAt | date: 'short' }}</span>
+              </div>
+
+              <!-- End -->
+              <div class="flex items-center gap-2 text-sm text-gray-600 mt-1">
+                <ng-icon name="bootstrapFlag"></ng-icon>
+                <span>{{ u.ride.destinationAddress }}</span>
+                <ng-icon name="bootstrapClock" class="ml-3"></ng-icon>
+                <span>
+                  {{ u.ride.endedAt ? (u.ride.endedAt | date: 'short') : 'Ongoing' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="text-gray-400 text-xl">
+              <ng-icon name="bootstrapChevronRight"></ng-icon>
+            </div>
+          </button>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+@if (modalOpen) {
+  <admin-ride-info [dto]="selectedRide" (close)="modalOpen = false"></admin-ride-info>
+}

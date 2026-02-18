@@ -38,7 +38,7 @@ public class Route extends BaseEntity {
     @JoinColumn(name = "destination_location_id")
     private Location destination;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "route_id")
     private List<Location> stops;
 
@@ -63,6 +63,10 @@ public class Route extends BaseEntity {
         return Arrays.stream(coords)
                 .map(c -> new Location(c[1], c[0]))
                 .toList();
+    }
+
+    public List<Location> getStopsWithAddresses(){
+        return stops;
     }
 
 }

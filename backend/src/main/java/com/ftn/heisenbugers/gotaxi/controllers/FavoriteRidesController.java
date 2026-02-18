@@ -30,21 +30,21 @@ public class FavoriteRidesController {
         );
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<FavoriteRouteDTO> createFavoriteRoute(
-            @RequestBody FavoriteRouteDTO request) {
-
-        FavoriteRouteDTO route = new FavoriteRouteDTO();
-        route.setId(request.getId());
-        //route.setRoute(request.getRoute());
-
-        return new ResponseEntity<>(route, HttpStatus.CREATED);
+    @PostMapping("/{id}")
+    public ResponseEntity<Void> approve(@PathVariable UUID id) {
+        favoriteRouteService.addFavorite(id);
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFavorite(@PathVariable UUID id) {
         favoriteRouteService.deleteFavorite(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/ride")
+    public ResponseEntity<Void> deleteFavoriteFromRide(@PathVariable UUID id) {
+        favoriteRouteService.deleteFavoriteFromRide(id);
         return ResponseEntity.noContent().build();
     }
 }

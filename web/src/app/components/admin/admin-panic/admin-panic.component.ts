@@ -1,9 +1,9 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminPanicService } from '../../../services/admin-panic.service';
+import { AdminPanicService, RideDTO } from '../../../services/admin-panic.service';
 import { MapComponent, MapPin, carSelectedIcon } from '../../map/map.component';
-
-
+import * as L from 'leaflet';
+import { firstValueFrom } from 'rxjs';
 
 //http://localhost:4200/admin/panic
 @Component({
@@ -14,6 +14,7 @@ import { MapComponent, MapPin, carSelectedIcon } from '../../map/map.component';
 })
 export class AdminPanicComponent implements OnInit, OnDestroy {
   private api = inject(AdminPanicService);
+  @ViewChild(MapComponent) mapCmp!: MapComponent;
 
   panics: any[] = [];
   notifications: any[] = [];
@@ -94,52 +95,95 @@ export class AdminPanicComponent implements OnInit, OnDestroy {
     this.selectedRideId = rideId;
     this.selectedPanicId = panicId;
 
-    const lat = p?.vehicleLat;
-    const lng = p?.vehicleLng;
-
-    if (typeof lat === 'number' && typeof lng === 'number') {
-      this.pins = [{
-        lat,
-        lng,
-        popup: `PANIC ride: ${rideId}`,
-        iconUrl: carSelectedIcon,
-        snapToRoad: false,
-      }];
-      return;
-    }
-
     try {
-      const tr = await this.api.getRideTracking(rideId).toPromise();
-      const vLat = tr?.vehicleLatitude;
-      const vLng = tr?.vehicleLongitude;
+      const ride = await this.api.getAdminRide(rideId).toPromise();
 
-      if (typeof vLat === 'number' && typeof vLng === 'number') {
+
+      const start = ride?.startLocation ?? ride?.start ?? null;
+      const end   = ride?.destination;
+      const stops = Array.isArray(ride?.stops) ? ride.stops : [];
+
+
+
+      const pins: MapPin[] = [];
+
+      // Start
+      if (typeof start?.latitude === 'number' && typeof start?.longitude === 'number') {
+        pins.push({
+          lat: start.latitude,
+          lng: start.longitude,
+          popup: 'Start',
+          snapToRoad: true,
+        });
+      }
+
+      // Stops (если есть)
+      if (stops.length > 2) {
+        for (const s of stops.slice(1, -1)) {
+          if (typeof s?.latitude === 'number' && typeof s?.longitude === 'number') {
+            pins.push({
+              lat: s.latitude,
+              lng: s.longitude,
+              popup: 'Stop',
+              snapToRoad: true,
+            });
+          }
+        }
+      }
+
+      // End
+      if (typeof end?.latitude === 'number' && typeof end?.longitude === 'number') {
+        pins.push({
+          lat: end.latitude,
+          lng: end.longitude,
+          popup: 'End',
+          snapToRoad: true,
+        });
+      }
+
+      // Panic marker
+      const panicLat = p?.vehicleLat;
+      const panicLng = p?.vehicleLng;
+      if (typeof panicLat === 'number' && typeof panicLng === 'number') {
+        pins.push({
+          lat: panicLat,
+          lng: panicLng,
+          popup: p?.message ? `PANIC: ${p.message}` : 'PANIC',
+          iconUrl: carSelectedIcon,
+          snapToRoad: false,
+        });
+      }
+
+      this.pins = pins;
+
+    } catch {
+
+      // fallback: только panic marker
+      const panicLat = p?.vehicleLat;
+      const panicLng = p?.vehicleLng;
+      if (typeof panicLat === 'number' && typeof panicLng === 'number') {
         this.pins = [{
-          lat: vLat,
-          lng: vLng,
-          popup: `PANIC ride: ${rideId}`,
+          lat: panicLat,
+          lng: panicLng,
+          popup: p?.message ? `PANIC: ${p.message}` : 'PANIC',
           iconUrl: carSelectedIcon,
           snapToRoad: false,
         }];
       } else {
         this.pins = [];
       }
-    } catch {
-      this.pins = [];
     }
   }
 
+
   async resolvePanic() {
     if (!this.selectedPanicId) return;
-
     try {
-      await this.api.resolvePanic(this.selectedPanicId).toPromise();
-
+      await firstValueFrom(this.api.resolvePanic(this.selectedPanicId));
       await this.poll(true);
       this.selectedPanicId = null;
       this.selectedRideId = null;
       this.pins = [];
-    } catch {
-    }
+    } catch {}
   }
 }

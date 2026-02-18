@@ -14,8 +14,10 @@ import { ActivatedRoute } from '@angular/router';
 import { RideInfo } from '../../models/driver-info.model';
 import { LatLng } from 'leaflet';
 import { ChangeDetectorRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { RideRateInfo } from '../../models/ride.model';
+import { ChatComponent } from "../chat/chat.component";
+import {AuthService} from '../auth/auth.service';
 
 interface Location {
   latitude: number,
@@ -50,7 +52,7 @@ export interface RideDTO {
 
 @Component({
   selector: 'app-during-ride',
-  imports: [MapComponent, NgIcon, FormsModule, RateModal],
+  imports: [MapComponent, NgIcon, FormsModule, RateModal, ChatComponent],
   templateUrl: './during-ride.component.html',
   viewProviders: [provideIcons({ bootstrapExclamationCircleFill, bootstrapChatDots, bootstrapFeather, bootstrapStar, bootstrapStarFill, bootstrapX })]
 
@@ -59,7 +61,9 @@ export interface RideDTO {
 
 export class DuringRide {
   @Input() rideId!: string;
+  @Input() external!: boolean;
   private stops?: L.LatLng[]
+  chatId: string = "";
   private baseUrl = 'http://localhost:8081/api';
 
   private mockStops: L.LatLng[] = [
@@ -82,29 +86,6 @@ export class DuringRide {
   @ViewChild('noteFocus') noteFocus!: ElementRef<HTMLInputElement>;
   @ViewChild(MapComponent) mapCmp!: MapComponent;
 
-
-  /*ride: RideInfo = {
-
-    rideId: 'ride-' + Math.random().toString(36).substr(2, 9),
-    driverName: 'Vozac Vozacovic',
-    startAddress: 'ул.Атамана Головатого 2а',
-    endAddress: 'ул.Красная 113',
-    startedAt: new Date('2025-12-19T08:12:00'),
-    endedAt: new Date('2025-12-19T10:12:00'),
-    price: 350,
-    rating: 3.5,
-    maxRating: 5,
-    canceled: false,
-    passengers: [
-      {firstName: 'Alice', lastName: 'Alisic'},
-      {firstName: 'Bob', lastName: 'Bobic'},
-      {firstName: 'Carl', lastName: 'Carlic'},
-      {firstName: 'Denise', lastName: 'Denisic'}
-    ],
-    trafficViolations: [{type: 'Red light'}],
-    panicTriggered: false
-
-  };*/
   NotesIsOpen: boolean = false;
   rateIsOpen: boolean = false;
   driverRate = 0;
@@ -112,18 +93,12 @@ export class DuringRide {
   etimateMinutes?: number;
 
   location: MapPin = { lat: 45.249570, lng: 19.815809, popup: 'You are here', iconUrl: carSelectedIcon };
-  passengers = [
-    { name: 'Alice Alisic', avatar: 'https://i.pravatar.cc/150?img=1' },
-    { name: 'Bob Bobic', avatar: 'https://i.pravatar.cc/150?img=2' },
-    { name: 'Carl Carlic', avatar: 'https://i.pravatar.cc/150?img=3' },
-    { name: 'Denise Denisic', avatar: 'https://i.pravatar.cc/150?img=4' }
-  ];
-
   toastVisible = false;
   toastMessage = '';
+  chatOpen: boolean = false;
 
 
-  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute) {
+  constructor(private cdr: ChangeDetectorRef, private http: HttpClient, private route: ActivatedRoute, private authService: AuthService) {
 
     if (!this.mockStops || this.mockStops.length < 2){
       return;
@@ -137,6 +112,21 @@ export class DuringRide {
   }
 
   ngOnInit(): void {
+    const token = this.route.snapshot.queryParamMap.get('token') ?? "";
+    var id;
+    if (this.external) {
+      id = this.authService.getRideId(token);
+    }
+
+    if(id){
+      this.rideId = id;
+    }
+
+    if (this.external === undefined) {
+      this.route.data.subscribe(data => {
+      this.external = data['external'] ?? false;
+      });
+    }
 
     const fromRoute = this.route.snapshot.paramMap.get('rideId');
     if (!this.rideId && fromRoute) {
@@ -148,8 +138,22 @@ export class DuringRide {
       this.useMockData('Missing rideId');
       return;
     }
+    let urls = [`${this.baseUrl}/rides/${this.rideId}/tracking`, `${this.baseUrl}/rides/${this.rideId}` ]
+    if (this.external) {
+      console.log('External tracking mode');
+      urls = [`${this.baseUrl}/rides/link-tracking/tracking`, `${this.baseUrl}/rides/link-tracking/ride`]
+    }
 
-    this.http.get<TrackingDTO>(`${this.baseUrl}/rides/${this.rideId}/tracking`).subscribe({
+    this.subscribeForRide(urls);
+
+  }
+
+  subscribeForRide(urls: string[]): void {
+
+    const token = this.route.snapshot.queryParamMap.get('token');
+    const params = new HttpParams().set('token', token ?? '');
+
+    this.http.get<TrackingDTO>(urls[0], { params }).subscribe({
       next: (data) => {
         this.vehicleCoords = {
           vehicleLatitude: data.vehicleLatitude,
@@ -167,7 +171,7 @@ export class DuringRide {
       error: (error) => this.useMockData(error)
     });
 
-    this.http.get<RideDTO>(`${this.baseUrl}/rides/${this.rideId}`).subscribe({
+    this.http.get<RideDTO>(urls[1], { params }).subscribe({
       next: (data) => {
         this.stops = data.route.map((l: Location) => {
           return new LatLng(l.latitude, l.longitude);
@@ -198,7 +202,7 @@ export class DuringRide {
       this.addEstimateMinutes()
       },
       error: (error) => this.useMockData(error)
-    })
+    });
   }
 
   addEstimateMinutes(): void {
@@ -365,11 +369,23 @@ export class DuringRide {
     //const rideId = this.ride?.rideId;
     if (!this.rideId) return;
 
-    const msg = prompt('Describe the problem (optional):') ?? '';
+    const res = prompt('Describe the problem (optional):');
+
+    if (res === null) return;
+
+    const msg = res.trim();
+
     this.panicApi.panic(String(this.rideId), msg).subscribe({
       next: () => alert('Panic sent to administrators.'),
       error: (e) => alert(e?.error?.message ?? 'Panic failed')
     });
+  }
+
+  toggleChat(){
+    this.chatOpen = !this.chatOpen;
+  }
+  closeChat(){
+    this.chatOpen = false;
   }
 
 }

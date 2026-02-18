@@ -1,0 +1,177 @@
+<div class="flex flex-row justify-between m-7">
+  <label class="text-xl"> Admin Dashboard </label>
+</div>
+
+<div class="py-5 px-7 flex flex-row gap-50">
+  <div class="flex ml-7 flex-col items-start">
+    <div class="gap-1.5 flex flex-col mr-5">
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Rides')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Rides',
+          'border-gray-200': selectedTab !== 'Rides',
+          'text-gray-700': selectedTab !== 'Rides',
+          'bg-[#C5E55D]': selectedTab === 'Rides',
+        }"
+      >
+        Rides
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Panic Dashboard')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Panic Dashboard',
+          'border-gray-200': selectedTab !== 'Panic Dashboard',
+          'text-gray-700': selectedTab !== 'Panic Dashboard',
+          'bg-[#C5E55D]': selectedTab === 'Panic Dashboard',
+        }"
+      >
+        Panic Dashboard
+      </button>
+      <button
+        data-testid="admin-ride-history-btn"
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Admin Ride History')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Admin Ride History',
+          'border-gray-200': selectedTab !== 'Admin Ride History',
+          'text-gray-700': selectedTab !== 'Admin Ride History',
+          'bg-[#C5E55D]': selectedTab === 'Admin Ride History',
+        }"
+      >
+        Ride History
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Chats')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Chats',
+          'border-gray-200': selectedTab !== 'Chats',
+          'text-gray-700': selectedTab !== 'Chats',
+          'bg-[#C5E55D]': selectedTab === 'Chats',
+        }"
+      >
+        Chats
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Prices')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Prices',
+          'border-gray-200': selectedTab !== 'Prices',
+          'text-gray-700': selectedTab !== 'Prices',
+          'bg-[#C5E55D]': selectedTab === 'Prices',
+        }"
+      >
+        Prices
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Analitics')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Analitics',
+          'border-gray-200': selectedTab !== 'Analitics',
+          'text-gray-700': selectedTab !== 'Analitics',
+          'bg-[#C5E55D]': selectedTab === 'Analitics',
+        }"
+      >
+        Analitics
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Manage Users')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Manage Users',
+          'border-gray-200': selectedTab !== 'Manage Users',
+          'text-gray-700': selectedTab !== 'Manage Users',
+          'bg-[#C5E55D]': selectedTab === 'Manage Users',
+        }"
+      >
+        Manage Users
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Driver Registration')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Driver Registration',
+          'border-gray-200': selectedTab !== 'Driver Registration',
+          'text-gray-700': selectedTab !== 'Driver Registration',
+          'bg-[#C5E55D]': selectedTab === 'Driver Registration',
+        }"
+      >
+        Driver Registration
+      </button>
+      <button
+        class="mt-1 cursor-pointer border rounded-xl p-15 pt-2 pb-2 hover:bg-gray-100"
+        (click)="setProfileTab('Profile Requests')"
+        [class]="{
+          'border-lime-300': selectedTab === 'Profile Requests',
+          'border-gray-200': selectedTab !== 'Profile Requests',
+          'text-gray-700': selectedTab !== 'Profile Requests',
+          'bg-[#C5E55D]': selectedTab === 'Profile Requests',
+        }"
+      >
+        Profile Requests
+      </button>
+    </div>
+  </div>
+
+  @if (selectedTab === 'Rides') {
+    <div class="mt-6 w-full">
+      <h2 class="text-3xl font-bold">Rides</h2>
+
+      <div class="mt-6">
+        <app-admin-all-rides></app-admin-all-rides>
+      </div>
+    </div>
+  } @else if (selectedTab === 'Admin Ride History') {
+    <div class="mt-6 w-full">
+      <h2 class="text-3xl font-bold">Ride History</h2>
+
+      <div class="mt-6">
+        <app-admin-rides></app-admin-rides>
+      </div>
+    </div>
+  } @else if (selectedTab === 'Panic Dashboard') {
+    <div class="mt-6 w-full">
+      <h2 class="text-3xl font-bold">Panic Dashboard</h2>
+
+      <div class="mt-6">
+        <app-admin-panic></app-admin-panic>
+      </div>
+    </div>
+  } @else if (selectedTab === 'Chats') {
+    <div class="mt-6 w-full h-[500px]">
+      <h2 class="text-3xl font-bold">Chats</h2>
+
+      <div class="mt-6">
+        <app-admin-chats></app-admin-chats>
+      </div>
+    </div>
+  } @else if (selectedTab === 'Prices') {
+    <div class="mt-6 w-full">
+      <h2 class="text-3xl font-bold">Prices</h2>
+
+      <div class="mt-6">
+        <app-admin-price></app-admin-price>
+      </div>
+    </div>
+  } @else if (selectedTab === 'Analitics') {
+    <div class="mt-6 w-full">
+      <app-ride-analytics></app-ride-analytics>
+    </div>
+  } @else if (selectedTab === 'Manage Users') {
+    <div class="mt-6 w-full">
+      <app-block-users></app-block-users>
+    </div>
+  } @else if (selectedTab === 'Driver Registration') {
+    <div class="mt-6 w-full">
+      <app-driver-registration></app-driver-registration>
+    </div>
+  } @else if (selectedTab === 'Profile Requests') {
+    <div class="mt-6 w-full">
+      <app-profile-requests></app-profile-requests>
+    </div>
+  }
+</div>

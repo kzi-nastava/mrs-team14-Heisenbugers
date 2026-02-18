@@ -7,9 +7,11 @@ import com.ftn.heisenbugers.gotaxi.models.User;
 import com.ftn.heisenbugers.gotaxi.models.dtos.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
+import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.services.RideService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.Claims;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,20 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static tools.jackson.databind.type.LogicalType.DateTime;
-
 @RestController
 @RequestMapping("/api/rides")
+@RequiredArgsConstructor
 public class RideController {
 
-    @Autowired
-    private RideRepository rideRepository;
+    private final RideRepository rideRepository;
     private final RideService rideService;
-
-    public RideController(RideService rideService) {
-
-        this.rideService = rideService;
-    }
+    private final JwtService jwtService;
 
     @GetMapping("")
     public ResponseEntity<List<RideTrackingDTO>> getRideTracking() {
@@ -82,11 +78,11 @@ public class RideController {
                 ));
             }
 
-            if (ride.getRoute().getStops() != null) {
-                List<LocationDTO> stops = ride.getRoute().getStops().stream()
+            if (ride.getRoute().getStopsWithAddresses() != null) {
+                List<LocationDTO> stops = ride.getRoute().getStopsWithAddresses().stream()
                         .map(l -> new LocationDTO(
-                                l.getLongitude(),
                                 l.getLatitude(),
+                                l.getLongitude(),
                                 l.getAddress()
                         ))
                         .toList();
@@ -171,6 +167,32 @@ public class RideController {
                     .body(Map.of("message", "Ride successfully rated"));
         } else {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+    }
+
+    @GetMapping("/link-tracking/tracking")
+    public ResponseEntity<RideTrackingDTO> getLinkTracking(@RequestParam String token) {
+        Claims claims = jwtService.parseClaims(token);
+        UUID rideId = UUID.fromString(claims.get("rideId", String.class));
+
+        RideTrackingDTO ride = rideService.getRideTrackingById(rideId);
+        if (ride == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(ride);
+        }
+    }
+
+    @GetMapping("/link-tracking/ride")
+    public ResponseEntity<RideDTO> getLinkTrackingRide(@RequestParam String token) {
+        Claims claims = jwtService.parseClaims(token);
+        UUID rideId = UUID.fromString(claims.get("rideId", String.class));
+        
+        RideDTO ride = rideService.getRide(rideId);
+        if (ride == null) {
+            return ResponseEntity.notFound().build();
+        } else {
+            return ResponseEntity.ok(ride);
         }
     }
 

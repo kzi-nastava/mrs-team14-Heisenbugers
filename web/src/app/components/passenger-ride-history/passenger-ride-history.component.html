@@ -1,0 +1,119 @@
+<div class="w-full">
+  <!-- Filters -->
+  <div class="flex items-center justify-between mb-6">
+    <!-- left: filters -->
+    <div class="flex gap-2">
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'date' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('date')"
+      >
+        by date
+      </button>
+
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'price' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('price')"
+      >
+        by price
+      </button>
+
+      <button
+        class="px-4 py-1 rounded-full border text-sm cursor-pointer hover:opacity-80"
+        [ngClass]="sort === 'route' ? 'border-black' : 'border-gray-400'"
+        (click)="setSort('route')"
+      >
+        by route
+      </button>
+    </div>
+
+    <!-- right: arrows -->
+    <span class="text-lg cursor-pointer select-none">⇅</span>
+  </div>
+
+  @if (loading) {
+    <div class="p-4 text-neutral-600">Loading…</div>
+  } @else {
+    @if (rides.length === 0) {
+      <div class="p-4 rounded-xl border border-neutral-200 bg-white text-neutral-600">
+        No rides found
+      </div>
+    } @else {
+      @for (r of sortedRides; track r.rideId) {
+        <div
+          class="flex flex-row mb-3 border rounded-xl border-gray-200 hover:shadow-md hover:bg-gray-50 items-center"
+          [class.border-2]="r.panicTriggered"
+          [class.border-red-500]="r.panicTriggered"
+        >
+          <button
+            class="w-full text-left px-4 py-3 text-sm flex justify-between items-center cursor-pointer"
+            (click)="goToRide(r)"
+          >
+            <span class="flex items-center">
+              <span class="mr-4">{{ r.startAddress }}</span>
+              <span class="mr-4 flex items-center">
+                <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
+                {{ r.startedAt | date: 'HH:mm' }}
+              </span>
+
+              <ng-icon class="mr-4" name="bootstrapArrowRight"></ng-icon>
+
+              <span class="mr-4">{{ r.endAddress }}</span>
+              <span class="mr-4 flex items-center">
+                <ng-icon name="bootstrapClock" class="mr-1"></ng-icon>
+                {{ r.endedAt | date: 'HH:mm' }}
+              </span>
+
+              <span class="ml-6 flex items-center">
+                <ng-icon name="bootstrapCash" class="mr-1"></ng-icon>
+                <span>{{ r.price | number: '1.2-2' }} RSD</span>
+              </span>
+            </span>
+
+            @if (r.panicTriggered) {
+              <ng-icon name="bootstrapExclamationCircleFill" color="red" size="24"></ng-icon>
+            }
+            @if (!r.rated) {
+              <button
+                [id]="'rate-btn-' + $index"
+                class="cursor-pointer"
+                (click)="$event.stopPropagation(); openRateModal(r)"
+              >
+                <ng-icon name="bootstrapFeather" size="24" class="mx-3"></ng-icon>
+              </button>
+            }
+          </button>
+          <button
+            class="pr-3 mt-2 cursor-pointer"
+            (click)="$event.stopPropagation(); toggleFavorite(r)"
+          >
+            @if (r.favorite) {
+              <ng-icon name="bootstrapHeartFill" size="24" color="#e11d48"></ng-icon>
+            } @else {
+              <ng-icon name="bootstrapHeart" size="24"></ng-icon>
+            }
+          </button>
+        </div>
+      }
+    }
+  }
+</div>
+
+@if (this.ratingRide != null) {
+  <app-rate-modal
+    id="rate-modal"
+    [ride]="this.ratingRide"
+    (onClose)="closeRateModal()"
+    (onSubmit)="submitRateForm($event)"
+  ></app-rate-modal>
+}
+
+@if (toastVisible) {
+  <div
+    id="toast"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg"
+  >
+    {{ toastMessage }}
+  </div>
+}
