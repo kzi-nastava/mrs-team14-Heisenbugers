@@ -1,6 +1,6 @@
 <div class="absolute bg-white top-0 bottom-0 left-60 -translate-x-1/2 z-50 p-10 overflow-y-auto max-h-auto">
   @if (messageText) {
-    <div [class]="(messageType === 'error' ? 'bg-red-600 text-white' : (messageType === 'success' ? 'bg-lime-400 text-black' : 'bg-gray-800 text-white')) + ' fixed top-6 right-6 z-70 p-3 rounded shadow'">
+    <div id="message" [class]="(messageType === 'error' ? 'bg-red-600 text-white' : (messageType === 'success' ? 'bg-lime-400 text-black' : 'bg-gray-800 text-white')) + ' fixed top-6 right-6 z-70 p-3 rounded shadow'">
       {{ messageText }}
     </div>
   }
@@ -144,6 +144,7 @@
       Order
     </button>
     <button
+      id="schedule-ride-button"
       type="button"
       class="mx-auto block h-10.5 w-47.5 rounded-[10px] bg-[#F0F0F0] text-[#000000B3] font-semibold shadow hover:bg-gray-200 active:scale-[0.99] cursor-pointer"
       (click)="showScheduler = true">
