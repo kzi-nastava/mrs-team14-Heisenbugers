@@ -54,7 +54,7 @@
             android:id="@+id/fab_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/register_driver"
             android:visibility="gone"
             app:backgroundTint="@color/colorPrimary"
@@ -62,6 +62,20 @@
             app:iconTint="@color/text"
             android:textColor="@color/text"
             app:icon="@drawable/ic_person_add" />
+
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_ride_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="Ride History"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_book" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_main"
@@ -74,5 +88,6 @@
             app:fabSize="normal" />
 
     </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
