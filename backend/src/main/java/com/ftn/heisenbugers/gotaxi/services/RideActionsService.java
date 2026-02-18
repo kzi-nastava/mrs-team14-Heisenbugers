@@ -1,14 +1,15 @@
 package com.ftn.heisenbugers.gotaxi.services;
 
 import com.ftn.heisenbugers.gotaxi.config.AuthContextService;
-import com.ftn.heisenbugers.gotaxi.models.Driver;
-import com.ftn.heisenbugers.gotaxi.models.Location;
-import com.ftn.heisenbugers.gotaxi.models.Ride;
+import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.StopRideRequestDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
+import com.ftn.heisenbugers.gotaxi.models.services.EmailService;
 import com.ftn.heisenbugers.gotaxi.repositories.LocationRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.PassengerRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -24,6 +26,9 @@ public class RideActionsService {
 
     private final RideRepository rideRepository;
     private final LocationRepository locationRepository;
+    private final EmailService emailService;
+    private final PassengerRepository passengerRepository;
+    private final UserRepository userRepository;
 
     public ResponseEntity<?> stopRide(UUID rideId, StopRideRequestDTO request) throws InvalidUserType {
 
@@ -68,6 +73,9 @@ public class RideActionsService {
 
         stopLocation = locationRepository.save(stopLocation);
 
+        currentDriver.setAvailable(true);
+        userRepository.save(currentDriver);
+
         ride.setEnd(stopLocation);
         ride.setEndedAt(LocalDateTime.now());
         ride.setStatus(RideStatus.FINISHED);
@@ -75,7 +83,16 @@ public class RideActionsService {
 
         double newPrice = recalcPriceOnStop(ride, oldEnd, stopLocation);
         ride.setPrice(newPrice);
+
         rideRepository.save(ride);
+
+
+        for (User u : ride.getPassengers()) {
+            sendFinishedRideEmail(u, ride);
+            if (Objects.equals(u.getFirstName(), "")) {
+                passengerRepository.delete((Passenger) u);
+            }
+        }
 
         return ResponseEntity.ok(Map.of(
                 "message", "Ride stopped and finished.",
@@ -123,5 +140,24 @@ public class RideActionsService {
 
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return R * c;
+    }
+
+    private void sendFinishedRideEmail(User recipient, Ride ride) {
+        String subject = "Subject: Your Ride Has Completed – Share Your Feedback!";
+        String body =
+                """
+                        Dear %s %s,
+                        
+                        Your ride from %s to %s with us has successfully concluded. We hope you had a smooth and enjoyable journey!
+                        
+                        We would love to hear about your experience. You can leave a review by visiting your ride history in your profile.
+                        
+                        Thank you for choosing our service. We look forward to serving you again soon!
+                        
+                        Best regards, \s
+                        GoTaxi 
+                        """.formatted(!Objects.equals(recipient.getFirstName(), "") ? recipient.getFirstName() : recipient.getEmail(), recipient.getLastName(),
+                        ride.getStart().getAddress(), ride.getEnd().getAddress());
+        emailService.sendMail(recipient.getEmail(), subject, body);
     }
 }
