@@ -19,7 +19,7 @@ public class RateRideTest extends BaseTest {
         // Log in and navigate to history page
         HomePage homePage = new LoginPage(driver)
                 .open("http://localhost:4200/auth/login")
-                .enterUsername("acafaca00k@gmail.com")
+                .enterUsername("acafaca000k@gmail.com")
                 .enterPassword("password")
                 .submit();
         HistoryPage historyPage = homePage.goToHistory();

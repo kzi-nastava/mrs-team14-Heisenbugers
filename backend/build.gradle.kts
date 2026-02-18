@@ -41,6 +41,8 @@ dependencies {
 
     // Jackson for Java 17 date/time
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    // Jackson for JSON bindings
+    implementation("com.fasterxml.jackson.core:jackson-databind")
 
     //Security + JWT
     implementation("org.springframework.boot:spring-boot-starter-security")

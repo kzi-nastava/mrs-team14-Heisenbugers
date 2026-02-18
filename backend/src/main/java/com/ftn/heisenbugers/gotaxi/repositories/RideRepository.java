@@ -85,9 +85,7 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
         AND r.endedAt BETWEEN :start AND :end
         AND r.status = 'FINISHED'
     """)
-    List<Ride> findDriverRidesBetween(UUID driverId,
-                                      LocalDateTime start,
-                                      LocalDateTime end);
+    List<Ride> findDriverRidesBetween(UUID driverId, LocalDateTime start, LocalDateTime end);
 
     @Query("""
     SELECT r FROM Ride r
@@ -95,9 +93,7 @@ public interface RideRepository extends JpaRepository<Ride, UUID> {
     AND r.endedAt BETWEEN :start AND :end
     AND r.status = 'FINISHED'
 """)
-    List<Ride> findOrderedRidesBetween(UUID userId,
-                                       LocalDateTime start,
-                                       LocalDateTime end);
+    List<Ride> findOrderedRidesBetween(UUID userId, LocalDateTime start, LocalDateTime end);
 
 
     List<Ride> findByStatusAndScheduledAtAfter(RideStatus status, LocalDateTime scheduledAt);

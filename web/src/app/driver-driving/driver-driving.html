@@ -42,12 +42,19 @@
     </div>
   </div>
 
+  <!-- Chat Button -->
   <button
-    class="absolute right-6 bottom-52 bg-white shadow-lg rounded-full w-11 h-11 flex items-center justify-center cursor-pointer active:scale-[0.98]"
-    (click)="chatClick()"
+    class="absolute right-6 bottom-52 bg-white shadow-lg rounded-full w-11 h-11 flex items-center justify-center cursor-pointer"
+    (click)="toggleChat()"
   >
     <ng-icon name="bootstrapChatDots" size="26"></ng-icon>
   </button>
+
+  @if (chatOpen) {
+    <div class="absolute bottom-6 right-20 rounded-xl border overflow-hidden w-[450px] h-[550px]">
+      <app-chat [chatId]="chatId" (onClose)="closeChat()"></app-chat>
+    </div>
+  }
 
   <button
     type="button"
