@@ -9,6 +9,7 @@ import com.ftn.heisenbugers.gotaxi.models.security.InvalidUserType;
 import com.ftn.heisenbugers.gotaxi.models.security.JwtService;
 import com.ftn.heisenbugers.gotaxi.models.services.EmailService;
 import com.ftn.heisenbugers.gotaxi.repositories.*;
+import com.ftn.heisenbugers.gotaxi.utils.DrivingSimulator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +31,7 @@ public class RideService {
     private final JwtService jwtService;
     private final NotificationService notificationService;
     private final PriceRepository priceRepository;
+    private final DrivingSimulator drivingSimulator;
 
     public CreatedRideDTO addRide(CreateRideDTO request) throws InvalidUserType {
 
@@ -289,7 +291,10 @@ public class RideService {
         ride.setStatus(RideStatus.ONGOING);
         ride.setStartedAt(LocalDateTime.now());
         ride.setLastModifiedBy(ride.getDriver());
-        ride.getDriver().setAvailable(true);
+        try {
+            drivingSimulator.driveRoute(ride.getRoute(), ride.getDriver().getId());
+        } catch (Exception ignored) {
+        }
         rideRepository.save(ride);
 
         return true;

@@ -1,5 +1,6 @@
 package com.ftn.heisenbugers.gotaxi.web.pages;
 
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -35,7 +36,7 @@ public class LoginPage extends BasePage {
     }
 
     public HomePage submit() {
-        loginButton.click();
+        passwordInput.sendKeys(Keys.ENTER);
         return new HomePage(driver);
     }
 
