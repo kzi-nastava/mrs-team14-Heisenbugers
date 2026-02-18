@@ -1,16 +1,14 @@
 package com.ftn.heisenbugers.gotaxi.controllers;
 
-import com.ftn.heisenbugers.gotaxi.models.Driver;
-import com.ftn.heisenbugers.gotaxi.models.Location;
-import com.ftn.heisenbugers.gotaxi.models.Passenger;
-import com.ftn.heisenbugers.gotaxi.models.Vehicle;
+import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.dtos.CreateRideDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.LocationDTO;
 import com.ftn.heisenbugers.gotaxi.models.dtos.RouteDTO;
 import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
 import com.ftn.heisenbugers.gotaxi.models.services.EmailService;
-import com.ftn.heisenbugers.gotaxi.repositories.LocationRepository;
+import com.ftn.heisenbugers.gotaxi.repositories.PriceRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +46,14 @@ public class CreateRideControllerIntegrationTest {
 
     @MockitoBean
     EmailService emailService;
+
+    @BeforeAll
+    static void setup(@Autowired PriceRepository priceRepository) {
+        Price price = new Price();
+        price.setVehicleType(VehicleType.STANDARD);
+        price.setStartingPrice(200.0);
+        priceRepository.save(price);
+    }
 
     @Test
     @DisplayName("Should create ride when making POST request to /api/rides")
@@ -130,7 +136,7 @@ public class CreateRideControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should fail ride creation when no driver is available when making POST request to /api/rides")
+    @DisplayName("Should fail ride creation when no driver is available")
     void shouldFailRideCreationWhenNoDriver() throws Exception {
         Passenger passenger = persistPassenger("passenger3@example.test");
 
@@ -161,7 +167,7 @@ public class CreateRideControllerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Should fail ride creation when no autorization is present when making POST request to /api/rides")
+    @DisplayName("Should fail ride creation when no autorization is present")
     void shouldFailRideCreationWhenNoAuthorization() throws Exception {
         persistPassenger("passenger4@example.test");
 
@@ -187,6 +193,40 @@ public class CreateRideControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Should fail ride creation when the user account is blocked")
+    void shouldFailRideCreationWhenUserIsBlocked() throws Exception {
+        Passenger passenger = persistPassenger("blocked@example.test");
+        passenger.setBlocked(true);
+        passenger.setBlockNote("Violation of terms");
+        userRepository.save(passenger);
+
+        LocationDTO start = new LocationDTO(19.795411, 45.251058, "Dusana Danilovica 3, Novi Sad");
+        LocationDTO destination = new LocationDTO(19.824706, 45.247205, "Laze Nancica 1, Novi Sad");
+
+        RouteDTO route = new RouteDTO();
+        route.setDistanceKm(3.0);
+        route.setEstimatedTimeMin(5);
+        route.setPolyline("encodedPolyline");
+        route.setStart(start);
+        route.setDestination(destination);
+        route.setStops(List.of());
+
+        CreateRideDTO request = new CreateRideDTO();
+        request.setRoute(route);
+        request.setVehicleType(VehicleType.STANDARD);
+        request.setBabyTransport(false);
+        request.setPetTransport(false);
+        request.setPassengersEmails(List.of("passenger1@gmail.com"));
+
+        mockMvc.perform(post("/api/rides")
+                        .with(authAsPassenger(passenger))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Your account is blocked! Reason: " + passenger.getBlockNote()));
     }
 
 
