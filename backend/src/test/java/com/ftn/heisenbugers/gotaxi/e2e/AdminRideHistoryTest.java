@@ -12,7 +12,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.List;
 
-public class AdminRideHistoryTest extends TestBase {
+public class AdminRideHistoryTest extends TestBase2 {
 
     static final String ADMIN_EMAIL = "admin@admin.a";
     static final String ADMIN_PASS  = "123456";

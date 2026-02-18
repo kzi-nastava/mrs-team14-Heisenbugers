@@ -7,8 +7,8 @@ import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -17,8 +17,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -34,7 +33,7 @@ class RideRepositoryStopRideTest {
 
         Ride assigned = createRide(driver, RideStatus.ASSIGNED, null);
         Ride ongoing  = createRide(driver, RideStatus.ONGOING, null);
-        Ride finished = createRide(driver, RideStatus.FINISHED,null);
+        Ride finished = createRide(driver, RideStatus.FINISHED, null);
 
         Driver otherDriver = persistDriverWithVehicle(uniqueEmail("other"));
         Ride otherOngoing = createRide(otherDriver, RideStatus.ONGOING, null);
@@ -55,45 +54,41 @@ class RideRepositoryStopRideTest {
     @Test
     @DisplayName("findActiveRidesByDriver: returns empty if the driver does not have ASSIGNED/ONGOING")
     void testFindActiveRidesByDriver_ReturnsEmpty_WhenNoActive() {
-        // Given
         Driver driver = persistDriverWithVehicle(uniqueEmail("driver"));
         createRide(driver, RideStatus.FINISHED, null);
         createRide(driver, RideStatus.CANCELED, null);
 
-        // When
         List<Ride> result = rideRepository.findActiveRidesByDriver(driver.getId());
 
-        // Then
         assertEquals(0, result.size());
     }
 
     @Test
     @DisplayName("findFirstByDriverIdAndStatusInOrderByScheduledAtAsc: returns the closest scheduledAt among given statuses")
     void testFindFirstByDriverIdAndStatusInOrderByScheduledAtAsc_ReturnsEarliestScheduled() {
-        // Given
         Driver driver = persistDriverWithVehicle(uniqueEmail("driver"));
 
         LocalDateTime base = LocalDateTime.now();
-        Ride later   = createRide(driver, RideStatus.ASSIGNED, base.plusMinutes(30));
-        Ride earlier = createRide(driver, RideStatus.ONGOING,  base.plusMinutes(10));
+        createRide(driver, RideStatus.ASSIGNED, base.plusMinutes(30));
+        Ride earlier = createRide(driver, RideStatus.ONGOING, base.plusMinutes(10));
 
-        // When
         Optional<Ride> opt = rideRepository.findFirstByDriverIdAndStatusInOrderByScheduledAtAsc(
                 driver.getId(),
                 List.of(RideStatus.ASSIGNED, RideStatus.ONGOING)
         );
 
-        // Then
         assertTrue(opt.isPresent());
         assertEquals(earlier.getId(), opt.get().getId(), "Should return the ride with smallest scheduledAt");
     }
 
 
 
-
-
     private String uniqueEmail(String prefix) {
         return prefix + "-" + UUID.randomUUID() + "@example.test";
+    }
+
+    private String uniquePhone() {
+        return "+38164" + (1000000 + (int)(Math.random() * 9000000));
     }
 
     private Ride createRide(Driver driver, RideStatus status, LocalDateTime scheduledAt) {
@@ -102,7 +97,6 @@ class RideRepositoryStopRideTest {
         ride.setStatus(status);
         ride.setCanceled(false);
         ride.setScheduledAt(scheduledAt);
-
 
         Location start = Location.builder().latitude(45.0).longitude(19.0).address("Start").build();
         Location dest  = Location.builder().latitude(45.1).longitude(19.1).address("Dest").build();
@@ -115,8 +109,6 @@ class RideRepositoryStopRideTest {
         route.setEstimatedTimeMin(3);
 
         ride.setRoute(route);
-
-
         ride.setPassengers(List.of());
 
         return rideRepository.saveAndFlush(ride);
@@ -125,10 +117,15 @@ class RideRepositoryStopRideTest {
     private Driver persistDriverWithVehicle(String email) {
         Driver d = new Driver();
         d.setEmail(email);
-        d.setPasswordHash("test");
+
+        d.setPasswordHash("12345678");
+
         d.setFirstName("Test");
         d.setLastName("Driver");
-        d.setPhone("000");
+
+
+        d.setPhone(uniquePhone());
+
         d.setAddress("Addr");
         d.setActivated(true);
         d.setBlocked(false);
