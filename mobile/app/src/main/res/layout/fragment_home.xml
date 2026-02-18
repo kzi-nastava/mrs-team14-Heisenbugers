@@ -71,6 +71,9 @@
         android:contentDescription="Estimate ride"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_route" />
+        app:srcCompat="@drawable/ic_pindrop"
+        app:backgroundTint="@color/colorPrimary"
+        app:tint="@color/text"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

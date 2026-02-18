@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.example.gotaximobile.R;
 import com.example.gotaximobile.models.MapPin;
 
 import org.json.JSONArray;
@@ -29,8 +30,10 @@ import org.osmdroid.views.overlay.Polyline;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -243,6 +246,66 @@ public class MapFragment extends Fragment {
     }
 
 
+    private final List<Marker> routeMarkers = new ArrayList<>();
 
+    public void addRoutePin(GeoPoint point, String title, String tag) {
+        Marker marker = new Marker(map);
+        marker.setPosition(point);
+        marker.setTitle(tag + "-" + title);
+        marker.setIcon(ContextCompat.getDrawable(requireContext(), R.drawable.ic_location_pin));
+        map.getOverlays().add(marker);
+        routeMarkers.add(marker);
+        map.invalidate();
+
+        checkAndDrawRoute();
+    }
+
+    public void removeRoutePin(String title, String tag) {
+        String targetTitle = tag + "-" + title;
+
+        List<Marker> toRemove = new ArrayList<>();
+
+        for (Marker marker : routeMarkers) {
+            if (Objects.equals(marker.getTitle(), targetTitle)) {
+                map.getOverlays().remove(marker);
+                toRemove.add(marker);
+            }
+        }
+
+        routeMarkers.removeAll(toRemove);
+
+        map.invalidate();
+        checkAndDrawRoute();
+    }
+
+    public void clearRouteMarkers() {
+        for (Marker m : routeMarkers) map.getOverlays().remove(m);
+        routeMarkers.clear();
+        if (routeOverlay != null) map.getOverlays().remove(routeOverlay);
+        map.invalidate();
+    }
+
+    private void checkAndDrawRoute() {
+        if (routeMarkers.size() < 2) return;
+
+        GeoPoint start = null;
+        GeoPoint end = null;
+        List<GeoPoint> stops = new ArrayList<>();
+
+        for (int i = 0; i < routeMarkers.size(); i++) {
+            if (Objects.equals(routeMarkers.get(i).getTitle().split("-")[0], "start")){
+                start = routeMarkers.get(i).getPosition();
+            } else if (Objects.equals(routeMarkers.get(i).getTitle().split("-")[0], "end")) {
+                end = routeMarkers.get(i).getPosition();
+            } else {
+                stops.add(routeMarkers.get(i).getPosition());
+            }
+        }
+
+        if(start == null || end == null){
+            return;
+        }
+        drawRoute(start, end, stops);
+    }
 
 }
