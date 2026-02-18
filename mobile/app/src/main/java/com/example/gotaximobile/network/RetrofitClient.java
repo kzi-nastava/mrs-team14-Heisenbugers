@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -30,6 +31,9 @@ public class RetrofitClient {
         log.setLevel(HttpLoggingInterceptor.Level.BODY);
 
         OkHttpClient ok = new OkHttpClient.Builder()
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(new AuthInterceptor(storage))
                 .addInterceptor(log)
                 .build();
@@ -75,5 +79,12 @@ public class RetrofitClient {
         return get(context).create(PublicService.class);
     }
 
+    public static MapService mapService(Context context){
+        return  get(context).create(MapService.class);
+    }
+
+    public static PriceService priceService(Context context){
+        return  get(context).create(PriceService.class);
+    }
 
 }
