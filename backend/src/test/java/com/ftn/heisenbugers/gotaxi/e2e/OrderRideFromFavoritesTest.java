@@ -23,6 +23,7 @@ public class OrderRideFromFavoritesTest extends TestBase{
         login.submit();
 
         BasePage base = new BasePage(driver);
+        Assert.assertTrue(base.isLoggedIn());
         base.clickOnFavorites();
 
         FavoritesPage favorites = new FavoritesPage(driver);
@@ -31,5 +32,29 @@ public class OrderRideFromFavoritesTest extends TestBase{
         Assert.assertTrue(base.isTimeCalculated());
         base.clickOnStandardVehicle();
         base.clickOnOrderRide();
+    }
+
+    @Test
+    public void scheduleRideFromFavorites(){
+        HomePage home = new HomePage(driver);
+        home.clickOnLogin();
+
+        LoginPage login = new LoginPage(driver);
+        login.enterEmail(EMAIL);
+        login.enterPassword(PASSWORD);
+        login.submit();
+
+        BasePage base = new BasePage(driver);
+        base.clickOnFavorites();
+
+        FavoritesPage favorites = new FavoritesPage(driver);
+        favorites.clickUseButton();
+
+        Assert.assertTrue(base.isTimeCalculated());
+        base.clickOnStandardVehicle();
+        base.clickOnScheduleRide();
+        base.clickOnScheduleConfirmButton();
+
+        Assert.assertTrue(base.isRideOrdered());
     }
 }
