@@ -44,4 +44,15 @@ public class PassengerRepositoryTest {
         assertThat(result).isEmpty();
     }
 
+    @Test
+    @DisplayName("Should return empty Optional when searching with empty email string")
+    void shouldReturnEmptyWhenSearchingWithEmptyEmail() {
+        String storedEmail = "emptycheck@example.com";
+        Passenger passenger = new Passenger(storedEmail, "hash", "Passenger", "Empty", "0601234566", "Address 1" );
+        passengerRepository.save(passenger);
+
+        Optional<Passenger> result = passengerRepository.findByEmail("");
+
+        assertThat(result).isEmpty();
+    }
 }

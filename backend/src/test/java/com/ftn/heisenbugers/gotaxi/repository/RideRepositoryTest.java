@@ -3,8 +3,10 @@ package com.ftn.heisenbugers.gotaxi.repository;
 import com.ftn.heisenbugers.gotaxi.models.*;
 import com.ftn.heisenbugers.gotaxi.models.enums.RideStatus;
 import com.ftn.heisenbugers.gotaxi.models.enums.VehicleType;
+import com.ftn.heisenbugers.gotaxi.repositories.PriceRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.RideRepository;
 import com.ftn.heisenbugers.gotaxi.repositories.UserRepository;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
+import java.time.LocalDateTime;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
@@ -24,6 +27,14 @@ public class RideRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @BeforeAll
+    static void setup(@Autowired PriceRepository priceRepository) {
+        Price price = new Price();
+        price.setVehicleType(VehicleType.STANDARD);
+        price.setStartingPrice(200.0);
+        priceRepository.save(price);
+    }
 
     @Test
     @DisplayName("Should return rides with ASSIGNED or ONGOING status for a specific driver")
@@ -51,8 +62,38 @@ public class RideRepositoryTest {
     void shouldReturnEmptyWhenNoActiveRides() {
         Driver driver = persistDriverWithVehicle("driver3@gmail.com");
         createRide(driver, RideStatus.CANCELED);
+        createRide(null, RideStatus.REQUESTED);
 
         List<Ride> result = rideRepository.findActiveRidesByDriver(driver.getId());
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Should find rides by status scheduled after given time")
+    void shouldFindRidesByStatusAndScheduledAfter() {
+        LocalDateTime now = LocalDateTime.now();
+
+        createScheduledRide(RideStatus.REQUESTED, now.plusHours(2));
+        createScheduledRide(RideStatus.REQUESTED, now.plusMinutes(65));
+        createScheduledRide(RideStatus.REQUESTED, now);
+        createScheduledRide(RideStatus.ASSIGNED, now.plusHours(3));
+
+        List<Ride> result = rideRepository.findByStatusAndScheduledAtAfter(RideStatus.REQUESTED, now.plusHours(1));
+
+        assertThat(result).hasSize(2);
+        assertThat(result).allMatch(r -> r.getStatus() == RideStatus.REQUESTED && r.getScheduledAt().isAfter(now.plusHours(1)));
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no rides match status and scheduled after time")
+    void shouldReturnEmptyWhenNoRidesMatchStatusAndScheduledAfter() {
+        LocalDateTime now = LocalDateTime.now();
+
+        createScheduledRide(RideStatus.FINISHED, now.plusHours(2));
+        createScheduledRide(RideStatus.CANCELED, now.plusHours(3));
+
+        List<Ride> result = rideRepository.findByStatusAndScheduledAtAfter(RideStatus.REQUESTED, now);
 
         assertThat(result).isEmpty();
     }
@@ -65,7 +106,7 @@ public class RideRepositoryTest {
         Route route = new Route();
         route.setDistanceKm(3.0);
         route.setEstimatedTimeMin(5);
-        route.setPolyline(new ArrayList<Location>());
+        route.setPolyline(new ArrayList<>());
         route.setStart(start);
         route.setDestination(destination);
         route.setStops(List.of());
@@ -103,5 +144,24 @@ public class RideRepositoryTest {
         v.setDriver(d);
 
         return userRepository.save(d);
+    }
+
+    private void createScheduledRide(RideStatus status, LocalDateTime scheduledAt) {
+        Ride ride = new Ride();
+        Location start = new Location(19.795411, 45.251058, "Dusana Danilovica 3, Novi Sad");
+        Location destination = new Location(19.824706, 45.247205, "Laze Nancica 1, Novi Sad");
+
+        Route route = new Route();
+        route.setDistanceKm(3.0);
+        route.setEstimatedTimeMin(5);
+        route.setPolyline(new ArrayList<>());
+        route.setStart(start);
+        route.setDestination(destination);
+        route.setStops(List.of());
+
+        ride.setRoute(route);
+        ride.setStatus(status);
+        ride.setScheduledAt(scheduledAt);
+        rideRepository.save(ride);
     }
 }
