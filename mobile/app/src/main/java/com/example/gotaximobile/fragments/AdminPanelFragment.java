@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.fragments.admin.AdminAllRidesFragment;
 import com.example.gotaximobile.fragments.admin.AdminRideHistoryHubFragment;
 import com.example.gotaximobile.fragments.driverProfileRequests.DriverRequestsFragment;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -27,6 +28,12 @@ public class AdminPanelFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_panel, container, false);
+
+        if (savedInstanceState == null) {
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.admin_fragment_container, new AdminAllRidesFragment())
+                    .commit();
+        }
 
         fabMain = view.findViewById(R.id.fab_main);
         fabRequests = view.findViewById(R.id.fab_requests);

@@ -2,6 +2,7 @@ package com.example.gotaximobile.network;
 
 import com.example.gotaximobile.models.dtos.AdminRideDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
+import com.example.gotaximobile.models.dtos.RideRequestDTO;
 import com.example.gotaximobile.models.dtos.RideDetailsDTO;
 import com.example.gotaximobile.models.dtos.RideTrackingDTO;
 import com.example.gotaximobile.models.dtos.VehicleInfoDTO;
@@ -42,6 +43,8 @@ public interface RideService {
     @GET("api/admin/rides/all")
     Call<List<AdminRideDTO>> getAllRides();
 
+    @POST("api/rides")
+    Call<Void> createRide(@Body RideRequestDTO body);
     @POST("api/rides/{id}/cancel")
     Call<com.example.gotaximobile.models.dtos.MessageResponse> cancelRide(
             @Path("id") java.util.UUID id,
