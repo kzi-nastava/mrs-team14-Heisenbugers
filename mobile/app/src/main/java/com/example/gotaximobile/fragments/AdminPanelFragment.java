@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.fragments.admin.AdminRideHistoryHubFragment;
 import com.example.gotaximobile.fragments.driverProfileRequests.DriverRequestsFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -21,7 +22,7 @@ public class AdminPanelFragment extends Fragment {
 
     private boolean isFabExpanded = false;
     private FloatingActionButton fabMain;
-    private ExtendedFloatingActionButton fabRequests, fabRegister;
+    private ExtendedFloatingActionButton fabRequests, fabRegister,fabRideHistory;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,8 +31,24 @@ public class AdminPanelFragment extends Fragment {
         fabMain = view.findViewById(R.id.fab_main);
         fabRequests = view.findViewById(R.id.fab_requests);
         fabRegister = view.findViewById(R.id.fab_register);
+        fabRideHistory = view.findViewById(R.id.fab_ride_history);
+
+
+        fabRequests.hide();
+        fabRegister.hide();
+        fabRideHistory.hide();
+        fabMain.setImageResource(R.drawable.ic_edit);
+        isFabExpanded = false;
 
         fabMain.setOnClickListener(v -> toggleFab());
+
+        fabRideHistory.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new AdminRideHistoryHubFragment())
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
 
         fabRequests.setOnClickListener(v -> {
             DriverRequestsFragment requestsFragment = new DriverRequestsFragment();
@@ -56,10 +73,12 @@ public class AdminPanelFragment extends Fragment {
         if (!isFabExpanded) {
             fabRequests.show();
             fabRegister.show();
+            fabRideHistory.show();
             fabMain.setImageResource(R.drawable.ic_close);
         } else {
             fabRequests.hide();
             fabRegister.hide();
+            fabRideHistory.hide();
             fabMain.setImageResource(R.drawable.ic_edit);
         }
         isFabExpanded = !isFabExpanded;

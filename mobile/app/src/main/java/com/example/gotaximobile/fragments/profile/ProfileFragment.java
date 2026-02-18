@@ -86,16 +86,10 @@ public class ProfileFragment extends Fragment {
                 String role = storage2.getRole();
                 Fragment next;
 
-                if ("PASSENGER".equals(role)) {
-                    next = new com.example.gotaximobile.fragments.PassengerRideHistoryFragment();
-                } else if ("DRIVER".equals(role)) {
+                if ("DRIVER".equals(role)) {
                     next = new com.example.gotaximobile.fragments.RideFragment();
-                } else {
-                    // ADMIN
+                }else{
                     next = new com.example.gotaximobile.fragments.PassengerRideHistoryFragment();
-
-                   // Toast.makeText(requireContext(), "History is not available for this role", Toast.LENGTH_SHORT).show();
-                    return;
                 }
 
                 getParentFragmentManager().beginTransaction()
