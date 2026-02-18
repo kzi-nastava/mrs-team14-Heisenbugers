@@ -11,5 +11,9 @@ public class TrafficViolationDTO {
     public String toString() {
         return title;
     }
+
+
+    public String getTitle() { return title; }
+    public String getDescription() { return description; }
 }
 

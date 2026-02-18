@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -80,10 +81,27 @@ public class ProfileFragment extends Fragment {
 
             ImageView icon = view.findViewById(R.id.history_button);
             icon.setOnClickListener(v -> {
+
+                TokenStorage storage2 = new TokenStorage(requireContext());
+                String role = storage2.getRole();
+                Fragment next;
+
+                if ("DRIVER".equals(role)) {
+                    next = new com.example.gotaximobile.fragments.RideFragment();
+                }else{
+                    next = new com.example.gotaximobile.fragments.PassengerRideHistoryFragment();
+                }
+
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, next)
+                        .addToBackStack(null)
+                        .commit();
+
+                /*
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new RideFragment())
                         .addToBackStack(null)
-                        .commit();
+                        .commit();*/
             });
 
             tabLayout.setVisibility(View.VISIBLE);

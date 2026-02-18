@@ -6,7 +6,7 @@
     android:background="@color/white">
 
     <!-- MAP -->
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/mapFragment"
         android:name="com.example.gotaximobile.fragments.MapFragment"
         android:layout_width="0dp"
@@ -53,7 +53,7 @@
                 android:id="@+id/tvEstimateEta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="ETA: -"
+                android:text="Time: -"
                 android:textSize="13sp"/>
 
         </LinearLayout>

@@ -5,4 +5,7 @@ public class AdminRideDTO {
     public DriverDto driver;
     public double vehicleLatitude;
     public double vehicleLongitude;
+
+
+
 }

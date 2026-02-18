@@ -12,4 +12,8 @@ public class LocationDTO {
     }
 
     public LocationDTO(){}
+
+    public String getAddress() { return address; }
+    public double getLatitude() { return latitude; }
+    public double getLongitude() { return longitude; }
 }

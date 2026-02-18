@@ -11,4 +11,9 @@ public class AdminJustRideDTO {
     public String canceledBy;
     public int price;
     public boolean panicTriggered;
+
+
+    public String getRideId() {
+        return rideId;
+    }
 }
