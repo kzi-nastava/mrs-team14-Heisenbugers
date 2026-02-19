@@ -57,13 +57,19 @@ public class RideService {
         route.setDistanceKm(request.getRoute().getDistanceKm());
         route.setUser(user);
 
+        double price = priceRepository.findAll().stream()
+                .filter(p -> p.getVehicleType().equals(request.getVehicleType()))
+                .max(Comparator.comparing(Price::getCreatedAt))
+                .map(Price::getStartingPrice)
+                .get();
+
         Ride ride = new Ride();
         ride.setRoute(route);
         ride.setStatus(RideStatus.REQUESTED);
         ride.setCanceled(false);
         ride.setStart(start);
         ride.setEnd(end);
-        ride.setPrice(request.getRoute().getDistanceKm() * 120 + priceRepository.getStartingPriceByVehicleType(request.getVehicleType()));
+        ride.setPrice(request.getRoute().getDistanceKm() * 120 + price);
         ride.setPassengers(new ArrayList<>());
         for (int i = 0; i < request.getPassengersEmails().size(); i++) {
             Optional<Passenger> p = passengerRepository.findByEmail(request.getPassengersEmails().get(i));
