@@ -96,5 +96,7 @@ public class RetrofitClient {
         return get(context).create(PanicApi.class);
     }
 
-
+    public static RideAnalyticsService rideAnalyticsService(Context context){
+        return  get(context).create(RideAnalyticsService.class);
+    }
 }
