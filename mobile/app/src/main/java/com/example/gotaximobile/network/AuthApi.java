@@ -1,12 +1,16 @@
 package com.example.gotaximobile.network;
 
+import com.example.gotaximobile.models.dtos.CreateDriverDTO;
+import com.example.gotaximobile.models.dtos.CreatedDriverDTO;
 import com.example.gotaximobile.models.dtos.ForgotPasswordRequestDTO;
 import com.example.gotaximobile.models.dtos.ForgotPasswordResponseDTO;
+import com.example.gotaximobile.models.dtos.GetProfileDTO;
 import com.example.gotaximobile.models.dtos.LoginRequestDTO;
 import com.example.gotaximobile.models.dtos.LoginResponseDTO;
 import com.example.gotaximobile.models.dtos.MessageResponse;
 import com.example.gotaximobile.models.dtos.RegisterResponseDTO;
 import com.example.gotaximobile.models.dtos.ResetPasswordRequestDTO;
+import com.example.gotaximobile.models.dtos.SetDriverPasswordDTO;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -41,6 +45,16 @@ public interface AuthApi {
     @GET("api/auth/activate")
     Call<MessageResponse> activateAccount(@Query("token") String token);
 
+    @Multipart
+    @POST("api/drivers")
+    Call<CreatedDriverDTO> registerDriver(
+            @Part("data") CreateDriverDTO profileDTO,
+            @Part MultipartBody.Part profileImage
+    );
 
+    @GET("api/drivers/activate")
+    Call<Void> activateDriver(@Query("token") String token);
 
+    @PUT("api/drivers/password")
+    Call<Void> setInitialPassword(@Query("token") String token, @Body SetDriverPasswordDTO body);
 }

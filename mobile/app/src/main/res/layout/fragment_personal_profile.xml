@@ -9,49 +9,68 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
         <TextView
+            android:id="@+id/tvBlockRibbon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/personal_information"
-            android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_information_subtext"
-            android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-            android:layout_marginBottom="20dp" />
+            android:background="#D32F2F"
+            android:padding="10dp"
+            android:text="Your account is blocked!"
+            android:textAlignment="center"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <com.example.gotaximobile.fragments.profile.ProfileCardView
-                android:id="@+id/card_name"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/personal_information"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"/>
 
-            <com.example.gotaximobile.fragments.profile.ProfileCardView
-                android:id="@+id/card_email"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/profile_information_subtext"
+                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                android:layout_marginBottom="20dp" />
 
-            <com.example.gotaximobile.fragments.profile.ProfileCardView
-                android:id="@+id/card_address"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <com.example.gotaximobile.fragments.profile.ProfileCardView
-                android:id="@+id/card_phone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <com.example.gotaximobile.fragments.profile.ProfileCardView
+                    android:id="@+id/card_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
+                <com.example.gotaximobile.fragments.profile.ProfileCardView
+                    android:id="@+id/card_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.example.gotaximobile.fragments.profile.ProfileCardView
+                    android:id="@+id/card_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.example.gotaximobile.fragments.profile.ProfileCardView
+                    android:id="@+id/card_phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 

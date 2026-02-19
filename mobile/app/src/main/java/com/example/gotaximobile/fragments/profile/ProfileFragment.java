@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import com.example.gotaximobile.activities.MainActivity;
 import com.example.gotaximobile.adapters.ProfileTabAdapter;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.RideFragment;
+import com.example.gotaximobile.fragments.admin.ReportsFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.tabs.TabLayout;
@@ -80,8 +82,35 @@ public class ProfileFragment extends Fragment {
 
             ImageView icon = view.findViewById(R.id.history_button);
             icon.setOnClickListener(v -> {
+
+                TokenStorage storage2 = new TokenStorage(requireContext());
+                String role = storage2.getRole();
+                Fragment next;
+
+                if ("DRIVER".equals(role)) {
+                    next = new com.example.gotaximobile.fragments.RideFragment();
+                }else{
+                    next = new com.example.gotaximobile.fragments.PassengerRideHistoryFragment();
+                }
+
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, next)
+                        .addToBackStack(null)
+                        .commit();
+
+                /*
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new RideFragment())
+                        .addToBackStack(null)
+                        .commit();*/
+            });
+
+            ImageView analytics = view.findViewById(R.id.analytics_button);
+            analytics.setOnClickListener(v -> {
+                ReportsFragment reportsFragment = new ReportsFragment();
+
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, reportsFragment)
                         .addToBackStack(null)
                         .commit();
             });

@@ -36,6 +36,14 @@
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/ic_book" />
 
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/analytics_button"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_gravity="end"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_analytics" />
+
         </com.google.android.material.appbar.MaterialToolbar>
 
         <com.google.android.material.tabs.TabLayout

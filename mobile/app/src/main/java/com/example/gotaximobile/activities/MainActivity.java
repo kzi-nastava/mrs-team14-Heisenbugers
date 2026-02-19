@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.AdminPanelFragment;
+import com.example.gotaximobile.fragments.FavoriteRoutesFragment;
 import com.example.gotaximobile.fragments.HomeFragment;
 
 import com.example.gotaximobile.fragments.admin.AdminPriceFragment;
@@ -120,11 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else {
                 if (id == R.id.nav_favorite) {
-
-                    selectedFragment = new AdminPriceFragment();
-
-                    selectedFragment = new AdminAllRidesFragment();
-
+                    selectedFragment = new FavoriteRoutesFragment();
                 } else if (id == R.id.nav_admin_panel) {
                     selectedFragment = new AdminPanelFragment();
                 } else if (id == R.id.nav_profile) {
@@ -253,6 +250,19 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("NETWORK_ERROR", Objects.requireNonNull(t.getMessage()));
                 callback.onFragmentReady(new HomeFragment()); // fallback
             }
+        });
+    }
+
+    public void navigateToHome() {
+        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+
+        if (bottomNav != null) {
+            bottomNav.setSelectedItemId(R.id.nav_home);
+        }
+
+        decideOnHomeFragment(fragment -> {
+            loadFragment(fragment);
+            updateTopBarVisibility(R.id.nav_home);
         });
     }
 

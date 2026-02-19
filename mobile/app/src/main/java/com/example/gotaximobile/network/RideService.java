@@ -1,8 +1,15 @@
 package com.example.gotaximobile.network;
 
 import com.example.gotaximobile.models.dtos.AdminRideDTO;
+import com.example.gotaximobile.models.dtos.AssignedRideDTO;
+import com.example.gotaximobile.models.dtos.CancelRideRequestDTO;
+import com.example.gotaximobile.models.dtos.FavoriteRouteDTO;
+import com.example.gotaximobile.models.dtos.MessageResponse;
 import com.example.gotaximobile.models.dtos.RideDTO;
+import com.example.gotaximobile.models.dtos.RideRequestDTO;
+import com.example.gotaximobile.models.dtos.RideDetailsDTO;
 import com.example.gotaximobile.models.dtos.RideTrackingDTO;
+import com.example.gotaximobile.models.dtos.StopRideRequestDTO;
 import com.example.gotaximobile.models.dtos.VehicleInfoDTO;
 
 import java.util.List;
@@ -11,6 +18,7 @@ import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -40,5 +48,41 @@ public interface RideService {
 
     @GET("api/admin/rides/all")
     Call<List<AdminRideDTO>> getAllRides();
+
+    @POST("api/rides")
+    Call<Void> createRide(@Body RideRequestDTO body);
+    @POST("api/rides/{id}/cancel")
+    Call<com.example.gotaximobile.models.dtos.MessageResponse> cancelRide(
+            @Path("id") java.util.UUID id,
+            @Body com.example.gotaximobile.models.dtos.CancelRideRequestDTO body
+    );
+
+    @GET("api/rides/{rideId}")
+    Call<RideDetailsDTO> getRideDetails(@Path("rideId") String rideId);
+
+    @GET("api/rides/me/active")
+    Call<AssignedRideDTO> getAssignedRide();
+
+    @POST("api/rides/{id}/start")
+    Call<Void> startRide(@Path("id") UUID id);
+
+    @GET("api/favorite-routes")
+    Call<List<FavoriteRouteDTO>> getFavoriteRoutes();
+
+    @DELETE("api/favorite-routes/{id}")
+    Call<Void> deleteFavorite(@Path("id") UUID id);
+
+    @POST("api/favorite-routes/{id}")
+    Call<Void> addFavorite(@Path("id") UUID id);
+
+    @DELETE("api/favorite-routes/{id}/ride")
+    Call<Void> deleteFavoriteFromRide(@Path("id") UUID id);
+
+    @POST("api/rides/{rideId}/cancel")
+    Call<MessageResponse> cancelAssignedRide(@Path("id") UUID rideId, @Body CancelRideRequestDTO body);
+
+    @POST("api/rides/{rideId}/stop")
+    Call<MessageResponse> stopRide(@Path("rideId") UUID rideId, @Body StopRideRequestDTO body);
+
 
 }

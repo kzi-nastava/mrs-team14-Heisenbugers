@@ -15,6 +15,31 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnChat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/chat"
+        app:srcCompat="@drawable/ic_chat"
+        app:tint="@android:color/white"
+        app:backgroundTint="@color/colorPrimary"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnPanic" />
+
+    <!-- PANIC button ON MAP (overlay) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnPanic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="PANIC"
+        app:srcCompat="@drawable/ic_panic"
+        app:tint="@android:color/white"
+        app:backgroundTint="@android:color/holo_red_dark"
+        android:layout_margin="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/orderCard" />
+
     <!-- ORDER CARD -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/orderCard"
@@ -80,36 +105,36 @@
 
             <!-- START -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                android:layout_marginTop="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/start_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:hint="Start"
                     android:enabled="false"
                     android:text="Start address"
-                    android:textColor="@color/primaryContrast"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent" />
+                    android:textColor="@color/primaryContrast" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- FINISH -->
             <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                android:layout_marginTop="8dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/finish_field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:hint="Finish"
                     android:enabled="false"
-                    android:textColor="@color/primaryContrast"
                     android:text="Finish address"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent" />
+                    android:textColor="@color/primaryContrast" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- NOTE -->
@@ -141,7 +166,6 @@
             </LinearLayout>
 
         </LinearLayout>
-
     </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

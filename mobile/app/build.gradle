@@ -20,7 +20,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField "String", "BASE_URL", "\"http://192.168.0.16:8081/\""
+            buildConfigField "String", "BASE_URL", "\"http://10.0.2.2:8081/\""
         }
         release {
             minifyEnabled false
@@ -64,4 +64,7 @@ dependencies {
     implementation libs.core
     implementation libs.rxjava
     implementation libs.rxandroid
+    implementation libs.lifecycle.viewmodel.ktx
+    implementation 'androidx.lifecycle:lifecycle-livedata:2.10.0'
+    implementation libs.mpandroidchart
 }

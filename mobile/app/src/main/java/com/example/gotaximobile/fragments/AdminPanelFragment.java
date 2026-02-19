@@ -1,19 +1,21 @@
 package com.example.gotaximobile.fragments;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
+import com.example.gotaximobile.fragments.admin.AdminAllRidesFragment;
+import com.example.gotaximobile.fragments.admin.AdminPriceFragment;
+import com.example.gotaximobile.fragments.admin.AdminRideHistoryHubFragment;
+import com.example.gotaximobile.fragments.admin.ManageUsersFragment;
+import com.example.gotaximobile.fragments.admin.ReportsFragment;
+import com.example.gotaximobile.fragments.admin.chat.AdminChatsFragment;
+import com.example.gotaximobile.fragments.auth.DriverRegistrationFragment;
 import com.example.gotaximobile.fragments.driverProfileRequests.DriverRequestsFragment;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -21,17 +23,47 @@ public class AdminPanelFragment extends Fragment {
 
     private boolean isFabExpanded = false;
     private FloatingActionButton fabMain;
-    private ExtendedFloatingActionButton fabRequests, fabRegister;
+    private ExtendedFloatingActionButton fabRequests, fabRegister, fabRideHistory, fabManageUsers, fabPanicDashboard, fabRideAnalytics, fabPrices, fabChat;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_admin_panel, container, false);
 
+        if (savedInstanceState == null) {
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.admin_fragment_container, new AdminAllRidesFragment())
+                    .commit();
+        }
+
         fabMain = view.findViewById(R.id.fab_main);
         fabRequests = view.findViewById(R.id.fab_requests);
         fabRegister = view.findViewById(R.id.fab_register);
+        fabRideHistory = view.findViewById(R.id.fab_ride_history);
+        fabManageUsers = view.findViewById(R.id.fab_manageUsers);
+        fabRideAnalytics = view.findViewById(R.id.fab_rideAnalytics);
+        fabPrices = view.findViewById(R.id.fab_prices);
+        fabChat = view.findViewById(R.id.fab_chat);
+
+
+        fabPanicDashboard = view.findViewById(R.id.fab_panic_dashboard);
+
+        fabRequests.hide();
+        fabRegister.hide();
+        fabRideHistory.hide();
+        fabManageUsers.hide();
+        fabRideAnalytics.hide();
+        fabMain.setImageResource(R.drawable.ic_edit);
+        isFabExpanded = false;
 
         fabMain.setOnClickListener(v -> toggleFab());
+
+        fabRideHistory.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new AdminRideHistoryHubFragment())
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
 
         fabRequests.setOnClickListener(v -> {
             DriverRequestsFragment requestsFragment = new DriverRequestsFragment();
@@ -45,8 +77,58 @@ public class AdminPanelFragment extends Fragment {
         });
 
         fabRegister.setOnClickListener(v -> {
-            // Navigate to Registration Fragment
-            Toast.makeText(getContext(), "Opening Registration...", Toast.LENGTH_SHORT).show();
+            DriverRegistrationFragment driverRegistrationFragment = new DriverRegistrationFragment();
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, driverRegistrationFragment)
+                    .addToBackStack(null)
+                    .commit();
+
+            toggleFab();
+        });
+
+        fabManageUsers.setOnClickListener(v -> {
+            ManageUsersFragment manageUsersFragment = new ManageUsersFragment();
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, manageUsersFragment)
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
+
+        fabRideAnalytics.setOnClickListener(v -> {
+            ReportsFragment reportsFragment = new ReportsFragment();
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, reportsFragment)
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
+
+        fabPanicDashboard.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new com.example.gotaximobile.fragments.admin.AdminPanicDashboardFragment())
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
+
+        fabPrices.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new AdminPriceFragment())
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
+
+        fabChat.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new AdminChatsFragment())
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
         });
 
         return view;
@@ -56,10 +138,22 @@ public class AdminPanelFragment extends Fragment {
         if (!isFabExpanded) {
             fabRequests.show();
             fabRegister.show();
+            fabRideHistory.show();
+            fabManageUsers.show();
+            fabPanicDashboard.show();
+            fabRideAnalytics.show();
+            fabPrices.show();
+            fabChat.show();
             fabMain.setImageResource(R.drawable.ic_close);
         } else {
             fabRequests.hide();
             fabRegister.hide();
+            fabRideHistory.hide();
+            fabManageUsers.hide();
+            fabPanicDashboard.hide();
+            fabRideAnalytics.hide();
+            fabPrices.hide();
+            fabChat.hide();
             fabMain.setImageResource(R.drawable.ic_edit);
         }
         isFabExpanded = !isFabExpanded;

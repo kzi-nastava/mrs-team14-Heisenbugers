@@ -17,10 +17,8 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.fragments.ride.RateRideDialogFragment;
 import com.example.gotaximobile.models.Constants;
 import com.example.gotaximobile.models.Ride;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
@@ -100,17 +98,7 @@ public class DriverHistoryOneRideFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        MaterialButton rateButton = view.findViewById(R.id.rate_ride_button);
-        rateButton.setOnClickListener(v -> {
-            RateRideDialogFragment dialog = RateRideDialogFragment.newInstance(
-                    ride.getStartLocation(),
-                    ride.getEndLocation(),
-                    ride.getFormatedTime(),
-                    ride.getFormatedPrice(),
-                    ride.getId().toString()
-            );
-            dialog.show(getParentFragmentManager(), "rateRideDialog");
-        });
+
     }
 
     private void MakeViolationChips(View view, Ride r) {

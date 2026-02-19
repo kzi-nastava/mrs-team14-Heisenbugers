@@ -16,6 +16,7 @@ import com.example.gotaximobile.fragments.auth.ForgotPasswordFragment;
 import com.example.gotaximobile.fragments.auth.LoginFragment;
 import com.example.gotaximobile.fragments.auth.RegisterFragment;
 import com.example.gotaximobile.fragments.auth.ResetPasswordFragment;
+import com.example.gotaximobile.fragments.auth.SetPasswordFragment;
 import com.example.gotaximobile.network.AuthApi;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -60,6 +61,14 @@ public class AuthActivity extends AppCompatActivity {
 
     public void openLogin(boolean addToBackStack) {
         replaceFragment(new LoginFragment(), addToBackStack, "login");
+    }
+
+    public void openSetPassword(boolean addToBackStack, String token) {
+        SetPasswordFragment setPasswordFragment = new SetPasswordFragment();
+        Bundle b = new Bundle();
+        b.putString(SetPasswordFragment.ARG_TOKEN, token);
+        setPasswordFragment.setArguments(b);
+        replaceFragment(setPasswordFragment, addToBackStack, "setPassword");
     }
 
     public void openRegister() {
@@ -116,6 +125,9 @@ public class AuthActivity extends AppCompatActivity {
             } else if ("/activate-account".equals(path)) {
                 activateAccountFromDeepLink(token);
                 return;
+            } else if ("/activate-account-driver".equals(path)){
+                activateDriverFromDeepLink(token);
+                return;
             }
         }
 
@@ -160,6 +172,29 @@ public class AuthActivity extends AppCompatActivity {
                                   Throwable t) {
                 Toast.makeText(AuthActivity.this, "Network error", Toast.LENGTH_SHORT).show();
                 openLogin(false);
+            }
+        });
+    }
+
+    private void activateDriverFromDeepLink(String token) {
+        AuthApi api = RetrofitClient.authApi(this);
+
+        api.activateDriver(token).enqueue(new retrofit2.Callback<Void>() {
+            @Override
+            public void onResponse(retrofit2.Call<Void> call,
+                                   retrofit2.Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(AuthActivity.this, "Account activated", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(AuthActivity.this, "Activation failed", Toast.LENGTH_SHORT).show();
+                }
+                openSetPassword(false, token);
+            }
+
+            @Override
+            public void onFailure(retrofit2.Call<Void> call,
+                                  Throwable t) {
+                openSetPassword(false, token);
             }
         });
     }

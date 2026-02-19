@@ -57,7 +57,7 @@ public class ChatWebSocketService {
     private void subscribe(String chatId, MessageListener listener) {
 
         String destinationPath =
-                chatId != null ? "/topic/admin/chat/" + chatId : "user/queue/messages";
+                chatId != null ? "/topic/admin/chat/" + chatId : "/user/queue/messages";
 
         disposables.add(
                 stompClient.topic(destinationPath)

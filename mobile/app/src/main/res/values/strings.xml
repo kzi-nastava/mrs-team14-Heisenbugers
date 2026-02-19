@@ -146,4 +146,10 @@
     <string name="search_rides">Search rides</string>
     <string name="no_rides_found">No rides found</string>
     <string name="estimate_ride">Estimate ride</string>
+    <string name="rate_ride">Rate Ride</string>
+    <string name="manage_users">Manage Users</string>
+    <string name="ride_analytics">Ride Analytics</string>
+    <string name="prices">Prices</string>
+    <string name="chats">Chats</string>
+    <string name="chat">Chat</string>
 </resources>

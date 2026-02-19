@@ -1,6 +1,7 @@
 package com.example.gotaximobile.fragments;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -8,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.databinding.FragmentItemBinding;
 import com.example.gotaximobile.models.Ride;
 
 import java.util.List;
@@ -30,11 +30,9 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        return new ViewHolder(FragmentItemBinding.inflate(
-                LayoutInflater.from(parent.getContext()), parent, false),
-                handler);
-
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_driver_ride, parent, false);
+        return new ViewHolder(view, handler);
     }
 
     @Override
@@ -55,24 +53,18 @@ public class MyRideRecyclerViewAdapter extends RecyclerView.Adapter<MyRideRecycl
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // public final TextView mIdView;
         public final TextView mContentView;
         public final TextView mRightSideView;
         public Ride mItem;
 
-        public ViewHolder(FragmentItemBinding binding, Consumer<Ride> handler) {
-            super(binding.getRoot());
-            mContentView = binding.content;
-            mRightSideView = binding.rightSide;
+        public ViewHolder(View view, Consumer<Ride> handler) {
+            super(view);
+            mContentView = view.findViewById(R.id.content);
+            mRightSideView = view.findViewById(R.id.rightSide);
 
-            itemView.setBackgroundResource(R.drawable.item_background_selector);
-            itemView.setClickable(true);
-            itemView.setOnClickListener(v -> {
-                v.setPressed(true);
-                handler.accept(mItem);
-
-            });
+            view.setOnClickListener(v -> handler.accept(mItem));
         }
+
 
         @NonNull
         @Override

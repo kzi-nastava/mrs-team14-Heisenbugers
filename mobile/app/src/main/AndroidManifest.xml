@@ -48,6 +48,17 @@
                     android:host="gotaxi"
                     android:path="/activate-account" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="http"
+                    android:host="gotaxi"
+                    android:pathPrefix="/activate-account-driver" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".activities.MainActivity"

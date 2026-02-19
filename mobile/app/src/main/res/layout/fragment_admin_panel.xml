@@ -1,5 +1,4 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -29,6 +28,12 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <FrameLayout
+        android:id="@+id/admin_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -36,6 +41,20 @@
         android:layout_margin="16dp"
         android:gravity="end"
         android:orientation="vertical">
+
+        <!-- Panic Dashboard -->
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_panic_dashboard"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Panic dashboard"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_panic" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_requests"
@@ -51,10 +70,23 @@
             app:icon="@drawable/ic_person_check" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_rideAnalytics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/ride_analytics"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_analytics" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_register"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/register_driver"
             android:visibility="gone"
             app:backgroundTint="@color/colorPrimary"
@@ -62,6 +94,59 @@
             app:iconTint="@color/text"
             android:textColor="@color/text"
             app:icon="@drawable/ic_person_add" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_manageUsers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/manage_users"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_person_outline" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_ride_history"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Ride History"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_book" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_prices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/prices"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_dollar" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/chats"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_chat" />
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_main"
@@ -74,5 +159,6 @@
             app:fabSize="normal" />
 
     </LinearLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
