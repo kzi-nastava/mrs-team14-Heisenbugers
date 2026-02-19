@@ -139,7 +139,7 @@ public class HomeFragment extends Fragment {
         if ("DRIVER".equals(role)) {
             switchDriverWorking.setVisibility(View.VISIBLE);
             loadWorkingState();
-            //checkForActiveRide();
+            checkForActiveRide();
             switchDriverWorking.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (updatingSwitchProgrammatically) return;
 
