@@ -60,38 +60,29 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
 
         viewModel = new androidx.lifecycle.ViewModelProvider(requireParentFragment()).get(RideBookingViewModel.class);
 
-        // Initialize Views
         containerStops = v.findViewById(R.id.containerStops);
         containerPassengers = v.findViewById(R.id.containerPassengers);
         acStart = v.findViewById(R.id.acStart);
         acDestination = v.findViewById(R.id.acDestination);
 
-        // Setup Debounce for static fields
         setupDebounce(acStart);
         setupSuggestionClick(acStart, "start");
         setupDebounce(acDestination);
         setupSuggestionClick(acDestination, "end");
 
-        // Add Stop Logic
         v.findViewById(R.id.btnAddStop).setOnClickListener(view -> addDynamicField(containerStops, "Intermediate Stop", true));
 
-        // Add Passenger Logic
         v.findViewById(R.id.btnAddPassenger).setOnClickListener(view -> addDynamicField(containerPassengers, "Passenger Email", false));
 
-        // Reset Logic
         v.findViewById(R.id.btnReset).setOnClickListener(view -> {
             containerStops.removeAllViews();
             containerPassengers.removeAllViews();
             acStart.setText("");
             acDestination.setText("");
 
-            //if (viewModel != null) viewModel.reset();
-
-            // 3. Tell HomeFragment to clear the Map
             getParentFragmentManager().setFragmentResult("clear_map", new Bundle());
         });
 
-        // Vehicle Selection (MaterialButtonToggleGroup handles borders automatically)
         MaterialButtonToggleGroup vehicleGroup = v.findViewById(R.id.toggleGroupVehicle);
         vehicleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
             if (isChecked) {
@@ -126,7 +117,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
             selectedCal.set(Calendar.MINUTE, selectedMinute);
             selectedCal.set(Calendar.SECOND, 0);
 
-            // 5 Hours Limit Logic
             Calendar maxLimit = Calendar.getInstance();
             maxLimit.add(Calendar.HOUR_OF_DAY, 5);
 
@@ -135,16 +125,13 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
             } else if (selectedCal.after(maxLimit)) {
                 Toast.makeText(getContext(), "Maximum schedule time is 5 hours from now", Toast.LENGTH_SHORT).show();
             } else {
-                // Format for Backend (ISO 8601)
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault());
                 sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
                 selectedScheduledTime = sdf.format(selectedCal.getTime());
 
-                // UI Update: Update the button text to show selected time
                 MaterialButton btnSchedule = getView().findViewById(R.id.btnSchedule);
                 btnSchedule.setText("At " + String.format("%02d:%02d", hourOfDay, selectedMinute));
 
-                // Trigger the actual order
                 processOrder(true);
             }
         }, hour, minute, true);
@@ -157,7 +144,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
         AutoCompleteTextView input = itemView.findViewById(R.id.acInput);
         input.setHint(hint);
         if (isLocation) {
-            // Only setup debounce and click listeners if it's a location/stop
             setupDebounce(input);
             setupSuggestionClick(input, "stop");
 
@@ -176,9 +162,8 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
                 }
             });
         } else {
-            // For passengers, treat it as a normal EditText
-            input.setAdapter(null); // Ensure no adapter is attached
-            input.setThreshold(999); // Effectively prevents dropdown from showing
+            input.setAdapter(null);
+            input.setThreshold(999);
 
             itemView.findViewById(R.id.btnRemove).setOnClickListener(v -> {
                 container.removeView(itemView);
@@ -198,7 +183,7 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
             result.putDouble("lat", Double.parseDouble(selected.lat));
             result.putDouble("lon", Double.parseDouble(selected.lon));
             result.putString("name", selected.display_name);
-            result.putString("tag", tag); // "start", "end", or "stop"
+            result.putString("tag", tag);
 
             getParentFragmentManager().setFragmentResult("pin_selected", result);
         });
@@ -213,7 +198,7 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 searchHandler.removeCallbacks(searchRunnable);
                 searchRunnable = () -> fetchSuggestions(s.toString(), textView);
-                searchHandler.postDelayed(searchRunnable, 1000); // 1 second delay
+                searchHandler.postDelayed(searchRunnable, 1000);
             }
 
             @Override
@@ -230,7 +215,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
                 if (response.isSuccessful() && response.body() != null) {
                     List<GeocodeSuggestionDTO> fullList = response.body();
 
-                    // Limit to top 5 suggestions
                     List<GeocodeSuggestionDTO> limitedList = fullList.subList(0, Math.min(fullList.size(), 5));
 
                     ArrayAdapter<GeocodeSuggestionDTO> adapter = new ArrayAdapter<>(
@@ -241,7 +225,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
 
                     textView.setAdapter(adapter);
 
-                    // Show dropdown only if the user is still typing in THIS field
                     if (textView.hasFocus()) {
                         textView.showDropDown();
                     }
@@ -268,7 +251,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
         }
         String selectedVehicle = ((Button)getView().findViewById(checkedId)).getText().toString().toUpperCase();
 
-        // 2. Build the Payload
         RideRequestDTO payload = new RideRequestDTO();
         payload.vehicleType = selectedVehicle;
         payload.babyTransport = ((MaterialSwitch)getView().findViewById(R.id.switchBabies)).isChecked();
@@ -296,7 +278,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
 
         payload.route = route;
 
-        // 4. Extract Passengers
         payload.passengersEmails = new ArrayList<>();
         for (int i = 0; i < containerPassengers.getChildCount(); i++) {
             View v = containerPassengers.getChildAt(i);
@@ -309,7 +290,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
             payload.scheduledAt = selectedScheduledTime;
         }
 
-        // 5. API Call
         RetrofitClient.rideService(getContext()).createRide(payload).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {

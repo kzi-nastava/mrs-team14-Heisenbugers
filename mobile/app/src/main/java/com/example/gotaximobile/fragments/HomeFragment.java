@@ -1,34 +1,53 @@
 package com.example.gotaximobile.fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.example.gotaximobile.BuildConfig;
 import com.example.gotaximobile.R;
 //import com.example.gotaximobile.fragments.ride.EstimateRideFragment;
 import com.example.gotaximobile.fragments.ride.EstimateRideBottomSheet;
 import com.example.gotaximobile.fragments.ride.RideBookingBottomSheet;
 import com.example.gotaximobile.models.MapPin;
+import com.example.gotaximobile.models.dtos.AssignedRideDTO;
 import com.example.gotaximobile.models.dtos.GetProfileDTO;
+import com.example.gotaximobile.models.dtos.LocationDTO;
+import com.example.gotaximobile.models.dtos.PassengerInfoDTO;
 import com.example.gotaximobile.models.dtos.PriceDTO;
+import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.models.dtos.VehicleInfoDTO;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.RideService;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.viewmodels.RideBookingViewModel;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 
 
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,12 +55,21 @@ import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
     private com.google.android.material.card.MaterialCardView cardEstimateInfo;
-    private android.widget.TextView tvEstimatePrice, tvEstimateDistance, tvEstimateEta;
+    private android.widget.TextView tvEstimatePrice, tvEstimateDistance, tvEstimateEta,
+            tvDriverStart, tvDriverDestination, tvDriverDistance, tvDriverTime, tvNoPassengers;
+
+    private ChipGroup cgPassengers;
+
+    private LinearLayout containerDriverStops;
+
+    private Button startRideButton;
+    private Button cancelRideButton;
 
     private RideService rideService;
     private List<VehicleInfoDTO> vehicles;
     private List<MapPin> mapPins;
     private MapFragment mapFragment;
+    private BottomSheetBehavior<View> driverSheetBehavior;
     private RideBookingViewModel viewModel;
 
     private List<PriceDTO> pricesList;
@@ -50,7 +78,6 @@ public class HomeFragment extends Fragment {
     public HomeFragment() {
 
     }
-
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -77,14 +104,34 @@ public class HomeFragment extends Fragment {
         View fab = view.findViewById(R.id.fabEstimate);
         fab.setVisibility(isGuest || "PASSENGER".equals(role) ? View.VISIBLE : View.GONE);
 
+        View driverSheet = view.findViewById(R.id.driverBottomSheet);
+        driverSheetBehavior = BottomSheetBehavior.from(driverSheet);
+        driverSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+
+        if ("DRIVER".equals(role)) {
+            checkForActiveRide();
+        }
+
         if (cardEstimateInfo != null) {
             cardEstimateInfo.setVisibility(View.GONE);
         }
 
         cardEstimateInfo = view.findViewById(R.id.cardEstimateInfo);
         tvEstimatePrice = view.findViewById(R.id.tvEstimatePrice);
+        tvDriverStart = view.findViewById(R.id.tvDriverStart);
+        tvDriverDestination = view.findViewById(R.id.tvDriverDestination);
+        tvDriverDistance = view.findViewById(R.id.tvDriverDistance);
+        tvDriverTime = view.findViewById(R.id.tvDriverTime);
         tvEstimateDistance = view.findViewById(R.id.tvEstimateDistance);
         tvEstimateEta = view.findViewById(R.id.tvEstimateEta);
+        tvNoPassengers = view.findViewById(R.id.noPassengers);
+
+        cgPassengers = view.findViewById(R.id.cgPassengers);
+
+        containerDriverStops = view.findViewById(R.id.containerDriverStops);
+
+        startRideButton = view.findViewById(R.id.btnStartRide);
+        cancelRideButton = view.findViewById(R.id.btnCancelRide);
 
         if (!isGuest) {
             cardEstimateInfo.setVisibility(View.GONE);
@@ -93,11 +140,11 @@ public class HomeFragment extends Fragment {
 
         if (mapFragment != null) {
             mapFragment.setRouteInfoListener((durationSeconds, distanceKm) -> {
-                // Convert seconds to minutes for display
                 int durationMinutes = (int) (durationSeconds / 60);
 
-                // Show the card and update values
-                cardEstimateInfo.setVisibility(View.VISIBLE);
+                if(Objects.equals(role, "PASSENGER")){
+                    cardEstimateInfo.setVisibility(View.VISIBLE);
+                }
                 tvEstimateDistance.setText("Distance: " + String.format("%.2f", + distanceKm) + " km");
                 tvEstimateEta.setText("Time: " + durationMinutes + " min");
 
@@ -118,9 +165,6 @@ public class HomeFragment extends Fragment {
             } else if (isGuest) {
                 new EstimateRideBottomSheet().show(getParentFragmentManager(), "estimate_sheet");
             }
-
-//            new com.example.gotaximobile.fragments.ride.EstimateRideBottomSheet()
-//                    .show(getParentFragmentManager(), "estimate_sheet");
         });
 
         getChildFragmentManager().setFragmentResultListener("pin_selected", this, (key, bundle) -> {
@@ -255,12 +299,106 @@ public class HomeFragment extends Fragment {
         });
     }
 
-
     private void updateVehiclePins() {
         if (mapFragment == null || mapPins == null) return;
         mapFragment.setPins(mapPins);
     }
 
+    private void checkForActiveRide() {
+        RetrofitClient.rideService(getContext()).getAssignedRide().enqueue(new Callback<AssignedRideDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<AssignedRideDTO> call, @NonNull Response<AssignedRideDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    showRideOnSheet(response.body());
+                } else {
+                    driverSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<AssignedRideDTO> call, @NonNull Throwable t) {  }
+        });
+    }
 
+    private void showRideOnSheet(AssignedRideDTO ride) {
+        driverSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        tvDriverStart.setText(ride.start.address);
+        tvDriverDestination.setText(ride.end.address);
+
+        containerDriverStops.removeAllViews();
+        for (LocationDTO stop : ride.stops) {
+            View stopView = getLayoutInflater().inflate(R.layout.item_ride_stop, containerDriverStops, false);
+            TextView tvStopName = stopView.findViewById(R.id.tvStopName);
+            tvStopName.setText(stop.getAddress());
+            containerDriverStops.addView(stopView);
+        }
+
+        cgPassengers.removeAllViews();
+        if (ride.passengers.isEmpty()){
+            tvNoPassengers.setVisibility(View.VISIBLE);
+        }
+        for (PassengerInfoDTO p : ride.passengers) {
+            Chip chip = new Chip(requireContext());
+            chip.setText(p.getEmail());
+
+            chip.setChipIconVisible(true);
+            chip.setCheckable(false);
+            chip.setClickable(true);
+
+            Glide.with(this)
+                    .load(p.getProfileImageUrl().replace("http://localhost:8081/", BuildConfig.BASE_URL))
+                    .placeholder(R.drawable.ic_person)
+                    .circleCrop()
+                    .into(new CustomTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            chip.setChipIcon(resource);
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            chip.setChipIcon(placeholder);
+                        }
+                    });
+
+            cgPassengers.addView(chip);
+        }
+
+        tvDriverDistance.setText(String.format(Locale.getDefault(), "%.1f km", ride.distanceKm));
+        tvDriverTime.setText(ride.estimatedTimeMin + " min");
+
+        if (mapFragment != null) {
+            GeoPoint start = new GeoPoint(ride.start.getLatitude(), ride.start.getLongitude());
+            mapFragment.addRoutePin(start, ride.start.address, "start");
+            GeoPoint end = new GeoPoint(ride.end.getLatitude(), ride.end.getLongitude());
+            mapFragment.addRoutePin(end, ride.end.address, "end");
+
+            List<GeoPoint> stops = new ArrayList<>();
+            for(LocationDTO stop : ride.stops) {
+                GeoPoint stopPoint = new GeoPoint(stop.getLatitude(), stop.getLongitude());
+                mapFragment.addRoutePin(stopPoint, stop.address, "stop");
+            }
+        }
+
+        startRideButton.setOnClickListener(v -> startRide(ride.rideId));
+
+        // add call for cancel ride
+        //cancelRideButton.setOnClickListener(v -> cancelRide());
+    }
+
+    private void startRide(UUID id) {
+        RetrofitClient.rideService(getContext()).startRide(id).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Ride started!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "There was an error!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {  }
+        });
+    }
 
 }
