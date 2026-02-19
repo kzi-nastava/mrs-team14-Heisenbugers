@@ -29,7 +29,6 @@ import com.example.gotaximobile.network.RideService;
 import com.example.gotaximobile.network.UserService;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 
 
 import org.osmdroid.util.GeoPoint;
@@ -85,7 +84,7 @@ public class DriverDuringRideFragment extends Fragment {
         MaterialButton btnPanic = view.findViewById(R.id.btnPanic);
         btnPanic.setOnClickListener(v -> onPanicClicked(btnPanic));
 
-        ExtendedFloatingActionButton btnStop = view.findViewById(R.id.btnStopRide);
+        MaterialButton btnStop = view.findViewById(R.id.btnStopRide);
         btnStop.setOnClickListener(v -> onStopRideClicked(btnStop));
 
         fetchCurrentRide();
@@ -250,7 +249,7 @@ public class DriverDuringRideFragment extends Fragment {
     }
 
 
-    private void onStopRideClicked(ExtendedFloatingActionButton btn) {
+    private void onStopRideClicked(MaterialButton btn) {
         if (rideId == null) {
             Toast.makeText(requireContext(), "No active ride", Toast.LENGTH_SHORT).show();
             return;
@@ -265,7 +264,7 @@ public class DriverDuringRideFragment extends Fragment {
                 .show();
     }
 
-    private void callStopRide(ExtendedFloatingActionButton btn) {
+    private void callStopRide(MaterialButton btn) {
         if (rideId == null) {
             Toast.makeText(requireContext(), "No active ride", Toast.LENGTH_SHORT).show();
             return;

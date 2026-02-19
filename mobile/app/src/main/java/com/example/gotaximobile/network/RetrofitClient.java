@@ -99,4 +99,8 @@ public class RetrofitClient {
     public static RideAnalyticsService rideAnalyticsService(Context context){
         return  get(context).create(RideAnalyticsService.class);
     }
+      
+    public static DriverService driverService(Context context) {
+        return get(context).create(DriverService.class);
+    }
 }

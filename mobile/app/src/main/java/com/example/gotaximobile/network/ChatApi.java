@@ -18,6 +18,11 @@ public interface ChatApi {
             @Path("chatId") String chatId
     );
 
+    @GET("/api/me/chat/full")
+    Call<List<Message>> loadMyMessages(
+            @Header("Authorization") String token
+    );
+
     @GET("/api/admin/chats")
     Call<List<Chat>> getAllChats();
 }

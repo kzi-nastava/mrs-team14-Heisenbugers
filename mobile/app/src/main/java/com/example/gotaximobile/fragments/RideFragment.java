@@ -1,12 +1,17 @@
 package com.example.gotaximobile.fragments;
 
 import android.content.Context;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -41,12 +46,20 @@ public class RideFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     private Button[] buttons;
+    private int activatedButtonIndex = 0;
     private SortDirection sortDirection = SortDirection.ASCENDING;
     private ProfileService profileApi;
     private List<Ride> rides = new ArrayList<>();
 
     private RecyclerView recyclerView;
     private MyRideRecyclerViewAdapter adapter;
+
+    // For shake-sort
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private SensorEventListener shakeListener;
+    private static final float SHAKE_THRESHOLD = 2.5f;
+    private long lastShakeTime = 0;
 
 
     /**
@@ -57,13 +70,71 @@ public class RideFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (accelerometer != null) {
+            sensorManager.registerListener(shakeListener, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(shakeListener);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        shakeListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+
+                float gX = x / SensorManager.GRAVITY_EARTH;
+                float gY = y / SensorManager.GRAVITY_EARTH;
+                float gZ = z / SensorManager.GRAVITY_EARTH;
+
+                float gForce = (float) Math.sqrt(gX * gX + gY * gY + gZ * gZ);
+
+                if (gForce > SHAKE_THRESHOLD) {
+                    long now = System.currentTimeMillis();
+                    if (lastShakeTime + 1000 < now) {
+                        lastShakeTime = now;
+
+                        // DO SOMETHING
+                        Toast.makeText(requireContext(), "Shaken!", Toast.LENGTH_SHORT).show();
+                        nextSortOption();
+
+                    }
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            }
+        };
     }
+
+    private void nextSortOption() {
+        if (buttons == null || buttons.length == 0) return;
+
+        // toggle direction
+
+        // re-trigger current active sort
+        getButtonHandlers().get(activatedButtonIndex).accept(buttons[activatedButtonIndex]);
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -164,6 +235,7 @@ public class RideFragment extends Fragment {
                     } else {
                         sortDirection = SortDirection.ASCENDING;
                     }
+                    activatedButtonIndex = 0;
                     queryRides(null, null, "DATE", sortDirection);
                 },
                 view -> {
@@ -172,6 +244,7 @@ public class RideFragment extends Fragment {
                     } else {
                         sortDirection = SortDirection.ASCENDING;
                     }
+                    activatedButtonIndex = 1;
                     queryRides(null, null, "PRICE", sortDirection);
                 },
                 view -> {
@@ -180,6 +253,7 @@ public class RideFragment extends Fragment {
                     } else {
                         sortDirection = SortDirection.ASCENDING;
                     }
+                    activatedButtonIndex = 2;
                     queryRides(null, null, "DESTINATION", sortDirection);
                 }
         );

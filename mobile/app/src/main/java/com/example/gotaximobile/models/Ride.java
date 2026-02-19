@@ -10,6 +10,8 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.UUID;
 
@@ -56,8 +58,17 @@ public class Ride implements Serializable {
         this.driver = null;
         this.startLocation = dto.startAddress;
         this.endLocation = dto.endAddress;
+
+        DateTimeFormatter FMT = new DateTimeFormatterBuilder()
+                .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+                .optionalStart()
+                .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
+                .optionalEnd()
+                .toFormatter();
+
         this.startTime = dto.startedAt != null ? LocalDateTime.parse(dto.startedAt, FMT) : null;
         this.endTime = dto.endedAt != null ? LocalDateTime.parse(dto.endedAt, FMT) : null;
+
         this.price = dto.price;
         this.rating = 0.0;
         this.maxRating = 0.0;
