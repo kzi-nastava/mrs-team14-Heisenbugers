@@ -31,6 +31,7 @@ import com.example.gotaximobile.fragments.ride.RideBookingBottomSheet;
 import com.example.gotaximobile.models.MapPin;
 import com.example.gotaximobile.models.dtos.AssignedRideDTO;
 import com.example.gotaximobile.models.dtos.CancelRideRequestDTO;
+import com.example.gotaximobile.models.dtos.DriverWorkingDTO;
 import com.example.gotaximobile.models.dtos.FavoriteRouteDTO;
 import com.example.gotaximobile.models.dtos.GetProfileDTO;
 import com.example.gotaximobile.models.dtos.LocationDTO;
@@ -39,6 +40,7 @@ import com.example.gotaximobile.models.dtos.PassengerInfoDTO;
 import com.example.gotaximobile.models.dtos.PriceDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.models.dtos.VehicleInfoDTO;
+import com.example.gotaximobile.network.DriverService;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.RideService;
 import com.example.gotaximobile.data.TokenStorage;
@@ -46,13 +48,17 @@ import com.example.gotaximobile.viewmodels.RideBookingViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textfield.TextInputLayout;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.osmdroid.util.GeoPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -89,6 +95,10 @@ public class HomeFragment extends Fragment {
     private List<PriceDTO> pricesList;
     private String selectedType;
 
+    private DriverService driverService;
+    private MaterialSwitch switchDriverWorking;
+    private boolean updatingSwitchProgrammatically = false;
+
     public HomeFragment() {
 
     }
@@ -99,6 +109,8 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         rideService = RetrofitClient.rideService(requireContext());
+
+        driverService = RetrofitClient.driverService(requireContext());
         queryVehicles();
         fetchPrices();
         return view;
@@ -115,6 +127,8 @@ public class HomeFragment extends Fragment {
         boolean isGuest = !storage.isLoggedIn();
         String role = storage.getRole();
 
+        switchDriverWorking = view.findViewById(R.id.switchDriverWorking);
+
         View fab = view.findViewById(R.id.fabEstimate);
         fab.setVisibility(isGuest || "PASSENGER".equals(role) ? View.VISIBLE : View.GONE);
 
@@ -123,8 +137,19 @@ public class HomeFragment extends Fragment {
         driverSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
 
         if ("DRIVER".equals(role)) {
-            checkForActiveRide();
+            switchDriverWorking.setVisibility(View.VISIBLE);
+            loadWorkingState();
+            //checkForActiveRide();
+            switchDriverWorking.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                if (updatingSwitchProgrammatically) return;
+
+                boolean previous = !isChecked;
+                setWorkingState(isChecked, previous);
+            });
+        } else {
+            switchDriverWorking.setVisibility(View.GONE);
         }
+
 
         if (cardEstimateInfo != null) {
             cardEstimateInfo.setVisibility(View.GONE);
@@ -543,6 +568,101 @@ public class HomeFragment extends Fragment {
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+
+    private void loadWorkingState() {
+        if (switchDriverWorking == null) return;
+
+        switchDriverWorking.setEnabled(false);
+
+        driverService.getMyWorkingState().enqueue(new Callback<DriverWorkingDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<DriverWorkingDTO> call,
+                                   @NonNull Response<DriverWorkingDTO> response) {
+                switchDriverWorking.setEnabled(true);
+
+                if (response.isSuccessful() && response.body() != null) {
+                    updatingSwitchProgrammatically = true;
+                    switchDriverWorking.setChecked(response.body().working);
+                    updatingSwitchProgrammatically = false;
+                } else {
+                    Toast.makeText(requireContext(),
+                            "Failed to load working state (" + response.code() + ")",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<DriverWorkingDTO> call,
+                                  @NonNull Throwable t) {
+                switchDriverWorking.setEnabled(true);
+                Log.e("DRIVER_WORK", "load error", t);
+                Toast.makeText(requireContext(),
+                        "Network error",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void setWorkingState(boolean targetState, boolean previousState) {
+        if (switchDriverWorking == null) return;
+
+        switchDriverWorking.setEnabled(false);
+
+        DriverWorkingDTO body = new DriverWorkingDTO(targetState);
+
+        driverService.setMyWorkingState(body).enqueue(new Callback<DriverWorkingDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<DriverWorkingDTO> call,
+                                   @NonNull Response<DriverWorkingDTO> response) {
+                switchDriverWorking.setEnabled(true);
+
+                if (response.isSuccessful() && response.body() != null) {
+                    updatingSwitchProgrammatically = true;
+                    switchDriverWorking.setChecked(response.body().working);
+                    updatingSwitchProgrammatically = false;
+                } else {
+                    String msg = "Failed (" + response.code() + ")";
+
+                    try {
+                        if (response.errorBody() != null) {
+                            String json = response.errorBody().string();
+                            JSONObject obj = new JSONObject(json);
+                            String serverMsg = obj.optString("message", null);
+                            if (serverMsg != null && !serverMsg.isEmpty()) {
+                                msg = serverMsg;
+                            }
+                        }
+                    } catch (IOException | JSONException e) {
+                        Log.e("DRIVER_WORK", "parse errorBody failed", e);
+                    }
+
+
+
+                    updatingSwitchProgrammatically = true;
+                    switchDriverWorking.setChecked(previousState);
+                    updatingSwitchProgrammatically = false;
+
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<DriverWorkingDTO> call,
+                                  @NonNull Throwable t) {
+                switchDriverWorking.setEnabled(true);
+
+                updatingSwitchProgrammatically = true;
+                switchDriverWorking.setChecked(previousState);
+                updatingSwitchProgrammatically = false;
+
+                Log.e("DRIVER_WORK", "set error", t);
+                Toast.makeText(requireContext(),
+                        "Network error",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 
