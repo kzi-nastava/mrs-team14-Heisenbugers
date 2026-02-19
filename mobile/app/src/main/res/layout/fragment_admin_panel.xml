@@ -1,5 +1,4 @@
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -100,7 +99,7 @@
             android:id="@+id/fab_panic_dashboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:text="Panic dashboard"
             android:visibility="gone"
             app:backgroundTint="@color/colorPrimary"
@@ -108,6 +107,33 @@
             app:iconTint="@color/text"
             android:textColor="@color/text"
             app:icon="@drawable/ic_panic" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_prices"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/prices"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_dollar" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_chat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/chats"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_chat" />
+
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_main"
