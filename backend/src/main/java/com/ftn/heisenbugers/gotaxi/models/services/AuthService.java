@@ -169,8 +169,7 @@ public class AuthService {
 
         String activationLink = "http://localhost:8081/api/drivers/activate?token=" + token;
 
-        //link for mobile - will change!!!!!
-        String androidLink = "http://gotaxi/activate-account?token=" + token;
+        String androidLink = "http://gotaxi/activate-account-driver?token=" + token;
 
         emailService.sendActivationEmail(normalizedEmail, activationLink,androidLink);
 

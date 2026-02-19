@@ -17,6 +17,7 @@ import com.example.gotaximobile.R;
 import com.example.gotaximobile.activities.AuthActivity;
 import com.example.gotaximobile.models.dtos.MessageResponse;
 import com.example.gotaximobile.models.dtos.ResetPasswordRequestDTO;
+import com.example.gotaximobile.models.dtos.SetDriverPasswordDTO;
 import com.example.gotaximobile.network.AuthApi;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.google.android.material.button.MaterialButton;
@@ -40,8 +41,8 @@ public class SetPasswordFragment extends Fragment {
         super(R.layout.fragment_set_password);
     }
 
-    public static ResetPasswordFragment newInstance(String token) {
-        ResetPasswordFragment f = new ResetPasswordFragment();
+    public static SetPasswordFragment newInstance(String token) {
+        SetPasswordFragment f = new SetPasswordFragment();
         Bundle b = new Bundle();
         b.putString(ARG_TOKEN, token);
         f.setArguments(b);
@@ -67,7 +68,7 @@ public class SetPasswordFragment extends Fragment {
         etConfirm = view.findViewById(R.id.etConfirm);
 
         btnSave = view.findViewById(R.id.btnSave);
-        btnBack = view.findViewById(R.id.btnBackToLogin);
+        //btnBack = view.findViewById(R.id.btnBackToLogin);
 
         btnSave.setOnClickListener(v -> {
             clearErrors();
@@ -84,10 +85,10 @@ public class SetPasswordFragment extends Fragment {
 
             setLoading(true);
 
-            authApi.resetPassword(new ResetPasswordRequestDTO(token,pass,confirm))
-                    .enqueue(new Callback<MessageResponse>() {
+            authApi.setInitialPassword(token, new SetDriverPasswordDTO(pass, confirm))
+                    .enqueue(new Callback<Void>() {
                         @Override
-                        public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                        public void onResponse(Call<Void> call, Response<Void> response) {
                             setLoading(false);
 
                             if(response.isSuccessful()){
@@ -99,16 +100,11 @@ public class SetPasswordFragment extends Fragment {
                                         FragmentManager.POP_BACK_STACK_INCLUSIVE);
                                 ((AuthActivity) requireActivity()).openLogin(false);
                             }
-                            else{
-                                Toast.makeText(requireContext(),
-                                        "Reset failed: "+response.code(),
-                                        Toast.LENGTH_LONG).show();
 
-                            }
                         }
 
                         @Override
-                        public void onFailure(Call<MessageResponse> call, Throwable throwable) {
+                        public void onFailure(Call<Void> call, Throwable throwable) {
                             setLoading(false);
                             Toast.makeText(requireContext(),
                                             "Network error: " + throwable.getMessage(),
@@ -117,11 +113,11 @@ public class SetPasswordFragment extends Fragment {
                     });
         });
 
-        btnBack.setOnClickListener(v -> {
-            requireActivity().getSupportFragmentManager().popBackStack(null,
-                    androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
-            ((AuthActivity) requireActivity()).openLogin(false);
-        });
+//        btnBack.setOnClickListener(v -> {
+//            requireActivity().getSupportFragmentManager().popBackStack(null,
+//                    androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//            ((AuthActivity) requireActivity()).openLogin(false);
+//        });
     }
 
     private void clearErrors() {
@@ -130,7 +126,7 @@ public class SetPasswordFragment extends Fragment {
     }
     private void setLoading(boolean loading){
         btnSave.setEnabled(!loading);
-        btnBack.setEnabled(!loading);
+        //btnBack.setEnabled(!loading);
     }
 
 

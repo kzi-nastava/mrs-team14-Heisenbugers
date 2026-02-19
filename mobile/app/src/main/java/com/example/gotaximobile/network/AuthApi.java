@@ -10,6 +10,7 @@ import com.example.gotaximobile.models.dtos.LoginResponseDTO;
 import com.example.gotaximobile.models.dtos.MessageResponse;
 import com.example.gotaximobile.models.dtos.RegisterResponseDTO;
 import com.example.gotaximobile.models.dtos.ResetPasswordRequestDTO;
+import com.example.gotaximobile.models.dtos.SetDriverPasswordDTO;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -50,4 +51,10 @@ public interface AuthApi {
             @Part("data") CreateDriverDTO profileDTO,
             @Part MultipartBody.Part profileImage
     );
+
+    @GET("api/drivers/activate")
+    Call<Void> activateDriver(@Query("token") String token);
+
+    @PUT("api/drivers/password")
+    Call<Void> setInitialPassword(@Query("token") String token, @Body SetDriverPasswordDTO body);
 }
