@@ -13,15 +13,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
-import com.example.gotaximobile.models.dtos.RideHistoryDTO;
-import com.example.gotaximobile.models.dtos.RideDetailsDTO;
+import com.example.gotaximobile.fragments.ride.RateRideDialogFragment;
 import com.example.gotaximobile.models.dtos.LocationDTO;
+import com.example.gotaximobile.models.dtos.RideDetailsDTO;
+import com.example.gotaximobile.models.dtos.RideHistoryDTO;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.RideService;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,6 +147,22 @@ public class PassengerRideHistoryDetailFragment extends Fragment {
             // (не обязательно показывать Toast, но полезно в дебаге)
             // Toast.makeText(requireContext(), "Missing rideId for map", Toast.LENGTH_SHORT).show();
         }
+
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("HH:mm");
+        String startedAtF = LocalDateTime.parse(startedAt, DateTimeFormatter.ISO_DATE_TIME).format(fmt);
+        String endedAtF = LocalDateTime.parse(endedAt, DateTimeFormatter.ISO_DATE_TIME).format(fmt);
+
+        MaterialButton rateButton = view.findViewById(R.id.rate_ride_button);
+        rateButton.setOnClickListener(v -> {
+            RateRideDialogFragment dialog = RateRideDialogFragment.newInstance(
+                    start,
+                    end,
+                    startedAtF + " - " + endedAtF,
+                    String.format("%.2f", price),
+                    rideId
+            );
+            dialog.show(getParentFragmentManager(), "rateRideDialog");
+        });
     }
 
     private void loadRideDetailsAndDraw(String rideId, TextView tvDriver) {
@@ -211,7 +231,9 @@ public class PassengerRideHistoryDetailFragment extends Fragment {
         return out;
     }
 
-    private String safe(String s) { return s == null ? "" : s; }
+    private String safe(String s) {
+        return s == null ? "" : s;
+    }
 
     private String fmt(String iso) {
         if (iso == null) return "—";
