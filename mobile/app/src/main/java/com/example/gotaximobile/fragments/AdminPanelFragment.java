@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.fragments.admin.AdminAllRidesFragment;
 import com.example.gotaximobile.fragments.admin.AdminRideHistoryHubFragment;
+import com.example.gotaximobile.fragments.admin.ManageUsersFragment;
 import com.example.gotaximobile.fragments.auth.DriverRegistrationFragment;
 import com.example.gotaximobile.fragments.driverProfileRequests.DriverRequestsFragment;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -24,7 +25,7 @@ public class AdminPanelFragment extends Fragment {
 
     private boolean isFabExpanded = false;
     private FloatingActionButton fabMain;
-    private ExtendedFloatingActionButton fabRequests, fabRegister,fabRideHistory;
+    private ExtendedFloatingActionButton fabRequests, fabRegister, fabRideHistory, fabManageUsers, fabPanicDashboard;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -40,11 +41,14 @@ public class AdminPanelFragment extends Fragment {
         fabRequests = view.findViewById(R.id.fab_requests);
         fabRegister = view.findViewById(R.id.fab_register);
         fabRideHistory = view.findViewById(R.id.fab_ride_history);
+        fabManageUsers = view.findViewById(R.id.fab_manageUsers);
 
+        fabPanicDashboard = view.findViewById(R.id.fab_panic_dashboard);
 
         fabRequests.hide();
         fabRegister.hide();
         fabRideHistory.hide();
+        fabManageUsers.hide();
         fabMain.setImageResource(R.drawable.ic_edit);
         isFabExpanded = false;
 
@@ -80,6 +84,24 @@ public class AdminPanelFragment extends Fragment {
             toggleFab();
         });
 
+        fabManageUsers.setOnClickListener(v -> {
+            ManageUsersFragment manageUsersFragment = new ManageUsersFragment();
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, manageUsersFragment)
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
+
+        fabPanicDashboard.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new com.example.gotaximobile.fragments.admin.AdminPanicDashboardFragment())
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
+
         return view;
     }
 
@@ -88,11 +110,15 @@ public class AdminPanelFragment extends Fragment {
             fabRequests.show();
             fabRegister.show();
             fabRideHistory.show();
+            fabManageUsers.show();
+            fabPanicDashboard.show();
             fabMain.setImageResource(R.drawable.ic_close);
         } else {
             fabRequests.hide();
             fabRegister.hide();
             fabRideHistory.hide();
+            fabManageUsers.hide();
+            fabPanicDashboard.hide();
             fabMain.setImageResource(R.drawable.ic_edit);
         }
         isFabExpanded = !isFabExpanded;

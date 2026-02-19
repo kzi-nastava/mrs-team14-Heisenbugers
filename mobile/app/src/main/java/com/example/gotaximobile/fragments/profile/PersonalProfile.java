@@ -3,6 +3,7 @@ package com.example.gotaximobile.fragments.profile;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -10,10 +11,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.adapters.ProfileTabAdapter;
+import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.models.dtos.GetProfileDTO;
+import com.example.gotaximobile.models.dtos.IsBlockedDTO;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
@@ -28,6 +32,8 @@ import retrofit2.Response;
 public class PersonalProfile extends Fragment {
 
     private ProfileCardView nameCard, emailCard, addressCard, phoneCard;
+    private IsBlockedDTO isBlockedUser;
+    private TokenStorage storage;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,9 +44,23 @@ public class PersonalProfile extends Fragment {
         addressCard = view.findViewById(R.id.card_address);
         phoneCard = view.findViewById(R.id.card_phone);
 
+        storage = new TokenStorage(requireContext().getApplicationContext());
+        String role = storage.getRole();
+
         fetchProfileData();
+        if ("DRIVER".equals(role)) {
+            fetchIsBlocked();
+        }
 
         return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        TextView blockRibbon = view.findViewById(R.id.tvBlockRibbon);
+        blockRibbon.setVisibility(View.GONE);
     }
 
     private void fetchProfileData() {
@@ -57,6 +77,36 @@ public class PersonalProfile extends Fragment {
 
             @Override
             public void onFailure(@NonNull Call<GetProfileDTO> call, @NonNull Throwable t) {
+                Log.e("NETWORK_ERROR", Objects.requireNonNull(t.getMessage()));
+            }
+        });
+    }
+
+    private void fetchIsBlocked(){
+        RetrofitClient.userService(getContext()).checkIsUserBlocked().enqueue(new Callback<IsBlockedDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<IsBlockedDTO> call, @NonNull Response<IsBlockedDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    isBlockedUser = response.body();
+
+                    if (getView() != null) {
+                        TextView blockRibbon = getView().findViewById(R.id.tvBlockRibbon);
+                        if (isBlockedUser.blocked) {
+                            String reason = isBlockedUser.blockNote;
+                            if (reason == null || reason.isEmpty()) reason = "No reason provided";
+
+                            blockRibbon.setText("Your account is blocked! Reason: " + reason);
+                            blockRibbon.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                } else {
+                    Log.e("API_ERROR", "Response failed: " + response.code());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<IsBlockedDTO> call, @NonNull Throwable t) {
                 Log.e("NETWORK_ERROR", Objects.requireNonNull(t.getMessage()));
             }
         });

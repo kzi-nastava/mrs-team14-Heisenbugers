@@ -2,11 +2,14 @@ package com.example.gotaximobile.network;
 
 import com.example.gotaximobile.models.dtos.AdminRideDTO;
 import com.example.gotaximobile.models.dtos.AssignedRideDTO;
+import com.example.gotaximobile.models.dtos.CancelRideRequestDTO;
 import com.example.gotaximobile.models.dtos.FavoriteRouteDTO;
+import com.example.gotaximobile.models.dtos.MessageResponse;
 import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.models.dtos.RideRequestDTO;
 import com.example.gotaximobile.models.dtos.RideDetailsDTO;
 import com.example.gotaximobile.models.dtos.RideTrackingDTO;
+import com.example.gotaximobile.models.dtos.StopRideRequestDTO;
 import com.example.gotaximobile.models.dtos.VehicleInfoDTO;
 
 import java.util.List;
@@ -74,5 +77,12 @@ public interface RideService {
 
     @DELETE("api/favorite-routes/{id}/ride")
     Call<Void> deleteFavoriteFromRide(@Path("id") UUID id);
+
+    @POST("api/rides/{rideId}/cancel")
+    Call<MessageResponse> cancelAssignedRide(@Path("id") UUID rideId, @Body CancelRideRequestDTO body);
+
+    @POST("api/rides/{rideId}/stop")
+    Call<MessageResponse> stopRide(@Path("rideId") UUID rideId, @Body StopRideRequestDTO body);
+
 
 }

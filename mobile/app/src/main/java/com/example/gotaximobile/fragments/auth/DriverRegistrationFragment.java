@@ -67,7 +67,7 @@ public class DriverRegistrationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // This connects your Java code to the XML layout we created earlier
+
         return inflater.inflate(R.layout.fragment_driver_registration, container, false);
     }
 

@@ -147,4 +147,5 @@
     <string name="no_rides_found">No rides found</string>
     <string name="estimate_ride">Estimate ride</string>
     <string name="rate_ride">Rate Ride</string>
+    <string name="manage_users">Manage Users</string>
 </resources>

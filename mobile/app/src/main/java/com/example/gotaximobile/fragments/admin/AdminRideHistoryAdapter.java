@@ -36,7 +36,6 @@ public class AdminRideHistoryAdapter extends RecyclerView.Adapter<AdminRideHisto
 
     private String money(java.math.BigDecimal price) {
         if (price == null) return "";
-        // если надо без копеек:
         return price.stripTrailingZeros().toPlainString() + " RSD";
     }
 
