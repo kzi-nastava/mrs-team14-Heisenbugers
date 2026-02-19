@@ -21,4 +21,8 @@ public interface UserService {
             @Query("sortBy") String sortBy,
             @Query("direction") String direction
     );
+
+    @GET("api/users/state")
+    Call<UserStateDTO> getState();
+
 }
