@@ -1,5 +1,6 @@
 package com.example.gotaximobile.fragments;
 
+import android.app.AlertDialog;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,9 +30,11 @@ import com.example.gotaximobile.fragments.ride.EstimateRideBottomSheet;
 import com.example.gotaximobile.fragments.ride.RideBookingBottomSheet;
 import com.example.gotaximobile.models.MapPin;
 import com.example.gotaximobile.models.dtos.AssignedRideDTO;
+import com.example.gotaximobile.models.dtos.CancelRideRequestDTO;
 import com.example.gotaximobile.models.dtos.FavoriteRouteDTO;
 import com.example.gotaximobile.models.dtos.GetProfileDTO;
 import com.example.gotaximobile.models.dtos.LocationDTO;
+import com.example.gotaximobile.models.dtos.MessageResponse;
 import com.example.gotaximobile.models.dtos.PassengerInfoDTO;
 import com.example.gotaximobile.models.dtos.PriceDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
@@ -351,6 +355,8 @@ public class HomeFragment extends Fragment {
 
     private void showRideOnSheet(AssignedRideDTO ride) {
         driverSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        cancelRideButton.setOnClickListener(v -> showCancelDialog(ride.rideId));
+
 
         tvDriverStart.setText(ride.start.address);
         tvDriverDestination.setText(ride.end.address);
@@ -416,7 +422,7 @@ public class HomeFragment extends Fragment {
         //cancelRideButton.setOnClickListener(v -> cancelRide());
     }
 
-    private void startRide(UUID id) {
+    /*private void startRide(UUID id) {
         RetrofitClient.rideService(getContext()).startRide(id).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
@@ -429,6 +435,115 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {  }
         });
+    }*/
+    private void startRide(UUID id) {
+        RetrofitClient.rideService(getContext()).startRide(id).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(@NonNull Call<Void> call,
+                                   @NonNull Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), "Ride started!", Toast.LENGTH_SHORT).show();
+
+
+                    if (driverSheetBehavior != null) {
+                        driverSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                    }
+
+                    Bundle args = new Bundle();
+                    args.putString("rideId", id.toString());
+
+                    com.example.gotaximobile.fragments.ride.DriverDuringRideFragment fragment =
+                            new com.example.gotaximobile.fragments.ride.DriverDuringRideFragment();
+                    fragment.setArguments(args);
+
+                    requireActivity().getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, fragment)
+                            .addToBackStack(null)
+                            .commit();
+
+                } else {
+                    Toast.makeText(getContext(), "There was an error!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                Toast.makeText(getContext(), "Network error", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+    private void showCancelDialog(UUID rideId) {
+
+        EditText input = new EditText(requireContext());
+        input.setHint("Reason for cancel");
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Cancel ride")
+                .setMessage("Enter reason for canceling the ride")
+                .setView(input)
+                .setNegativeButton("Back", (d, w) -> d.dismiss())
+                .setPositiveButton("Cancel ride", (d, w) -> {
+
+                    String reason = input.getText() != null
+                            ? input.getText().toString().trim()
+                            : "";
+
+                    if (reason.isEmpty()) {
+                        Toast.makeText(requireContext(),
+                                "Reason is required",
+                                Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    callCancelRide(rideId, reason);
+                })
+                .show();
+    }
+
+
+    private void callCancelRide(UUID rideId, String reason) {
+
+        CancelRideRequestDTO body = new CancelRideRequestDTO(reason);
+
+        rideService.cancelRide(rideId, body)
+                .enqueue(new Callback<MessageResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<MessageResponse> call,
+                                           @NonNull Response<MessageResponse> response) {
+
+                        if (response.isSuccessful()) {
+
+                            Toast.makeText(requireContext(),
+                                    "Ride canceled",
+                                    Toast.LENGTH_SHORT).show();
+
+                            driverSheetBehavior.setState(
+                                    BottomSheetBehavior.STATE_HIDDEN
+                            );
+
+                            if (mapFragment != null) {
+                                mapFragment.clearRouteMarkers();
+                            }
+
+                        } else {
+                            Toast.makeText(requireContext(),
+                                    "Failed: " + response.code(),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<MessageResponse> call,
+                                          @NonNull Throwable t) {
+
+                        Toast.makeText(requireContext(),
+                                "Network error",
+                                Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
 
 }
