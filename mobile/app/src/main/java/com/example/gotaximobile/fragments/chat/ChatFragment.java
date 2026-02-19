@@ -125,24 +125,47 @@ public class ChatFragment extends Fragment {
 
         ChatApi api = RetrofitClient.chatApi(requireContext());
 
-        api.loadMessages(tokenStorage.getAuthHeaderValue(), chatId)
-                .enqueue(new Callback<>() {
-                    @Override
-                    public void onResponse(Call<List<Message>> call,
-                                           Response<List<Message>> response) {
+        if (chatId != null) {
+            api.loadMessages(tokenStorage.getAuthHeaderValue(), chatId)
+                    .enqueue(new Callback<>() {
+                        @Override
+                        public void onResponse(Call<List<Message>> call,
+                                               Response<List<Message>> response) {
 
-                        if (response.isSuccessful() && response.body() != null) {
-                            messages.addAll(response.body());
-                            adapter.notifyDataSetChanged();
-                            recyclerView.scrollToPosition(messages.size() - 1);
+                            if (response.isSuccessful() && response.body() != null) {
+                                messages.addAll(response.body());
+                                adapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(messages.size() - 1);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Call<List<Message>> call, Throwable t) {
-                        Log.e("CHAT", "Load failed", t);
-                    }
-                });
+                        @Override
+                        public void onFailure(Call<List<Message>> call, Throwable t) {
+                            Log.e("CHAT", "Load failed", t);
+                        }
+                    });
+        } else {
+            api.loadMyMessages(tokenStorage.getAuthHeaderValue())
+                    .enqueue(new Callback<>() {
+                        @Override
+                        public void onResponse(Call<List<Message>> call,
+                                               Response<List<Message>> response) {
+
+                            if (response.isSuccessful() && response.body() != null) {
+                                messages.addAll(response.body());
+                                adapter.notifyDataSetChanged();
+                                recyclerView.scrollToPosition(messages.size() - 1);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<Message>> call, Throwable t) {
+                            Log.e("CHAT", "Load failed", t);
+                        }
+                    });
+        }
+
+
     }
 
     @Override

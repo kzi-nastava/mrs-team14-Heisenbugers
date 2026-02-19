@@ -19,19 +19,19 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.fragments.MapFragment;
+import com.example.gotaximobile.fragments.chat.ChatFragment;
 import com.example.gotaximobile.models.MapPin;
 import com.example.gotaximobile.models.dtos.LocationDTO;
+import com.example.gotaximobile.models.dtos.MessageResponse;
+import com.example.gotaximobile.models.dtos.PanicRequestDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.models.dtos.RideTrackingDTO;
+import com.example.gotaximobile.network.PanicApi;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.RideService;
 import com.google.android.material.color.MaterialColors;
-import com.google.android.material.textfield.TextInputEditText;
-
-import com.example.gotaximobile.models.dtos.MessageResponse;
-import com.example.gotaximobile.models.dtos.PanicRequestDTO;
-import com.example.gotaximobile.network.PanicApi;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -177,6 +177,14 @@ public class DuringRideFragment extends Fragment {
             });
 
             builder.show();
+        });
+
+        FloatingActionButton btnChat = view.findViewById(R.id.btnChat);
+        btnChat.setOnClickListener(v -> {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new ChatFragment())
+                    .addToBackStack(null)
+                    .commit();
         });
 
 
