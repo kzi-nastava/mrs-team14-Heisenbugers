@@ -62,4 +62,6 @@ public class RideHistoryDTO {
     public boolean isRated() {
         return rated;
     }
+
+    public void setFavorite(boolean favorite) { this.favorite = favorite; }
 }

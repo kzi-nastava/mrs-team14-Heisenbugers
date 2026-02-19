@@ -65,6 +65,9 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
         acStart = v.findViewById(R.id.acStart);
         acDestination = v.findViewById(R.id.acDestination);
 
+        acStart.setText(viewModel.startAddress);
+        acDestination.setText(viewModel.endAddress);
+
         setupDebounce(acStart);
         setupSuggestionClick(acStart, "start");
         setupDebounce(acDestination);
@@ -96,7 +99,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
             }
         });
 
-        // Final Buttons
         v.findViewById(R.id.btnOrder).setOnClickListener(view -> {
             selectedScheduledTime = null;
             processOrder(false);
@@ -178,7 +180,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
         textView.setOnItemClickListener((parent, view, position, id) -> {
             GeocodeSuggestionDTO selected = (GeocodeSuggestionDTO) parent.getItemAtPosition(position);
 
-            // Prepare data for HomeFragment
             Bundle result = new Bundle();
             result.putDouble("lat", Double.parseDouble(selected.lat));
             result.putDouble("lon", Double.parseDouble(selected.lon));
@@ -239,7 +240,6 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void processOrder(boolean isScheduled) {
-        // 1. Basic Validation
         String startAddr = acStart.getText().toString();
         String endAddr = acDestination.getText().toString();
 

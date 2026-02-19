@@ -29,6 +29,7 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
 
 public class PassengerRideHistoryFragment extends Fragment implements SensorEventListener {
 
@@ -67,25 +68,34 @@ public class PassengerRideHistoryFragment extends Fragment implements SensorEven
 
         RecyclerView rv = view.findViewById(R.id.recycler);
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
-        adapter = new PassengerRideHistoryAdapter(item -> {
-            // Передадим данные в детали без сети (самый надёжный вариант)
-            Bundle b = new Bundle();
-            b.putString("start", item.getStartAddress());
-            b.putString("end", item.getEndAddress());
-            b.putString("startedAt", item.getStartedAt() != null ? item.getStartedAt().toString() : null);
-            b.putString("endedAt", item.getEndedAt() != null ? item.getEndedAt().toString() : null);
-            b.putDouble("price", item.getPrice());
-            b.putBoolean("canceled", item.isCanceled());
-            b.putBoolean("panic", item.isPanicTriggered());
-            b.putString("rideId", item.getRideId() != null ? item.getRideId().toString() : null);
+        adapter = new PassengerRideHistoryAdapter(new PassengerRideHistoryAdapter.OnRideClick(){
+            @Override
+            public void onClick(RideHistoryDTO item) {
+                // Передадим данные в детали без сети (самый надёжный вариант)
+                Bundle b = new Bundle();
+                b.putString("start", item.getStartAddress());
+                b.putString("end", item.getEndAddress());
+                b.putString("startedAt", item.getStartedAt() != null ? item.getStartedAt().toString() : null);
+                b.putString("endedAt", item.getEndedAt() != null ? item.getEndedAt().toString() : null);
+                b.putDouble("price", item.getPrice());
+                b.putBoolean("canceled", item.isCanceled());
+                b.putBoolean("panic", item.isPanicTriggered());
+                b.putString("rideId", item.getRideId() != null ? item.getRideId().toString() : null);
 
-            Fragment details = new PassengerRideHistoryDetailFragment();
-            details.setArguments(b);
+                Fragment details = new PassengerRideHistoryDetailFragment();
+                details.setArguments(b);
 
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, details)
-                    .addToBackStack(null)
-                    .commit();
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, details)
+                        .addToBackStack(null)
+                        .commit();
+            }
+
+            @Override
+            public void onFavoriteClick(RideHistoryDTO item, int position) {
+                toggleFavorite(item, position);
+            }
+
         });
         rv.setAdapter(adapter);
         rv.setAdapter(adapter);
@@ -199,6 +209,53 @@ public class PassengerRideHistoryFragment extends Fragment implements SensorEven
     public void onAccuracyChanged(Sensor sensor, int accuracy) {}
     private void toggleDirection() {
         direction = "asc".equals(direction) ? "desc" : "asc";
+    }
+
+    private void toggleFavorite(RideHistoryDTO item, int position) {
+        // 1. Determine new state
+        boolean newState = !item.isFavorite();
+
+        if(newState) {
+            RetrofitClient.rideService(getContext()).addFavorite(item.getRideId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        item.setFavorite(newState);
+                        adapter.notifyItemChanged(position);
+
+                        String msg = "Added to favorites";
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to update favorite", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                    Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else{
+            RetrofitClient.rideService(getContext()).deleteFavoriteFromRide(item.getRideId()).enqueue(new Callback<Void>() {
+                @Override
+                public void onResponse(@NonNull Call<Void> call, @NonNull Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        item.setFavorite(newState);
+                        adapter.notifyItemChanged(position);
+
+                        String msg = "Removed from favorites";
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to update favorite", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<Void> call, @NonNull Throwable t) {
+                    Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
 }

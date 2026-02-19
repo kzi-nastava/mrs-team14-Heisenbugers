@@ -2,6 +2,8 @@ package com.example.gotaximobile.fragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.example.gotaximobile.fragments.ride.EstimateRideBottomSheet;
 import com.example.gotaximobile.fragments.ride.RideBookingBottomSheet;
 import com.example.gotaximobile.models.MapPin;
 import com.example.gotaximobile.models.dtos.AssignedRideDTO;
+import com.example.gotaximobile.models.dtos.FavoriteRouteDTO;
 import com.example.gotaximobile.models.dtos.GetProfileDTO;
 import com.example.gotaximobile.models.dtos.LocationDTO;
 import com.example.gotaximobile.models.dtos.PassengerInfoDTO;
@@ -39,21 +42,28 @@ import com.example.gotaximobile.viewmodels.RideBookingViewModel;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.textfield.TextInputLayout;
 
 
 import org.osmdroid.util.GeoPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
+    private static final Logger log = LoggerFactory.getLogger(HomeFragment.class);
     private com.google.android.material.card.MaterialCardView cardEstimateInfo;
     private android.widget.TextView tvEstimatePrice, tvEstimateDistance, tvEstimateEta,
             tvDriverStart, tvDriverDestination, tvDriverDistance, tvDriverTime, tvNoPassengers;
@@ -214,6 +224,26 @@ public class HomeFragment extends Fragment {
             if (cardEstimateInfo != null) {
                 cardEstimateInfo.setVisibility(View.GONE);
             }
+        });
+
+        getParentFragmentManager().setFragmentResultListener("favorite_selected", this, (key, bundle) -> {
+            FavoriteRouteDTO favorite = (FavoriteRouteDTO) bundle.getSerializable("selected_favorite");
+            if (favorite == null) return;
+
+            viewModel.clearAll();
+            viewModel.startPoint = new GeoPoint(favorite.startAddress.latitude, favorite.startAddress.longitude);
+            viewModel.endPoint = new GeoPoint(favorite.endAddress.latitude, favorite.endAddress.longitude);
+            viewModel.startAddress = favorite.startAddress.address;
+            viewModel.endAddress = favorite.endAddress.address;
+
+
+            mapFragment.clearRouteMarkers();
+            mapFragment.addRoutePin(viewModel.startPoint, viewModel.startAddress, "start");
+            mapFragment.addRoutePin(viewModel.endPoint, viewModel.endAddress, "end");
+
+
+            RideBookingBottomSheet bookingSheet = new RideBookingBottomSheet();
+            bookingSheet.show(getChildFragmentManager(), "booking_sheet");
         });
 
         getParentFragmentManager().setFragmentResultListener("estimate_result", this, (key, bundle) -> {

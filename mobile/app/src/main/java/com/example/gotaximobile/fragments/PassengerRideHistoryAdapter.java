@@ -3,6 +3,7 @@ package com.example.gotaximobile.fragments;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +18,7 @@ public class PassengerRideHistoryAdapter extends RecyclerView.Adapter<PassengerR
 
     public interface OnRideClick {
         void onClick(RideHistoryDTO item);
+        void onFavoriteClick(RideHistoryDTO item, int position);
     }
 
     private final List<RideHistoryDTO> data = new ArrayList<>();
@@ -59,18 +61,33 @@ public class PassengerRideHistoryAdapter extends RecyclerView.Adapter<PassengerR
         h.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onClick(r);
         });
+
+        int heartIcon = r.isFavorite() ? R.drawable.ic_heart_fill : R.drawable.ic_hearth;
+        h.btnFavorite.setImageResource(heartIcon);
+
+        h.btnFavorite.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onFavoriteClick(r, pos);
+            }
+        });
+
+        h.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onClick(r);
+        });
     }
 
     @Override public int getItemCount() { return data.size(); }
 
     static class VH extends RecyclerView.ViewHolder {
         TextView route, time, price, flags;
+        ImageButton btnFavorite;
         VH(@NonNull View item) {
             super(item);
             route = item.findViewById(R.id.tvRoute);
             time = item.findViewById(R.id.tvTime);
             price = item.findViewById(R.id.tvPrice);
             flags = item.findViewById(R.id.tvFlags);
+            btnFavorite = item.findViewById(R.id.btnFavorite);
         }
     }
 }
