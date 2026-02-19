@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- CHAT -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/chatCard"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnPanic">
+
+        <FrameLayout
+            android:id="@+id/chat_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Chat will be here..."
+                android:textSize="14sp"
+                android:textColor="@android:color/darker_gray"
+                android:layout_gravity="center" />
+        </FrameLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- PANIC  -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPanic"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:text="PANIC"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@android:color/holo_red_dark"
+        app:cornerRadius="24dp"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:iconTint="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/btnStopRide" />
+
+    <!-- STOP RIDE -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnStopRide"
+        style="@style/Widget.Material3.Button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="STOP RIDE"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        app:backgroundTint="@android:color/holo_green_light"
+        app:cornerRadius="24dp"
+        app:iconGravity="textStart"
+        app:iconPadding="8dp"
+        app:iconTint="@android:color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

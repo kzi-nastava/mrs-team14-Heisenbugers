@@ -28,6 +28,11 @@ import com.example.gotaximobile.network.RideService;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.textfield.TextInputEditText;
 
+import com.example.gotaximobile.models.dtos.MessageResponse;
+import com.example.gotaximobile.models.dtos.PanicRequestDTO;
+import com.example.gotaximobile.network.PanicApi;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import org.osmdroid.util.GeoPoint;
 
 import java.util.ArrayList;
@@ -48,6 +53,7 @@ public class DuringRideFragment extends Fragment {
     private RideService rideService;
     private UUID rideId;
     private MapFragment mapFragment;
+    private PanicApi panicApi;
 
     @Nullable
     @Override
@@ -68,6 +74,9 @@ public class DuringRideFragment extends Fragment {
         assert rideId != null;
 
         rideService = RetrofitClient.rideService(requireContext());
+        panicApi = RetrofitClient.panicApi(requireContext());
+        Log.d("PANIC", "rideId=" + rideId);
+
         rideService.getRide(rideId).enqueue(new Callback<RideDTO>() {
             @Override
             public void onResponse(@NonNull Call<RideDTO> call,
@@ -84,7 +93,6 @@ public class DuringRideFragment extends Fragment {
         });
 
         updateTracking();
-
         return view;
     }
 
@@ -111,6 +119,66 @@ public class DuringRideFragment extends Fragment {
 
         noteButton.setOnClickListener(v -> openModal());
         noteLabel.setOnClickListener(v -> openModal());
+
+
+        //panic
+        FloatingActionButton btnPanic = view.findViewById(R.id.btnPanic);
+
+        btnPanic.setOnClickListener(v -> {
+            if (rideId == null) {
+                Toast.makeText(requireContext(), "Missing rideId", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(new ContextThemeWrapper(requireContext(),
+                            androidx.appcompat.R.style.ThemeOverlay_AppCompat_Dialog));
+            builder.setTitle("PANIC");
+            builder.setMessage("Send PANIC alert to admins?");
+
+
+            final EditText msgInput = new EditText(requireContext());
+            msgInput.setHint("Message");
+            int pad = (int) (16 * getResources().getDisplayMetrics().density);
+            msgInput.setPadding(pad, pad, pad, pad);
+            builder.setView(msgInput);
+
+            builder.setNegativeButton("Cancel", (d, w) -> d.dismiss());
+            builder.setPositiveButton("SEND", (d, w) -> {
+                v.setEnabled(false);
+
+                String msg = msgInput.getText() != null ? msgInput.getText().toString().trim() : "";
+                if (msg.isEmpty()) msg = "PANIC button pressed!";
+
+                panicApi.panic(rideId.toString(), new PanicRequestDTO(msg))
+                        .enqueue(new Callback<MessageResponse>() {
+                            @Override
+                            public void onResponse(@NonNull Call<MessageResponse> call,
+                                                   @NonNull Response<MessageResponse> response) {
+                                v.setEnabled(true);
+
+                                if (!response.isSuccessful()) {
+                                    Toast.makeText(requireContext(), "Failed: " + response.code(), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+
+                                String text = (response.body() != null && response.body().getMessage() != null)
+                                        ? response.body().getMessage()
+                                        : "Panic sent";
+                                Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailure(@NonNull Call<MessageResponse> call, @NonNull Throwable t) {
+                                v.setEnabled(true);
+                                Toast.makeText(requireContext(), "Network error", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            });
+
+            builder.show();
+        });
+
 
     }
 
@@ -244,4 +312,6 @@ public class DuringRideFragment extends Fragment {
             mapFragment.drawRoute(startPoint, endPoint, stops);
         }
     }
+
+
 }
