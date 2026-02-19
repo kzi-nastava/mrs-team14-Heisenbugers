@@ -1,0 +1,3 @@
+Uputstvo za pokretanje mobilne aplikacije
+
+Pokrenuti PostgreSQL bazu kroz docker-compose. Pokrenuti Spring Boot aplikaciju za backend. U build.gradle mobilne aplikacije uneti za debug BASE_URL polje IP adresu na kojoj je pokrenut backend. Startovati mobilnu aplikaciju.
