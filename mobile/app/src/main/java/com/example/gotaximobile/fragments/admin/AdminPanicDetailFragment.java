@@ -90,7 +90,7 @@ public class AdminPanicDetailFragment extends Fragment {
                 getParentFragmentManager().popBackStack()
         );
 
-        // resolve из деталки
+
         ExtendedFloatingActionButton btnResolve = view.findViewById(R.id.btnResolvePanic);
         btnResolve.setOnClickListener(v -> {
             if (panicId == null) {
@@ -118,7 +118,7 @@ public class AdminPanicDetailFragment extends Fragment {
             });
         });
 
-        // карта с маркером машины (если есть координаты)
+
         MapFragment mapFragment =
                 (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
         if (mapFragment != null && lat != null && lng != null) {
