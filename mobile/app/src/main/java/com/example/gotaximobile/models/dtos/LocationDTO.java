@@ -1,6 +1,10 @@
 package com.example.gotaximobile.models.dtos;
 
-public class LocationDTO {
+import androidx.annotation.NonNull;
+
+import java.io.Serializable;
+
+public class LocationDTO implements Serializable {
     public double latitude;
     public double longitude;
     public String address;
@@ -16,4 +20,10 @@ public class LocationDTO {
     public String getAddress() { return address; }
     public double getLatitude() { return latitude; }
     public double getLongitude() { return longitude; }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return address;
+    }
 }

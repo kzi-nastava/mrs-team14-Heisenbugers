@@ -2,6 +2,7 @@ package com.example.gotaximobile.network;
 
 import com.example.gotaximobile.models.dtos.AdminRideDTO;
 import com.example.gotaximobile.models.dtos.AssignedRideDTO;
+import com.example.gotaximobile.models.dtos.FavoriteRouteDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
 import com.example.gotaximobile.models.dtos.RideRequestDTO;
 import com.example.gotaximobile.models.dtos.RideDetailsDTO;
@@ -14,6 +15,7 @@ import java.util.UUID;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -60,5 +62,17 @@ public interface RideService {
 
     @POST("api/rides/{id}/start")
     Call<Void> startRide(@Path("id") UUID id);
+
+    @GET("api/favorite-routes")
+    Call<List<FavoriteRouteDTO>> getFavoriteRoutes();
+
+    @DELETE("api/favorite-routes/{id}")
+    Call<Void> deleteFavorite(@Path("id") UUID id);
+
+    @POST("api/favorite-routes/{id}")
+    Call<Void> addFavorite(@Path("id") UUID id);
+
+    @DELETE("api/favorite-routes/{id}/ride")
+    Call<Void> deleteFavoriteFromRide(@Path("id") UUID id);
 
 }
