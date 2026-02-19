@@ -14,6 +14,8 @@ import com.example.gotaximobile.models.dtos.AdminRideDTO;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.List;
 
 public class AdminRideAdapter extends RecyclerView.Adapter<AdminRideAdapter.ViewHolder> {
@@ -25,7 +27,13 @@ public class AdminRideAdapter extends RecyclerView.Adapter<AdminRideAdapter.View
     private List<AdminRideDTO> rides;
     private OnRideClick listener;
 
-    private final DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
+    private final DateTimeFormatter inputFormatter = new DateTimeFormatterBuilder()
+            .appendPattern("yyyy-MM-dd'T'HH:mm:ss")
+            .optionalStart()
+            .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)
+            .optionalEnd()
+            .toFormatter();
+
     private final DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
 
