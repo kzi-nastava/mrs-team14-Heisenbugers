@@ -15,6 +15,7 @@ import com.example.gotaximobile.R;
 import com.example.gotaximobile.fragments.admin.AdminAllRidesFragment;
 import com.example.gotaximobile.fragments.admin.AdminRideHistoryHubFragment;
 import com.example.gotaximobile.fragments.admin.ManageUsersFragment;
+import com.example.gotaximobile.fragments.admin.ReportsFragment;
 import com.example.gotaximobile.fragments.auth.DriverRegistrationFragment;
 import com.example.gotaximobile.fragments.driverProfileRequests.DriverRequestsFragment;
 import com.google.android.material.appbar.MaterialToolbar;
@@ -25,7 +26,7 @@ public class AdminPanelFragment extends Fragment {
 
     private boolean isFabExpanded = false;
     private FloatingActionButton fabMain;
-    private ExtendedFloatingActionButton fabRequests, fabRegister, fabRideHistory, fabManageUsers, fabPanicDashboard;
+    private ExtendedFloatingActionButton fabRequests, fabRegister, fabRideHistory, fabManageUsers, fabPanicDashboard, fabRideAnalytics;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,13 +43,14 @@ public class AdminPanelFragment extends Fragment {
         fabRegister = view.findViewById(R.id.fab_register);
         fabRideHistory = view.findViewById(R.id.fab_ride_history);
         fabManageUsers = view.findViewById(R.id.fab_manageUsers);
-
+        fabRideAnalytics = view.findViewById(R.id.fab_rideAnalytics);
         fabPanicDashboard = view.findViewById(R.id.fab_panic_dashboard);
 
         fabRequests.hide();
         fabRegister.hide();
         fabRideHistory.hide();
         fabManageUsers.hide();
+        fabRideAnalytics.hide();
         fabMain.setImageResource(R.drawable.ic_edit);
         isFabExpanded = false;
 
@@ -94,6 +96,16 @@ public class AdminPanelFragment extends Fragment {
             toggleFab();
         });
 
+        fabRideAnalytics.setOnClickListener(v -> {
+            ReportsFragment reportsFragment = new ReportsFragment();
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, reportsFragment)
+                    .addToBackStack(null)
+                    .commit();
+            toggleFab();
+        });
+
         fabPanicDashboard.setOnClickListener(v -> {
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new com.example.gotaximobile.fragments.admin.AdminPanicDashboardFragment())
@@ -112,6 +124,7 @@ public class AdminPanelFragment extends Fragment {
             fabRideHistory.show();
             fabManageUsers.show();
             fabPanicDashboard.show();
+            fabRideAnalytics.show();
             fabMain.setImageResource(R.drawable.ic_close);
         } else {
             fabRequests.hide();
@@ -119,6 +132,7 @@ public class AdminPanelFragment extends Fragment {
             fabRideHistory.hide();
             fabManageUsers.hide();
             fabPanicDashboard.hide();
+            fabRideAnalytics.hide();
             fabMain.setImageResource(R.drawable.ic_edit);
         }
         isFabExpanded = !isFabExpanded;

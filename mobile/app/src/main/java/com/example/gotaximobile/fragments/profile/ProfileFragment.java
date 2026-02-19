@@ -21,6 +21,7 @@ import com.example.gotaximobile.activities.MainActivity;
 import com.example.gotaximobile.adapters.ProfileTabAdapter;
 import com.example.gotaximobile.data.TokenStorage;
 import com.example.gotaximobile.fragments.RideFragment;
+import com.example.gotaximobile.fragments.admin.ReportsFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.tabs.TabLayout;
@@ -102,6 +103,16 @@ public class ProfileFragment extends Fragment {
                         .replace(R.id.fragment_container, new RideFragment())
                         .addToBackStack(null)
                         .commit();*/
+            });
+
+            ImageView analytics = view.findViewById(R.id.analytics_button);
+            analytics.setOnClickListener(v -> {
+                ReportsFragment reportsFragment = new ReportsFragment();
+
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, reportsFragment)
+                        .addToBackStack(null)
+                        .commit();
             });
 
             tabLayout.setVisibility(View.VISIBLE);
