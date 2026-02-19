@@ -70,6 +70,19 @@
             app:icon="@drawable/ic_person_add" />
 
         <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/fab_manageUsers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/manage_users"
+            android:visibility="gone"
+            app:backgroundTint="@color/colorPrimary"
+            app:tint="@color/text"
+            app:iconTint="@color/text"
+            android:textColor="@color/text"
+            app:icon="@drawable/ic_person_outline" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
             android:id="@+id/fab_ride_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

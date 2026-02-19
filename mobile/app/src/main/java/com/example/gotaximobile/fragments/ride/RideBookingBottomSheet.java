@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import androidx.annotation.Nullable;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.models.dtos.GeocodeSuggestionDTO;
+import com.example.gotaximobile.models.dtos.IsBlockedDTO;
 import com.example.gotaximobile.models.dtos.LocationDTO;
 import com.example.gotaximobile.models.dtos.RideRequestDTO;
 import com.example.gotaximobile.models.dtos.RouteDTO;
@@ -33,11 +35,13 @@ import com.google.android.material.materialswitch.MaterialSwitch;
 
 import org.osmdroid.util.GeoPoint;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.TimeZone;
 
 import retrofit2.Call;
@@ -52,6 +56,8 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
     private Runnable searchRunnable;
     private RideBookingViewModel viewModel;
     private String selectedScheduledTime = null;
+
+    private IsBlockedDTO isBlockedUser;
 
     @Nullable
     @Override
@@ -104,6 +110,8 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
             processOrder(false);
         });
         v.findViewById(R.id.btnSchedule).setOnClickListener(view -> showTimePicker());
+
+        fetchIsBlocked();
 
         return v;
     }
@@ -240,6 +248,10 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void processOrder(boolean isScheduled) {
+        if (isBlockedUser.blocked){
+            Toast.makeText(getContext(), "Your account is blocked! Reason: " + isBlockedUser.blockNote, Toast.LENGTH_LONG).show();
+        }
+
         String startAddr = acStart.getText().toString();
         String endAddr = acDestination.getText().toString();
 
@@ -297,13 +309,42 @@ public class RideBookingBottomSheet extends BottomSheetDialogFragment {
                     Toast.makeText(getContext(), "Ride created!", Toast.LENGTH_SHORT).show();
                     dismiss();
                 } else {
-                    Toast.makeText(getContext(), "Error: " + response.code(), Toast.LENGTH_SHORT).show();
+                    String errorMessage = "An error occurred (Code: " + response.code() + ")";
+
+                    try {
+                        if (response.errorBody() != null) {
+                            errorMessage = response.errorBody().string();
+                        }
+                    } catch (IOException e) {
+                        Log.e("API_ERROR", "Error parsing error body", e);
+                    }
+
+                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_LONG).show();
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 Log.e("API_ERROR", t.getMessage());
+            }
+        });
+    }
+
+    private void fetchIsBlocked(){
+        RetrofitClient.userService(getContext()).checkIsUserBlocked().enqueue(new Callback<IsBlockedDTO>() {
+            @Override
+            public void onResponse(@NonNull Call<IsBlockedDTO> call, @NonNull Response<IsBlockedDTO> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    isBlockedUser = response.body();
+
+                } else {
+                    Log.e("API_ERROR", "Response failed: " + response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<IsBlockedDTO> call, @NonNull Throwable t) {
+                Log.e("NETWORK_ERROR", Objects.requireNonNull(t.getMessage()));
             }
         });
     }
