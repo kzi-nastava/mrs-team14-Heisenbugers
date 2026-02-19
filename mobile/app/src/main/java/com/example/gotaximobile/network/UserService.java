@@ -39,4 +39,7 @@ public interface UserService {
 
     @GET("api/users/is-blocked")
     Call<IsBlockedDTO> checkIsUserBlocked();
+    @GET("api/users/state")
+    Call<UserStateDTO> getState();
+
 }
