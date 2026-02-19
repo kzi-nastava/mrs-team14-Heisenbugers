@@ -96,5 +96,7 @@ public class RetrofitClient {
         return get(context).create(PanicApi.class);
     }
 
-
+    public static DriverService driverService(Context context) {
+        return get(context).create(DriverService.class);
+    }
 }

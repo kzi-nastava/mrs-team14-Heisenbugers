@@ -34,7 +34,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- PANIC  -->
+    <!-- PANIC -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnPanic"
         style="@style/Widget.Material3.Button"
@@ -75,7 +75,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
