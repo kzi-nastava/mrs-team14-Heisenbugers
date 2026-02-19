@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.fragments.admin.AdminAllRidesFragment;
 import com.example.gotaximobile.fragments.admin.AdminRideHistoryHubFragment;
+import com.example.gotaximobile.fragments.auth.DriverRegistrationFragment;
 import com.example.gotaximobile.fragments.driverProfileRequests.DriverRequestsFragment;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -69,8 +70,14 @@ public class AdminPanelFragment extends Fragment {
         });
 
         fabRegister.setOnClickListener(v -> {
-            // Navigate to Registration Fragment
-            Toast.makeText(getContext(), "Opening Registration...", Toast.LENGTH_SHORT).show();
+            DriverRegistrationFragment driverRegistrationFragment = new DriverRegistrationFragment();
+
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, driverRegistrationFragment)
+                    .addToBackStack(null)
+                    .commit();
+
+            toggleFab();
         });
 
         return view;

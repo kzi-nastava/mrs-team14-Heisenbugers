@@ -1,7 +1,10 @@
 package com.example.gotaximobile.network;
 
+import com.example.gotaximobile.models.dtos.CreateDriverDTO;
+import com.example.gotaximobile.models.dtos.CreatedDriverDTO;
 import com.example.gotaximobile.models.dtos.ForgotPasswordRequestDTO;
 import com.example.gotaximobile.models.dtos.ForgotPasswordResponseDTO;
+import com.example.gotaximobile.models.dtos.GetProfileDTO;
 import com.example.gotaximobile.models.dtos.LoginRequestDTO;
 import com.example.gotaximobile.models.dtos.LoginResponseDTO;
 import com.example.gotaximobile.models.dtos.MessageResponse;
@@ -41,6 +44,10 @@ public interface AuthApi {
     @GET("api/auth/activate")
     Call<MessageResponse> activateAccount(@Query("token") String token);
 
-
-
+    @Multipart
+    @POST("api/drivers")
+    Call<CreatedDriverDTO> registerDriver(
+            @Part("data") CreateDriverDTO profileDTO,
+            @Part MultipartBody.Part profileImage
+    );
 }
