@@ -87,4 +87,14 @@ public class RetrofitClient {
         return  get(context).create(PriceService.class);
     }
 
+
+    public static AdminPanicApi adminPanicApi(Context context) {
+        return get(context).create(AdminPanicApi.class);
+    }
+
+    public static PanicApi panicApi(Context context) {
+        return get(context).create(PanicApi.class);
+    }
+
+
 }
