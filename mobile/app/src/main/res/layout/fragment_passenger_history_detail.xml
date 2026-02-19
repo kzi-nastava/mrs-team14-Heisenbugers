@@ -25,7 +25,7 @@
                 android:layout_height="40dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 app:srcCompat="@drawable/ic_arrow_back"
-                app:tint="@color/black"/>
+                app:tint="@color/black" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -34,7 +34,7 @@
                 android:text="Ride details"
                 android:textStyle="bold"
                 android:textSize="18sp"
-                android:textColor="@color/black"/>
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <ProgressBar
@@ -69,7 +69,7 @@
                     android:text="Start → Destination"
                     android:textStyle="bold"
                     android:textSize="16sp"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
                 <!-- Chips row -->
                 <LinearLayout
@@ -83,7 +83,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="STATUS"
-                        app:chipCornerRadius="12dp"/>
+                        app:chipCornerRadius="12dp" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipCanceled"
@@ -92,7 +92,7 @@
                         android:layout_marginStart="8dp"
                         android:text="CANCELED"
                         android:visibility="gone"
-                        app:chipCornerRadius="12dp"/>
+                        app:chipCornerRadius="12dp" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chipPanic"
@@ -101,7 +101,7 @@
                         android:layout_marginStart="8dp"
                         android:text="PANIC"
                         android:visibility="gone"
-                        app:chipCornerRadius="12dp"/>
+                        app:chipCornerRadius="12dp" />
                 </LinearLayout>
 
                 <!-- key info row -->
@@ -118,7 +118,7 @@
                         android:layout_weight="1"
                         android:text="Price"
                         android:textStyle="bold"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black" />
 
                     <TextView
                         android:id="@+id/tvTimes"
@@ -126,7 +126,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="2"
                         android:text="Time"
-                        android:textColor="@color/black"/>
+                        android:textColor="@color/black" />
                 </LinearLayout>
 
                 <TextView
@@ -135,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:text="Driver"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
                 <!-- Map -->
                 <FrameLayout
@@ -153,14 +153,14 @@
                     android:layout_marginTop="12dp"
                     android:text="Passengers"
                     android:textStyle="bold"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/tvPassengers"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="—"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -168,14 +168,14 @@
                     android:layout_marginTop="10dp"
                     android:text="Traffic violations"
                     android:textStyle="bold"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/tvViolations"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="—"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -183,17 +183,28 @@
                     android:layout_marginTop="10dp"
                     android:text="Rating"
                     android:textStyle="bold"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/tvRating"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="—"
-                    android:textColor="@color/black"/>
+                    android:textColor="@color/black" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/rate_ride_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/rate_ride"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="16dp"
+            app:cornerRadius="12dp"
+            app:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/black" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

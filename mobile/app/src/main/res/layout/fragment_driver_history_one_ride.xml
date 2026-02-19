@@ -261,16 +261,6 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/rate_ride_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Rate Ride"
-                android:layout_gravity="bottom"
-                android:layout_marginTop="16dp"
-                app:cornerRadius="12dp"
-                app:backgroundTint="@color/colorPrimary"
-                android:textColor="@color/black" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
