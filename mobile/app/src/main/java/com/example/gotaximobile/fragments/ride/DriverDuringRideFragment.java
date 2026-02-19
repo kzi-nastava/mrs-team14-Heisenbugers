@@ -16,20 +16,20 @@ import androidx.fragment.app.Fragment;
 
 import com.example.gotaximobile.R;
 import com.example.gotaximobile.fragments.MapFragment;
+import com.example.gotaximobile.fragments.chat.ChatFragment;
 import com.example.gotaximobile.models.MapPin;
 import com.example.gotaximobile.models.dtos.LocationDTO;
 import com.example.gotaximobile.models.dtos.MessageResponse;
 import com.example.gotaximobile.models.dtos.PanicRequestDTO;
 import com.example.gotaximobile.models.dtos.RideDTO;
-import com.example.gotaximobile.models.dtos.UserStateDTO;
 import com.example.gotaximobile.models.dtos.StopRideRequestDTO;
+import com.example.gotaximobile.models.dtos.UserStateDTO;
 import com.example.gotaximobile.network.PanicApi;
 import com.example.gotaximobile.network.RetrofitClient;
 import com.example.gotaximobile.network.RideService;
 import com.example.gotaximobile.network.UserService;
-import com.google.android.material.color.MaterialColors;
 import com.google.android.material.button.MaterialButton;
-
+import com.google.android.material.color.MaterialColors;
 
 import org.osmdroid.util.GeoPoint;
 
@@ -66,7 +66,14 @@ public class DriverDuringRideFragment extends Fragment {
                 rideId = UUID.fromString(idStr);
             }
         }
-       return v;
+
+        if (savedInstanceState == null) {
+            getChildFragmentManager().beginTransaction()
+                    .replace(R.id.chat_container, new ChatFragment())
+                    .commit();
+        }
+
+        return v;
     }
 
     @Override
@@ -76,7 +83,7 @@ public class DriverDuringRideFragment extends Fragment {
 
         rideService = RetrofitClient.rideService(requireContext());
         userService = RetrofitClient.userService(requireContext());
-        panicApi   = RetrofitClient.panicApi(requireContext());
+        panicApi = RetrofitClient.panicApi(requireContext());
 
         mapFragment = (MapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.mapFragment);
